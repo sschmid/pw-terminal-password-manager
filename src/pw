@@ -78,16 +78,15 @@ pw::help() {
   cat << EOF
 pw $(cat "${PW_HOME}/version.txt")
 
-usage: pw [-a | --all]
-
-  <nothing>                search entry and copy password
-  <entry>                  print password for entry
-  init [<keychain>]        create keychain (default: pw.keychain)
-  add <name> [<account>]   add entry
-  rm <name> [<account>]    remove entry
-  ls                       list all entries
-  update                   update pw
-  help                     show this
+usage:
+  pw [-a]                                    search entry and copy password
+  pw <name> [<account> <keychain>]           print password for entry
+  pw init [<keychain>]                       create keychain (default: pw.keychain)
+  pw add <name> [<account> <keychain>]       add entry
+  pw [-a] rm [<name> <account> <keychain>]   remove entry
+  pw [-a] ls [<keychain>]                    list all entries
+  pw update                                  update pw
+  pw help                                    show this
 EOF
 }
 
