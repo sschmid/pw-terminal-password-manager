@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+BEE_PROJECT="pw"
+PLUGINS=(changelog github version)
+
+# secrets
+[[ -f "${HOME}/.bee/pw.bash" ]] && source "${HOME}/.bee/pw.bash"
+
+# changelog => version
+CHANGELOG_PATH=CHANGELOG.md
+CHANGELOG_CHANGES=CHANGES.md
+CHANGELOG_URL=https://github.com/sschmid/pw
+CHANGELOG_TAG_PREFIX=""
+CHANGELOG_TAG_SUFFIX=""
+
+# github => version
+GITHUB_REPO="sschmid/pw"
+GITHUB_CHANGES=CHANGES.md
+GITHUB_RELEASE_PREFIX="${BEE_PROJECT}-"
+GITHUB_ASSETS_ZIP=()
+
+# version
+VERSION_PATH=version.txt
+
+pw::release() {
+  local version
+  version="$(version::read)"
+  changelog::merge
+  git add .
+  git commit -m "Release ${version}"
+  git tag "${version}"
+  git push origin main
+  git push --tags
+  log "bzzz... giving GitHub some time to process..."
+  sleep 10
+  github::create_release
+}
