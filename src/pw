@@ -51,7 +51,7 @@ pw::list() {
   if ((PW_ALL)); then
     mapfile -t keychains < <(security list-keychains -d user | tr -d \")
   else
-    keychains=("${PW_KEYCHAIN}")
+    keychains=("${1:-"${PW_KEYCHAIN}"}")
   fi
   for keychain in "${keychains[@]}"; do
     keychain="${keychain##*/}"
@@ -102,7 +102,7 @@ main() {
       init) shift; pw::init "$@" ;;
       add) shift; pw::add "$@" ;;
       rm) shift; pw::rm "$@" ;;
-      ls) pw::list | column -s '|' -t ;;
+      ls) shift; pw::list "$@" | column -s '|' -t ;;
       update) pw::update ;;
       help) pw::help ;;
       *) pw::print "$@" ;;
