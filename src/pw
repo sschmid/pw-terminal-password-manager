@@ -2,85 +2,74 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-PW_HOME="${BASH_SOURCE[0]}"
-while [[ -L "${PW_HOME}" ]]; do
-  PW_HOME="$(readlink "${PW_HOME}")"
-done
-PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
-
 : "${PW_KEYCHAIN:="pw.keychain"}"
+declare -ig PW_ALL=0
 
 pw::init() {
   security create-keychain -P "${1:-"${PW_KEYCHAIN}"}"
 }
 
 pw::add() {
-  local name="$1" account="${2:-"${USER}"}" password password2
-  read -rsp "Enter password for ${name}: " password
-  echo
-  read -rsp "Retype password for ${name}: " password2
-  echo
+  local name="$1" account="${2:-"${USER}"}" keychain="${3:-"${PW_KEYCHAIN}"}" password password2
+  read -rsp "Enter password for ${name}: " password; echo
+  read -rsp "Retype password for ${name}: " password2; echo
   if [[ "${password}" != "${password2}" ]]; then
     echo "Error: the entered passwords do not match."
     exit 1
   fi
-
-  security add-generic-password \
-    -a "${account}" \
-    -s "${name}" \
-    -w "${password}" \
-    "${PW_KEYCHAIN}"
+  security add-generic-password -a "${account}" -s "${name}" -w "${password}" "${keychain}"
 }
 
 pw::rm() {
-  local name account
+  local name account keychain
   if (($#)); then
-    name="$1"
-    account="${2:-"${USER}"}"
-    security delete-generic-password \
-      -a "${account}" \
-      -s "${name}" \
-      "${PW_KEYCHAIN}"
-  else
-    while IFS=" " read -r name account; do
-      security delete-generic-password \
-        -a "${account}" \
-        -s "${name}" \
-        "${PW_KEYCHAIN}"
-    done < <(pw::fzf)
-  fi
+    name="$1" account="${2:-"${USER}"}" keychain="${3:-"${PW_KEYCHAIN}"}"
+    security delete-generic-password -a "${account}" -s "${name}" "${keychain}"
+  else while IFS=" | " read -r name account keychain; do
+    security delete-generic-password -a "${account}" -s "${name}" "${keychain}"
+  done < <(pw::fzf); fi
 }
 
 pw::print() {
-  local name="$1" account="${2:-"${USER}"}"
-  security find-generic-password \
-    -a "${account}" \
-    -s "${name}" \
-    -w \
-    "${PW_KEYCHAIN}"
+  local name="$1" account="${2:-"${USER}"}" keychain="${3:-"${PW_KEYCHAIN}"}"
+  security find-generic-password -a "${account}" -s "${name}" -w "${keychain}"
 }
 
 pw::copy() {
   pw::print "$@" | pbcopy
 }
 
-pw::ls() {
+pw::list() {
   local dump
-  local -a names accounts
-  dump="$(security dump-keychain "${PW_KEYCHAIN}")"
-  mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
-  mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
-  for ((i = 0; i < ${#names[@]}; i++)); do
-    echo "${names[i]} | ${accounts[i]}"
-  done | column -s '|' -t
+  local -a names accounts keychains
+  if ((PW_ALL)); then
+    mapfile -t keychains < <(security list-keychains -d user | tr -d \")
+  else
+    keychains=("${PW_KEYCHAIN}")
+  fi
+  for keychain in "${keychains[@]}"; do
+    keychain="${keychain##*/}"
+    dump="$(security dump-keychain "${keychain}")"
+    mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
+    mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
+    for ((i = 0; i < ${#names[@]}; i++)); do
+      echo "${names[i]} | ${accounts[i]} | ${keychain}"
+    done
+  done
 }
 
 pw::fzf() {
-  pw::ls | fzf --height=1% --layout=reverse --border --info=hidden
+  pw::list | fzf --height=40% --layout=reverse --border --info=hidden
 }
 
 pw::update() {
-  pushd "${PW_HOME}" > /dev/null || exit 1
+  local home="${BASH_SOURCE[0]}"
+  while [[ -L "${home}" ]]; do
+    home="$(readlink "${home}")"
+  done
+  home="$(cd "$(dirname "${home}")/.." && pwd)"
+
+  pushd "${home}" > /dev/null || exit 1
     git pull origin main
   popd > /dev/null || exit 1
 }
@@ -99,20 +88,25 @@ EOF
 }
 
 main() {
+  while (($#)); do case "$1" in
+    -a) shift; PW_ALL=1 ;;
+    --) shift; break ;; *) break ;;
+  esac done
+
   if (($#)); then
     case "$1" in
       init) shift; pw::init "$@" ;;
       add) shift; pw::add "$@" ;;
       rm) shift; pw::rm "$@" ;;
-      ls) pw::ls ;;
+      ls) pw::list | column -s '|' -t ;;
       update) pw::update ;;
       help) pw::help ;;
       *) pw::print "$@" ;;
     esac
   else
-    local name account
-    while IFS=" " read -r name account; do
-      pw::copy "${name}" "${account}"
+    local name account keychain
+    while IFS=" | " read -r name account keychain; do
+      pw::copy "${name}" "${account}" "${keychain}"
     done < <(pw::fzf)
   fi
 }
