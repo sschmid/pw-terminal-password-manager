@@ -2,6 +2,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+PW_HOME="${BASH_SOURCE[0]}"
+while [[ -L "${PW_HOME}" ]]; do
+  PW_HOME="$(readlink "${PW_HOME}")"
+done
+PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
+
 : "${PW_KEYCHAIN:="pw.keychain"}"
 
 pw::init() {
@@ -73,6 +79,12 @@ pw::fzf() {
   pw::ls | fzf --height=1% --layout=reverse --border --info=hidden
 }
 
+pw::update() {
+  pushd "${PW_HOME}" > /dev/null || exit 1
+    git pull origin main
+  popd > /dev/null || exit 1
+}
+
 pw::help() {
   cat << EOF
 usage: pw
@@ -82,6 +94,7 @@ usage: pw
   add <name> [<account>]   add entry
   rm <name> [<account>]    remove entry
   ls                       list all entries
+  update                   update pw
 EOF
 }
 
@@ -91,8 +104,9 @@ main() {
       init) shift; pw::init "$@" ;;
       add) shift; pw::add "$@" ;;
       rm) shift; pw::rm "$@" ;;
-      ls) shift; pw::ls ;;
-      help) shift; pw::help ;;
+      ls) pw::ls ;;
+      update) pw::update ;;
+      help) pw::help ;;
       *) pw::print "$@" ;;
     esac
   else
