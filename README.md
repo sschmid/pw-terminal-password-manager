@@ -36,7 +36,8 @@ $ pw
 ## usage
 
 ```
-usage: pw
+usage: pw [-a | --all]
+
   <nothing>                search entry and copy password
   <entry>                  print password for entry
   init [<keychain>]        create keychain (default: pw.keychain)
@@ -44,6 +45,7 @@ usage: pw
   rm <name> [<account>]    remove entry
   ls                       list all entries
   update                   update pw
+  help                     show this
 ```
 ## dependencies
 - [fzf](https://github.com/junegunn/fzf)

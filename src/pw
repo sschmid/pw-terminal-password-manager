@@ -2,6 +2,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+PW_HOME="${BASH_SOURCE[0]}"
+while [[ -L "${PW_HOME}" ]]; do
+  PW_HOME="$(readlink "${PW_HOME}")"
+done
+PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
+
 : "${PW_KEYCHAIN:="pw.keychain"}"
 declare -ig PW_ALL=0
 
@@ -63,20 +69,17 @@ pw::fzf() {
 }
 
 pw::update() {
-  local home="${BASH_SOURCE[0]}"
-  while [[ -L "${home}" ]]; do
-    home="$(readlink "${home}")"
-  done
-  home="$(cd "$(dirname "${home}")/.." && pwd)"
-
-  pushd "${home}" > /dev/null || exit 1
+  pushd "${PW_HOME}" > /dev/null || exit 1
     git pull origin main
   popd > /dev/null || exit 1
 }
 
 pw::help() {
   cat << EOF
-usage: pw
+pw $(cat "${PW_HOME}/version.txt")
+
+usage: pw [-a | --all]
+
   <nothing>                search entry and copy password
   <entry>                  print password for entry
   init [<keychain>]        create keychain (default: pw.keychain)
@@ -84,6 +87,7 @@ usage: pw
   rm <name> [<account>]    remove entry
   ls                       list all entries
   update                   update pw
+  help                     show this
 EOF
 }
 
