@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# This script installs to /usr/local only
+# To install, run
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install)"
+
+set -e
+
+LOCAL_REPO=/usr/local/opt/pw
+REPO=https://github.com/sschmid/pw
+
+if [[ -d "${LOCAL_REPO}" ]]; then
+  echo "It seems like pw is already installed at ${LOCAL_REPO}"
+  echo "Run 'pw update' to update pw to the latest version"
+else
+  git clone "${REPO}" "${LOCAL_REPO}"
+  echo "Linking ${LOCAL_REPO}/src/pw to /usr/local/bin/pw"
+  mkdir -p /usr/local/bin
+  ln -s "${LOCAL_REPO}/src/pw" /usr/local/bin/pw
+  echo "pw has been installed successfully"
+fi
