@@ -19,6 +19,10 @@ pw::open() {
   open -a "Keychain Access" ~/Library/Keychains/"${1:-"${PW_KEYCHAIN}"}-db"
 }
 
+pw::lock() {
+  security lock-keychain "${1:-"${PW_KEYCHAIN}"}"
+}
+
 pw::add() {
   local name="$1" account="${2:-"${USER}"}" keychain="${3:-"${PW_KEYCHAIN}"}" password password2
   read -rsp "Enter password for ${name}: " password; echo
@@ -93,6 +97,7 @@ usage:
   pw <name> [<account> <keychain>]           print password for entry
   pw init [<keychain>]                       create keychain (default: pw.keychain)
   pw open [<keychain>]                       open keychain in Keychain Access
+  pw lock [<keychain>]                       lock keychain
   pw add <name> [<account> <keychain>]       add entry
   pw [-a] rm [<name> <account> <keychain>]   remove entry
   pw [-a] ls [<keychain>]                    list all entries
@@ -112,6 +117,7 @@ main() {
     case "$1" in
       init) shift; pw::init "$@" ;;
       open) shift; pw::open "$@" ;;
+      lock) shift; pw::lock "$@" ;;
       add) shift; pw::add "$@" ;;
       rm) shift; pw::rm "$@" ;;
       ls) shift; pw::list "$@" ;;

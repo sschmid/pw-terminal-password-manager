@@ -28,6 +28,13 @@ $ pw open                    # open default keychain
 $ pw open secrets.keychain   # create custom keychain
 ```
 
+### `pw lock [<keychain>] - lock keychain`
+
+```
+$ pw lock                    # lock default keychain
+$ pw lock secrets.keychain   # lock custom keychain
+```
+
 ### `pw add <name> [<account> <keychain>] - add entry`
 
 ```
