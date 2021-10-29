@@ -21,6 +21,13 @@ $ pw init                    # create default keychain at ~/Library/Keychains/pw
 $ pw init secrets.keychain   # create custom keychain at ~/Library/Keychains/secrets.keychain-db
 ```
 
+### `pw open [<keychain>] - open keychain in Keychain Access`
+
+```
+$ pw open                    # open default keychain
+$ pw open secrets.keychain   # create custom keychain
+```
+
 ### `pw add <name> [<account> <keychain>] - add entry`
 
 ```
