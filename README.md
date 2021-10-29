@@ -46,10 +46,11 @@ $ pw rm                                       # do fuzzy search using fzf and re
 $ pw -a rm                                    # do fuzzy search in all user keychains and remove entry
 ```
 
-### `pw [-a] [<name> <account> <keychain>] - get password for entry`
+### `pw [-a | -k <keychain>] [<name> <account> <keychain>] - get password for entry`
 
 ```
 $ pw                                       # do fuzzy search using fzf and copy password to clipboard
+$ pw -k secrets.keychain                   # do fuzzy search in given keychain and copy password to clipboard
 $ pw -a                                    # do fuzzy search in all user keychains and copy password to clipboard
 $ pw github.com                            # print password matching default account ($USER)
 $ pw github.com sschmid                    # print password matching custom account

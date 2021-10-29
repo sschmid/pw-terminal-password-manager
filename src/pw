@@ -89,7 +89,7 @@ pw::help() {
 pw $(cat "${PW_HOME}/version.txt")
 
 usage:
-  pw [-a]                                    search entry and copy password
+  pw [-a | -k <keychain>]                    search entry and copy password
   pw <name> [<account> <keychain>]           print password for entry
   pw init [<keychain>]                       create keychain (default: pw.keychain)
   pw open [<keychain>]                       open keychain in Keychain Access
@@ -104,6 +104,7 @@ EOF
 main() {
   while (($#)); do case "$1" in
     -a) shift; PW_ALL=1 ;;
+    -k) PW_KEYCHAIN="$2"; shift 2 ;;
     --) shift; break ;; *) break ;;
   esac done
 
