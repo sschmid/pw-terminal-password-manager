@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2021-10-29
+### Added
+- Ask before removing entry using pw rm
+- Use tab for columns
+- pw ls given keychain
+- Update readme
+
 ## [1.1.0] - 2021-10-28
 ### Added
 - Add -a option to search all user keychains
@@ -17,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/sschmid/pw/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/sschmid/pw/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/sschmid/pw/releases/tag/1.0.0
