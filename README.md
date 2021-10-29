@@ -12,6 +12,31 @@ $ bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/instal
 $ brew install fzf
 ```
 
+# example
+
+```
+$ pw init
+$ pw add github.com
+Enter password for github.com:
+Retype password for github.com:
+$ pw github.com
+github123
+$ pw add github.com work
+Enter password for github.com:
+Retype password for github.com:
+$ pw
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ >                                                                            │
+│ > github.com    sschmid                                                      │
+│   github.com    work                                                         │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+```
+
 # usage
 
 ### `pw init [<keychain>] - create keychain (default: pw.keychain)`
@@ -83,31 +108,6 @@ $ pw -a ls                 # list all entries in all user keychains
 
 ```
 $ pw update
-```
-
-# example
-
-```
-$ pw init
-$ pw add github.com
-Enter password for github.com:
-Retype password for github.com:
-$ pw github.com
-github123
-$ pw add github.com work
-Enter password for github.com:
-Retype password for github.com:
-$ pw
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ >                                                                            │
-│ > github.com    sschmid                                                      │
-│   github.com    work                                                         │
-│                                                                              │
-│                                                                              │
-│                                                                              │
-│                                                                              │
-│                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## dependencies
