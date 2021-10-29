@@ -25,7 +25,7 @@ $ pw init secrets.keychain   # create custom keychain at ~/Library/Keychains/sec
 
 ```
 $ pw open                    # open default keychain
-$ pw open secrets.keychain   # create custom keychain
+$ pw open secrets.keychain   # open custom keychain
 ```
 
 ### `pw lock [<keychain>] - lock keychain`
