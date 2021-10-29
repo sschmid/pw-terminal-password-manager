@@ -28,12 +28,18 @@ pw::add() {
 
 pw::rm() {
   local name account keychain
+  local -i remove=1
   if (($#)); then
     name="$1" account="${2:-"${USER}"}" keychain="${3:-"${PW_KEYCHAIN}"}"
-    security delete-generic-password -a "${account}" -s "${name}" "${keychain}"
-  else while IFS=" | " read -r name account keychain; do
-    security delete-generic-password -a "${account}" -s "${name}" "${keychain}"
-  done < <(pw::fzf); fi
+  else
+    local n a k
+    while IFS=$'\t' read -r n a k; do
+      name="${n%% *}" account="${a%% *}" keychain="${k%% *}"
+    done < <(pw::fzf)
+    read -rp "Do you really want to remove ${name} (y / n): "
+    [[ "${REPLY}" != "y" ]] && remove=0
+  fi
+  ((remove)) && security delete-generic-password -a "${account}" -s "${name}" "${keychain}"
 }
 
 pw::print() {
@@ -59,7 +65,7 @@ pw::list() {
     mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
     mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
     for ((i = 0; i < ${#names[@]}; i++)); do
-      echo "${names[i]} | ${accounts[i]} | ${keychain}"
+      printf "%-16s\t%-16s\t%s\n" "${names[i]}" "${accounts[i]}" "${keychain}"
     done
   done
 }
@@ -101,15 +107,15 @@ main() {
       init) shift; pw::init "$@" ;;
       add) shift; pw::add "$@" ;;
       rm) shift; pw::rm "$@" ;;
-      ls) shift; pw::list "$@" | column -s '|' -t ;;
+      ls) shift; pw::list "$@" ;;
       update) pw::update ;;
       help) pw::help ;;
       *) pw::print "$@" ;;
     esac
   else
     local name account keychain
-    while IFS=" | " read -r name account keychain; do
-      pw::copy "${name}" "${account}" "${keychain}"
+    while IFS=$'\t' read -r name account keychain; do
+      pw::copy "${name%% *}" "${account%% *}" "${keychain}"
     done < <(pw::fzf)
   fi
 }
