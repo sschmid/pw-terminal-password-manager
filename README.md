@@ -35,6 +35,15 @@ $ pw lock                    # lock default keychain
 $ pw lock secrets.keychain   # lock custom keychain
 ```
 
+### `pw unlock [<keychain> <password>] - unlock keychain`
+
+```
+$ pw unlock                           # unlock default keychain and prompt password
+$ pw unlock 123456                    # unlock default keychain
+$ pw unlock secrets.keychain          # unlock custom keychain and prompt password
+$ pw unlock secrets.keychain 123456   # unlock custom keychain
+```
+
 ### `pw add <name> [<account> <keychain>] - add entry`
 
 ```
