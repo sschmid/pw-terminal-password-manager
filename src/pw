@@ -24,11 +24,7 @@ pw::lock() {
 }
 
 pw::unlock() {
-  if [[ -v 2 ]]; then
-    security unlock-keychain -p "$2" "${1:-"${PW_KEYCHAIN}"}"
-  else
-    security unlock-keychain "${1:-"${PW_KEYCHAIN}"}"
-  fi
+  security unlock-keychain "${1:-"${PW_KEYCHAIN}"}"
 }
 
 pw::add() {
@@ -106,7 +102,7 @@ usage:
   pw init [<keychain>]                       create keychain (default: pw.keychain)
   pw open [<keychain>]                       open keychain in Keychain Access
   pw lock [<keychain>]                       lock keychain
-  pw unlock [<keychain> <password>]          unlock keychain
+  pw unlock [<keychain>]                     unlock keychain
   pw add <name> [<account> <keychain>]       add entry
   pw [-a] rm [<name> <account> <keychain>]   remove entry
   pw [-a] ls [<keychain>]                    list all entries
