@@ -9,10 +9,10 @@ pw is a one-file bash wrapper for the [macOS keychain](https://developer.apple.c
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│ > GITHUB_ACCESS_TOKEN     sschmid                 pw.keychain                │
+│   GITHUB_ACCESS_TOKEN     sschmid                 pw.keychain                │
 │   twitter                 sschmid                 pw.keychain                │
 │   nuget                   sschmid                 pw.keychain                │
-│   github                  sschmid                 pw.keychain                │
+│ > github                  sschmid                 pw.keychain                │
 │   slack                   sschmid                 pw.keychain                │
 │   unity                   sschmid                 pw.keychain                │
 │   IOS_USER                popcore                 pw.keychain                │
