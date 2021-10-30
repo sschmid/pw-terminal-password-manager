@@ -10,13 +10,13 @@ $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
 │   GITHUB_ACCESS_TOKEN     repo                    pw.keychain                │
-│   twitter                 s_schmid                pw.keychain                │
-│   nuget                   sschmid                 pw.keychain                │
+│   IOS_PASSWORD            me@work.com             pw.keychain                │
+│   IOS_USER                me@work.com             pw.keychain                │
 │ > github                  sschmid                 pw.keychain                │
+│   nuget                   sschmid                 pw.keychain                │
 │   slack                   me@work.com             pw.keychain                │
+│   twitter                 s_schmid                pw.keychain                │
 │   unity                   me@work.com             pw.keychain                │
-│   IOS_USER                popcore                 pw.keychain                │
-│   IOS_PASSWORD            popcore                 pw.keychain                │
 │                                                                              │
 │                                                                              │
 │                                                                              │
