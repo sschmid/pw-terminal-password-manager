@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2021-10-30
+### Fixed
+- Remove entry matching empty account
+
 ## [2.0.0] - 2021-10-30
 ### Added
 - Support empty account
@@ -40,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/2.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/2.1.0...HEAD
+[2.1.0]: https://github.com/sschmid/pw/compare/2.0.0...2.1.0
 [2.0.0]: https://github.com/sschmid/pw/compare/1.3.0...2.0.0
 [1.3.0]: https://github.com/sschmid/pw/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/sschmid/pw/compare/1.1.0...1.2.0
