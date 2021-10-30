@@ -130,5 +130,11 @@ $ pw -a ls                 # list all entries in all user keychains
 $ pw update
 ```
 
+### set default keychain (default: pw.keychain)
+
+```bash
+export PW_KEYCHAIN=login.keychain
+```
+
 ## dependencies
 - [fzf](https://github.com/junegunn/fzf)
