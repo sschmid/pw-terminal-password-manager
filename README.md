@@ -53,12 +53,14 @@ Retype password for github:
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│ > github                                          pw.keychain                │
-│   github                  me@work.com             pw.keychain                │
+│   github                                          pw.keychain                │
+│ > github                  me@work.com             pw.keychain                │
 │                                                                              │
 │                                                                              │
 │                                                                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
+githubWork123
+$
 ```
 
 ### set default keychain (default: pw.keychain)
