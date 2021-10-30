@@ -32,6 +32,12 @@ $ bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/instal
 $ brew install fzf
 ```
 
+# usage
+
+```
+$ pw help
+```
+
 # example
 
 ```
