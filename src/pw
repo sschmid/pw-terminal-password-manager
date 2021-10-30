@@ -51,7 +51,7 @@ pw::rm() {
 
 pw::list() {
   local dump
-  local -a names accounts keychains
+  local -a names accounts keychains account
   if ((PW_ALL)); then
     mapfile -t keychains < <(security list-keychains -d user | tr -d \")
   else
@@ -63,7 +63,9 @@ pw::list() {
     mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
     mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
     for ((i = 0; i < ${#names[@]}; i++)); do
-      printf "%-16s\t%-16s\t%s\n" "${names[i]}" "${accounts[i]}" "${keychain}"
+      account="${accounts[i]}"
+      [[ "${account}" == "<NULL>" ]] && account=""
+      printf "%-16s\t%-16s\t%s\n" "${names[i]}" "${account}" "${keychain}"
     done | sort
   done
 }
