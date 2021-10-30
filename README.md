@@ -42,21 +42,19 @@ $ pw help
 
 ```
 $ pw init
-$ pw add github.com
-Enter password for github.com:
-Retype password for github.com:
-$ pw github.com
+$ pw add github
+Enter password for github:
+Retype password for github:
+$ pw github
 github123
-$ pw add github.com work
-Enter password for github.com:
-Retype password for github.com:
+$ pw add github work
+Enter password for github:
+Retype password for github:
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│ > github.com    sschmid                                                      │
-│   github.com    work                                                         │
-│                                                                              │
-│                                                                              │
+│ > github                                          pw.keychain                │
+│   github                  work                    pw.keychain                │
 │                                                                              │
 │                                                                              │
 │                                                                              │
