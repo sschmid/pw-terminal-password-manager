@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-IFS=$'\n\t'
 
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
@@ -10,24 +9,13 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 
 : "${PW_KEYCHAIN:="pw.keychain"}"
 
-pw::init() {
-  security create-keychain -P "${PW_KEYCHAIN}"
-}
-
-pw::open() {
-  open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}-db"
-}
-
-pw::lock() {
-  security lock-keychain "${PW_KEYCHAIN}"
-}
-
-pw::unlock() {
-  security unlock-keychain "${PW_KEYCHAIN}"
-}
+pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
+pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}-db"; }
+pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
+pw::unlock() { security unlock-keychain "${PW_KEYCHAIN}"; }
 
 pw::add() {
-  local name="$1" account="${2:-"${USER}"}" password password2
+  local name="$1" account="${2:-}" password password2
   read -rsp "Enter password for ${name}: " password; echo
   read -rsp "Retype password for ${name}: " password2; echo
   if [[ "${password}" != "${password2}" ]]; then
@@ -37,30 +25,31 @@ pw::add() {
   security add-generic-password -a "${account}" -s "${name}" -w "${password}" "${PW_KEYCHAIN}"
 }
 
+pw::get() {
+  local name="$1" account="${2:-}"
+  if ((PW_COPY));then
+    security find-generic-password ${account:+-a ${account}} -s "${name}" -w "${PW_KEYCHAIN}" | pbcopy
+  else
+    security find-generic-password ${account:+-a ${account}} -s "${name}" -w "${PW_KEYCHAIN}"
+  fi
+}
+
 pw::rm() {
   local name account
   local -i remove=1
   if (($#)); then
-    name="$1" account="${2:-"${USER}"}"
+    name="$1" account="${2:-}"
   else
     local n a k
     while IFS=$'\t' read -r n a k; do
       name="${n%% *}" account="${a%% *}"
+      [[ "${account}" == "<NULL>" ]] && account=""
       pw::keychain "${k}"
     done < <(pw::fzf)
     read -rp "Do you really want to remove ${name} (y / n): "
     [[ "${REPLY}" != "y" ]] && remove=0
   fi
-  ((remove)) && security delete-generic-password -a "${account}" -s "${name}" "${PW_KEYCHAIN}"
-}
-
-pw::get() {
-  local name="$1" account="${2:-"${USER}"}"
-  if ((PW_COPY));then
-    security find-generic-password -a "${account}" -s "${name}" -w "${PW_KEYCHAIN}" | pbcopy
-  else
-    security find-generic-password -a "${account}" -s "${name}" -w "${PW_KEYCHAIN}"
-  fi
+  ((remove)) && security delete-generic-password ${account:+-a ${account}} -s "${name}" "${PW_KEYCHAIN}"
 }
 
 pw::list() {
