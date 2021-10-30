@@ -78,7 +78,7 @@ pw::list() {
     mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
     for ((i = 0; i < ${#names[@]}; i++)); do
       printf "%-16s\t%-16s\t%s\n" "${names[i]}" "${accounts[i]}" "${keychain}"
-    done
+    done | sort
   done
 }
 
