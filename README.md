@@ -9,12 +9,12 @@ pw is a one-file bash wrapper for the [macOS keychain](https://developer.apple.c
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│   GITHUB_ACCESS_TOKEN     sschmid                 pw.keychain                │
-│   twitter                 sschmid                 pw.keychain                │
+│   GITHUB_ACCESS_TOKEN     repo                    pw.keychain                │
+│   twitter                 s_schmid                pw.keychain                │
 │   nuget                   sschmid                 pw.keychain                │
 │ > github                  sschmid                 pw.keychain                │
-│   slack                   sschmid                 pw.keychain                │
-│   unity                   sschmid                 pw.keychain                │
+│   slack                   me@work.com             pw.keychain                │
+│   unity                   me@work.com             pw.keychain                │
 │   IOS_USER                popcore                 pw.keychain                │
 │   IOS_PASSWORD            popcore                 pw.keychain                │
 │                                                                              │
@@ -47,14 +47,14 @@ Enter password for github:
 Retype password for github:
 $ pw github
 github123
-$ pw add github work
+$ pw add github me@work.com
 Enter password for github:
 Retype password for github:
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
 │ > github                                          pw.keychain                │
-│   github                  work                    pw.keychain                │
+│   github                  me@work.com             pw.keychain                │
 │                                                                              │
 │                                                                              │
 │                                                                              │
