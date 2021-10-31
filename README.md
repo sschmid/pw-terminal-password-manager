@@ -120,5 +120,12 @@ $ pw -a     # -a searches in all user keychains
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
+# example in other script
+Use `pw` to avoid leaking secrets in scripts that you share or commit.
+
+```bash
+curl -s -H "Authorization: token $(pw GITHUB_ACCESS_TOKEN)" https://api.github.com/user
+```
+
 ## dependencies
 - [fzf](https://github.com/junegunn/fzf)
