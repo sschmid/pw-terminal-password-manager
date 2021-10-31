@@ -51,7 +51,7 @@ pw::rm() {
     read -rp "Do you really want to remove ${PW_NAME} (y / n): "
     [[ "${REPLY}" != "y" ]] && remove=0
   fi
-  ((remove)) && security delete-generic-password -a "${PW_ACCOUNT}" -s "${PW_NAME}" "${PW_KEYCHAIN}"
+  ((remove)) && security delete-generic-password -a "${PW_ACCOUNT}" -s "${PW_NAME}" "${PW_KEYCHAIN}" > /dev/null
 }
 
 pw::list() {
