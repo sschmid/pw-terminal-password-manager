@@ -36,6 +36,33 @@ $ brew install fzf
 
 ```
 $ pw help
+██████╗ ██╗    ██╗
+██╔══██╗██║    ██║
+██████╔╝██║ █╗ ██║
+██╔═══╝ ██║███╗██║
+██║     ╚███╔███╔╝
+╚═╝      ╚══╝╚══╝  2.2.0
+
+usage: pw [-c] [-a | -k <keychain>] [<commands>]
+
+options:
+  -c              copy password instead of printing
+  -a              search in all user keychains
+  -k <keychain>   search in given keychain
+
+commands:
+  [-c] no command           print (or copy) password using fuzzy finder
+  [-c] <name> [<account>]   print (or copy) password
+  init                      create keychain (default: pw.keychain)
+  open                      open keychain in Keychain Access
+  lock                      lock keychain
+  unlock                    unlock keychain
+  add <name> [<account>]    add entry (leave password empty to generate one)
+  rm                        remove entry using fuzzy finder
+  rm <name> [<account>]     remove entry
+  ls                        list all entries
+  update                    update pw
+  help                      show this
 ```
 
 # example
