@@ -18,12 +18,16 @@ pw::unlock() { security unlock-keychain "${PW_KEYCHAIN}"; }
 
 pw::add() {
   PW_NAME="$1" PW_ACCOUNT="${2:-}"
-  local password password2
+  local password retype
   read -rsp "Enter password for ${PW_NAME}: " password; echo
-  read -rsp "Retype password for ${PW_NAME}: " password2; echo
-  if [[ "${password}" != "${password2}" ]]; then
-    echo "Error: the entered passwords do not match."
-    exit 1
+  if [[ -n "${password}" ]]; then
+    read -rsp "Retype password for ${PW_NAME}: " retype; echo
+    if [[ "${retype}" != "${password}" ]]; then
+      echo "Error: the entered passwords do not match."
+      exit 1
+    fi
+  else
+    password="$(echo "$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c 32)"))"
   fi
   security add-generic-password -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
 }
@@ -99,7 +103,7 @@ commands:
   open                      open keychain in Keychain Access
   lock                      lock keychain
   unlock                    unlock keychain
-  add <name> [<account>]    add entry
+  add <name> [<account>]    add entry (leave password empty to generate one)
   rm                        remove entry using fuzzy finder
   rm <name> [<account>]     remove entry
   ls                        list all entries
