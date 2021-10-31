@@ -34,7 +34,11 @@ pw::add() {
 }
 
 pw::get() {
-  PW_NAME="$1" PW_ACCOUNT="${2:-}"
+  if (($#)); then
+    PW_NAME="$1" PW_ACCOUNT="${2:-}"
+  else
+    pw::fzf
+  fi
   if ((PW_COPY));then
     security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w "${PW_KEYCHAIN}" | pbcopy
   else
@@ -148,8 +152,7 @@ main() {
       *) pw::get "$@" ;;
     esac
   else
-    pw::fzf
-    pw::get "${PW_NAME}" "${PW_ACCOUNT}"
+    pw::get
   fi
 }
 
