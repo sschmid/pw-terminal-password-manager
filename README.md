@@ -48,8 +48,7 @@ Retype password for github:
 $ pw github
 github123
 $ pw add github me@work.com
-Enter password for github:
-Retype password for github:
+Enter password for github:         # leave empty to generate a password
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
@@ -59,7 +58,7 @@ $ pw
 │                                                                              │
 │                                                                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
-githubWork123
+3<w>q]tM[?D+7tjLLDlvg>OE.3$X6n=y)
 $
 ```
 
