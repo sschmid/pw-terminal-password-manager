@@ -1,4 +1,4 @@
-# pw - password manager using macOS keychain
+# 🔐 pw - password manager using macOS keychain
 
 pw is a one-file bash wrapper for the [macOS keychain](https://developer.apple.com/documentation/security/keychain_services) [security](https://ss64.com/osx/security.html) commands to make interacting with the keychain fast, easy and secure. It's combining the security of the macOS keychain with the speed and simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder.
 
