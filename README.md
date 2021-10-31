@@ -124,7 +124,11 @@ $ pw -a     # -a searches in all user keychains
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
 
 ```bash
-curl -s -H "Authorization: token $(pw GITHUB_ACCESS_TOKEN)" https://api.github.com/user
+github::me() {
+  local token
+  token="$(pw GITHUB_ACCESS_TOKEN)"
+  curl -s -H "Authorization: token ${token}" "https://api.github.com/user"
+}
 ```
 
 ## dependencies
