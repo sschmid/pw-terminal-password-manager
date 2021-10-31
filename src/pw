@@ -40,9 +40,17 @@ pw::get() {
     pw::fzf
   fi
   if ((PW_COPY));then
-    security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w "${PW_KEYCHAIN}" | pbcopy
+    if ((PW_ALL)); then
+      security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w | pbcopy
+    else
+      security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w "${PW_KEYCHAIN}" | pbcopy
+    fi
   else
-    security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w "${PW_KEYCHAIN}"
+    if ((PW_ALL)); then
+      security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w
+    else
+      security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w "${PW_KEYCHAIN}"
+    fi
   fi
 }
 
