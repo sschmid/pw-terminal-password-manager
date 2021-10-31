@@ -41,31 +41,56 @@ $ pw help
 # example
 
 ```
-$ pw init
-$ pw add github
+$ pw init                      # create keychain (default: pw.keychain)
+$ pw add github                # add new entry for github
 Enter password for github:
 Retype password for github:
-$ pw github
+$ pw github                    # print password for github
 github123
-$ pw add github me@work.com
-Enter password for github:         # leave empty to generate a password
-$ pw
+$ pw add slack me@work.com     # add new entry for slack with account
+Enter password for slack:      # leave empty to generate a password
+$ pw                           # open fzf and print password for selected entry
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
 │   github                                          pw.keychain                │
-│ > github                  me@work.com             pw.keychain                │
+│ > slack                   me@work.com             pw.keychain                │
 │                                                                              │
 │                                                                              │
 │                                                                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 3<w>q]tM[?D+7tjLLDlvg>OE.3$X6n=y)
-$
 ```
 
-### set default keychain (default: pw.keychain)
+# example with custom keychain
+`pw -k <keychain>` sets the keychain for the current command.
+Export `PW_KEYCHAIN` to change the default keychain.
 
 ```bash
 export PW_KEYCHAIN=login.keychain
+```
+
+```
+$ pw -k secrets init
+$ pw -k secrets add twitter s_schmid
+Enter password for twitter:
+$ pw -c -k secrets    # -c copies password to clipboard instead of printing
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ >                                                                            │
+│ > twitter                 s_schmid                secrets.keychain           │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+$ pw -a     # -a searches in all user keychains
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ >                                                                            │
+│ > github                                          pw.keychain                │
+│   slack                   me@work.com             pw.keychain                │
+│   twitter                 s_schmid                secrets.keychain           │
+│                                                                              │
+│                                                                              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## dependencies
