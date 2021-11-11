@@ -34,8 +34,7 @@ pw::add() {
 }
 
 pw::get() {
-  local keychain="${PW_KEYCHAIN}"
-  ((PW_ALL)) && unset keychain
+  ((!PW_ALL)) && local keychain="${PW_KEYCHAIN}"
   if (($#))
   then PW_NAME="$1" PW_ACCOUNT="${2:-}"
   else pw::fzf
