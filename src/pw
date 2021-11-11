@@ -9,7 +9,7 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 
 PW_NAME=""
 PW_ACCOUNT=""
-: "${PW_KEYCHAIN:="pw.keychain"}"
+: "${PW_KEYCHAIN:="login.keychain"}"
 
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
 pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}-db"; }
@@ -103,7 +103,7 @@ options:
 commands:
   [-c] no command           print (or copy) password using fuzzy finder
   [-c] <name> [<account>]   print (or copy) password
-  init                      create keychain (default: pw.keychain)
+  init                      create keychain (default: login.keychain)
   open                      open keychain in Keychain Access
   lock                      lock keychain
   unlock                    unlock keychain

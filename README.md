@@ -9,14 +9,14 @@ pw is a one-file bash wrapper for the [macOS keychain](https://developer.apple.c
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│   GITHUB_ACCESS_TOKEN     repo                    pw.keychain                │
-│   IOS_PASSWORD            me@work.com             pw.keychain                │
-│   IOS_USER                me@work.com             pw.keychain                │
-│ > github                  sschmid                 pw.keychain                │
-│   nuget                   sschmid                 pw.keychain                │
-│   slack                   me@work.com             pw.keychain                │
-│   twitter                 s_schmid                pw.keychain                │
-│   unity                   me@work.com             pw.keychain                │
+│   GITHUB_ACCESS_TOKEN     repo                    login.keychain             │
+│   IOS_PASSWORD            me@work.com             login.keychain             │
+│   IOS_USER                me@work.com             login.keychain             │
+│ > github                  sschmid                 login.keychain             │
+│   nuget                   sschmid                 login.keychain             │
+│   slack                   me@work.com             login.keychain             │
+│   twitter                 s_schmid                login.keychain             │
+│   unity                   me@work.com             login.keychain             │
 │                                                                              │
 │                                                                              │
 │                                                                              │
@@ -53,7 +53,7 @@ options:
 commands:
   [-c] no command           print (or copy) password using fuzzy finder
   [-c] <name> [<account>]   print (or copy) password
-  init                      create keychain (default: pw.keychain)
+  init                      create keychain (default: login.keychain)
   open                      open keychain in Keychain Access
   lock                      lock keychain
   unlock                    unlock keychain
@@ -68,7 +68,7 @@ commands:
 # example
 
 ```
-$ pw init                      # create keychain (default: pw.keychain)
+$ pw init                      # create keychain (default: login.keychain)
 $ pw add github                # add new entry for github
 Enter password for github:
 Retype password for github:
@@ -79,8 +79,8 @@ Enter password for slack:      # leave empty to generate a password
 $ pw                           # open fzf and print password for selected entry
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│   github                                          pw.keychain                │
-│ > slack                   me@work.com             pw.keychain                │
+│   github                                          login.keychain             │
+│ > slack                   me@work.com             login.keychain             │
 │                                                                              │
 │                                                                              │
 │                                                                              │
@@ -93,7 +93,7 @@ $ pw                           # open fzf and print password for selected entry
 Export `PW_KEYCHAIN` to change the default keychain.
 
 ```bash
-export PW_KEYCHAIN=login.keychain
+export PW_KEYCHAIN=secrets.keychain
 ```
 
 ```
@@ -111,8 +111,8 @@ $ pw -c -k secrets    # -c copies password to clipboard instead of printing
 $ pw -a     # -a searches in all user keychains
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│ > github                                          pw.keychain                │
-│   slack                   me@work.com             pw.keychain                │
+│ > github                                          login.keychain             │
+│   slack                   me@work.com             login.keychain             │
 │   twitter                 s_schmid                secrets.keychain           │
 │                                                                              │
 │                                                                              │
