@@ -1,0 +1,15 @@
+name: Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  test:
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: brew install bash
+      - run: test/bats/bin/bats --tap test
