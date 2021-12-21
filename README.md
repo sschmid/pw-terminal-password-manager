@@ -10,10 +10,10 @@ pw is a one-file bash wrapper for the [macOS keychain](https://developer.apple.c
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│   GITHUB_ACCESS_TOKEN     repo                    login.keychain             │
-│   IOS_PASSWORD            me@work.com             login.keychain             │
-│   IOS_USER                me@work.com             login.keychain             │
+│   ios.password            me@work.com             login.keychain             │
+│   ios.user                me@work.com             login.keychain             │
 │ > github                  sschmid                 login.keychain             │
+│   github.token            sschmid                 login.keychain             │
 │   nuget                   sschmid                 login.keychain             │
 │   slack                   me@work.com             login.keychain             │
 │   twitter                 s_schmid                login.keychain             │
@@ -44,16 +44,16 @@ $ pw help
 ██║     ╚███╔███╔╝
 ╚═╝      ╚══╝╚══╝
 
-usage: pw [-c] [-a | -k <keychain>] [<commands>]
+usage: pw [-p] [-a | -k <keychain>] [<commands>]
 
 options:
-  -c              copy password instead of printing
+  -p              print password instead of copying
   -a              search in all user keychains
   -k <keychain>   search in given keychain
 
 commands:
-  [-c] no command           print (or copy) password using fuzzy finder
-  [-c] <name> [<account>]   print (or copy) password
+  [-p] no command           copy (or print) password using fuzzy finder
+  [-p] <name> [<account>]   copy (or print) password
   init                      create keychain (default: login.keychain)
   open                      open keychain in Keychain Access
   lock                      lock keychain
@@ -73,11 +73,10 @@ $ pw init                      # create keychain (default: login.keychain)
 $ pw add github                # add new entry for github
 Enter password for github:
 Retype password for github:
-$ pw github                    # print password for github
-github123
+$ pw github                    # copy password for github
 $ pw add slack me@work.com     # add new entry for slack with account
 Enter password for slack:      # leave empty to generate a password
-$ pw                           # open fzf and print password for selected entry
+$ pw                           # open fzf and copy password for selected entry
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
 │   github                                          login.keychain             │
@@ -86,7 +85,6 @@ $ pw                           # open fzf and print password for selected entry
 │                                                                              │
 │                                                                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
-3<w>q]tM[?D+7tjLLDlvg>OE.3$X6n=y)
 ```
 
 # example with custom keychain
@@ -101,7 +99,7 @@ export PW_KEYCHAIN=secrets.keychain
 $ pw -k secrets init
 $ pw -k secrets add twitter s_schmid
 Enter password for twitter:
-$ pw -c -k secrets    # -c copies password to clipboard instead of printing
+$ pw -p -k secrets    # -p prints password instead of copying
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
 │ > twitter                 s_schmid                secrets.keychain           │
@@ -127,7 +125,7 @@ Use `pw` to avoid leaking secrets in scripts that you share or commit.
 ```bash
 github::me() {
   local token
-  token="$(pw GITHUB_ACCESS_TOKEN)"
+  token="$(pw -p github.token)"
   curl -s -H "Authorization: token ${token}" "https://api.github.com/user"
 }
 ```
