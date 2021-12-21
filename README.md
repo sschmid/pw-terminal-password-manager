@@ -59,6 +59,7 @@ commands:
   lock                      lock keychain
   unlock                    unlock keychain
   add <name> [<account>]    add entry (leave password empty to generate one)
+  edit <name> [<account>]   edit entry (leave password empty to generate one)
   rm                        remove entry using fuzzy finder
   rm <name> [<account>]     remove entry
   ls                        list all entries
