@@ -56,6 +56,12 @@ assert_pw_home() {
   assert_fail_add_item_with_name "test-name" "test-pw"
 }
 
+@test "updates item with existing name" {
+  _add_item_with_name "test-name" "test-pw"
+  _update_item_with_name "test-name" "test-pw-new"
+  assert_item_with_name "test-name" "test-pw-new"
+}
+
 @test "adds item with different name" {
   _add_item_with_name "test-name" "test-pw"
   _add_item_with_name "test2-name" "test2-pw"
@@ -71,6 +77,12 @@ assert_pw_home() {
 @test "fails when adding item with existing account" {
   _add_item_with_account "test-account" "test-pw"
   assert_fail_add_item_with_account "test-account" "test-pw"
+}
+
+@test "updates item with existing account" {
+  _add_item_with_account "test-account" "test-pw"
+  _update_item_with_account "test-account" "test-pw-new"
+  assert_item_with_account "test-account" "test-pw-new"
 }
 
 @test "adds item with different account" {
@@ -90,6 +102,12 @@ assert_pw_home() {
 @test "fails when adding item with existing name and account" {
   _add_item_with_name_and_account "test-name" "test-account" "test-pw"
   assert_fail_add_item_with_name_and_account "test-name" "test-account" "test-pw"
+}
+
+@test "updates item with existing name and account" {
+  _add_item_with_name_and_account "test-name" "test-account" "test-pw"
+  _update_item_with_name_and_account "test-name" "test-account" "test-pw-new"
+  assert_item_with_name_and_account "test-name" "test-account" "test-pw-new"
 }
 
 @test "adds item with different name and existing account" {

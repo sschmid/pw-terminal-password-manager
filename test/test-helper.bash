@@ -20,6 +20,14 @@ _add_item_with_name_and_account() {
   assert_success
 }
 
+_update_item_with_name() { _update_item_with_name_and_account "$1" "" "$2"; }
+_update_item_with_account() { _update_item_with_name_and_account "" "$1" "$2"; }
+_update_item_with_name_and_account() {
+  local item_name="$1" item_account="$2" item_pw="$3"
+  run security add-generic-password -U -a "${item_account}" -s "${item_name}" -w "${item_pw}" "${TEST_KEYCHAIN}"
+  assert_success
+}
+
 _delete_item_with_name() {
   local item_name="$1"
   run security delete-generic-password -s "${item_name}" pw_test.keychain

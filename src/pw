@@ -17,6 +17,8 @@ pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
 pw::unlock() { security unlock-keychain "${PW_KEYCHAIN}"; }
 
 pw::add() {
+  local -i edit=$1; shift
+  ((edit)) || unset edit
   PW_NAME="$1" PW_ACCOUNT="${2:-}"
   local password retype
   read -rsp "Enter password for ${PW_NAME}: " password; echo
@@ -30,7 +32,7 @@ pw::add() {
     # shellcheck disable=SC2005
     password="$(echo "$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c 32)"))"
   fi
-  security add-generic-password -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
+  security add-generic-password ${edit:+-U} -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
 }
 
 pw::get() {
@@ -108,6 +110,7 @@ commands:
   lock                      lock keychain
   unlock                    unlock keychain
   add <name> [<account>]    add entry (leave password empty to generate one)
+  edit <name> [<account>]   edit entry (leave password empty to generate one)
   rm                        remove entry using fuzzy finder
   rm <name> [<account>]     remove entry
   ls                        list all entries
@@ -143,7 +146,8 @@ main() {
       open) shift; pw::open ;;
       lock) shift; pw::lock ;;
       unlock) shift; pw::unlock ;;
-      add) shift; pw::add "$@" ;;
+      add) shift; pw::add 0 "$@" ;;
+      edit) shift; pw::add 1 "$@" ;;
       rm) shift; pw::rm "$@" ;;
       ls) shift; pw::list ;;
       update) pw::update ;;
