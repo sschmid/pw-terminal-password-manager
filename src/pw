@@ -39,9 +39,9 @@ pw::get() {
   then PW_NAME="$1" PW_ACCOUNT="${2:-}"
   else pw::fzf
   fi
-  if ((PW_COPY))
-  then security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}} | pbcopy
-  else security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}}
+  if ((PW_PRINT))
+  then security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}}
+  else security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}} | pbcopy
   fi
 }
 
@@ -92,16 +92,16 @@ pw::help() {
 ██║     ╚███╔███╔╝
 ╚═╝      ╚══╝╚══╝  $(cat "${PW_HOME}/version.txt")
 
-usage: pw [-c] [-a | -k <keychain>] [<commands>]
+usage: pw [-p] [-a | -k <keychain>] [<commands>]
 
 options:
-  -c              copy password instead of printing
+  -p              print password instead of copying
   -a              search in all user keychains
   -k <keychain>   search in given keychain
 
 commands:
-  [-c] no command           print (or copy) password using fuzzy finder
-  [-c] <name> [<account>]   print (or copy) password
+  [-p] no command           copy (or print) password using fuzzy finder
+  [-p] <name> [<account>]   copy (or print) password
   init                      create keychain (default: login.keychain)
   open                      open keychain in Keychain Access
   lock                      lock keychain
@@ -123,12 +123,12 @@ pw::fzf() {
   if [[ -z "${PW_NAME}" ]]; then exit 1; fi
 }
 
-declare -ig PW_COPY=0
+declare -ig PW_PRINT=0
 declare -ig PW_ALL=0
 
 main() {
   while (($#)); do case "$1" in
-    -c) shift; PW_COPY=1 ;;
+    -p) shift; PW_PRINT=1 ;;
     -a) shift; PW_ALL=1 ;;
     -k)
       PW_KEYCHAIN="$2"; shift 2;

@@ -44,7 +44,7 @@ assert_pw_home() {
 
 @test "copies item with name" {
   _add_item_with_name "test-name" "test-pw"
-  run pw -c "test-name"
+  run pw "test-name"
   assert_success
   refute_output
   run pbpaste
@@ -53,7 +53,7 @@ assert_pw_home() {
 
 @test "copies item with account" {
   _add_item_with_account "test-account" "test-pw"
-  run pw -c "" "test-account"
+  run pw "" "test-account"
   assert_success
   refute_output
   run pbpaste
@@ -62,7 +62,7 @@ assert_pw_home() {
 
 @test "copies item with name and account" {
   _add_item_with_name_and_account "test-name" "test-account" "test-pw"
-  run pw -c "test-name" "test-account"
+  run pw "test-name" "test-account"
   assert_success
   refute_output
   run pbpaste
@@ -71,21 +71,21 @@ assert_pw_home() {
 
 @test "prints item with name" {
   _add_item_with_name "test-name" "test-pw"
-  run pw "test-name"
+  run pw -p "test-name"
   assert_success
   assert_output "test-pw"
 }
 
 @test "prints item with account" {
   _add_item_with_account "test-account" "test-pw"
-  run pw "" "test-account"
+  run pw -p "" "test-account"
   assert_success
   assert_output "test-pw"
 }
 
 @test "prints item with name and account" {
   _add_item_with_name_and_account "test-name" "test-account" "test-pw"
-  run pw "test-name" "test-account"
+  run pw -p "test-name" "test-account"
   assert_success
   assert_output "test-pw"
 }
