@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2021-12-21
+### Added
+- Add pw edit
+- Add tests
+- Add GitHub action to run tests
+
+### Changed
+- Copy password by default instead of printing
+
 ## [3.0.0] - 2021-11-11
 ### Added
 - Print keychain in pw rm
@@ -60,7 +69,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/4.0.0...HEAD
+[4.0.0]: https://github.com/sschmid/pw/compare/3.0.0...4.0.0
 [3.0.0]: https://github.com/sschmid/pw/compare/2.3.0...3.0.0
 [2.3.0]: https://github.com/sschmid/pw/compare/2.2.0...2.3.0
 [2.2.0]: https://github.com/sschmid/pw/compare/2.1.0...2.2.0
