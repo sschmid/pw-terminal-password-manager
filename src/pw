@@ -34,12 +34,13 @@ pw::add() {
 }
 
 pw::get() {
+  local -i print=$1; shift
   ((!PW_ALL)) && local keychain="${PW_KEYCHAIN}"
   if (($#))
   then PW_NAME="$1" PW_ACCOUNT="${2:-}"
   else pw::fzf
   fi
-  if ((PW_PRINT))
+  if ((print))
   then security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}}
   else security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}} | pbcopy
   fi
@@ -123,12 +124,12 @@ pw::fzf() {
   if [[ -z "${PW_NAME}" ]]; then exit 1; fi
 }
 
-declare -ig PW_PRINT=0
 declare -ig PW_ALL=0
 
 main() {
+  local -i print=0
   while (($#)); do case "$1" in
-    -p) shift; PW_PRINT=1 ;;
+    -p) shift; print=1 ;;
     -a) shift; PW_ALL=1 ;;
     -k)
       PW_KEYCHAIN="$2"; shift 2;
@@ -147,10 +148,10 @@ main() {
       ls) shift; pw::list ;;
       update) pw::update ;;
       help) pw::help ;;
-      *) pw::get "$@" ;;
+      *) pw::get ${print} "$@" ;;
     esac
   else
-    pw::get
+    pw::get ${print}
   fi
 }
 
