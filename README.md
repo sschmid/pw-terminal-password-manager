@@ -70,7 +70,6 @@ commands:
 # example
 
 ```
-$ pw init                      # create keychain (default: login.keychain)
 $ pw add github                # add new entry for github
 Enter password for github:
 Retype password for github:
