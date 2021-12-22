@@ -44,7 +44,7 @@ pw::get() {
   fi
   if ((print))
   then security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}}
-  else security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}} | pbcopy
+  else echo -n "$(security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}})" | pbcopy
   fi
 }
 
