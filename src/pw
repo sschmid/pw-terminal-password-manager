@@ -12,6 +12,39 @@ PW_ACCOUNT=""
 : "${PW_KEYCHAIN:="login.keychain"}"
 PW_FZF=0
 
+pw::help() {
+  cat << EOF
+██████╗ ██╗    ██╗
+██╔══██╗██║    ██║
+██████╔╝██║ █╗ ██║
+██╔═══╝ ██║███╗██║
+██║     ╚███╔███╔╝
+╚═╝      ╚══╝╚══╝  $(cat "${PW_HOME}/version.txt")
+
+usage: pw [-p] [-a | -k <keychain>] [<commands>]
+
+options:
+  -p              print password instead of copying
+  -a              search in all user keychains
+  -k <keychain>   search in given keychain
+
+commands:
+  [-p] no command           copy (or print) password using fuzzy finder
+  [-p] <name> [<account>]   copy (or print) password
+  init                      create keychain (default: login.keychain)
+  open                      open keychain in Keychain Access
+  lock                      lock keychain
+  unlock                    unlock keychain
+  add <name> [<account>]    add entry (leave password empty to generate one)
+  edit <name> [<account>]   edit entry (leave password empty to generate one)
+  rm                        remove entry using fuzzy finder
+  rm <name> [<account>]     remove entry
+  ls                        list all entries
+  update                    update pw
+  help                      show this
+EOF
+}
+
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
 pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}-db"; }
 pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
@@ -85,39 +118,6 @@ pw::update() {
   pushd "${PW_HOME}" > /dev/null || exit 1
     git pull origin main
   popd > /dev/null || exit 1
-}
-
-pw::help() {
-  cat << EOF
-██████╗ ██╗    ██╗
-██╔══██╗██║    ██║
-██████╔╝██║ █╗ ██║
-██╔═══╝ ██║███╗██║
-██║     ╚███╔███╔╝
-╚═╝      ╚══╝╚══╝  $(cat "${PW_HOME}/version.txt")
-
-usage: pw [-p] [-a | -k <keychain>] [<commands>]
-
-options:
-  -p              print password instead of copying
-  -a              search in all user keychains
-  -k <keychain>   search in given keychain
-
-commands:
-  [-p] no command           copy (or print) password using fuzzy finder
-  [-p] <name> [<account>]   copy (or print) password
-  init                      create keychain (default: login.keychain)
-  open                      open keychain in Keychain Access
-  lock                      lock keychain
-  unlock                    unlock keychain
-  add <name> [<account>]    add entry (leave password empty to generate one)
-  edit <name> [<account>]   edit entry (leave password empty to generate one)
-  rm                        remove entry using fuzzy finder
-  rm <name> [<account>]     remove entry
-  ls                        list all entries
-  update                    update pw
-  help                      show this
-EOF
 }
 
 pw::select() {
