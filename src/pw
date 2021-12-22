@@ -10,6 +10,7 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 PW_NAME=""
 PW_ACCOUNT=""
 : "${PW_KEYCHAIN:="login.keychain"}"
+PW_FZF=0
 
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
 pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}-db"; }
@@ -35,13 +36,15 @@ pw::add() {
   security add-generic-password ${edit:+-U} -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
 }
 
+pw::edit() {
+  pw::select "$@"
+  pw::add 1 "${PW_NAME}" "${PW_ACCOUNT}"
+}
+
 pw::get() {
   local -i print=$1; shift
-  ((!PW_ALL)) && local keychain="${PW_KEYCHAIN}"
-  if (($#))
-  then PW_NAME="$1" PW_ACCOUNT="${2:-}"
-  else pw::fzf
-  fi
+  ((PW_ALL)) || local keychain="${PW_KEYCHAIN}"
+  pw::select "$@"
   if ((print))
   then security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}}
   else echo -n "$(security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}})" | pbcopy
@@ -50,14 +53,12 @@ pw::get() {
 
 pw::rm() {
   local -i remove=1
-  if (($#)); then
-    PW_NAME="$1" PW_ACCOUNT="${2:-}"
-  else
-    pw::fzf
+  pw::select "$@"
+  if ((PW_FZF)); then
     read -rp "Do you really want to remove ${PW_NAME} from ${PW_KEYCHAIN}? (y / n): "
-    [[ "${REPLY}" != "y" ]] && remove=0
+    [[ "${REPLY}" == "y" ]] || remove=0
   fi
-  ((remove)) && security delete-generic-password -a "${PW_ACCOUNT}" -s "${PW_NAME}" "${PW_KEYCHAIN}" > /dev/null
+  ((!remove)) || security delete-generic-password -a "${PW_ACCOUNT}" -s "${PW_NAME}" "${PW_KEYCHAIN}" > /dev/null
 }
 
 pw::list() {
@@ -119,6 +120,13 @@ commands:
 EOF
 }
 
+pw::select() {
+  if (($#))
+  then PW_NAME="$1" PW_ACCOUNT="${2:-}" PW_FZF=0
+  else pw::fzf && PW_FZF=1
+  fi
+}
+
 pw::fzf() {
   local name account keychain
   while IFS=$'\t' read -r name account keychain; do
@@ -147,7 +155,7 @@ main() {
       lock) shift; pw::lock ;;
       unlock) shift; pw::unlock ;;
       add) shift; pw::add 0 "$@" ;;
-      edit) shift; pw::add 1 "$@" ;;
+      edit) shift; pw::edit "$@" ;;
       rm) shift; pw::rm "$@" ;;
       ls) shift; pw::list ;;
       update) pw::update ;;
