@@ -128,6 +128,15 @@ test2-name      	test2-account   	pw_test.keychain
 EOF
 }
 
+@test "list filters <NULL> name" {
+  _add_item_with_account "test-account" "test-pw"
+  run pw ls
+  assert_success
+  cat << 'EOF' | assert_output -
+                	test-account    	pw_test.keychain
+EOF
+}
+
 @test "list filters <NULL> account" {
   _add_item_with_name "test-name" "test-pw"
   run pw ls

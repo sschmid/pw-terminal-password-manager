@@ -88,7 +88,7 @@ pw::rm() {
   local -i remove=1
   pw::select "$@"
   if ((PW_FZF)); then
-    read -rp "Do you really want to remove '${PW_NAME}' from ${PW_KEYCHAIN}? (y / n): "
+    read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / n): "
     [[ "${REPLY}" == "y" ]] || remove=0
   fi
   ((!remove)) || security delete-generic-password -a "${PW_ACCOUNT}" -s "${PW_NAME}" "${PW_KEYCHAIN}" > /dev/null
@@ -96,7 +96,7 @@ pw::rm() {
 
 pw::list() {
   local dump
-  local -a names accounts keychains account
+  local -a names accounts keychains name account
   if ((PW_ALL))
   then mapfile -t keychains < <(security list-keychains -d user | tr -d \")
   else keychains=("${PW_KEYCHAIN}")
@@ -107,9 +107,11 @@ pw::list() {
     mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
     mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
     for ((i = 0; i < ${#names[@]}; i++)); do
+      name="${names[i]}"
       account="${accounts[i]}"
+      [[ "${name}" == "<NULL>" ]] && name=""
       [[ "${account}" == "<NULL>" ]] && account=""
-      printf "%-16s\t%-16s\t%s\n" "${names[i]}" "${account}" "${keychain}"
+      printf "%-16s\t%-16s\t%s\n" "${name}" "${account}" "${keychain}"
     done | sort
   done
 }
@@ -132,7 +134,7 @@ pw::fzf() {
   while IFS=$'\t' read -r name account keychain; do
     PW_NAME="${name%% *}" PW_ACCOUNT="${account%% *}" PW_KEYCHAIN="${keychain}"
   done < <(pw::list | fzf --height=40% --layout=reverse --border --info=hidden)
-  if [[ -z "${PW_NAME}" ]]; then exit 1; fi
+  if [[ -z "${PW_NAME}" && -z "${PW_ACCOUNT}" ]]; then exit 1; fi
 }
 
 declare -ig PW_ALL=0
