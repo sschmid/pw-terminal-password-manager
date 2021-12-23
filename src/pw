@@ -78,9 +78,11 @@ pw::get() {
   local -i print=$1; shift
   ((PW_ALL)) || local keychain="${PW_KEYCHAIN}"
   pw::select "$@"
+  local password
+  password="$(security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}})"
   if ((print))
-  then security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}}
-  else echo -n "$(security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}})" | pbcopy
+  then echo "${password}"
+  else echo -n "${password}" | pbcopy
   fi
 }
 

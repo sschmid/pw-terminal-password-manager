@@ -36,7 +36,7 @@ assert_pw_home() {
   assert_pw_home
 }
 
-@test "fails when getting item that doesn't exist" {
+@test "fails when copying item that doesn't exist" {
   run pw "test-name"
   assert_failure
   assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
@@ -67,6 +67,12 @@ assert_pw_home() {
   refute_output
   run pbpaste
   assert_output "test-pw"
+}
+
+@test "fails when printing item that doesn't exist" {
+  run pw -p "test-name"
+  assert_failure
+  assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
 }
 
 @test "prints item with name" {
