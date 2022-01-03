@@ -10,7 +10,8 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 PW_NAME=""
 PW_ACCOUNT=""
 : "${PW_KEYCHAIN:="login.keychain"}"
-PW_FZF=0
+declare -ig PW_ALL=0
+declare -ig PW_FZF=0
 
 pw::help() {
   cat << EOF
@@ -139,9 +140,70 @@ pw::fzf() {
   if [[ -z "${PW_NAME}" && -z "${PW_ACCOUNT}" ]]; then exit 1; fi
 }
 
-declare -ig PW_ALL=0
+declare -ag PW_OPTIONS=(-p -a -k)
+declare -ag PW_COMMANDS=(init open lock unlock add edit rm ls update help)
+declare -ig COMP_PARTIAL=1
+# Add this to your .bashrc
+# complete -C pw pw
+pw::comp() {
+  # shellcheck disable=SC2207
+  local words=($(pw::split_args "${COMP_LINE}"))
+  local -i head=0 cursor=0
+  for word in "${words[@]}"; do
+    ((head += ${#word} + 1))
+    ((head <= COMP_POINT)) && ((cursor += 1))
+  done
+  local cur="${words[cursor]:-}" wordlist
+  ((cursor == ${#words[@]})) && COMP_PARTIAL=0
+  if ((cursor == 1)); then # e.g. pw
+    local comps=("${PW_OPTIONS[@]}" "${PW_COMMANDS[@]}")
+    wordlist="${comps[*]}"
+  else # e.g. pw edit
+    wordlist="$(pw::comp_command "${words[1]}" "${words[@]:2}")"
+  fi
+  compgen -W "${wordlist}" -- "${cur}"
+}
 
-main() {
+pw::comp_command() {
+  local comps=("${PW_OPTIONS[@]}" "${PW_COMMANDS[@]}")
+  while (($#)); do case "$1" in
+    -p) comps=("${comps[@]/-p/}"); shift ;;
+    -a) comps=("${comps[@]/-a/}"); shift ;;
+    -k) comps=("${comps[@]/-k/}"); shift ;;
+    *) break ;;
+  esac done
+
+  if (($#)); then
+    case "$1" in
+      lock) shift; pw:comp_keychains "$@"; return ;;
+      unlock) shift; pw:comp_keychains "$@"; return ;;
+    esac
+    compgen -W "${comps[*]}" -- "$1"
+  else
+    echo "${comps[*]}"
+  fi
+}
+
+pw:comp_keychains() {
+  if ((!$# || $# == 1 && COMP_PARTIAL)); then
+    pushd "${HOME}/Library/Keychains" > /dev/null || exit 1
+      echo *-db
+    popd > /dev/null || exit 1
+  fi
+}
+
+pw::split_args() {
+  local IFS=' '
+  # shellcheck disable=SC2068
+  for arg in $@; do echo "${arg}"; done
+}
+
+pw::main() {
+  if [[ -v COMP_LINE ]]; then
+    pw::comp
+    exit 0
+  fi
+
   local -i print=0
   while (($#)); do case "$1" in
     -p) shift; print=1 ;;
@@ -171,4 +233,4 @@ main() {
   fi
 }
 
-[[ "${BASH_SOURCE[0]}" != "$0" ]] || main "$@"
+[[ "${BASH_SOURCE[0]}" != "$0" ]] || pw::main "$@"

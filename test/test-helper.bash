@@ -1,7 +1,10 @@
 load 'test_helper/bats-support/load.bash'
 load 'test_helper/bats-assert/load.bash'
 
+PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." >/dev/null 2>&1 && pwd)"
+PATH="${PROJECT_ROOT}/src:${PATH}"
 TEST_KEYCHAIN=pw_test.keychain
+export PW_KEYCHAIN="${TEST_KEYCHAIN}"
 
 _setup() {
   security delete-keychain "${TEST_KEYCHAIN}" || true

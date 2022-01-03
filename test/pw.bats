@@ -1,9 +1,6 @@
 setup() {
   load 'test-helper.bash'
   _setup
-  PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." >/dev/null 2>&1 && pwd)"
-  PATH="${PROJECT_ROOT}/src:${PATH}"
-  export PW_KEYCHAIN="${TEST_KEYCHAIN}"
 }
 
 teardown() {
