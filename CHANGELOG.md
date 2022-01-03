@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.0] - 2022-01-03
+### Added
+- Add fzf to pw edit
+- Add support for account only entries
+
+### Fixed
+- Copy password without trailing newline
+- Fix copying non-existent entry did not fail
+
 ## [4.0.0] - 2021-12-21
 ### Added
 - Add pw edit
@@ -69,7 +78,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/4.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/4.1.0...HEAD
+[4.1.0]: https://github.com/sschmid/pw/compare/4.0.0...4.1.0
 [4.0.0]: https://github.com/sschmid/pw/compare/3.0.0...4.0.0
 [3.0.0]: https://github.com/sschmid/pw/compare/2.3.0...3.0.0
 [2.3.0]: https://github.com/sschmid/pw/compare/2.2.0...2.3.0
