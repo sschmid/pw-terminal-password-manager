@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.0] - 2022-01-11
+### Added
+- Add custom fzf prompt
+
 ## [4.1.0] - 2022-01-03
 ### Added
 - Add fzf to pw edit
@@ -78,7 +82,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/4.1.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/4.2.0...HEAD
+[4.2.0]: https://github.com/sschmid/pw/compare/4.1.0...4.2.0
 [4.1.0]: https://github.com/sschmid/pw/compare/4.0.0...4.1.0
 [4.0.0]: https://github.com/sschmid/pw/compare/3.0.0...4.0.0
 [3.0.0]: https://github.com/sschmid/pw/compare/2.3.0...3.0.0
