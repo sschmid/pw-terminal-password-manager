@@ -70,6 +70,7 @@ pw::add() {
 }
 
 pw::edit() {
+  FZF_PROMPT="edit"
   pw::select "$@"
   pw::add 1 "${PW_NAME}" "${PW_ACCOUNT}"
 }
@@ -77,6 +78,10 @@ pw::edit() {
 pw::get() {
   local -i print=$1; shift
   ((PW_ALL)) || local keychain="${PW_KEYCHAIN}"
+  if ((print))
+  then FZF_PROMPT="print"
+  else FZF_PROMPT="copy"
+  fi
   pw::select "$@"
   local password
   password="$(security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}})"
@@ -88,6 +93,7 @@ pw::get() {
 
 pw::rm() {
   local -i remove=1
+  FZF_PROMPT="remove"
   pw::select "$@"
   if ((PW_FZF)); then
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / n): "
@@ -135,7 +141,7 @@ pw::fzf() {
   local name account keychain
   while IFS=$'\t' read -r name account keychain; do
     PW_NAME="${name%% *}" PW_ACCOUNT="${account%% *}" PW_KEYCHAIN="${keychain}"
-  done < <(pw::list | fzf --height=40% --layout=reverse --border --info=hidden)
+  done < <(pw::list | fzf --prompt="${FZF_PROMPT}> " --layout=reverse --info=hidden)
   if [[ -z "${PW_NAME}" && -z "${PW_ACCOUNT}" ]]; then exit 1; fi
 }
 
