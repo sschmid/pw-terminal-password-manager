@@ -24,13 +24,16 @@ $ pw
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
-# install
+# install pw
 
 ```bash
-$ bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install)"
+````
 
-# install fzf
-$ brew install fzf
+# install [fzf](https://github.com/junegunn/fzf) (command-line fuzzy finder)
+
+```bash
+brew install fzf
 ```
 
 # usage
@@ -52,19 +55,18 @@ options:
   -k <keychain>   search in given keychain
 
 commands:
-  [-p] no command           copy (or print) password using fuzzy finder
-  [-p] <name> [<account>]   copy (or print) password
-  init                      create keychain (default: login.keychain)
-  open                      open keychain in Keychain Access
-  lock                      lock keychain
-  unlock                    unlock keychain
-  add <name> [<account>]    add entry (leave password empty to generate one)
-  edit <name> [<account>]   edit entry (leave password empty to generate one)
-  rm                        remove entry using fuzzy finder
-  rm <name> [<account>]     remove entry
-  ls                        list all entries
-  update                    update pw
-  help                      show this
+  [-p] no command             copy (or print) password using fuzzy finder
+  [-p] <name> [<account>]     copy (or print) password
+  init                        create keychain (default: login.keychain)
+  open                        open keychain in Keychain Access
+  lock                        lock keychain
+  unlock                      unlock keychain
+  add <name> [<account>]      add entry (leave password empty to generate one)
+  edit [<name>] [<account>]   edit entry (leave password empty to generate one)
+  rm [<name>] [<account>]     remove entry
+  ls                          list all entries
+  update                      update pw
+  help                        show this
 ```
 
 # example
