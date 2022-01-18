@@ -81,7 +81,7 @@ pw::get() {
   else pw::select copy "$@"
   fi
   local password
-  password="$(security find-generic-password ${PW_ACCOUNT:+-a ${PW_ACCOUNT}} -s "${PW_NAME}" -w ${keychain:+${keychain}})"
+  password="$(security find-generic-password ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -s "${PW_NAME}" -w ${keychain:+"${keychain}"})"
   if ((print))
   then echo "${password}"
   else echo -n "${password}" | pbcopy
@@ -137,7 +137,9 @@ pw::select() {
 pw::fzf() {
   local fzf_prompt="$1" name account keychain
   while IFS=$'\t' read -r name account keychain; do
-    PW_NAME="${name%% *}" PW_ACCOUNT="${account%% *}" PW_KEYCHAIN="${keychain}"
+    PW_NAME="$(echo "${name}" | xargs)"
+    PW_ACCOUNT="$(echo "${account}" | xargs)"
+    PW_KEYCHAIN="${keychain}"
   done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
   if [[ -z "${PW_NAME}" && -z "${PW_ACCOUNT}" ]]; then exit 1; fi
 }

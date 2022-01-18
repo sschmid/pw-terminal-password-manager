@@ -51,6 +51,15 @@ assert_pw_home() {
   assert_output "test-pw"
 }
 
+@test "copies item with name and spaces" {
+  _add_item_with_name "test name" "test pw"
+  run pw "test name"
+  assert_success
+  refute_output
+  run pbpaste
+  assert_output "test pw"
+}
+
 @test "copies item with account" {
   _add_item_with_account "test-account" "test-pw"
   run pw "" "test-account"
@@ -60,6 +69,15 @@ assert_pw_home() {
   assert_output "test-pw"
 }
 
+@test "copies item with account and spaces" {
+  _add_item_with_account "test account" "test pw"
+  run pw "" "test account"
+  assert_success
+  refute_output
+  run pbpaste
+  assert_output "test pw"
+}
+
 @test "copies item with name and account" {
   _add_item_with_name_and_account "test-name" "test-account" "test-pw"
   run pw "test-name" "test-account"
@@ -67,6 +85,15 @@ assert_pw_home() {
   refute_output
   run pbpaste
   assert_output "test-pw"
+}
+
+@test "copies item with name and account and spaces" {
+  _add_item_with_name_and_account "test name" "test account" "test pw"
+  run pw "test name" "test account"
+  assert_success
+  refute_output
+  run pbpaste
+  assert_output "test pw"
 }
 
 @test "fails when printing item that doesn't exist" {
