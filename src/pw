@@ -135,6 +135,16 @@ pw::select() {
 }
 
 pw::fzf() {
+  if ! command -v fzf > /dev/null; then
+    cat << EOF
+Please install fzf:
+
+  brew install fzf
+
+see https://github.com/junegunn/fzf
+EOF
+    exit 1
+  fi
   local fzf_prompt="$1" name account keychain
   while IFS=$'\t' read -r name account keychain; do
     PW_NAME="$(echo "${name}" | xargs)"
