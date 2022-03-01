@@ -132,5 +132,17 @@ github::me() {
 }
 ```
 
+# customization
+
+Export or provide the following variables to customize pw's default behaviour:
+
+```bash
+# Default keychain used when not specified with -k
+export PW_KEYCHAIN=secrets.keychain
+
+# Generated password length
+export PW_GEN_LENGTH=35
+```
+
 ## dependencies
 - [fzf](https://github.com/junegunn/fzf)
