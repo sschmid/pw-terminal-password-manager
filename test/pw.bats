@@ -178,3 +178,26 @@ EOF
 test-name       	                	pw_test.keychain
 EOF
 }
+
+@test "generates and copies password" {
+  skip "Doesn't work with GitHub actions for some reason"
+  # shellcheck disable=SC2030,SC2031
+  export PW_GEN_LENGTH=5
+  run pw gen
+  assert_success
+  refute_output
+  run pbpaste
+  run echo "${#output}"
+  assert_output "5"
+}
+
+@test "generates and prints password" {
+  skip "Doesn't work with GitHub actions for some reason"
+  # shellcheck disable=SC2030,SC2031
+  export PW_GEN_LENGTH=5
+  run pw -p gen
+  assert_success
+  assert_output
+  run echo "${#output}"
+  assert_output "5"
+}

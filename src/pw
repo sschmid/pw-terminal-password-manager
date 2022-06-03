@@ -33,13 +33,14 @@ commands:
   [-p] no command             copy (or print) password using fuzzy finder
   [-p] <name> [<account>]     copy (or print) password
   init                        create keychain (default: login.keychain)
-  open                        open keychain in Keychain Access
-  lock                        lock keychain
-  unlock                      unlock keychain
   add <name> [<account>]      add entry (leave password empty to generate one)
   edit [<name>] [<account>]   edit entry (leave password empty to generate one)
   rm [<name>] [<account>]     remove entry
   ls                          list all entries
+  gen                         generate password
+  open                        open keychain in Keychain Access
+  lock                        lock keychain
+  unlock                      unlock keychain
   update                      update pw
   help                        show this
 EOF
@@ -63,8 +64,7 @@ pw::add() {
       exit 1
     fi
   else
-    # shellcheck disable=SC2005
-    password="$(echo "$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c ${PW_GEN_LENGTH})")"
+    password="$(pw::gen 1)"
   fi
   security add-generic-password ${edit:+-U} -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
 }
@@ -121,6 +121,15 @@ pw::list() {
   done
 }
 
+pw::gen() {
+  local -i print=$1; shift
+  # shellcheck disable=SC2005
+  if ((print))
+  then echo "$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c ${PW_GEN_LENGTH})"
+  else echo -n "$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c ${PW_GEN_LENGTH})" | pbcopy
+  fi
+}
+
 pw::update() {
   pushd "${PW_HOME}" > /dev/null || exit 1
     git pull origin main
@@ -171,13 +180,14 @@ main() {
   if (($#)); then
     case "$1" in
       init) shift; pw::init ;;
-      open) shift; pw::open ;;
-      lock) shift; pw::lock ;;
-      unlock) shift; pw::unlock ;;
       add) shift; pw::add 0 "$@" ;;
       edit) shift; pw::edit "$@" ;;
       rm) shift; pw::rm "$@" ;;
       ls) shift; pw::list ;;
+      gen) shift; pw::gen ${print} ;;
+      open) shift; pw::open ;;
+      lock) shift; pw::lock ;;
+      unlock) shift; pw::unlock ;;
       update) pw::update ;;
       help) pw::help ;;
       *) pw::get ${print} "$@" ;;
