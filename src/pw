@@ -64,7 +64,7 @@ pw::add() {
     fi
   else
     # shellcheck disable=SC2005
-    password="$(echo "$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c ${PW_GEN_LENGTH})"))"
+    password="$(echo "$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c ${PW_GEN_LENGTH})")"
   fi
   security add-generic-password ${edit:+-U} -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
 }
