@@ -58,13 +58,14 @@ commands:
   [-p] no command             copy (or print) password using fuzzy finder
   [-p] <name> [<account>]     copy (or print) password
   init                        create keychain (default: login.keychain)
-  open                        open keychain in Keychain Access
-  lock                        lock keychain
-  unlock                      unlock keychain
   add <name> [<account>]      add entry (leave password empty to generate one)
   edit [<name>] [<account>]   edit entry (leave password empty to generate one)
   rm [<name>] [<account>]     remove entry
   ls                          list all entries
+  gen                         generate password
+  open                        open keychain in Keychain Access
+  lock                        lock keychain
+  unlock                      unlock keychain
   update                      update pw
   help                        show this
 ```

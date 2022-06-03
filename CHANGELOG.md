@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.5.0] - 2022-06-03
+### Added
+- Add pw gen
+
+### Fixed
+- Fix generated passwords end with `)`
+
 ## [4.4.0] - 2022-03-01
 ### Added
 - Add PW_GEN_LENGTH (default: 35)
@@ -90,7 +97,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/4.4.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/4.5.0...HEAD
+[4.5.0]: https://github.com/sschmid/pw/compare/4.4.0...4.5.0
 [4.4.0]: https://github.com/sschmid/pw/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/sschmid/pw/compare/4.2.0...4.3.0
 [4.2.0]: https://github.com/sschmid/pw/compare/4.1.0...4.2.0
