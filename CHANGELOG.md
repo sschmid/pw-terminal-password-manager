@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.5.1] - 2022-10-11
+### Added
+- Display minimum bash version error message
+- Upgrade to bee 1.4.0
+
 ## [4.5.0] - 2022-06-03
 ### Added
 - Add pw gen
@@ -97,7 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/4.5.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/4.5.1...HEAD
+[4.5.1]: https://github.com/sschmid/pw/compare/4.5.0...4.5.1
 [4.5.0]: https://github.com/sschmid/pw/compare/4.4.0...4.5.0
 [4.4.0]: https://github.com/sschmid/pw/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/sschmid/pw/compare/4.2.0...4.3.0
