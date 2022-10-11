@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+require_bash() {
+  cat <<EOF
+pw requires bash-4.2 or later.
+Installed: ${BASH_VERSION}
+
+Please install bash:
+
+  brew install bash
+EOF
+  exit 1
+}
+
+((BASH_VERSINFO[0] >= 4)) || require_bash
+if ((BASH_VERSINFO[0] == 4)); then
+  ((BASH_VERSINFO[1] >= 2)) || require_bash
+fi
+
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
