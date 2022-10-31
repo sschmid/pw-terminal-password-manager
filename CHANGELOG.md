@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.0] - 2022-10-31
+### Changed
+- Change `help` command to option `--help`
+
 ## [4.5.1] - 2022-10-11
 ### Added
 - Display minimum bash version error message
@@ -102,7 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/4.5.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/5.0.0...HEAD
+[5.0.0]: https://github.com/sschmid/pw/compare/4.5.1...5.0.0
 [4.5.1]: https://github.com/sschmid/pw/compare/4.5.0...4.5.1
 [4.5.0]: https://github.com/sschmid/pw/compare/4.4.0...4.5.0
 [4.4.0]: https://github.com/sschmid/pw/compare/4.3.0...4.4.0
