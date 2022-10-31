@@ -39,7 +39,8 @@ pw::help() {
 ██║     ╚███╔███╔╝
 ╚═╝      ╚══╝╚══╝  $(cat "${PW_HOME}/version.txt")
 
-usage: pw [-p] [-a | -k <keychain>] [<commands>]
+usage: pw [--help | -h]
+          [-p] [-a | -k <keychain>] [<commands>]
 
 options:
   -p              print password instead of copying
@@ -59,7 +60,6 @@ commands:
   lock                        lock keychain
   unlock                      unlock keychain
   update                      update pw
-  help                        show this
 EOF
 }
 
@@ -191,6 +191,7 @@ main() {
     -k)
       PW_KEYCHAIN="$2"; shift 2;
       [[ "${PW_KEYCHAIN}" == *.keychain ]] || PW_KEYCHAIN+=.keychain ;;
+    --help | -h) pw::help; return ;;
     --) shift; break ;; *) break ;;
   esac done
 
@@ -206,7 +207,6 @@ main() {
       lock) shift; pw::lock ;;
       unlock) shift; pw::unlock ;;
       update) pw::update ;;
-      help) pw::help ;;
       *) pw::get ${print} "$@" ;;
     esac
   else
