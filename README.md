@@ -47,7 +47,8 @@ $ pw help
 ██║     ╚███╔███╔╝
 ╚═╝      ╚══╝╚══╝
 
-usage: pw [-p] [-a | -k <keychain>] [<commands>]
+usage: pw [--help | -h]
+          [-p] [-a | -k <keychain>] [<commands>]
 
 options:
   -p              print password instead of copying
@@ -67,7 +68,11 @@ commands:
   lock                        lock keychain
   unlock                      unlock keychain
   update                      update pw
-  help                        show this
+
+customization:
+  PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain)
+  PW_GEN_LENGTH               length of generated passwords (default: 35)
+  PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
 ```
 
 # example
