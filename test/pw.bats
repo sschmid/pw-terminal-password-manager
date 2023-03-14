@@ -121,6 +121,27 @@ assert_require_bash() {
   assert_output "test pw"
 }
 
+@test "clears clipboard after copying item" {
+  # shellcheck disable=SC2030,SC2031
+  export PW_CLIP_TIME=1
+  _add_item_with_name_and_account "test name" "test account" "test pw"
+  run pw "test name" "test account"
+  sleep 2
+  run pbpaste
+  refute_output
+}
+
+@test "doesn't clear clipboard when changed" {
+  # shellcheck disable=SC2030,SC2031
+  export PW_CLIP_TIME=1
+  _add_item_with_name_and_account "test name" "test account" "test pw"
+  run pw "test name" "test account"
+  echo -n "after" | pbcopy
+  sleep 2
+  run pbpaste
+  assert_output "after"
+}
+
 @test "fails when printing item that doesn't exist" {
   run pw -p "test-name"
   assert_failure

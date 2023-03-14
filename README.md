@@ -143,6 +143,9 @@ export PW_KEYCHAIN=secrets.keychain
 
 # Generated password length
 export PW_GEN_LENGTH=35
+
+# Time after which the password is cleared from the clipboard
+export PW_CLIP_TIME=45
 ```
 
 ## dependencies

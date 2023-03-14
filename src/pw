@@ -24,8 +24,11 @@ while [[ -L "${PW_HOME}" ]]; do
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 
+declare -i PW_GEN_LENGTH PW_CLIP_TIME
 : "${PW_KEYCHAIN:="login.keychain"}"
 : "${PW_GEN_LENGTH:=35}"
+: "${PW_CLIP_TIME:=45}"
+
 PW_NAME=""
 PW_ACCOUNT=""
 declare -ig PW_FZF=0
@@ -100,9 +103,17 @@ pw::get() {
   fi
   local password
   password="$(security find-generic-password ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -s "${PW_NAME}" -w ${keychain:+"${keychain}"})"
-  if ((print))
-  then echo "${password}"
-  else echo -n "${password}" | pbcopy
+  if ((print)); then
+    echo "${password}"
+  else
+    local p
+    p="pw-$(id -u)"
+    pkill -f "^$p" 2> /dev/null && sleep 0.5
+    echo -n "${password}" | pbcopy
+    (
+      ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
+      [[ "$(pbpaste)" == "${password}" ]] && echo -n | pbcopy
+    ) > /dev/null 2>&1 & disown
   fi
 }
 
