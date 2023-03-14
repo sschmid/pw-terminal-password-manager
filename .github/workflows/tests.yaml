@@ -6,9 +6,9 @@ on:
     types: [published]
 jobs:
   test:
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: brew install bash
