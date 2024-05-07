@@ -39,7 +39,7 @@ brew install fzf
 # usage
 
 ```
-$ pw help
+$ pw --help
 ██████╗ ██╗    ██╗
 ██╔══██╗██║    ██║
 ██████╔╝██║ █╗ ██║
@@ -153,5 +153,5 @@ export PW_GEN_LENGTH=35
 export PW_CLIP_TIME=45
 ```
 
-## dependencies
+# dependencies
 - [fzf](https://github.com/junegunn/fzf)
