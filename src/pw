@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090
 set -euo pipefail
 
 require_bash() {
@@ -18,16 +19,33 @@ if ((BASH_VERSINFO[0] == 4)); then
   ((BASH_VERSINFO[1] >= 2)) || require_bash
 fi
 
+if ! command -v fzf > /dev/null; then
+  cat << EOF
+pw requires fzf. Please install fzf:
+
+  brew install fzf
+
+see https://github.com/junegunn/fzf
+EOF
+  exit 1
+fi
+
+declare -i PW_GEN_LENGTH PW_CLIP_TIME
+: "${PW_RC:="${HOME}/.pwrc"}"
+: "${PW_GEN_LENGTH:=35}"
+: "${PW_CLIP_TIME:=45}"
+
+[[ ! -f "${PW_RC}" ]] && cat << 'EOF' > "${PW_RC}"
+PW_KEYCHAINS=(login)
+EOF
+source "${PW_RC}"
+[[ -v PW_KEYCHAINS ]] || PW_KEYCHAINS=(login)
+
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
-
-declare -i PW_GEN_LENGTH PW_CLIP_TIME
-: "${PW_KEYCHAIN:="login.keychain"}"
-: "${PW_GEN_LENGTH:=35}"
-: "${PW_CLIP_TIME:=45}"
 
 PW_NAME=""
 PW_ACCOUNT=""
@@ -71,6 +89,18 @@ customization:
 EOF
 }
 
+pw::select_db() {
+  ((PW_ALL)) && return
+  if [[ -v PW_KEYCHAIN ]]; then
+    : # do nothing
+  elif ((${#PW_KEYCHAINS[@]} == 1)); then
+    PW_KEYCHAIN="${PW_KEYCHAINS[0]}"
+  else
+    PW_KEYCHAIN="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="db> " --layout=reverse --info=hidden)"
+  fi
+  [[ "${PW_KEYCHAIN}" == *.keychain ]] || PW_KEYCHAIN+=.keychain
+}
+
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
 pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}-db"; }
 pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
@@ -95,7 +125,7 @@ pw::add() {
 }
 
 pw::edit() {
-  pw::select edit "$@"
+  pw::select_entry edit "$@"
   pw::add 1 "${PW_NAME}" "${PW_ACCOUNT}"
 }
 
@@ -103,8 +133,8 @@ pw::get() {
   local -i print=$1; shift
   ((PW_ALL)) || local keychain="${PW_KEYCHAIN}"
   if ((print))
-  then pw::select print "$@"
-  else pw::select copy "$@"
+  then pw::select_entry print "$@"
+  else pw::select_entry copy "$@"
   fi
   local password
   password="$(security find-generic-password ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -s "${PW_NAME}" -w ${keychain:+"${keychain}"})"
@@ -124,7 +154,7 @@ pw::get() {
 
 pw::rm() {
   local -i remove=1
-  pw::select remove "$@"
+  pw::select_entry remove "$@"
   if ((PW_FZF)); then
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / n): "
     [[ "${REPLY}" == "y" ]] || remove=0
@@ -169,7 +199,7 @@ pw::update() {
   popd > /dev/null || exit 1
 }
 
-pw::select() {
+pw::select_entry() {
   local fzf_prompt="$1"; shift
   if (($#))
   then PW_NAME="$1" PW_ACCOUNT="${2:-}" PW_FZF=0
@@ -178,16 +208,6 @@ pw::select() {
 }
 
 pw::fzf() {
-  if ! command -v fzf > /dev/null; then
-    cat << EOF
-Please install fzf:
-
-  brew install fzf
-
-see https://github.com/junegunn/fzf
-EOF
-    exit 1
-  fi
   local fzf_prompt="$1" name account keychain
   while IFS=$'\t' read -r name account keychain; do
     PW_NAME="$(echo "${name}" | xargs)"
@@ -214,18 +234,19 @@ main() {
   if (($#)); then
     case "$1" in
       init) shift; pw::init ;;
-      add) shift; pw::add 0 "$@" ;;
-      edit) shift; pw::edit "$@" ;;
-      rm) shift; pw::rm "$@" ;;
-      ls) shift; pw::list ;;
+      add) shift; pw::select_db; pw::add 0 "$@" ;;
+      edit) shift; pw::select_db; pw::edit "$@" ;;
+      rm) shift; pw::select_db; pw::rm "$@" ;;
+      ls) shift; pw::select_db; pw::list ;;
       gen) shift; pw::gen ${print} ;;
-      open) shift; pw::open ;;
-      lock) shift; pw::lock ;;
-      unlock) shift; pw::unlock ;;
+      open) shift; pw::select_db; pw::open ;;
+      lock) shift; pw::select_db; pw::lock ;;
+      unlock) shift; pw::select_db; pw::unlock ;;
       update) pw::update ;;
-      *) pw::get ${print} "$@" ;;
+      *) pw::select_db; pw::get ${print} "$@" ;;
     esac
   else
+    pw::select_db
     pw::get ${print}
   fi
 }
