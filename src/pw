@@ -179,7 +179,7 @@ pw::list() {
       account="${accounts[i]}"
       [[ "${name}" == "<NULL>" ]] && name=""
       [[ "${account}" == "<NULL>" ]] && account=""
-      printf "%-16s\t%-16s\t%s\n" "${name}" "${account}" "${keychain}"
+      printf "%-28s\t%-16s\t%s\n" "${name}" "${account}" "${keychain}"
     done | sort
   done
 }

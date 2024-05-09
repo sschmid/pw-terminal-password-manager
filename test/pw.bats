@@ -202,8 +202,8 @@ assert_require_bash() {
   run pw ls
   assert_success
   cat << 'EOF' | assert_output -
-test-name       	test-account    	pw_test.keychain
-test2-name      	test2-account   	pw_test.keychain
+test-name                   	test-account    	pw_test.keychain
+test2-name                  	test2-account   	pw_test.keychain
 EOF
 }
 
@@ -212,7 +212,7 @@ EOF
   run pw ls
   assert_success
   cat << 'EOF' | assert_output -
-                	test-account    	pw_test.keychain
+                            	test-account    	pw_test.keychain
 EOF
 }
 
@@ -221,7 +221,7 @@ EOF
   run pw ls
   assert_success
   cat << 'EOF' | assert_output -
-test-name       	                	pw_test.keychain
+test-name                   	                	pw_test.keychain
 EOF
 }
 
