@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091,SC2119
 set -euo pipefail
 
 require_bash() {
@@ -96,6 +96,28 @@ pw::select_db() {
   else
     PW_KEYCHAIN="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="db> " --layout=reverse --info=hidden)"
   fi
+
+  local -a filetypes=()
+  while read -r file; do
+    source "${file}"
+    filetypes+=("$(filetype)")
+    if register; then
+      source "$(dirname "${file}")/plugin.bash"
+      return
+    fi
+  done < <(find "${PW_HOME}/src/plugins" -type f -name "hook.bash" -mindepth 2 -maxdepth 2)
+
+  if [[ -f "${PW_KEYCHAIN}" ]]; then
+    cat << EOF
+Could not detect plugin for ${PW_KEYCHAIN}
+Supported file types are:
+${filetypes[*]}
+EOF
+  else
+    echo "pw: ${PW_KEYCHAIN}: No such file"
+  fi
+
+  exit 1
 }
 
 pw::gen() {
