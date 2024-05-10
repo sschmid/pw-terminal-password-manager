@@ -104,6 +104,15 @@ pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
 pw::unlock() { security unlock-keychain "${PW_KEYCHAIN}"; }
 
 pw::add() {
+  _addOrEdit 0 "$@"
+}
+
+pw::edit() {
+  pw::select_entry_with_prompt edit "$@"
+  _addOrEdit 1 "${PW_NAME}" "${PW_ACCOUNT}"
+}
+
+_addOrEdit() {
   local -i edit=$1; shift
   ((edit)) || unset edit
   PW_NAME="$1" PW_ACCOUNT="${2:-}"
@@ -121,16 +130,11 @@ pw::add() {
   security add-generic-password ${edit:+-U} -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
 }
 
-pw::edit() {
-  pw::select_entry edit "$@"
-  pw::add 1 "${PW_NAME}" "${PW_ACCOUNT}"
-}
-
 pw::get() {
   local -i print=$1; shift
   if ((print))
-  then pw::select_entry print "$@"
-  else pw::select_entry copy "$@"
+  then pw::select_entry_with_prompt print "$@"
+  else pw::select_entry_with_prompt copy "$@"
   fi
   local password
   password="$(security find-generic-password ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -s "${PW_NAME}" -w "${PW_KEYCHAIN}")"
@@ -150,7 +154,7 @@ pw::get() {
 
 pw::rm() {
   local -i remove=1
-  pw::select_entry remove "$@"
+  pw::select_entry_with_prompt remove "$@"
   if ((PW_FZF)); then
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / n): "
     [[ "${REPLY}" == "y" ]] || remove=0
@@ -169,7 +173,7 @@ pw::list() {
     account="${accounts[i]}"
     [[ "${name}" == "<NULL>" ]] && name=""
     [[ "${account}" == "<NULL>" ]] && account=""
-    printf "%-28s\t%-16s\t%s\n" "${name}" "${account}" "${PW_KEYCHAIN##*/}"
+    printf "%-32s\t%s\n" "${name}" "${account}"
   done | sort
 }
 
@@ -188,22 +192,21 @@ pw::update() {
   popd > /dev/null || exit 1
 }
 
-pw::select_entry() {
+pw::select_entry_with_prompt() {
   local fzf_prompt="$1"; shift
-  if (($#))
-  then PW_NAME="$1" PW_ACCOUNT="${2:-}" PW_FZF=0
-  else pw::fzf "${fzf_prompt}" && PW_FZF=1
+  if (($#)); then
+    PW_NAME="$1"
+    PW_ACCOUNT="${2:-}"
+    PW_FZF=0
+  else
+    local name account
+    while IFS=$'\t' read -r name account; do
+      PW_NAME="$(echo "${name}" | xargs)"
+      PW_ACCOUNT="$(echo "${account}" | xargs)"
+    done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
+    [[ -n "${PW_NAME}" && -n "${PW_ACCOUNT}" ]] || exit 1
+    PW_FZF=1
   fi
-}
-
-pw::fzf() {
-  local fzf_prompt="$1" name account keychain
-  while IFS=$'\t' read -r name account keychain; do
-    PW_NAME="$(echo "${name}" | xargs)"
-    PW_ACCOUNT="$(echo "${account}" | xargs)"
-    PW_KEYCHAIN="${keychain}"
-  done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
-  if [[ -z "${PW_NAME}" && -z "${PW_ACCOUNT}" ]]; then exit 1; fi
 }
 
 main() {
@@ -218,7 +221,7 @@ main() {
   if (($#)); then
     case "$1" in
       init) shift; pw::init ;;
-      add) shift; pw::select_db; pw::add 0 "$@" ;;
+      add) shift; pw::select_db; pw::add "$@" ;;
       edit) shift; pw::select_db; pw::edit "$@" ;;
       rm) shift; pw::select_db; pw::rm "$@" ;;
       ls) shift; pw::select_db; pw::list ;;
