@@ -39,6 +39,22 @@ assert_require_bash() {
   assert_failure
 }
 
+@test "loads pwrc when specified" {
+  # shellcheck disable=SC2030
+  export PW_RC="${BATS_TEST_DIRNAME}/fixtures/test-pwrc.bash";
+  _add_item_with_name "test-name" "test-pw"
+  run pw "test-name"
+  assert_success
+  assert_output "# test pwrc sourced"
+}
+
+@test "creates default .pwrc" {
+  # shellcheck disable=SC2030,SC2031
+  export PW_RC="${BATS_TEST_TMPDIR}/pwrc.bash"
+  run pw --help
+  assert_file_exist "${PW_RC}"
+}
+
 @test "resolves pw home" {
   # shellcheck disable=SC1090,SC1091
   source "${PROJECT_ROOT}/src/pw"
