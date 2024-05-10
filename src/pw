@@ -61,11 +61,10 @@ pw::help() {
 ╚═╝      ╚══╝╚══╝  $(cat "${PW_HOME}/version.txt")
 
 usage: pw [--help | -h]
-          [-p] [-a | -k <keychain>] [<commands>]
+          [-p] [-k <keychain>] [<commands>]
 
 options:
   -p              print password instead of copying
-  -a              search in all user keychains
   -k <keychain>   search in given keychain
 
 commands:
@@ -90,7 +89,6 @@ EOF
 }
 
 pw::select_db() {
-  ((PW_ALL)) && return
   if [[ -v PW_KEYCHAIN ]]; then
     : # do nothing
   elif ((${#PW_KEYCHAINS[@]} == 1)); then
@@ -131,13 +129,12 @@ pw::edit() {
 
 pw::get() {
   local -i print=$1; shift
-  ((PW_ALL)) || local keychain="${PW_KEYCHAIN}"
   if ((print))
   then pw::select_entry print "$@"
   else pw::select_entry copy "$@"
   fi
   local password
-  password="$(security find-generic-password ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -s "${PW_NAME}" -w ${keychain:+"${keychain}"})"
+  password="$(security find-generic-password ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -s "${PW_NAME}" -w "${PW_KEYCHAIN}")"
   if ((print)); then
     echo "${password}"
   else
@@ -164,24 +161,17 @@ pw::rm() {
 
 pw::list() {
   local dump
-  local -a names accounts keychains name account
-  if ((PW_ALL))
-  then mapfile -t keychains < <(security list-keychains -d user | tr -d \")
-  else keychains=("${PW_KEYCHAIN}")
-  fi
-  for keychain in "${keychains[@]}"; do
-    keychain="${keychain##*/}"
-    dump="$(security dump-keychain "${keychain}")"
-    mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
-    mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
-    for ((i = 0; i < ${#names[@]}; i++)); do
-      name="${names[i]}"
-      account="${accounts[i]}"
-      [[ "${name}" == "<NULL>" ]] && name=""
-      [[ "${account}" == "<NULL>" ]] && account=""
-      printf "%-28s\t%-16s\t%s\n" "${name}" "${account}" "${keychain}"
-    done | sort
-  done
+  local -a names accounts name account
+  dump="$(security dump-keychain "${PW_KEYCHAIN}")"
+  mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
+  mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
+  for ((i = 0; i < ${#names[@]}; i++)); do
+    name="${names[i]}"
+    account="${accounts[i]}"
+    [[ "${name}" == "<NULL>" ]] && name=""
+    [[ "${account}" == "<NULL>" ]] && account=""
+    printf "%-28s\t%-16s\t%s\n" "${name}" "${account}" "${PW_KEYCHAIN##*/}"
+  done | sort
 }
 
 pw::gen() {
@@ -217,13 +207,10 @@ pw::fzf() {
   if [[ -z "${PW_NAME}" && -z "${PW_ACCOUNT}" ]]; then exit 1; fi
 }
 
-declare -ig PW_ALL=0
-
 main() {
   local -i print=0
   while (($#)); do case "$1" in
     -p) shift; print=1 ;;
-    -a) shift; PW_ALL=1 ;;
     -k)
       PW_KEYCHAIN="$2"; shift 2;
       [[ "${PW_KEYCHAIN}" == *.keychain ]] || PW_KEYCHAIN+=.keychain ;;
