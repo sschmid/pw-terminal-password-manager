@@ -36,10 +36,10 @@ declare -i PW_GEN_LENGTH PW_CLIP_TIME
 : "${PW_CLIP_TIME:=45}"
 
 [[ ! -f "${PW_RC}" ]] && cat << 'EOF' > "${PW_RC}"
-PW_KEYCHAINS=(login)
+PW_KEYCHAINS=(login.keychain)
 EOF
 source "${PW_RC}"
-[[ -v PW_KEYCHAINS ]] || PW_KEYCHAINS=(login)
+[[ -v PW_KEYCHAINS ]] || PW_KEYCHAINS=(login.keychain)
 
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
@@ -96,7 +96,6 @@ pw::select_db() {
   else
     PW_KEYCHAIN="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="db> " --layout=reverse --info=hidden)"
   fi
-  [[ "${PW_KEYCHAIN}" == *.keychain ]] || PW_KEYCHAIN+=.keychain
 }
 
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
@@ -211,9 +210,7 @@ main() {
   local -i print=0
   while (($#)); do case "$1" in
     -p) shift; print=1 ;;
-    -k)
-      PW_KEYCHAIN="$2"; shift 2;
-      [[ "${PW_KEYCHAIN}" == *.keychain ]] || PW_KEYCHAIN+=.keychain ;;
+    -k) PW_KEYCHAIN="$2"; shift 2 ;;
     --help | -h) pw::help; return ;;
     --) shift; break ;; *) break ;;
   esac done
