@@ -31,19 +31,19 @@ _update_item_with_name_and_account() {
 
 _delete_item_with_name() {
   local item_name="$1"
-  run security delete-generic-password -s "${item_name}" pw_test.keychain
+  run security delete-generic-password -s "${item_name}" "${TEST_KEYCHAIN}"
   assert_success
 }
 
 _delete_item_with_account() {
   local item_account="$1"
-  run security delete-generic-password -a "${item_account}" pw_test.keychain
+  run security delete-generic-password -a "${item_account}" "${TEST_KEYCHAIN}"
   assert_success
 }
 
 _delete_item_with_name_and_account() {
   local item_name="$1" item_account="$2"
-  run security delete-generic-password -a "${item_account}" -s "${item_name}" pw_test.keychain
+  run security delete-generic-password -a "${item_account}" -s "${item_name}" "${TEST_KEYCHAIN}"
   assert_success
 }
 

@@ -217,9 +217,9 @@ assert_require_bash() {
   _add_item_with_name_and_account "test2-name" "test2-account" "test-pw"
   run pw ls
   assert_success
-  cat << 'EOF' | assert_output -
-test-name                   	test-account    	pw_test.keychain
-test2-name                  	test2-account   	pw_test.keychain
+  cat << EOF | assert_output -
+test-name                   	test-account    	${TEST_KEYCHAIN}
+test2-name                  	test2-account   	${TEST_KEYCHAIN}
 EOF
 }
 
@@ -227,8 +227,8 @@ EOF
   _add_item_with_account "test-account" "test-pw"
   run pw ls
   assert_success
-  cat << 'EOF' | assert_output -
-                            	test-account    	pw_test.keychain
+  cat << EOF | assert_output -
+                            	test-account    	${TEST_KEYCHAIN}
 EOF
 }
 
@@ -236,8 +236,8 @@ EOF
   _add_item_with_name "test-name" "test-pw"
   run pw ls
   assert_success
-  cat << 'EOF' | assert_output -
-test-name                   	                	pw_test.keychain
+  cat << EOF | assert_output -
+test-name                   	                	${TEST_KEYCHAIN}
 EOF
 }
 
