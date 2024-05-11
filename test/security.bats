@@ -1,38 +1,11 @@
 setup() {
-  load 'test-helper.bash'
+  load 'security-test-helper.bash'
   _setup
 }
 
 teardown() {
   _teardown
 }
-
-assert_pw_home() {
-  assert_equal "${PW_HOME}" "${PROJECT_ROOT}"
-}
-
-## setup
-#@test "doesn't have test keychain" {
-#  run ls ~/Library/Keychains
-#  assert_success
-#  refute_output --partial "pw_test.keychain-db"
-#}
-#
-## setup
-#@test "creates test keychain" {
-#  run security create-keychain -p pw_test_password pw_test.keychain
-#  assert_success
-#  run ls ~/Library/Keychains
-#  assert_output --partial "pw_test.keychain-db"
-#}
-#
-## teardown
-#@test "deletes test keychain" {
-#  run security delete-keychain pw_test.keychain
-#  assert_success
-#  run ls ~/Library/Keychains
-#  refute_output --partial "pw_test.keychain-db"
-#}
 
 @test "keychain doesn't contain item with name" {
   assert_no_item_with_name "test-name"
