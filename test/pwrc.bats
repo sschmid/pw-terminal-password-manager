@@ -12,5 +12,5 @@ setup() {
 @test "creates pwrc" {
   export PW_RC="${BATS_TEST_TMPDIR}/mypwrc.bash"
   run pw --help
-  assert_file_exist "${PW_RC}"
+  assert_file_exists "${PW_RC}"
 }
