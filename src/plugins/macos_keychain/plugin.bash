@@ -1,3 +1,7 @@
+PW_NAME=""
+PW_ACCOUNT=""
+declare -ig PW_FZF=0
+
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
 pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}"; }
 pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
@@ -75,4 +79,22 @@ pw::list() {
     [[ "${account}" == "<NULL>" ]] && account=""
     printf "%-40s\t%s\n" "${name}" "${account}"
   done | sort
+}
+
+pw::select_entry_with_prompt() {
+  local fzf_prompt="$1"; shift
+  if (($#)); then
+    PW_NAME="$1"
+    PW_ACCOUNT="${2:-}"
+    PW_FZF=0
+  else
+    local name account
+    while IFS=$'\t' read -r name account; do
+      PW_NAME="$(echo "${name}" | xargs)"
+      PW_ACCOUNT="$(echo "${account}" | xargs)"
+    done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
+    [[ -n "${PW_NAME}" && -n "${PW_ACCOUNT}" ]] || exit 1
+    # shellcheck disable=SC2034
+    PW_FZF=1
+  fi
 }

@@ -47,10 +47,6 @@ while [[ -L "${PW_HOME}" ]]; do
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 
-PW_NAME=""
-PW_ACCOUNT=""
-declare -ig PW_FZF=0
-
 pw::help() {
   cat << EOF
 ██████╗ ██╗    ██╗
@@ -134,24 +130,6 @@ pw::update() {
   pushd "${PW_HOME}" > /dev/null || exit 1
     git pull origin main
   popd > /dev/null || exit 1
-}
-
-pw::select_entry_with_prompt() {
-  local fzf_prompt="$1"; shift
-  if (($#)); then
-    PW_NAME="$1"
-    PW_ACCOUNT="${2:-}"
-    PW_FZF=0
-  else
-    local name account
-    while IFS=$'\t' read -r name account; do
-      PW_NAME="$(echo "${name}" | xargs)"
-      PW_ACCOUNT="$(echo "${account}" | xargs)"
-    done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
-    [[ -n "${PW_NAME}" && -n "${PW_ACCOUNT}" ]] || exit 1
-    # shellcheck disable=SC2034
-    PW_FZF=1
-  fi
 }
 
 main() {
