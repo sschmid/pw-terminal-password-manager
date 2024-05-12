@@ -150,8 +150,8 @@ teardown() {
   run pw ls
   assert_success
   cat << EOF | assert_output -
-test-name                       	test-account
-test2-name                      	test2-account
+test-name                               	test-account
+test2-name                              	test2-account
 EOF
 }
 
@@ -159,12 +159,12 @@ EOF
   _add_item_with_account "test-account" "test-pw"
   run pw ls
   assert_success
-  assert_output "                                	test-account"
+  assert_output "                                        	test-account"
 }
 
 @test "list filters <NULL> account" {
   _add_item_with_name "test-name" "test-pw"
   run pw ls
   assert_success
-  assert_output "test-name                       	"
+  assert_output "test-name                               	"
 }
