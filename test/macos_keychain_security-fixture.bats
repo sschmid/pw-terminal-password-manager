@@ -7,12 +7,12 @@ setup() {
   assert_success
   refute_output --partial "${TEST_KEYCHAIN}"
 
-  _setup
+  run _setup
   assert_success
   run ls ~/Library/Keychains
   assert_output --partial "${TEST_KEYCHAIN}"
 
-  _teardown
+  run _teardown
   assert_success
   run ls ~/Library/Keychains
   refute_output --partial "${TEST_KEYCHAIN}"
