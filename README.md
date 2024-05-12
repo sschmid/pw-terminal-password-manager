@@ -10,14 +10,14 @@ pw is a one-file bash wrapper for the [macOS keychain](https://developer.apple.c
 $ pw
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│   ios.password            me@work.com             login.keychain             │
-│   ios.user                me@work.com             login.keychain             │
-│ > github                  sschmid                 login.keychain             │
-│   github.token            sschmid                 login.keychain             │
-│   nuget                   sschmid                 login.keychain             │
-│   slack                   me@work.com             login.keychain             │
-│   twitter                 s_schmid                login.keychain             │
-│   unity                   me@work.com             login.keychain             │
+│   ios.password            me@work.com             login.keychain-db          │
+│   ios.user                me@work.com             login.keychain-db          │
+│ > github                  sschmid                 login.keychain-db          │
+│   github.token            sschmid                 login.keychain-db          │
+│   nuget                   sschmid                 login.keychain-db          │
+│   slack                   me@work.com             login.keychain-db          │
+│   twitter                 s_schmid                login.keychain-db          │
+│   unity                   me@work.com             login.keychain-db          │
 │                                                                              │
 │                                                                              │
 │                                                                              │
@@ -58,7 +58,7 @@ options:
 commands:
   [-p] no command             copy (or print) password using fuzzy finder
   [-p] <name> [<account>]     copy (or print) password
-  init                        create keychain (default: login.keychain)
+  init                        create keychain (default: login.keychain-db)
   add <name> [<account>]      add entry (leave password empty to generate one)
   edit [<name>] [<account>]   edit entry (leave password empty to generate one)
   rm [<name>] [<account>]     remove entry
@@ -70,7 +70,7 @@ commands:
   update                      update pw
 
 customization:
-  PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain)
+  PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain-db)
   PW_GEN_LENGTH               length of generated passwords (default: 35)
   PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
 ```
@@ -87,8 +87,8 @@ Enter password for slack:      # leave empty to generate a password
 $ pw                           # open fzf and copy password for selected entry
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│   github                                          login.keychain             │
-│ > slack                   me@work.com             login.keychain             │
+│   github                                          login.keychain-db          │
+│ > slack                   me@work.com             login.keychain-db          │
 │                                                                              │
 │                                                                              │
 │                                                                              │
@@ -100,7 +100,7 @@ $ pw                           # open fzf and copy password for selected entry
 Export `PW_KEYCHAIN` to change the default keychain.
 
 ```bash
-export PW_KEYCHAIN=secrets.keychain
+export PW_KEYCHAIN=secrets.keychain-db
 ```
 
 ```
@@ -110,7 +110,7 @@ Enter password for twitter:
 $ pw -p -k secrets    # -p prints password instead of copying
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│ > twitter                 s_schmid                secrets.keychain           │
+│ > twitter                 s_schmid                secrets.keychain-db        │
 │                                                                              │
 │                                                                              │
 │                                                                              │
@@ -118,9 +118,9 @@ $ pw -p -k secrets    # -p prints password instead of copying
 $ pw -a     # -a searches in all user keychains
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│ > github                                          login.keychain             │
-│   slack                   me@work.com             login.keychain             │
-│   twitter                 s_schmid                secrets.keychain           │
+│ > github                                          login.keychain-db          │
+│   slack                   me@work.com             login.keychain-db          │
+│   twitter                 s_schmid                secrets.keychain-db        │
 │                                                                              │
 │                                                                              │
 │                                                                              │
@@ -144,7 +144,7 @@ Export or provide the following variables to customize pw's default behaviour:
 
 ```bash
 # Default keychain used when not specified with -k
-export PW_KEYCHAIN=secrets.keychain
+export PW_KEYCHAIN=secrets.keychain-db
 
 # Generated password length
 export PW_GEN_LENGTH=35

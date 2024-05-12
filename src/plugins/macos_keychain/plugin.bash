@@ -1,5 +1,5 @@
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
-pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}-db"; }
+pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}"; }
 pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
 pw::unlock() { security unlock-keychain "${PW_KEYCHAIN}"; }
 

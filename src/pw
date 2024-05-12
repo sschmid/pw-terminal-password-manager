@@ -36,10 +36,10 @@ declare -i PW_GEN_LENGTH PW_CLIP_TIME
 : "${PW_CLIP_TIME:=45}"
 
 [[ ! -f "${PW_RC}" ]] && cat << 'EOF' > "${PW_RC}"
-PW_KEYCHAINS=(login.keychain)
+PW_KEYCHAINS=(login.keychain-db)
 EOF
 source "${PW_RC}"
-[[ -v PW_KEYCHAINS ]] || PW_KEYCHAINS=(login.keychain)
+[[ -v PW_KEYCHAINS ]] || PW_KEYCHAINS=(login.keychain-db)
 
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
@@ -70,7 +70,7 @@ options:
 commands:
   [-p] no command             copy (or print) password using fuzzy finder
   [-p] <name> [<account>]     copy (or print) password
-  init                        create keychain (default: login.keychain)
+  init                        create keychain (default: login.keychain-db)
   add <name> [<account>]      add entry (leave password empty to generate one)
   edit [<name>] [<account>]   edit entry (leave password empty to generate one)
   rm [<name>] [<account>]     remove entry
@@ -82,7 +82,7 @@ commands:
   update                      update pw
 
 customization:
-  PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain)
+  PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain-db)
   PW_GEN_LENGTH               length of generated passwords (default: 35)
   PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
 EOF
@@ -148,6 +148,7 @@ pw::select_entry_with_prompt() {
       PW_ACCOUNT="$(echo "${account}" | xargs)"
     done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
     [[ -n "${PW_NAME}" && -n "${PW_ACCOUNT}" ]] || exit 1
+    # shellcheck disable=SC2034
     PW_FZF=1
   fi
 }

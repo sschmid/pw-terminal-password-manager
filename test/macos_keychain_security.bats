@@ -1,5 +1,5 @@
 setup() {
-  load 'security-test-helper.bash'
+  load 'macos_keychain_security-test-helper.bash'
   _setup
 }
 

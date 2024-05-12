@@ -2,7 +2,7 @@ load 'test_helper/bats-support/load.bash'
 load 'test_helper/bats-assert/load.bash'
 load 'test_helper/bats-file/load.bash'
 
-TEST_KEYCHAIN=pw_test.keychain
+TEST_KEYCHAIN=pw_test.keychain-db
 
 _setup() {
   security delete-keychain "${TEST_KEYCHAIN}" || true
