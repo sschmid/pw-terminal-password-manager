@@ -158,8 +158,10 @@ pw::gen() {
 }
 
 pw::update() {
+  local branch="${1:-main}"
   pushd "${PW_HOME}" > /dev/null || exit 1
-    git pull origin main
+    git switch "${branch}"
+    git pull
   popd > /dev/null || exit 1
 }
 
@@ -183,7 +185,7 @@ main() {
       open) shift; pw::select_db; pw::open ;;
       lock) shift; pw::select_db; pw::lock ;;
       unlock) shift; pw::select_db; pw::unlock ;;
-      update) pw::update ;;
+      update) shift; pw::update "$@" ;;
       *) pw::select_db; pw::get ${print} "$@" ;;
     esac
   else
