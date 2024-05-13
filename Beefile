@@ -3,7 +3,7 @@ BEE_VERSION=1.4.0
 BEE_PLUGINS_PATHS=("${BEE_RESOURCES}/plugins")
 BEE_PLUGINS=(release)
 
-[[ -f ~/.bee/pw.bash ]] && source ~/.bee/pw.bash
+[[ -f ~/.bee/secrets.bash ]] && source ~/.bee/secrets.bash
 
 GITHUB_REPO="sschmid/${BEE_PROJECT}"
 CHANGELOG_URL="https://github.com/${GITHUB_REPO}"
