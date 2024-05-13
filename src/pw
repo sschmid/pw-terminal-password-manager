@@ -61,7 +61,7 @@ usage: pw [--help | -h]
 
 options:
   -p              print password instead of copying
-  -k <keychain>   search in given keychain
+  -k <keychain>   use given keychain
 
 commands:
   [-p] no command             copy (or print) password using fuzzy finder
@@ -72,7 +72,7 @@ commands:
   rm [<name>] [<account>]     remove entry
   ls                          list all entries
   gen                         generate password
-  open                        open keychain in Keychain Access
+  open                        open keychain in native gui
   lock                        lock keychain
   unlock                      unlock keychain
   update                      update pw
