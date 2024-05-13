@@ -13,5 +13,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - run: brew install bash
+      - run: brew install bash fzf
+      - run: brew install --cask keepassxc
       - run: test/bats/bin/bats --tap test
