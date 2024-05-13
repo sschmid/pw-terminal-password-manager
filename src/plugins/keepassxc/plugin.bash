@@ -7,15 +7,8 @@ _set_password() {
   fi
 }
 
-_keepassxc-cli() {
-  "${PW_KEEPASSXC}" "$@"
-}
-
-_keepassxc-cli_with_db_password() {
-  _set_password
-  _keepassxc-cli "$@" <<< "${PW_KEEPASSXC_PASSWORD}"
-}
-
+_keepassxc-cli() { "${PW_KEEPASSXC}" "$@"; }
+_keepassxc-cli_with_db_password() { _set_password; _keepassxc-cli "$@" <<< "${PW_KEEPASSXC_PASSWORD}"; }
 _keepassxc-cli_with_db_password_and_entry_password() {
   _set_password
   local password="$1"; shift
