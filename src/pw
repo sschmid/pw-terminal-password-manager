@@ -3,7 +3,7 @@
 set -euo pipefail
 
 require_bash() {
-  cat <<EOF
+  cat << EOF
 pw requires bash-4.2 or later.
 Installed: ${BASH_VERSION}
 
@@ -94,27 +94,57 @@ pw::select_db() {
     PW_KEYCHAIN="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="db> " --layout=reverse --info=hidden)"
   fi
 
-  local -a filetypes=()
+  local -a file_types=()
   while read -r file; do
     source "${file}"
-    filetypes+=("$(filetype)")
+    file_types+=("${FILE_TYPE}")
     if register; then
       source "$(dirname "${file}")/plugin.bash"
       return
     fi
-  done < <(find "${PW_HOME}/src/plugins" -type f -name "hook.bash" -mindepth 2 -maxdepth 2)
+  done < <(pw::plugins)
 
   if [[ -f "${PW_KEYCHAIN}" ]]; then
     cat << EOF
 Could not detect plugin for ${PW_KEYCHAIN}
 Supported file types are:
-${filetypes[*]}
 EOF
+    printf '%s\n' "${file_types[@]}"
   else
     echo "pw: ${PW_KEYCHAIN}: No such file"
   fi
 
   exit 1
+}
+
+pw::infer_plugin() {
+  local extension="${PW_KEYCHAIN##*.}"
+  extension="${extension,,}"
+  local -a file_types=()
+  local -a file_extensions=()
+  while read -r file; do
+    source "${file}"
+    file_types+=("${FILE_TYPE}")
+    file_extensions+=("${FILE_EXTENSION}")
+    if register_with_extension "${extension}"; then
+      source "$(dirname "${file}")/plugin.bash"
+      return
+    fi
+  done < <(pw::plugins)
+
+  cat << EOF
+Could not detect plugin for ${PW_KEYCHAIN}
+Supported extensions are:
+EOF
+  for i in "${!file_extensions[@]}"; do
+    printf "%s (%s)\n" "${file_extensions[$i]}" "${file_types[$i]}"
+  done
+
+  exit 1
+}
+
+pw::plugins() {
+  find "${PW_HOME}/src/plugins" -type f -name "hook.bash" -mindepth 2 -maxdepth 2
 }
 
 pw::gen() {
@@ -143,7 +173,7 @@ main() {
 
   if (($#)); then
     case "$1" in
-      init) shift; pw::init ;;
+      init) shift; pw::infer_plugin; pw::init ;;
       add) shift; pw::select_db; pw::add "$@" ;;
       edit) shift; pw::select_db; pw::edit "$@" ;;
       rm) shift; pw::select_db; pw::rm "$@" ;;
