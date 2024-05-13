@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.0.0] - 2024-05-13
+### Added
+- Introduce plugin architecture to support different password managers
+- Add plugin for `macOS-keychain` and `keepassxc-cli`
+- Add support for choosing from multiple keychains
+- Update bats and add bats-file submodule
+
+### Changed
+- Changed `pw init` to accept keychain name as argument
+- Increase entry name padding in `pw ls`
+- Don't automatically append `.keychain`
+
+### Removed
+- Remove `-a` option to search in all user keychains
+
 ## [5.1.0] - 2023-03-14
 ### Added
 - Clear password from clipboard after 45 seconds
@@ -110,7 +125,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/5.1.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/6.0.0...HEAD
+[6.0.0]: https://github.com/sschmid/pw/compare/5.1.0...6.0.0
 [5.1.0]: https://github.com/sschmid/pw/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/sschmid/pw/compare/4.5.1...5.0.0
 [4.5.1]: https://github.com/sschmid/pw/compare/4.5.0...4.5.1
