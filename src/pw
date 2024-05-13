@@ -66,7 +66,7 @@ options:
 commands:
   [-p] no command             copy (or print) password using fuzzy finder
   [-p] <name> [<account>]     copy (or print) password
-  init                        create keychain (default: login.keychain-db)
+  init <keychain>             create keychain
   add <name> [<account>]      add entry (leave password empty to generate one)
   edit [<name>] [<account>]   edit entry (leave password empty to generate one)
   rm [<name>] [<account>]     remove entry
@@ -118,6 +118,7 @@ EOF
 }
 
 pw::infer_plugin() {
+  PW_KEYCHAIN="$1"
   local extension="${PW_KEYCHAIN##*.}"
   extension="${extension,,}"
   local -a file_types=()
@@ -173,7 +174,7 @@ main() {
 
   if (($#)); then
     case "$1" in
-      init) shift; pw::infer_plugin; pw::init ;;
+      init) shift; pw::infer_plugin "$@"; pw::init ;;
       add) shift; pw::select_db; pw::add "$@" ;;
       edit) shift; pw::select_db; pw::edit "$@" ;;
       rm) shift; pw::select_db; pw::rm "$@" ;;
