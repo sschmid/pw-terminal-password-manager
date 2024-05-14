@@ -1,9 +1,9 @@
 # 🔐 `pw` - Terminal Password Manager powered by `fzf`
 
-`pw` is a command-line password manager unifying widely trusted password managers
+`pw` is a command-line password manager unifying trusted password managers
 like [macOS Keychain](https://developer.apple.com/documentation/security/keychain_services)
 and [KeePassXC](https://keepassxc.org) in a single interface within the terminal.
-It combines the security of your password managers of choice with the speed and
+It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
 you to interact with various keychains effortlessly.
 
@@ -18,7 +18,7 @@ $ pw
 │   ios.password            me@work.com             login.keychain-db          │
 │   ios.user                me@work.com             login.keychain-db          │
 │ > github                  sschmid                 login.keychain-db          │
-│   github.token            sschmid                 login.keychain-db          │
+│   GITHUB_TOKEN            sschmid                 login.keychain-db          │
 │   nuget                   sschmid                 login.keychain-db          │
 │   slack                   me@work.com             login.keychain-db          │
 │   twitter                 s_schmid                login.keychain-db          │
@@ -165,13 +165,11 @@ $ pw
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
-# example for using `pw` in an other script
+# example for using `pw` in a command or script
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
 
 ```bash
-github::me() {
-  curl -s -H "Authorization: token $(pw -p github.token)" "https://api.github.com/user"
-}
+curl -s -H "Authorization: token $(pw -p GITHUB_TOKEN)" https://api.github.com/user
 ```
 
 # customization
