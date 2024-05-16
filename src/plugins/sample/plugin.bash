@@ -32,18 +32,9 @@ pw::edit() {
 
 _addOrEdit() {
   local -i edit=$1; shift
-  PW_NAME="$1" account="${2:-}"
-  local password retype
-  read -rsp "Enter password for ${PW_NAME}: " password; echo
-  if [[ -n "${password}" ]]; then
-    read -rsp "Retype password for ${PW_NAME}: " retype; echo
-    if [[ "${retype}" != "${password}" ]]; then
-      echo "Error: the entered passwords do not match."
-      exit 1
-    fi
-  else
-    password="$(pw::gen 1)"
-  fi
+  local name account
+  name="$1" account="${2:-}"
+  pw::prompt_password "${name}"
 
   if ((edit))
   # TOBEIMPLEMENTED

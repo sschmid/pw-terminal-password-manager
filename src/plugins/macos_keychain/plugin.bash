@@ -18,20 +18,14 @@ pw::edit() {
 
 _addOrEdit() {
   local -i edit=$1; shift
-  ((edit)) || unset edit
-  PW_NAME="$1" PW_ACCOUNT="${2:-}"
-  local password retype
-  read -rsp "Enter password for ${PW_NAME}: " password; echo
-  if [[ -n "${password}" ]]; then
-    read -rsp "Retype password for ${PW_NAME}: " retype; echo
-    if [[ "${retype}" != "${password}" ]]; then
-      echo "Error: the entered passwords do not match."
-      exit 1
-    fi
-  else
-    password="$(pw::gen 1)"
+  local name account
+  name="$1" account="${2:-}"
+  pw::prompt_password "${name}"
+
+  if ((edit))
+  then security add-generic-password -U -a "${account}" -s "${name}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
+  else security add-generic-password -a "${account}" -s "${name}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
   fi
-  security add-generic-password ${edit:+-U} -a "${PW_ACCOUNT}" -s "${PW_NAME}" -w "${password}" "${PW_KEYCHAIN}"
 }
 
 pw::get() {

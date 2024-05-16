@@ -151,6 +151,21 @@ pw::plugins() {
     -print
 }
 
+PW_PASSWORD=""
+pw::prompt_password() {
+  local name="$1" retype
+  read -rsp "Enter password for ${name}: " PW_PASSWORD; echo
+  if [[ -n "${PW_PASSWORD}" ]]; then
+    read -rsp "Retype password for ${name}: " retype; echo
+    if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
+      echo "Error: the entered passwords do not match."
+      exit 1
+    fi
+  else
+    PW_PASSWORD="$(pw::gen 1)"
+  fi
+}
+
 pw::clip_and_forget() {
   local p password="$1"
   p="pw-$(id -u)"

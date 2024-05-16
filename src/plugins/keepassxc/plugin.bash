@@ -37,22 +37,13 @@ pw::edit() {
 
 _addOrEdit() {
   local -i edit=$1; shift
-  PW_NAME="$1" account="${2:-}"
-  local password retype
-  read -rsp "Enter password for ${PW_NAME}: " password; echo
-  if [[ -n "${password}" ]]; then
-    read -rsp "Retype password for ${PW_NAME}: " retype; echo
-    if [[ "${retype}" != "${password}" ]]; then
-      echo "Error: the entered passwords do not match."
-      exit 1
-    fi
-  else
-    password="$(pw::gen 1)"
-  fi
+  local name account
+  name="$1" account="${2:-}"
+  pw::prompt_password "${name}"
 
   if ((edit))
-  then _keepassxc-cli_with_db_password_and_entry_password "${password}" edit -qp "${PW_KEYCHAIN}" "${PW_NAME}"
-  else _keepassxc-cli_with_db_password_and_entry_password "${password}" add -qp "${PW_KEYCHAIN}" -u "${account}" "${PW_NAME}"
+  then _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" edit -qp "${PW_KEYCHAIN}" "${name}"
+  else _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" add -qp "${PW_KEYCHAIN}" -u "${account}" "${name}"
   fi
 }
 
