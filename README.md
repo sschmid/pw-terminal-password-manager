@@ -11,6 +11,15 @@ you to interact with various keychains effortlessly.
 [![Latest release](https://img.shields.io/github/release/sschmid/pw.svg)](https://github.com/sschmid/pw/releases)
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
 
+# Why `pw`?
+
+- **Unified Interface:** `pw` unifies trusted password managers in a single terminal interface
+- **Efficiency:** With the `fzf` fuzzy finder, `pw` allows for rapid and intuitive interaction with your keychains - nice!
+- **Simplicity:** `pw` is built using simple bash, making it easy to understand, modify, and extend
+- **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](src/plugins))
+- **Clipboard Management:** Automatically clears passwords from the clipboard after a specified duration
+- **Multiple Keychain Support**: Effortlessly manage and switch between multiple keychains stored in various locations.
+
 ```
 copy>                                   ╭──────────────────────────────────────╮
 ─────────────────────────────────────── │ Title: GITHUB_TOKEN                  │
