@@ -12,32 +12,32 @@ you to interact with various keychains effortlessly.
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
 
 ```
-$ pw
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ >                                                                            │
-│   ios.password            me@work.com             login.keychain-db          │
-│   ios.user                me@work.com             login.keychain-db          │
-│ > github                  sschmid                 login.keychain-db          │
-│   GITHUB_TOKEN            sschmid                 login.keychain-db          │
-│   nuget                   sschmid                 login.keychain-db          │
-│   slack                   me@work.com             login.keychain-db          │
-│   twitter                 s_schmid                login.keychain-db          │
-│   unity                   me@work.com             login.keychain-db          │
-│                                                                              │
-│                                                                              │
-│                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────╯
+copy>                                   ╭──────────────────────────────────────╮
+─────────────────────────────────────── │ Title: GITHUB_TOKEN                  │
+> GITHUB_TOKEN                          │ UserName: sschmid                    │
+  Slack API                             │ Password: PROTECTED                  │
+  NUGET_API_KEY                         │ URL: http://github.com               │
+  Raspberry Pi 4 Model B                │ Notes: gist, repo, workflow, write:p │
+  Jenkins                               │ Uuid: {5wk3as3a-2aab-72kn-w27e-3cwe} │
+  Docker                                │ Tags: tokens                         │
+  Azure                                 │                                      │
+  Incoming WebHook                      │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        │                                      │
+                                        ╰──────────────────────────────────────╯
 ```
 
-# install pw
+# install pw and fzf
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install)"
-````
-
-# install [fzf](https://github.com/junegunn/fzf) (command-line fuzzy finder)
-
-```bash
 brew install fzf
 ```
 
