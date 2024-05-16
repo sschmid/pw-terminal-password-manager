@@ -145,7 +145,10 @@ EOF
 }
 
 pw::plugins() {
-  find "${PW_HOME}/src/plugins" -type f -name "hook.bash" -mindepth 2 -maxdepth 2
+  find "${PW_HOME}/src/plugins" \
+    -path "${PW_HOME}/src/plugins/sample" -prune \
+    -type f -o -name "hook.bash" \
+    -print
 }
 
 pw::gen() {

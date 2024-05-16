@@ -75,3 +75,13 @@ assert_pw_home() {
   run echo "${#output}"
   assert_output "${PW_GEN_LENGTH}"
 }
+
+@test "ignores sample plugin" {
+  # shellcheck disable=SC1090,SC1091
+  source "${PROJECT_ROOT}/src/pw"
+  run pw::plugins
+  assert_output --partial "macos_keychain/hook.bash"
+  assert_output --partial "keepassxc/hook.bash"
+
+  refute_output --partial "sample/hook.bash"
+}
