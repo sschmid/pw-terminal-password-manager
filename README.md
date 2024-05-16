@@ -5,7 +5,7 @@ like [macOS Keychain](https://developer.apple.com/documentation/security/keychai
 and [KeePassXC](https://keepassxc.org) in a single interface within the terminal.
 It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
-you to interact with various keychains effortlessly.
+you to interact with [various keychains](#example-with-multiple-keychains) effortlessly.
 
 [![Tests](https://github.com/sschmid/pw/actions/workflows/tests.yaml/badge.svg)](https://github.com/sschmid/pw/actions/workflows/tests.yaml)
 [![Latest release](https://img.shields.io/github/release/sschmid/pw.svg)](https://github.com/sschmid/pw/releases)
@@ -13,35 +13,14 @@ you to interact with various keychains effortlessly.
 
 # Why `pw`?
 
-- **Unified Interface:** `pw` unifies trusted password managers in a single terminal interface
-- **Efficiency:** With the `fzf` fuzzy finder, `pw` allows for rapid and intuitive interaction with your keychains - nice!
-- **Simplicity:** `pw` is built using simple bash, making it easy to understand, modify, and extend
-- **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](src/plugins))
-- **Clipboard Management:** Automatically clears passwords from the clipboard after a specified duration
-- **Multiple Keychain Support**: Effortlessly manage and switch between multiple keychains stored in various locations.
+- **Unified Interface:** `pw` unifies trusted password managers in a single terminal interface.
+- **Efficiency:** With the [fzf](https://github.com/junegunn/fzf) fuzzy finder, `pw` allows for rapid and intuitive interaction with your keychains - nice!
+- **Simplicity:** `pw` is built using simple bash, making it easy to understand, modify, and extend.
+- **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](src/plugins)).
+- **Clipboard Management:** Automatically clears passwords from the clipboard after a specified duration.
+- **Multiple Keychain Support**: Effortlessly manage and switch between [multiple keychains](#example-with-multiple-keychains) stored in various locations.
 
-```
-copy>                                   ╭──────────────────────────────────────╮
-─────────────────────────────────────── │ Title: GITHUB_TOKEN                  │
-> GITHUB_TOKEN                          │ UserName: sschmid                    │
-  Slack API                             │ Password: PROTECTED                  │
-  NUGET_API_KEY                         │ URL: http://github.com               │
-  Raspberry Pi 4 Model B                │ Notes: gist, repo, workflow, write:p │
-  Jenkins                               │ Uuid: {5wk3as3a-2aab-72kn-w27e-3cwe} │
-  Docker                                │ Tags: tokens                         │
-  Azure                                 │                                      │
-  Incoming WebHook                      │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        │                                      │
-                                        ╰──────────────────────────────────────╯
-```
+![pw-fzf](readme/pw-fzf.png)
 
 # install pw and fzf
 
@@ -162,17 +141,7 @@ After configuring your keychains, continue using `pw` as usual. If no keychain
 is specified with `-k` or by setting `PW_KEYCHAIN`, `pw` allows you to select
 one from `PW_KEYCHAINS` using the fuzzy finder.
 
-```bash
-$ pw
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ db>                                                                          │
-│ > login.keychain-db                                                          │
-│   secrets.keychain-db                                                        │
-│   ~/path/to/keepassxc.kdbx                                                   │
-│   ~/path/to/myproject.keychain-db                                            │
-│                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────╯
-```
+![pw-fzf](readme/pw-dbs.png)
 
 # example for using `pw` in a command or script
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
