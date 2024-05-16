@@ -18,7 +18,7 @@ ${password}
 EOF
 }
 
-PW_NAME=""
+PW_ENTRY=""
 declare -ig PW_FZF=0
 
 pw::init() { _keepassxc-cli db-create -p "${PW_KEYCHAIN}"; }
@@ -32,18 +32,18 @@ pw::add() {
 
 pw::edit() {
   pw::select_entry_with_prompt edit "$@"
-  _addOrEdit 1 "${PW_NAME}"
+  _addOrEdit 1 "${PW_ENTRY}"
 }
 
 _addOrEdit() {
   local -i edit=$1; shift
-  local name account
-  name="$1" account="${2:-}"
-  pw::prompt_password "${name}"
+  local entry account
+  entry="$1" account="${2:-}"
+  pw::prompt_password "${entry}"
 
   if ((edit))
-  then _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" edit -qp "${PW_KEYCHAIN}" "${name}"
-  else _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" add -qp "${PW_KEYCHAIN}" -u "${account}" "${name}"
+  then _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" edit -qp "${PW_KEYCHAIN}" "${entry}"
+  else _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" add -qp "${PW_KEYCHAIN}" -u "${account}" "${entry}"
   fi
 }
 
@@ -54,7 +54,7 @@ pw::get() {
   else pw::select_entry_with_prompt copy "$@"
   fi
   local password
-  password="$(_keepassxc-cli_with_db_password show -qsa Password "${PW_KEYCHAIN}" "${PW_NAME}")"
+  password="$(_keepassxc-cli_with_db_password show -qsa Password "${PW_KEYCHAIN}" "${PW_ENTRY}")"
   if ((print)); then
     echo "${password}"
   else
@@ -66,10 +66,10 @@ pw::rm() {
   local -i remove=1
   pw::select_entry_with_prompt remove "$@"
   if ((PW_FZF)); then
-    read -rp "Do you really want to remove ${PW_NAME} from ${PW_KEYCHAIN}? (y / n): "
+    read -rp "Do you really want to remove ${PW_ENTRY} from ${PW_KEYCHAIN}? (y / n): "
     [[ "${REPLY}" == "y" ]] || remove=0
   fi
-  ((!remove)) || _keepassxc-cli_with_db_password rm -q "${PW_KEYCHAIN}" "${PW_NAME}"
+  ((!remove)) || _keepassxc-cli_with_db_password rm -q "${PW_KEYCHAIN}" "${PW_ENTRY}"
 }
 
 pw::list() {
@@ -82,12 +82,12 @@ pw::select_entry_with_prompt() {
   _set_password
   local fzf_prompt="$1"; shift
   if (($#)); then
-    PW_NAME="$1"
+    PW_ENTRY="$1"
     PW_FZF=0
   else
-    PW_NAME="$(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
+    PW_ENTRY="$(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
               --preview="\"${PW_KEEPASSXC}\" show -q \"${PW_KEYCHAIN}\" {} <<< \"${PW_KEEPASSXC_PASSWORD}\"")"
-    [[ -n "${PW_NAME}" ]] || exit 1
+    [[ -n "${PW_ENTRY}" ]] || exit 1
     # shellcheck disable=SC2034
     PW_FZF=1
   fi

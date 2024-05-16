@@ -4,7 +4,7 @@
 # This sample resambles the behavior of the default plugin.
 # Change the behavior to match your needs.
 
-PW_NAME=""
+PW_ENTRY=""
 declare -ig PW_FZF=0
 
 _log() { echo "[Sample Plugin] $*"; }
@@ -27,20 +27,20 @@ pw::add() {
 
 pw::edit() {
   pw::select_entry_with_prompt edit "$@"
-  _addOrEdit 1 "${PW_NAME}"
+  _addOrEdit 1 "${PW_ENTRY}"
 }
 
 _addOrEdit() {
   local -i edit=$1; shift
-  local name account
-  name="$1" account="${2:-}"
-  pw::prompt_password "${name}"
+  local entry account
+  entry="$1" account="${2:-}"
+  pw::prompt_password "${entry}"
 
   if ((edit))
   # TOBEIMPLEMENTED
-  then _log "Editing entry '${PW_NAME}' with account '${account}' in keychain '${PW_KEYCHAIN}'"
+  then _log "Editing entry '${entry}' with account '${account}' in keychain '${PW_KEYCHAIN}'"
   # TOBEIMPLEMENTED
-  else _log "Adding entry '${PW_NAME}' with account '${account}' to keychain '${PW_KEYCHAIN}'"
+  else _log "Adding entry '${entry}' with account '${account}' to keychain '${PW_KEYCHAIN}'"
   fi
 }
 
@@ -66,12 +66,12 @@ pw::rm() {
   local -i remove=1
   pw::select_entry_with_prompt remove "$@"
   if ((PW_FZF)); then
-    read -rp "Do you really want to remove ${PW_NAME} from ${PW_KEYCHAIN}? (y / n): "
+    read -rp "Do you really want to remove ${PW_ENTRY} from ${PW_KEYCHAIN}? (y / n): "
     [[ "${REPLY}" == "y" ]] || remove=0
   fi
 
   # TOBEIMPLEMENTED
-  ((!remove)) || _log "Removing entry '${PW_NAME}' from keychain '${PW_KEYCHAIN}'"
+  ((!remove)) || _log "Removing entry '${PW_ENTRY}' from keychain '${PW_KEYCHAIN}'"
 }
 
 pw::list() {
@@ -82,14 +82,14 @@ pw::list() {
 pw::select_entry_with_prompt() {
   local fzf_prompt="$1"; shift
   if (($#)); then
-    PW_NAME="$1"
+    PW_ENTRY="$1"
     PW_FZF=0
   else
 
     # TOBEIMPLEMENTED
-    PW_NAME="$(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)"
+    PW_ENTRY="$(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)"
 
-    [[ -n "${PW_NAME}" ]] || exit 1
+    [[ -n "${PW_ENTRY}" ]] || exit 1
     # shellcheck disable=SC2034
     PW_FZF=1
   fi
