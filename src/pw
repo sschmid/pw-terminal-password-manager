@@ -151,6 +151,17 @@ pw::plugins() {
     -print
 }
 
+pw::clip_and_forget() {
+  local p password="$1"
+  p="pw-$(id -u)"
+  pkill -f "^$p" 2> /dev/null && sleep 0.5
+  echo -n "${password}" | pbcopy
+  (
+    ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
+    [[ "$(pbpaste)" == "${password}" ]] && echo -n | pbcopy
+  ) > /dev/null 2>&1 & disown
+}
+
 pw::gen() {
   local -i print=$1; shift
   # shellcheck disable=SC2005

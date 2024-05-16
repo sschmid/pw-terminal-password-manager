@@ -67,14 +67,7 @@ pw::get() {
   if ((print)); then
     echo "${password}"
   else
-    local p
-    p="pw-$(id -u)"
-    pkill -f "^$p" 2> /dev/null && sleep 0.5
-    echo -n "${password}" | pbcopy
-    (
-      ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
-      [[ "$(pbpaste)" == "${password}" ]] && echo -n | pbcopy
-    ) > /dev/null 2>&1 & disown
+    pw::clip_and_forget "${password}"
   fi
 }
 
