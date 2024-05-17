@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.1] - 2024-05-17
+### Fixed
+- `keepassxc:` Exclude `Recycle Bin/` folder, not entry
+
+### GitHub Actions
+- Upgrade to `actions/checkout@v4`
+- Install `shellcheck` instead of using docker image
+
 ## [6.1.0] - 2024-05-17
 ### Added
 - Add sample plugin `src/plugins/sample` to demonstrate how to create a plugin
@@ -137,7 +145,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/6.1.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/6.1.1...HEAD
+[6.1.1]: https://github.com/sschmid/pw/compare/6.1.0...6.1.1
 [6.1.0]: https://github.com/sschmid/pw/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/sschmid/pw/compare/5.1.0...6.0.0
 [5.1.0]: https://github.com/sschmid/pw/compare/5.0.0...5.1.0
