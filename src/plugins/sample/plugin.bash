@@ -53,6 +53,7 @@ pw::get() {
   local password
 
   # TOBEIMPLEMENTED
+  # shellcheck disable=SC2116
   password="$(echo "sample-password")"
 
   if ((print)); then
