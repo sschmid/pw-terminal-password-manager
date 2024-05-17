@@ -151,6 +151,13 @@ teardown() {
     #   assert_no_item_with_name_and_account "test-name" "test-account"
     # }
 
+@test "fails when wrong password is provided" {
+  PW_KEEPASSXC_PASSWORD="wrong"
+  run pw ls
+  assert_failure
+  assert_output "Error while reading the database ${TEST_KEYCHAIN}: Invalid credentials were provided, please try again."
+}
+
 @test "lists empty keychain" {
   run pw ls
   assert_success

@@ -2,8 +2,7 @@
 
 _set_password() {
   if [[ ! -v PW_KEEPASSXC_PASSWORD ]]; then
-    read -rsp "Enter password for ${PW_KEYCHAIN}: " PW_KEEPASSXC_PASSWORD </dev/tty
-    echo
+    read -rsp "Enter password to unlock ${PW_KEYCHAIN}:"$'\n' PW_KEEPASSXC_PASSWORD </dev/tty
   fi
 }
 
@@ -74,7 +73,11 @@ pw::rm() {
 
 pw::list() {
   local list
-  list="$(_keepassxc-cli_with_db_password ls -qfR "${PW_KEYCHAIN}" | grep -v '/$')"
+  if ! list="$(_keepassxc-cli_with_db_password ls -qfR "${PW_KEYCHAIN}" | grep -v '/$')"; then
+    echo "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again." >&2
+    exit 1
+  fi
+
   [[ "${list}" == "[empty]" ]] || echo "${list}"
 }
 
@@ -85,7 +88,9 @@ pw::select_entry_with_prompt() {
     PW_ENTRY="$1"
     PW_FZF=0
   else
-    PW_ENTRY="$(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
+    local list
+    list="$(pw::list)"
+    PW_ENTRY="$(echo "${list}" | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
               --preview="\"${PW_KEEPASSXC}\" show -q \"${PW_KEYCHAIN}\" {} <<< \"${PW_KEEPASSXC_PASSWORD}\"")"
     [[ -n "${PW_ENTRY}" ]] || exit 1
     # shellcheck disable=SC2034
