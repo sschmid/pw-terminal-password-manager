@@ -3,7 +3,7 @@
 set -euo pipefail
 
 require_bash() {
-  cat << EOF
+  cat << EOF >&2
 pw requires bash-4.2 or later.
 Installed: ${BASH_VERSION}
 
@@ -20,7 +20,7 @@ if ((BASH_VERSINFO[0] == 4)); then
 fi
 
 if ! command -v fzf > /dev/null; then
-  cat << EOF
+  cat << EOF >&2
 pw requires fzf. Please install fzf:
 
   brew install fzf
@@ -105,13 +105,13 @@ pw::select_db() {
   done < <(pw::plugins)
 
   if [[ -f "${PW_KEYCHAIN}" ]]; then
-    cat << EOF
+    cat << EOF >&2
 Could not detect plugin for ${PW_KEYCHAIN}
 Supported file types are:
 EOF
-    printf '%s\n' "${file_types[@]}"
+    printf '%s\n' "${file_types[@]}" >&2
   else
-    echo "pw: ${PW_KEYCHAIN}: No such file"
+    echo "pw: ${PW_KEYCHAIN}: No such file" >&2
   fi
 
   exit 1
@@ -133,12 +133,12 @@ pw::infer_plugin() {
     fi
   done < <(pw::plugins)
 
-  cat << EOF
+  cat << EOF >&2
 Could not detect plugin for ${PW_KEYCHAIN}
 Supported extensions are:
 EOF
   for i in "${!file_extensions[@]}"; do
-    printf "%s (%s)\n" "${file_extensions[$i]}" "${file_types[$i]}"
+    printf "%s (%s)\n" "${file_extensions[$i]}" "${file_types[$i]}" >&2
   done
 
   exit 1
@@ -158,7 +158,7 @@ pw::prompt_password() {
   if [[ -n "${PW_PASSWORD}" ]]; then
     read -rsp "Retype password for ${entry}: " retype; echo
     if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
-      echo "Error: the entered passwords do not match."
+      echo "Error: the entered passwords do not match." >&2
       exit 1
     fi
   else
