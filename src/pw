@@ -154,9 +154,9 @@ pw::plugins() {
 PW_PASSWORD=""
 pw::prompt_password() {
   local entry="$1" retype
-  read -rsp "Enter password for ${entry}: " PW_PASSWORD; echo
+  read -rsp "Enter password for ${entry}:"$'\n' PW_PASSWORD
   if [[ -n "${PW_PASSWORD}" ]]; then
-    read -rsp "Retype password for ${entry}: " retype; echo
+    read -rsp "Retype password for ${entry}:"$'\n' retype
     if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
       echo "Error: the entered passwords do not match." >&2
       exit 1
