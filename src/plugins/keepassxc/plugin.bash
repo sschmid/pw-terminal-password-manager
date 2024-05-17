@@ -73,7 +73,10 @@ pw::rm() {
 
 pw::list() {
   local list
-  if ! list="$(_keepassxc-cli_with_db_password ls -qfR "${PW_KEYCHAIN}" | grep -v -e '/$' -e 'Recycle Bin')"; then
+  if ! list="$(_keepassxc-cli_with_db_password ls -qfR "${PW_KEYCHAIN}" \
+    | grep -v -e '/$' -e 'Recycle Bin' \
+    | sort)"
+  then
     echo "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again." >&2
     exit 1
   fi
