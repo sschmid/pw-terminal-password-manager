@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.0] - 2024-05-17
+### Added
+- Add sample plugin `src/plugins/sample` to demonstrate how to create a plugin
+
+### Changed
+- `keepassxc`: Sort entries in `ls`
+- `keepassxc`: Exclude `Recycle Bin` from `ls`
+- `keepassxc`: Show error message when providing wrong database password
+- Extract `pw::clip_and_forget` from plugins
+- Extract `pw::prompt_password` from plugins
+- Print errors to `STDERR` instead of `STDOUT`
+
 ## [6.0.0] - 2024-05-13
 ### Added
 - Introduce plugin architecture to support different password managers
@@ -125,7 +137,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/6.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/6.1.0...HEAD
+[6.1.0]: https://github.com/sschmid/pw/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/sschmid/pw/compare/5.1.0...6.0.0
 [5.1.0]: https://github.com/sschmid/pw/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/sschmid/pw/compare/4.5.1...5.0.0
