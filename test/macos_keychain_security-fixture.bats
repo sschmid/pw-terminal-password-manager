@@ -2,18 +2,23 @@ setup() {
   load 'macos_keychain_security-test-helper.bash'
 }
 
-@test "sets up and tears down test keychain" {
-  run ls ~/Library/Keychains
-  assert_success
-  refute_output --partial "${TEST_KEYCHAIN}"
+@test "sets up and tears down test database" {
+  assert_file_not_exists "${TEST_KEYCHAIN}"
 
   run _setup
   assert_success
-  run ls ~/Library/Keychains
-  assert_output --partial "${TEST_KEYCHAIN}"
+  assert_file_exists "${TEST_KEYCHAIN}"
 
   run _teardown
   assert_success
+  assert_file_not_exists "${TEST_KEYCHAIN}"
+}
+
+@test "don't setup keychain in ~/Library/Keychains" {
+  run _setup
+  assert_success
+  assert_file_exists "${TEST_KEYCHAIN}"
+
   run ls ~/Library/Keychains
-  refute_output --partial "${TEST_KEYCHAIN}"
+  refute_output --partial "$(basename "${TEST_KEYCHAIN}")"
 }

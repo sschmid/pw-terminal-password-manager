@@ -2,10 +2,9 @@ load 'test_helper/bats-support/load.bash'
 load 'test_helper/bats-assert/load.bash'
 load 'test_helper/bats-file/load.bash'
 
-TEST_KEYCHAIN=pw_test.keychain-db
+TEST_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_test.keychain-db"
 
 _setup() {
-  security delete-keychain "${TEST_KEYCHAIN}" || true
   security create-keychain -p pw_test_password "${TEST_KEYCHAIN}"
 }
 

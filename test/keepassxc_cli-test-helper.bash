@@ -23,7 +23,6 @@ EOF
 }
 
 _setup() {
-  rm -f "${TEST_KEYCHAIN}"
   _keepassxc-cli_with_db_password_and_entry_password "${TEST_PASSWORD}" db-create -qp "${TEST_KEYCHAIN}"
 }
 
