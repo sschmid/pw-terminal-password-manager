@@ -3,7 +3,15 @@ PW_ACCOUNT=""
 declare -ig PW_FZF=0
 
 pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
-pw::open() { open -a "Keychain Access" ~/Library/Keychains/"${PW_KEYCHAIN}"; }
+
+pw::open() {
+  if [[ -f "${PW_KEYCHAIN}" ]]; then
+    open -a "Keychain Access" "${PW_KEYCHAIN}"
+  elif [[ -f "${HOME}/Library/Keychains/${PW_KEYCHAIN}" ]]; then
+    open -a "Keychain Access" "${HOME}/Library/Keychains/${PW_KEYCHAIN}"
+  fi
+}
+
 pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
 pw::unlock() { security unlock-keychain "${PW_KEYCHAIN}"; }
 
