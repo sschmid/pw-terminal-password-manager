@@ -1,5 +1,5 @@
 # This a sample plugin that you can copy paste as a template for your own plugins.
-# The sample plugin is ignored by pw and will not be loaded.
+# This sample plugin is ignored by pw and will not be loaded.
 FILE_TYPE="Put the file type here. Use 'file -b <file>' to get it, e.g. 'file -b my-keychain.xyz'"
 FILE_EXTENSION="Put the file extension here. e.g. 'xyz'"
 

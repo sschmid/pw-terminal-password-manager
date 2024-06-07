@@ -1,5 +1,5 @@
 # This a sample plugin that you can copy paste as a template for your own plugins.
-# The sample plugin is ignored by pw and will not be loaded.
+# This sample plugin is ignored by pw and will not be loaded.
 # Relevanted places are marked with TOBEIMPLEMENTED.
 # This sample resambles the behavior of the default plugin.
 # Change the behavior to match your needs.
