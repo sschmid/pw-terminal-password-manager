@@ -67,7 +67,7 @@ pw::rm() {
   local -i remove=1
   pw::select_entry_with_prompt remove "$@"
   if ((PW_FZF)); then
-    read -rp "Do you really want to remove ${PW_ENTRY} from ${PW_KEYCHAIN}? (y / n): "
+    read -rp "Do you really want to remove ${PW_ENTRY} from ${PW_KEYCHAIN}? (y / N): "
     [[ "${REPLY}" == "y" ]] || remove=0
   fi
 
