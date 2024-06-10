@@ -2,7 +2,14 @@ PW_ENTRY=""
 PW_ACCOUNT=""
 declare -ig PW_FZF=0
 
-pw::init() { security create-keychain -P "${PW_KEYCHAIN}"; }
+pw::init() {
+  if [[ -p /dev/stdin ]]; then
+    IFS= read -r password
+    security create-keychain -p "${password}" "${PW_KEYCHAIN}"
+  else
+    security create-keychain -P "${PW_KEYCHAIN}"
+  fi
+}
 
 pw::open() {
   if [[ -f "${PW_KEYCHAIN}" ]]; then
