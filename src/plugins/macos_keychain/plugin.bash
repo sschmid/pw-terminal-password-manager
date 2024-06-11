@@ -20,7 +20,14 @@ pw::open() {
 }
 
 pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
-pw::unlock() { security unlock-keychain "${PW_KEYCHAIN}"; }
+pw::unlock() {
+  if [[ -p /dev/stdin ]]; then
+    IFS= read -r password
+    security unlock-keychain -p "${password}" "${PW_KEYCHAIN}"
+  else
+    security unlock-keychain "${PW_KEYCHAIN}"
+  fi
+}
 
 pw::add() {
   _addOrEdit 0 "$@"
