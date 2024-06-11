@@ -60,7 +60,7 @@ pw::rm() {
     read -rp "Do you really want to remove ${PW_ENTRY:+"'${PW_ENTRY}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / N): "
     [[ "${REPLY}" == "y" ]] || remove=0
   fi
-  ((!remove)) || security delete-generic-password -s "${PW_ENTRY}" -a "${PW_ACCOUNT}" "${PW_KEYCHAIN}" > /dev/null
+  ((!remove)) || security delete-generic-password ${PW_ENTRY:+-s "${PW_ENTRY}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} "${PW_KEYCHAIN}" > /dev/null
 }
 
 pw::list() {
