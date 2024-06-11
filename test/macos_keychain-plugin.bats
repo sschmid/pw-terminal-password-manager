@@ -1,6 +1,8 @@
 setup() {
+  load 'pw-test-helper.bash'
   load 'macos_keychain.bash'
-  _setup
+  _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
+  pw init "${TEST_KEYCHAIN}" <<< " pw test password "
   nameA=" a test name "
   nameB=" b test name "
   accountA=" a test account "
@@ -10,17 +12,21 @@ setup() {
   pw3=" 3 test pw "
 }
 
-teardown() {
-  _teardown
+teardown() { _teardown; }
+
+_pw_with_password() {
+  local password="$1"
+  shift
+  pw "$@" <<< "${password}"
 }
 
 ################################################################################
 # no item
 ################################################################################
 
-assert_no_item_with_name()             { run _get_item_with_name "$1";                  _assert_no_item; }
-assert_no_item_with_account()          { run _get_item_with_account "$1";               _assert_no_item; }
-assert_no_item_with_name_and_account() { run _get_item_with_name_and_account "$1" "$2"; _assert_no_item; }
+assert_no_item_with_name()             { run pw "$1";      _assert_no_item; run pw -p "$1";      _assert_no_item; }
+assert_no_item_with_account()          { run pw "" "$1";   _assert_no_item; run pw -p "" "$1";   _assert_no_item; }
+assert_no_item_with_name_and_account() { run pw "$1" "$2"; _assert_no_item; run pw -p "$1" "$2"; _assert_no_item; }
 
 @test "doesn't have item with name" {
   assert_no_item_with_name "${nameA}"
@@ -38,18 +44,18 @@ assert_no_item_with_name_and_account() { run _get_item_with_name_and_account "$1
 # add item
 ################################################################################
 
-add_item_with_name()             { run _add_item_with_name "$1" "$2";                  assert_success; }
-add_item_with_account()          { run _add_item_with_account "$1" "$2";               assert_success; }
-add_item_with_name_and_account() { run _add_item_with_name_and_account "$1" "$2" "$3"; assert_success; }
+add_item_with_name()             { run _pw_with_password "$2" add "$1";      assert_success; }
+add_item_with_account()          { run _pw_with_password "$2" add "" "$1";   assert_success; }
+add_item_with_name_and_account() { run _pw_with_password "$3" add "$1" "$2"; assert_success; }
 
 _assert_item() {
   assert_success
   assert_output "$1"
 }
 
-assert_item_with_name()             { run _get_item_with_name "$1";                  _assert_item "$2"; }
-assert_item_with_account()          { run _get_item_with_account "$1";               _assert_item "$2"; }
-assert_item_with_name_and_account() { run _get_item_with_name_and_account "$1" "$2"; _assert_item "$3"; }
+assert_item_with_name()             { run pw "$1";      assert_success; refute_output; run pbpaste; _assert_item "$2"; run pw -p "$1";      _assert_item "$2"; }
+assert_item_with_account()          { run pw "" "$1";   assert_success; refute_output; run pbpaste; _assert_item "$2"; run pw -p "" "$1";   _assert_item "$2"; }
+assert_item_with_name_and_account() { run pw "$1" "$2"; assert_success; refute_output; run pbpaste; _assert_item "$3"; run pw -p "$1" "$2"; _assert_item "$3"; }
 
 @test "adds item with name" {
   add_item_with_name "${nameA}" "${pw1}"
@@ -116,9 +122,9 @@ assert_item_with_name_and_account() { run _get_item_with_name_and_account "$1" "
 # add duplicate
 ################################################################################
 
-assert_fail_add_item_with_name()             { run _add_item_with_name "$1" "$2";                  _assert_fail_add_item; }
-assert_fail_add_item_with_account()          { run _add_item_with_account "$1" "$2";               _assert_fail_add_item; }
-assert_fail_add_item_with_name_and_account() { run _add_item_with_name_and_account "$1" "$2" "$3"; _assert_fail_add_item; }
+assert_fail_add_item_with_name()             { run _pw_with_password "$2" add "$1";      _assert_fail_add_item; }
+assert_fail_add_item_with_account()          { run _pw_with_password "$2" add "" "$1";   _assert_fail_add_item; }
+assert_fail_add_item_with_name_and_account() { run _pw_with_password "$2" add "$1" "$2"; _assert_fail_add_item; }
 
 @test "fails when adding item with existing name" {
   add_item_with_name "${nameA}" "${pw1}"
@@ -139,9 +145,9 @@ assert_fail_add_item_with_name_and_account() { run _add_item_with_name_and_accou
 # delete item
 ################################################################################
 
-delete_item_with_name()             { run _delete_item_with_name "$1";                  assert_success; }
-delete_item_with_account()          { run _delete_item_with_account "$1";               assert_success; }
-delete_item_with_name_and_account() { run _delete_item_with_name_and_account "$1" "$2"; assert_success; }
+delete_item_with_name()             { run pw rm "$1";      assert_success; }
+delete_item_with_account()          { run pw rm "" "$1";   assert_success; }
+delete_item_with_name_and_account() { run pw rm "$1" "$2"; assert_success; }
 
 @test "deletes item with name" {
   add_item_with_name "${nameA}" "${pw1}"
@@ -173,9 +179,9 @@ delete_item_with_name_and_account() { run _delete_item_with_name_and_account "$1
 # delete non existing item
 ################################################################################
 
-assert_fail_delete_item_with_name()             { run _delete_item_with_name "$1";                  _assert_no_item; }
-assert_fail_delete_item_with_account()          { run _delete_item_with_account "$1";               _assert_no_item; }
-assert_fail_delete_item_with_name_and_account() { run _delete_item_with_name_and_account "$1" "$2"; _assert_no_item; }
+assert_fail_delete_item_with_name()             { run pw rm "$1";      _assert_no_item; }
+assert_fail_delete_item_with_account()          { run pw rm "" "$1";   _assert_no_item; }
+assert_fail_delete_item_with_name_and_account() { run pw rm "$1" "$2"; _assert_no_item; }
 
 @test "fails when deleting non existing item with name" {
   assert_fail_delete_item_with_name "${nameA}"
@@ -193,9 +199,9 @@ assert_fail_delete_item_with_name_and_account() { run _delete_item_with_name_and
 # update item
 ################################################################################
 
-update_item_with_name()             { run _update_item_with_name "$1" "$2";                  assert_success; }
-update_item_with_account()          { run _update_item_with_account "$1" "$2";               assert_success; }
-update_item_with_name_and_account() { run _update_item_with_name_and_account "$1" "$2" "$3"; assert_success; }
+update_item_with_name()             { run _pw_with_password "$2" edit "$1";      assert_success; }
+update_item_with_account()          { run _pw_with_password "$2" edit "" "$1";   assert_success; }
+update_item_with_name_and_account() { run _pw_with_password "$3" edit "$1" "$2"; assert_success; }
 
 @test "updates item with existing name" {
   add_item_with_name "${nameA}" "${pw1}"
@@ -239,7 +245,7 @@ update_item_with_name_and_account() { run _update_item_with_name_and_account "$1
 ################################################################################
 
 @test "lists no items" {
-  run _list_items
+  run pw ls
   assert_success
   refute_output
 }
@@ -247,7 +253,7 @@ update_item_with_name_and_account() { run _update_item_with_name_and_account "$1
 @test "lists sorted items" {
   add_item_with_name_and_account "${nameB}" "${accountB}" "${pw2}"
   add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  run _list_items
+  run pw ls
   assert_success
   cat << EOF | assert_output -
 ${nameA}                           	${accountA}
@@ -257,14 +263,39 @@ EOF
 
 @test "lists handles <NULL> name" {
   add_item_with_account "${accountA}" "${pw1}"
-  run _list_items
+  run pw ls
   assert_success
   assert_output "                                        	${accountA}"
 }
 
 @test "lists handles <NULL> account" {
   add_item_with_name "${nameA}" "${pw1}"
-  run _list_items
+  run pw ls
   assert_success
   assert_output "${nameA}                           	"
+}
+
+################################################################################
+# clipboard
+################################################################################
+
+@test "clears clipboard after copying item" {
+  # shellcheck disable=SC2030,SC2031
+  export PW_CLIP_TIME=1
+  add_item_with_name "${nameA}" "${pw1}"
+  run pw "${nameA}"
+  sleep 2
+  run pbpaste
+  refute_output
+}
+
+@test "doesn't clear clipboard when changed" {
+  # shellcheck disable=SC2030,SC2031
+  export PW_CLIP_TIME=1
+  add_item_with_name "${nameA}" "${pw1}"
+  run pw "${nameA}"
+  echo -n "changed" | pbcopy
+  sleep 2
+  run pbpaste
+  assert_output "changed"
 }

@@ -106,7 +106,7 @@ Supported file types are:
 EOF
     printf '%s\n' "${file_types[@]}" >&2
   else
-    echo "pw: ${PW_KEYCHAIN}: No such file" >&2
+    echo "pw: ${PW_KEYCHAIN}: No such file or directory" >&2
   fi
 
   exit 1
@@ -148,16 +148,20 @@ pw::plugins() {
 
 PW_PASSWORD=""
 pw::prompt_password() {
-  local entry="$1" retype
-  read -rsp "Enter password for ${entry}:"$'\n' PW_PASSWORD
-  if [[ -n "${PW_PASSWORD}" ]]; then
-    read -rsp "Retype password for ${entry}:"$'\n' retype
-    if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
-      echo "Error: the entered passwords do not match." >&2
-      exit 1
-    fi
+  if [[ -p /dev/stdin ]]; then
+    IFS= read -r PW_PASSWORD
   else
-    PW_PASSWORD="$(pw::gen 1)"
+    local entry="$1" retype
+    read -rsp "Enter password for ${entry}:"$'\n' PW_PASSWORD
+    if [[ -n "${PW_PASSWORD}" ]]; then
+      read -rsp "Retype password for ${entry}:"$'\n' retype
+      if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
+        echo "Error: the entered passwords do not match." >&2
+        exit 1
+      fi
+    else
+      PW_PASSWORD="$(pw::gen 1)"
+    fi
   fi
 }
 

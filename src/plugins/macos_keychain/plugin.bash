@@ -33,14 +33,10 @@ pw::edit() {
 
 _addOrEdit() {
   local -i edit=$1; shift
-  local entry account
-  entry="$1" account="${2:-}"
+  local entry="$1" account="${2:-}"
   pw::prompt_password "${entry}"
-
-  if ((edit))
-  then security add-generic-password -U -a "${account}" -s "${entry}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
-  else security add-generic-password -a "${account}" -s "${entry}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
-  fi
+  ((edit)) || unset edit
+  security add-generic-password ${edit:+-U} -s "${entry}" -a "${account}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
 }
 
 pw::get() {
@@ -50,11 +46,10 @@ pw::get() {
   else pw::select_entry_with_prompt copy "$@"
   fi
   local password
-  password="$(security find-generic-password ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -s "${PW_ENTRY}" -w "${PW_KEYCHAIN}")"
-  if ((print)); then
-    echo "${password}"
-  else
-    pw::clip_and_forget "${password}"
+  password="$(security find-generic-password ${PW_ENTRY:+-s "${PW_ENTRY}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -w "${PW_KEYCHAIN}")"
+  if ((print))
+  then echo "${password}"
+  else pw::clip_and_forget "${password}"
   fi
 }
 
@@ -65,7 +60,7 @@ pw::rm() {
     read -rp "Do you really want to remove ${PW_ENTRY:+"'${PW_ENTRY}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / N): "
     [[ "${REPLY}" == "y" ]] || remove=0
   fi
-  ((!remove)) || security delete-generic-password -a "${PW_ACCOUNT}" -s "${PW_ENTRY}" "${PW_KEYCHAIN}" > /dev/null
+  ((!remove)) || security delete-generic-password -s "${PW_ENTRY}" -a "${PW_ACCOUNT}" "${PW_KEYCHAIN}" > /dev/null
 }
 
 pw::list() {
@@ -80,15 +75,13 @@ pw::list() {
     [[ "${name}" == "<NULL>" ]] && name=""
     [[ "${account}" == "<NULL>" ]] && account=""
     printf "%-40s\t%s\n" "${name}" "${account}"
-  done | sort
+  done | LC_ALL=C sort
 }
 
 pw::select_entry_with_prompt() {
   local fzf_prompt="$1"; shift
   if (($#)); then
-    PW_ENTRY="$1"
-    PW_ACCOUNT="${2:-}"
-    PW_FZF=0
+    PW_ENTRY="$1" PW_ACCOUNT="${2:-}" PW_FZF=0
   else
     local entry account
     while IFS=$'\t' read -r entry account; do
