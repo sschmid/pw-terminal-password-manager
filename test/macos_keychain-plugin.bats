@@ -15,8 +15,7 @@ setup() {
 teardown() { _teardown; }
 
 _pw_with_password() {
-  local password="$1"
-  shift
+  local password="$1"; shift
   pw "$@" <<< "${password}"
 }
 
