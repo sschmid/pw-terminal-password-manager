@@ -9,3 +9,7 @@ _set_pwrc_with_keychains() {
   export PW_RC="${BATS_TEST_TMPDIR}/pwrc.bash"
   echo "PW_KEYCHAINS=($1)" > "${PW_RC}"
 }
+
+_skip_when_github_action() {
+  [[ "${PROJECT_ROOT}" != "/Users/runner/work/"* ]] || skip "$@"
+}
