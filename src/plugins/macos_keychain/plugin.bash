@@ -88,7 +88,7 @@ pw::select_entry_with_prompt() {
       PW_ENTRY="$(echo "${entry}" | xargs)"
       PW_ACCOUNT="$(echo "${account}" | xargs)"
     done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
-    [[ -n "${PW_ENTRY}" && -n "${PW_ACCOUNT}" ]] || exit 1
+    [[ -n "${PW_ENTRY}" || -n "${PW_ACCOUNT}" ]] || exit 1
     # shellcheck disable=SC2034
     PW_FZF=1
   fi
