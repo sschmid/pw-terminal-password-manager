@@ -62,8 +62,7 @@ assert_pw_home() {
   assert_success
   refute_output
   run pbpaste
-  run echo "${#output}"
-  assert_output "${PW_GEN_LENGTH}"
+  (("${#output}" == "${PW_GEN_LENGTH}"))
 }
 
 @test "generates and prints password" {
@@ -73,8 +72,7 @@ assert_pw_home() {
   run pw -p gen
   assert_success
   assert_output
-  run echo "${#output}"
-  assert_output "${PW_GEN_LENGTH}"
+  (("${#output}" == "${PW_GEN_LENGTH}"))
 }
 
 @test "ignores sample plugin" {
