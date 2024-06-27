@@ -71,18 +71,15 @@ pw::rm() {
 }
 
 pw::list() {
-  local dump
-  local -a names accounts name account
-  dump="$(security dump-keychain "${PW_KEYCHAIN}")"
-  mapfile -t names < <(echo "${dump}" | grep "svce" | awk -F= '{print $2}' | tr -d \")
-  mapfile -t accounts < <(echo "${dump}" | grep "acct" | awk -F= '{print $2}' | tr -d \")
-  for ((i = 0; i < ${#names[@]}; i++)); do
-    name="${names[i]}"
-    account="${accounts[i]}"
-    [[ "${name}" == "<NULL>" ]] && name=""
-    [[ "${account}" == "<NULL>" ]] && account=""
-    printf "%-40s\t%s\n" "${name}" "${account}"
-  done | LC_ALL=C sort
+  security dump-keychain "${PW_KEYCHAIN}" | awk '
+    BEGIN { FS="<blob>="; OFS="\t" }
+    /"acct"/ {
+      account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+    }
+    /"svce"/ {
+      name = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+      printf "%-40s\t%s\n", name, account
+    }' | LC_ALL=C sort
 }
 
 pw::select_entry_with_prompt() {

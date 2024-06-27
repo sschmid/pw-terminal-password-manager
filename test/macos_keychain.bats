@@ -266,3 +266,10 @@ EOF
   assert_success
   assert_output "${nameA}                           	"
 }
+
+@test "lists handles = in name" {
+  assert_add_item "te=st" "" "${pw1}"
+  run pw::plugin_ls
+  assert_success
+  assert_output "te=st                                   	"
+}
