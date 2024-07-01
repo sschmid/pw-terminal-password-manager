@@ -17,6 +17,6 @@ _skip_manual_test() {
   fi
 }
 
-_skip_when_github_action() {
+_skip_if_github_action() {
   [[ "${PROJECT_ROOT}" != "/Users/runner/work/"* ]] || skip "$@"
 }
