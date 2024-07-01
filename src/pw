@@ -62,10 +62,10 @@ commands:
   [-p] no command             copy (or print) password using fuzzy finder
   [-p] <name> [<account>]     copy (or print) password
   init <keychain>             create keychain
-  add <name> [<account>]      add entry (leave password empty to generate one)
-  edit [<name>] [<account>]   edit entry (leave password empty to generate one)
-  rm [<name>] [<account>]     remove entry
-  ls                          list all entries
+  add <name> [<account>]      add item (leave password empty to generate one)
+  edit [<name>] [<account>]   edit item (leave password empty to generate one)
+  rm [<name>] [<account>]     remove item
+  ls                          list all items
   gen                         generate password
   open                        open keychain in native gui
   lock                        lock keychain
@@ -151,10 +151,10 @@ pw::prompt_password() {
   if [[ -p /dev/stdin ]]; then
     IFS= read -r PW_PASSWORD
   else
-    local entry="$1" retype
-    read -rsp "Enter password for ${entry}:"$'\n' PW_PASSWORD
+    local name="$1" retype
+    read -rsp "Enter password for ${name}:"$'\n' PW_PASSWORD
     if [[ -n "${PW_PASSWORD}" ]]; then
-      read -rsp "Retype password for ${entry}:"$'\n' retype
+      read -rsp "Retype password for ${name}:"$'\n' retype
       if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
         echo "Error: the entered passwords do not match." >&2
         exit 1
