@@ -1,6 +1,8 @@
 setup() {
-  load 'macos_keychain.bash'
+  load 'macos_keychain'
   _setup
+  pw::plugin_init
+
   nameA=" a test name "
   nameB=" b test name "
   accountA=" a test account "
@@ -10,226 +12,248 @@ setup() {
   pw3=" 3 test pw "
 }
 
-teardown() { _teardown; }
+teardown() {
+  _delete_keychain
+}
 
 ################################################################################
-# no item
+# init
 ################################################################################
 
-assert_no_item_with_name()             { run _get_item_with_name "$1";                  _assert_no_item; }
-assert_no_item_with_account()          { run _get_item_with_account "$1";               _assert_no_item; }
-assert_no_item_with_name_and_account() { run _get_item_with_name_and_account "$1" "$2"; _assert_no_item; }
+@test "init fails when keychain already exists" {
+  run pw::plugin_init
+  assert_failure
+  assert_output "security: SecKeychainCreate ${PW_KEYCHAIN}: A keychain with the same name already exists."
+}
+
+################################################################################
+# get
+################################################################################
+
+assert_item_exists() {
+  local password="$1"; shift
+  run pw::plugin_get "$@"
+  assert_success
+  assert_output "${password}"
+}
+
+assert_item_not_exists() {
+  run pw::plugin_get "$@"
+  assert_failure
+  assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
+}
 
 @test "doesn't have item with name" {
-  assert_no_item_with_name "${nameA}"
+  assert_item_not_exists "${nameA}"
 }
 
 @test "doesn't have item with account" {
-  assert_no_item_with_account "${accountA}"
+  assert_item_not_exists "" "${accountA}"
 }
 
 @test "doesn't have item with name and account" {
-  assert_no_item_with_name_and_account "${nameA}" "${accountA}"
+  assert_item_not_exists "${nameA}" "${accountA}"
 }
 
 ################################################################################
-# add item
+# add
 ################################################################################
 
-add_item_with_name()             { run _add_item_with_name "$1" "$2";                  assert_success; }
-add_item_with_account()          { run _add_item_with_account "$1" "$2";               assert_success; }
-add_item_with_name_and_account() { run _add_item_with_name_and_account "$1" "$2" "$3"; assert_success; }
-
-_assert_item() {
+assert_adds_item() {
+  run pw::plugin_add "$@"
   assert_success
-  assert_output "$1"
+  refute_output
 }
-
-assert_item_with_name()             { run _get_item_with_name "$1";                  _assert_item "$2"; }
-assert_item_with_account()          { run _get_item_with_account "$1";               _assert_item "$2"; }
-assert_item_with_name_and_account() { run _get_item_with_name_and_account "$1" "$2"; _assert_item "$3"; }
 
 @test "adds item with name" {
-  add_item_with_name "${nameA}" "${pw1}"
-  assert_item_with_name "${nameA}" "${pw1}"
+  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_item_exists "${pw1}" "${nameA}"
 }
 
 @test "adds item with account" {
-  add_item_with_account "${accountA}" "${pw1}"
-  assert_item_with_account "${accountA}" "${pw1}"
+  assert_adds_item "" "${accountA}" "${pw1}"
+  assert_item_exists "${pw1}" "" "${accountA}"
 }
 
 @test "adds item with name and account" {
-  add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  assert_item_with_name "${nameA}" "${pw1}"
-  assert_item_with_account "${accountA}" "${pw1}"
-  assert_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_item_exists "${pw1}" "${nameA}"
+  assert_item_exists "${pw1}" "" "${accountA}"
+  assert_item_exists "${pw1}" "${nameA}" "${accountA}"
 }
 
 ################################################################################
-# add another item
+# add another
 ################################################################################
 
 @test "adds item with different name" {
-  add_item_with_name "${nameA}" "${pw1}"
-  add_item_with_name "${nameB}" "${pw2}"
-  assert_item_with_name "${nameA}" "${pw1}"
-  assert_item_with_name "${nameB}" "${pw2}"
+  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_adds_item "${nameB}" "" "${pw2}"
+  assert_item_exists "${pw1}" "${nameA}"
+  assert_item_exists "${pw2}" "${nameB}"
 }
 
 @test "adds item with different account" {
-  add_item_with_account "${accountA}" "${pw1}"
-  add_item_with_account "${accountB}" "${pw2}"
-  assert_item_with_account "${accountA}" "${pw1}"
-  assert_item_with_account "${accountB}" "${pw2}"
+  assert_adds_item "" "${accountA}" "${pw1}"
+  assert_adds_item "" "${accountB}" "${pw2}"
+  assert_item_exists "${pw1}" "" "${accountA}"
+  assert_item_exists "${pw2}" "" "${accountB}"
 }
 
-@test "adds item with different name and existing account" {
-  add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  add_item_with_name_and_account "${nameB}" "${accountA}" "${pw2}"
+@test "adds item with different name and same account" {
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
 
-  assert_item_with_name "${nameA}" "${pw1}"
-  assert_item_with_name "${nameB}" "${pw2}"
+  assert_item_exists "${pw1}" "${nameA}"
+  assert_item_exists "${pw2}" "${nameB}"
 
-  assert_item_with_account "${accountA}" "${pw1}"
+  assert_item_exists "${pw1}" "" "${accountA}"
 
-  assert_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  assert_item_with_name_and_account "${nameB}" "${accountA}" "${pw2}"
+  assert_item_exists "${pw1}" "${nameA}" "${accountA}"
+  assert_item_exists "${pw2}" "${nameB}" "${accountA}"
 }
 
-@test "adds item with existing name and different account" {
-  add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  add_item_with_name_and_account "${nameA}" "${accountB}" "${pw2}"
+@test "adds item with same name and different account" {
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_adds_item "${nameA}" "${accountB}" "${pw2}"
 
-  assert_item_with_name "${nameA}" "${pw1}"
+  assert_item_exists "${pw1}" "${nameA}"
 
-  assert_item_with_account "${accountA}" "${pw1}"
-  assert_item_with_account "${accountB}" "${pw2}"
+  assert_item_exists "${pw1}" "" "${accountA}"
+  assert_item_exists "${pw2}" "" "${accountB}"
 
-  assert_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  assert_item_with_name_and_account "${nameA}" "${accountB}" "${pw2}"
+  assert_item_exists "${pw1}" "${nameA}" "${accountA}"
+  assert_item_exists "${pw2}" "${nameA}" "${accountB}"
 }
 
 ################################################################################
 # add duplicate
 ################################################################################
 
-assert_fail_add_item_with_name()             { run _add_item_with_name "$1" "$2";                  _assert_fail_add_item; }
-assert_fail_add_item_with_account()          { run _add_item_with_account "$1" "$2";               _assert_fail_add_item; }
-assert_fail_add_item_with_name_and_account() { run _add_item_with_name_and_account "$1" "$2" "$3"; _assert_fail_add_item; }
+assert_item_already_exists() {
+  run pw::plugin_add "$@"
+  assert_failure
+  assert_output "security: SecKeychainItemCreateFromContent (${PW_KEYCHAIN}): The specified item already exists in the keychain."
+}
 
 @test "fails when adding item with existing name" {
-  add_item_with_name "${nameA}" "${pw1}"
-  assert_fail_add_item_with_name "${nameA}" "${pw2}"
+  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_item_already_exists "${nameA}" "" "${pw2}"
 }
 
 @test "fails when adding item with existing account" {
-  add_item_with_account "${accountA}" "${pw1}"
-  assert_fail_add_item_with_account "${accountA}" "${pw2}"
+  assert_adds_item "" "${accountA}" "${pw1}"
+  assert_item_already_exists "" "${accountA}" "${pw2}"
 }
 
 @test "fails when adding item with existing name and account" {
-  add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  assert_fail_add_item_with_name_and_account "${nameA}" "${accountA}" "${pw2}"
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_item_already_exists "${nameA}" "${accountA}" "${pw2}"
 }
 
 ################################################################################
-# delete item
+# rm
 ################################################################################
 
-delete_item_with_name()             { run _delete_item_with_name "$1";                  assert_success; }
-delete_item_with_account()          { run _delete_item_with_account "$1";               assert_success; }
-delete_item_with_name_and_account() { run _delete_item_with_name_and_account "$1" "$2"; assert_success; }
-
-@test "deletes item with name" {
-  add_item_with_name "${nameA}" "${pw1}"
-  add_item_with_name "${nameB}" "${pw2}"
-  delete_item_with_name "${nameA}"
-  assert_no_item_with_name "${nameA}"
-  assert_item_with_name "${nameB}" "${pw2}"
+assert_removes_item() {
+  run pw::plugin_rm "$@"
+  assert_success
+  assert_output "password has been deleted."
 }
 
-@test "deletes item with account" {
-  add_item_with_account "${accountA}" "${pw1}"
-  add_item_with_account "${accountB}" "${pw2}"
-  delete_item_with_account "${accountA}"
-  assert_no_item_with_account "${accountA}"
-  assert_item_with_account "${accountB}" "${pw2}"
+@test "removes item with name" {
+  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_adds_item "${nameB}" "" "${pw2}"
+  assert_removes_item "${nameA}"
+  assert_item_not_exists "${nameA}"
+  assert_item_exists "${pw2}" "${nameB}"
 }
 
-@test "deletes item with name and account" {
-  add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  add_item_with_name_and_account "${nameB}" "${accountA}" "${pw2}"
-  add_item_with_name_and_account "${nameA}" "${accountB}" "${pw3}"
-  delete_item_with_name_and_account "${nameA}" "${accountA}"
-  assert_no_item_with_name_and_account "${accountA}" "${accountA}"
-  assert_item_with_name_and_account "${nameB}" "${accountA}" "${pw2}"
-  assert_item_with_name_and_account "${nameA}" "${accountB}" "${pw3}"
+@test "removes item with account" {
+  assert_adds_item "" "${accountA}" "${pw1}"
+  assert_adds_item "" "${accountB}" "${pw2}"
+  assert_removes_item "" "${accountA}"
+  assert_item_not_exists "" "${accountA}"
+  assert_item_exists "${pw2}" "" "${accountB}"
+}
+
+@test "removes item with name and account" {
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
+  assert_adds_item "${nameA}" "${accountB}" "${pw3}"
+  assert_removes_item "${nameA}" "${accountA}"
+  assert_item_not_exists "${accountA}" "${accountA}"
+  assert_item_exists "${pw2}" "${nameB}" "${accountA}"
+  assert_item_exists "${pw3}" "${nameA}" "${accountB}"
 }
 
 ################################################################################
-# delete non existing item
+# rm non existing item
 ################################################################################
 
-assert_fail_delete_item_with_name()             { run _delete_item_with_name "$1";                  _assert_no_item; }
-assert_fail_delete_item_with_account()          { run _delete_item_with_account "$1";               _assert_no_item; }
-assert_fail_delete_item_with_name_and_account() { run _delete_item_with_name_and_account "$1" "$2"; _assert_no_item; }
+assert_rm_not_found() {
+  run pw::plugin_rm "$@"
+  assert_failure
+  assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
+}
 
 @test "fails when deleting non existing item with name" {
-  assert_fail_delete_item_with_name "${nameA}"
+  assert_rm_not_found "${nameA}"
 }
 
 @test "fails when deleting non existing item with account" {
-  assert_fail_delete_item_with_account "${accountA}"
+  assert_rm_not_found "" "${accountA}"
 }
 
 @test "fails when deleting non existing item with name and account" {
-  assert_fail_delete_item_with_name_and_account "${nameA}" "${accountA}"
+  assert_rm_not_found "${nameA}" "${accountA}"
 }
 
 ################################################################################
-# update item
+# edit
 ################################################################################
 
-update_item_with_name()             { run _update_item_with_name "$1" "$2";                  assert_success; }
-update_item_with_account()          { run _update_item_with_account "$1" "$2";               assert_success; }
-update_item_with_name_and_account() { run _update_item_with_name_and_account "$1" "$2" "$3"; assert_success; }
-
-@test "updates item with existing name" {
-  add_item_with_name "${nameA}" "${pw1}"
-  update_item_with_name "${nameA}" "${pw2}"
-  assert_item_with_name "${nameA}" "${pw2}"
+assert_edits_item() {
+  run pw::plugin_edit "$@"
+  assert_success
+  refute_output
 }
 
-@test "updates item with existing account" {
-  add_item_with_account "${accountA}" "${pw1}"
-  update_item_with_account "${accountA}" "${pw2}"
-  assert_item_with_account "${accountA}" "${pw2}"
+@test "edits item with name" {
+  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_edits_item "${nameA}" "" "${pw2}"
+  assert_item_exists "${pw2}" "${nameA}"
 }
 
-@test "updates item with existing name and account" {
-  add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  update_item_with_name_and_account "${nameA}" "${accountA}" "${pw2}"
-  assert_item_with_name_and_account "${nameA}" "${accountA}" "${pw2}"
+@test "edits item with account" {
+  assert_adds_item "" "${accountA}" "${pw1}"
+  assert_edits_item "" "${accountA}" "${pw2}"
+  assert_item_exists "${pw2}" "" "${accountA}"
+}
+
+@test "edits item with name and account" {
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_edits_item "${nameA}" "${accountA}" "${pw2}"
+  assert_item_exists "${pw2}" "${nameA}" "${accountA}"
 }
 
 ################################################################################
-# update non existing item
+# edit non existing item
 ################################################################################
 
-@test "adds item when updating non existing item with name" {
-  update_item_with_name "${nameA}" "${pw2}"
-  assert_item_with_name "${nameA}" "${pw2}"
+@test "adds item when editing non existing item with name" {
+  assert_edits_item "${nameA}" "" "${pw2}"
+  assert_item_exists "${pw2}" "${nameA}"
 }
 
-@test "adds item when updating non existing item with account" {
-  update_item_with_account "${accountA}" "${pw2}"
-  assert_item_with_account "${accountA}" "${pw2}"
+@test "adds item when editing non existing item with account" {
+  assert_edits_item "" "${accountA}" "${pw2}"
+  assert_item_exists "${pw2}" "" "${accountA}"
 }
 
-@test "adds item when updating non existing item with name and account" {
-  update_item_with_name_and_account "${nameA}" "${accountA}" "${pw2}"
-  assert_item_with_name_and_account "${nameA}" "${accountA}" "${pw2}"
+@test "adds item when editing non existing item with name and account" {
+  assert_edits_item "${nameA}" "${accountA}" "${pw2}"
+  assert_item_exists "${pw2}" "${nameA}" "${accountA}"
 }
 
 ################################################################################
@@ -237,15 +261,15 @@ update_item_with_name_and_account() { run _update_item_with_name_and_account "$1
 ################################################################################
 
 @test "lists no items" {
-  run _list_items
+  run pw::plugin_ls
   assert_success
   refute_output
 }
 
 @test "lists sorted items" {
-  add_item_with_name_and_account "${nameB}" "${accountB}" "${pw2}"
-  add_item_with_name_and_account "${nameA}" "${accountA}" "${pw1}"
-  run _list_items
+  assert_adds_item "${nameB}" "${accountB}" "${pw2}"
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  run pw::plugin_ls
   assert_success
   cat << EOF | assert_output -
 ${nameA}                           	${accountA}
@@ -253,22 +277,22 @@ ${nameB}                           	${accountB}
 EOF
 }
 
-@test "lists handles <NULL> name" {
-  add_item_with_account "${accountA}" "${pw1}"
-  run _list_items
+@test "ls handles <NULL> name" {
+  assert_adds_item "" "${accountA}" "${pw1}"
+  run pw::plugin_ls
   assert_success
   assert_output "                                        	${accountA}"
 }
 
-@test "lists handles <NULL> account" {
-  add_item_with_name "${nameA}" "${pw1}"
-  run _list_items
+@test "ls handles <NULL> account" {
+  assert_adds_item "${nameA}" "" "${pw1}"
+  run pw::plugin_ls
   assert_success
   assert_output "${nameA}                           	"
 }
 
-@test "lists handles = in name" {
-  assert_add_item "te=st" "" "${pw1}"
+@test "ls handles = in name" {
+  assert_adds_item "te=st" "" "${pw1}"
   run pw::plugin_ls
   assert_success
   assert_output "te=st                                   	"

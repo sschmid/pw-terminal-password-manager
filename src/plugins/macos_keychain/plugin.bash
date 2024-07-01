@@ -1,76 +1,24 @@
-PW_ENTRY=""
-PW_ACCOUNT=""
-declare -ig PW_FZF=0
-
-pw::init() {
-  if [[ -p /dev/stdin ]]; then
-    IFS= read -r password
-    security create-keychain -p "${password}" "${PW_KEYCHAIN}"
-  else
-    security create-keychain -P "${PW_KEYCHAIN}"
-  fi
+pw::plugin_init() {
+  security create-keychain -p "${PW_KEYCHAIN_PASSWORD}" "${PW_KEYCHAIN}"
 }
 
-pw::open() {
-  if [[ -f "${PW_KEYCHAIN}" ]]; then
-    open -a "Keychain Access" "${PW_KEYCHAIN}"
-  elif [[ -f "${HOME}/Library/Keychains/${PW_KEYCHAIN}" ]]; then
-    open -a "Keychain Access" "${HOME}/Library/Keychains/${PW_KEYCHAIN}"
-  fi
+pw::plugin_add() {
+  security add-generic-password -s "$1" -a "$2" -w "$3" "${PW_KEYCHAIN}"
 }
 
-pw::lock() { security lock-keychain "${PW_KEYCHAIN}"; }
-pw::unlock() {
-  if [[ -p /dev/stdin ]]; then
-    IFS= read -r password
-    security unlock-keychain -p "${password}" "${PW_KEYCHAIN}"
-  else
-    security unlock-keychain "${PW_KEYCHAIN}"
-  fi
+pw::plugin_edit() {
+  security add-generic-password -U -s "$1" -a "$2" -w "$3" "${PW_KEYCHAIN}"
 }
 
-pw::add() {
-  _addOrEdit 0 "$@"
+pw::plugin_get() {
+  security find-generic-password ${1:+-s "$1"} ${2:+-a "$2"} -w "${PW_KEYCHAIN}"
 }
 
-pw::edit() {
-  pw::select_entry_with_prompt edit "$@"
-  _addOrEdit 1 "${PW_ENTRY}" "${PW_ACCOUNT}"
+pw::plugin_rm() {
+  security delete-generic-password ${1:+-s "$1"} ${2:+-a "$2"} "${PW_KEYCHAIN}" > /dev/null
 }
 
-_addOrEdit() {
-  local -i edit=$1; shift
-  local entry="$1" account="${2:-}"
-  pw::prompt_password "${entry}"
-  ((edit)) || unset edit
-  security add-generic-password ${edit:+-U} -s "${entry}" -a "${account}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
-}
-
-pw::get() {
-  local -i print=$1; shift
-  if ((print))
-  then pw::select_entry_with_prompt print "$@"
-  else pw::select_entry_with_prompt copy "$@"
-  fi
-  local password
-  password="$(security find-generic-password ${PW_ENTRY:+-s "${PW_ENTRY}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -w "${PW_KEYCHAIN}")"
-  if ((print))
-  then echo "${password}"
-  else pw::clip_and_forget "${password}"
-  fi
-}
-
-pw::rm() {
-  local -i remove=1
-  pw::select_entry_with_prompt remove "$@"
-  if ((PW_FZF)); then
-    read -rp "Do you really want to remove ${PW_ENTRY:+"'${PW_ENTRY}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / N): "
-    [[ "${REPLY}" == "y" ]] || remove=0
-  fi
-  ((!remove)) || security delete-generic-password ${PW_ENTRY:+-s "${PW_ENTRY}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} "${PW_KEYCHAIN}" > /dev/null
-}
-
-pw::list() {
+pw::plugin_ls() {
   security dump-keychain "${PW_KEYCHAIN}" | awk '
     BEGIN { FS="<blob>="; OFS="\t" }
     /"acct"/ {
@@ -82,18 +30,23 @@ pw::list() {
     }' | LC_ALL=C sort
 }
 
-pw::select_entry_with_prompt() {
-  local fzf_prompt="$1"; shift
-  if (($#)); then
-    PW_ENTRY="$1" PW_ACCOUNT="${2:-}" PW_FZF=0
+pw::plugin_open() {
+  if [[ -f "${PW_KEYCHAIN}" ]]; then
+    open -a "Keychain Access" "${PW_KEYCHAIN}"
+  elif [[ -f "${HOME}/Library/Keychains/${PW_KEYCHAIN}" ]]; then
+    open -a "Keychain Access" "${HOME}/Library/Keychains/${PW_KEYCHAIN}"
+  fi
+}
+
+pw::plugin_lock() {
+  security lock-keychain "${PW_KEYCHAIN}"
+}
+
+pw::plugin_unlock() {
+  if [[ -p /dev/stdin ]]; then
+    IFS= read -r password
+    security unlock-keychain -p "${password}" "${PW_KEYCHAIN}"
   else
-    local entry account
-    while IFS=$'\t' read -r entry account; do
-      PW_ENTRY="$(echo "${entry}" | xargs)"
-      PW_ACCOUNT="$(echo "${account}" | xargs)"
-    done < <(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
-    [[ -n "${PW_ENTRY}" || -n "${PW_ACCOUNT}" ]] || exit 1
-    # shellcheck disable=SC2034
-    PW_FZF=1
+    security unlock-keychain "${PW_KEYCHAIN}"
   fi
 }
