@@ -2,28 +2,22 @@
 # shellcheck disable=SC1090,SC1091,SC2119
 set -euo pipefail
 
-if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
-  cat << EOF >&2
-pw requires bash-4.2 or later.
-Installed: ${BASH_VERSION}
-
-Please install bash:
-
-  brew install bash
+pw::require_bash_version() {
+  if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
+    cat << EOF >&2
+  pw requires bash-4.2 or later. Installed: ${BASH_VERSION}
+  Please install a newer version of bash.
 EOF
-  exit 1
-fi
+    exit 1
+  fi
+}
 
-if ! command -v fzf > /dev/null; then
-  cat << EOF >&2
-pw requires fzf. Please install fzf:
-
-  brew install fzf
-
-see https://github.com/junegunn/fzf
-EOF
-  exit 1
-fi
+pw::require_fzf() {
+  if ! command -v fzf > /dev/null; then
+    echo "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf" >&2
+    exit 1
+  fi
+}
 
 declare -i PW_GEN_LENGTH PW_CLIP_TIME
 : "${PW_RC:="${HOME}/.pwrc"}"
@@ -194,6 +188,9 @@ pw::update() {
 }
 
 main() {
+  pw::require_bash_version
+  pw::require_fzf
+
   local -i print=0
   while (($#)); do case "$1" in
     -p) shift; print=1 ;;
