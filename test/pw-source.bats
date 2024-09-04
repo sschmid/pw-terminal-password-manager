@@ -92,6 +92,15 @@ Error: the entered passwords do not match.
 EOF
 }
 
+@test "generates password when empty" {
+  _skip_manual_test "nothing"
+  _source_pw
+  run _intercept_prompt_password
+  assert_success
+  assert_line --index 0 "Enter password for name:"
+  (("${#lines[1]}" == "${PW_GEN_LENGTH}"))
+}
+
 _intercept_prompt_keychain_password() {
   pw::prompt_keychain_password
   echo "${PW_KEYCHAIN_PASSWORD}"
