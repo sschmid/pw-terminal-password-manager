@@ -5,8 +5,8 @@ set -euo pipefail
 pw::require_bash_version() {
   if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
     cat << EOF >&2
-  pw requires bash-4.2 or later. Installed: ${BASH_VERSION}
-  Please install a newer version of bash.
+pw requires bash-4.2 or later. Installed: ${BASH_VERSION}
+Please install a newer version of bash.
 EOF
     exit 1
   fi

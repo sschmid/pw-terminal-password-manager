@@ -9,11 +9,12 @@ _source_pw() {
 }
 
 assert_bash_version_fail() {
-  bats_require_minimum_version 1.5.0
-  BASH_VERSION="$1" run --separate-stderr pw::require_bash_version
+  BASH_VERSION="$1" run pw::require_bash_version
   assert_failure
-  [[ -z "${output}" ]]
-  [[ -n "${stderr}" ]]
+  cat << EOF | assert_output -
+pw requires bash-4.2 or later. Installed: $1
+Please install a newer version of bash.
+EOF
 }
 
 assert_bash_version_success() {
