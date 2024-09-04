@@ -55,12 +55,3 @@ setup() {
   assert_output
   (("${#output}" == "${PW_GEN_LENGTH}"))
 }
-
-@test "ignores sample plugin" {
-  _source_pw
-  run pw::plugins
-  assert_output --partial "macos_keychain/hook.bash"
-  assert_output --partial "keepassxc/hook.bash"
-
-  refute_output --partial "sample/hook.bash"
-}

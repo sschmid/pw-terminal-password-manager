@@ -19,22 +19,23 @@ pw::require_fzf() {
   fi
 }
 
-declare -i PW_GEN_LENGTH PW_CLIP_TIME
-: "${PW_RC:="${HOME}/.pwrc"}"
-: "${PW_GEN_LENGTH:=35}"
-: "${PW_CLIP_TIME:=45}"
-
-[[ ! -f "${PW_RC}" ]] && cat << 'EOF' > "${PW_RC}"
-PW_KEYCHAINS=(login.keychain-db)
-EOF
-source "${PW_RC}"
-[[ -v PW_KEYCHAINS ]] || PW_KEYCHAINS=(login.keychain-db)
-
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
+
+: "${PW_RC:="${HOME}/.pwrc"}"
+[[ ! -f "${PW_RC}" ]] && cat << 'EOF' > "${PW_RC}"
+PW_KEYCHAINS=(login.keychain-db)
+EOF
+
+declare -a PW_KEYCHAINS
+declare -i PW_GEN_LENGTH PW_CLIP_TIME
+source "${PW_RC}"
+: "${PW_GEN_LENGTH:=35}"
+: "${PW_CLIP_TIME:=45}"
+: "${PW_PLUGINS:="${PW_HOME}/src/plugins"}"
 
 pw::help() {
   cat << EOF
@@ -74,36 +75,43 @@ customization:
 EOF
 }
 
-pw::select_db() {
+pw::select_keychain() {
   if [[ -v PW_KEYCHAIN ]]; then
     : # do nothing
   elif ((${#PW_KEYCHAINS[@]} == 1)); then
     PW_KEYCHAIN="${PW_KEYCHAINS[0]}"
   else
-    PW_KEYCHAIN="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="db> " --layout=reverse --info=hidden)"
+    PW_KEYCHAIN="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="keychain> " --layout=reverse --info=hidden)"
   fi
 
   local -a file_types=()
+  local -i found=0
   while read -r file; do
     source "${file}"
     file_types+=("${FILE_TYPE}")
     if register; then
+      if ((found)); then
+        echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
+        exit 1
+      fi
       source "$(dirname "${file}")/plugin.bash"
-      return
+      found=1
     fi
   done < <(pw::plugins)
 
-  if [[ -f "${PW_KEYCHAIN}" ]]; then
-    cat << EOF >&2
+  if ((!found)); then
+    if [[ -f "${PW_KEYCHAIN}" ]]; then
+      cat << EOF >&2
 Could not detect plugin for ${PW_KEYCHAIN}
 Supported file types are:
 EOF
-    printf '%s\n' "${file_types[@]}" >&2
-  else
-    echo "pw: ${PW_KEYCHAIN}: No such file or directory" >&2
-  fi
+      printf '%s\n' "${file_types[@]}" >&2
+    else
+      echo "pw: ${PW_KEYCHAIN}: No such file or directory" >&2
+    fi
 
-  exit 1
+    exit 1
+  fi
 }
 
 pw::infer_plugin() {
@@ -112,32 +120,48 @@ pw::infer_plugin() {
   extension="${extension,,}"
   local -a file_types=()
   local -a file_extensions=()
+  local -i found=0
   while read -r file; do
     source "${file}"
     file_types+=("${FILE_TYPE}")
     file_extensions+=("${FILE_EXTENSION}")
     if register_with_extension "${extension}"; then
+      if ((found)); then
+        echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
+        exit 1
+      fi
       source "$(dirname "${file}")/plugin.bash"
-      return
+      found=1
     fi
   done < <(pw::plugins)
 
-  cat << EOF >&2
+  if ((!found)); then
+    cat << EOF >&2
 Could not detect plugin for ${PW_KEYCHAIN}
 Supported extensions are:
 EOF
-  for i in "${!file_extensions[@]}"; do
-    printf "%s (%s)\n" "${file_extensions[$i]}" "${file_types[$i]}" >&2
-  done
+    for i in "${!file_extensions[@]}"; do
+      printf "%s (%s)\n" "${file_extensions[$i]}" "${file_types[$i]}" >&2
+    done
 
-  exit 1
+    exit 1
+  fi
 }
 
 pw::plugins() {
-  find "${PW_HOME}/src/plugins" \
-    -path "${PW_HOME}/src/plugins/sample" -prune \
+  find "${PW_PLUGINS}" \
+    -path "${PW_PLUGINS}/sample" -prune \
     -type f -o -name "hook.bash" \
     -print
+}
+
+pw::prompt_keychain_password() {
+  if [[ ! -v PW_KEYCHAIN_PASSWORD ]]; then
+    if [[ -p /dev/stdin ]]
+    then IFS= read -r PW_KEYCHAIN_PASSWORD
+    else IFS= read -rsp "Please enter the keychain password:"$'\n' PW_KEYCHAIN_PASSWORD </dev/tty
+    fi
+  fi
 }
 
 PW_PASSWORD=""
@@ -189,6 +213,78 @@ pw::update() {
   popd > /dev/null || exit 1
 }
 
+#
+# BEGIN plugin
+#
+
+PW_NAME=""
+PW_ACCOUNT=""
+declare -ig PW_FZF=0
+
+pw::init() {
+  if [[ -f "${PW_KEYCHAIN}" ]]; then
+    echo "pw: ${PW_KEYCHAIN}: File already exists" >&2
+    exit 1
+  fi
+
+  pw::plugin_init
+}
+
+pw::add() {
+  pw::prompt_password "$1"
+  pw::plugin_add "$1" "${2:-}" "${PW_PASSWORD}"
+}
+
+pw::edit() {
+  pw::select_item_with_prompt edit "$@"
+  pw::prompt_password "${PW_NAME}"
+  pw::plugin_edit "${PW_NAME}" "${PW_ACCOUNT}" "${PW_PASSWORD}"
+}
+
+pw::get() {
+  local -i print=$1; shift
+  if ((print))
+  then pw::select_item_with_prompt print "$@"
+  else pw::select_item_with_prompt copy "$@"
+  fi
+  local password
+  password="$(pw::plugin_get "${PW_NAME}" "${PW_ACCOUNT}")"
+  if ((print))
+  then echo "${password}"
+  else pw::clip_and_forget "${password}"
+  fi
+}
+
+pw::rm() {
+  local -i remove=1
+  pw::select_item_with_prompt remove "$@"
+  if ((PW_FZF)); then
+    read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from ${PW_KEYCHAIN}? (y / N): "
+    [[ "${REPLY}" == "y" ]] || remove=0
+  fi
+  ((!remove)) || pw::plugin_rm "${PW_NAME}" "${PW_ACCOUNT}"
+}
+
+pw::select_item_with_prompt() {
+  local fzf_prompt="$1"; shift
+  if (($#)); then
+    PW_NAME="$1" PW_ACCOUNT="${2:-}" PW_FZF=0
+  else
+    local name account
+    while IFS=$'\t' read -r name account; do
+      PW_NAME="$(echo "${name}" | xargs)"
+      PW_ACCOUNT="$(echo "${account}" | xargs)"
+    done < <(pw::plugin_ls | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)
+    [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" ]] || exit 1
+    # shellcheck disable=SC2034
+    PW_FZF=1
+  fi
+}
+
+#
+# END plugin
+#
+
 main() {
   pw::require_bash_version
   pw::require_fzf
@@ -204,19 +300,19 @@ main() {
   if (($#)); then
     case "$1" in
       init) shift; pw::infer_plugin "$@"; pw::init ;;
-      add) shift; pw::select_db; pw::add "$@" ;;
-      edit) shift; pw::select_db; pw::edit "$@" ;;
-      rm) shift; pw::select_db; pw::rm "$@" ;;
-      ls) shift; pw::select_db; pw::list ;;
+      add) shift; pw::select_keychain; pw::add "$@" ;;
+      edit) shift; pw::select_keychain; pw::edit "$@" ;;
+      rm) shift; pw::select_keychain; pw::rm "$@" ;;
+      ls) shift; pw::select_keychain; pw::plugin_ls ;;
       gen) shift; pw::gen ${print} ;;
-      open) shift; pw::select_db; pw::open ;;
-      lock) shift; pw::select_db; pw::lock ;;
-      unlock) shift; pw::select_db; pw::unlock ;;
+      open) shift; pw::select_keychain; pw::plugin_open ;;
+      lock) shift; pw::select_keychain; pw::plugin_lock ;;
+      unlock) shift; pw::select_keychain; pw::plugin_unlock ;;
       update) shift; pw::update "$@" ;;
-      *) pw::select_db; pw::get ${print} "$@" ;;
+      *) pw::select_keychain; pw::get ${print} "$@" ;;
     esac
   else
-    pw::select_db
+    pw::select_keychain
     pw::get ${print}
   fi
 }
