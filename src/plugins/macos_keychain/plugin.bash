@@ -19,15 +19,31 @@ pw::plugin_rm() {
 }
 
 pw::plugin_ls() {
-  security dump-keychain "${PW_KEYCHAIN}" | awk '
-    BEGIN { FS="<blob>="; OFS="\t" }
-    /"acct"/ {
-      account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-    }
-    /"svce"/ {
-      name = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-      printf "%-40s\t%s\n", name, account
-    }' | LC_ALL=C sort
+  local format="${1:-default}"
+  case "${format}" in
+    fzf)
+      security dump-keychain "${PW_KEYCHAIN}" | awk '
+        BEGIN { FS="<blob>="; }
+        /"acct"/ {
+          account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+        }
+        /"svce"/ {
+          name = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+          printf "%-40s\t%s\t%s\t%s\n", name, account, name, account
+        }' | LC_ALL=C sort
+      ;;
+    *)
+      security dump-keychain "${PW_KEYCHAIN}" | awk '
+        BEGIN { FS="<blob>="; }
+        /"acct"/ {
+          account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+        }
+        /"svce"/ {
+          name = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+          printf "%-40s\t%s\n", name, account
+        }' | LC_ALL=C sort
+      ;;
+  esac
 }
 
 pw::plugin_open() {
