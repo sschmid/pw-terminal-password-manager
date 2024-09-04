@@ -30,6 +30,14 @@ _set_plugin_2() { export PW_TEST_PLUGIN_2=1; }
   assert_output "plugin 1 ls pw_test2.keychain"
 }
 
+@test "pw -k overwrites PW_KEYCHAINS" {
+  _set_pwrc_with_keychains "pw_test1.keychain"
+  _set_plugin_1
+  run pw -k pw_test2.keychain ls
+  assert_success
+  assert_output "plugin 1 ls pw_test2.keychain"
+}
+
 @test "fails when keychain does not exist" {
   export PW_KEYCHAIN="doesNotExist.keychain"
   run pw ls
