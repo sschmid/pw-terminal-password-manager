@@ -5,7 +5,7 @@ setup() {
   export PW_PLUGINS="${PROJECT_ROOT}/test/fixtures/plugins"
 }
 
-_create_keychain() {
+_create_fake_keychain() {
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_test.keychain";
   touch "${PW_KEYCHAIN}"
 }
@@ -38,7 +38,7 @@ _set_plugin_2() { export PW_TEST_PLUGIN_2=1; }
 }
 
 @test "prints supported file types" {
-  _create_keychain
+  _create_fake_keychain
   run pw ls
   assert_failure
   cat << EOF | assert_output -
@@ -61,7 +61,7 @@ EOF
 }
 
 @test "fails when multiple plugins match with file type" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   _set_plugin_2
   run pw ls
@@ -85,7 +85,7 @@ EOF
 }
 
 @test "init fails when keychain already exists" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw init "${PW_KEYCHAIN}"
   assert_failure
@@ -93,7 +93,7 @@ EOF
 }
 
 @test "prints item password" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw -p name account
   assert_success
@@ -101,7 +101,7 @@ EOF
 }
 
 @test "copies item password" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   pw name account
   run pbpaste
@@ -112,7 +112,7 @@ EOF
 @test "clears clipboard after copying item" {
   # shellcheck disable=SC2030,SC2031
   export PW_CLIP_TIME=1
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   pw name account
   sleep 2
@@ -123,7 +123,7 @@ EOF
 @test "doesn't clear clipboard when changed" {
   # shellcheck disable=SC2030,SC2031
   export PW_CLIP_TIME=1
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   pw name account
   echo -n "after" | pbcopy
@@ -133,7 +133,7 @@ EOF
 }
 
 @test "adds item" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw add name account <<< password
   assert_success
@@ -141,7 +141,7 @@ EOF
 }
 
 @test "removes item" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw rm name account
   assert_success
@@ -149,7 +149,7 @@ EOF
 }
 
 @test "edits item" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw edit name account <<< password2
   assert_success
@@ -157,7 +157,7 @@ EOF
 }
 
 @test "lists items" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw ls
   assert_success
@@ -165,7 +165,7 @@ EOF
 }
 
 @test "opens keychain" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw open
   assert_success
@@ -173,7 +173,7 @@ EOF
 }
 
 @test "locks keychain" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw lock
   assert_success
@@ -181,7 +181,7 @@ EOF
 }
 
 @test "unlocks keychain" {
-  _create_keychain
+  _create_fake_keychain
   _set_plugin_1
   run pw unlock
   assert_success
