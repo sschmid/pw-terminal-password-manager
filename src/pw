@@ -173,9 +173,11 @@ pw::clip_and_forget() {
 pw::gen() {
   local -i print=$1; shift
   # shellcheck disable=SC2005
+  local password
+  password="$(LC_CTYPE=C tr -dc '[:graph:]' < /dev/urandom | head -c ${PW_GEN_LENGTH} || true)"
   if ((print))
-  then echo "$(LC_CTYPE=C tr -dc '[:graph:]' < /dev/urandom | head -c ${PW_GEN_LENGTH})"
-  else echo -n "$(LC_CTYPE=C tr -dc '[:graph:]' < /dev/urandom | head -c ${PW_GEN_LENGTH})" | pbcopy
+  then echo "${password}"
+  else pw::clip_and_forget "${password}"
   fi
 }
 

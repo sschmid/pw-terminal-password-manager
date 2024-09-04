@@ -27,6 +27,25 @@ setup() {
   (("${#output}" == "${PW_GEN_LENGTH}"))
 }
 
+@test "clears clipboard after generating password" {
+  # shellcheck disable=SC2030,SC2031
+  export PW_CLIP_TIME=1
+  run pw gen
+  sleep 2
+  run pbpaste
+  refute_output
+}
+
+@test "doesn't clear clipboard when changed" {
+  # shellcheck disable=SC2030,SC2031
+  export PW_CLIP_TIME=1
+  run pw gen
+  echo -n "after" | pbcopy
+  sleep 2
+  run pbpaste
+  assert_output "after"
+}
+
 @test "generates and prints password" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
   # shellcheck disable=SC2030,SC2031
