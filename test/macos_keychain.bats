@@ -1,7 +1,7 @@
 setup() {
   load 'macos_keychain'
   _setup
-  pw::plugin_init
+  pw::plugin_init <<< " test password "
 
   nameA=" a test name "
   nameB=" b test name "
@@ -21,7 +21,7 @@ teardown() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw::plugin_init
+  run pw::plugin_init <<< " test password "
   assert_failure
   assert_output "security: SecKeychainCreate ${PW_KEYCHAIN}: A keychain with the same name already exists."
 }

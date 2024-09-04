@@ -2,7 +2,6 @@ _setup() {
   load 'test-helper'
   _common_setup
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_macos_keychain_test.keychain-db"
-  export PW_KEYCHAIN_PASSWORD=" test password "
   source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
 }
 

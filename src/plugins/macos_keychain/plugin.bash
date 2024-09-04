@@ -1,5 +1,10 @@
 pw::plugin_init() {
-  security create-keychain -p "${PW_KEYCHAIN_PASSWORD}" "${PW_KEYCHAIN}"
+  if [[ -p /dev/stdin ]]; then
+    IFS= read -r password
+    security create-keychain -p "${password}" "${PW_KEYCHAIN}"
+  else
+    security create-keychain "${PW_KEYCHAIN}"
+  fi
 }
 
 pw::plugin_add() {
