@@ -304,7 +304,7 @@ main() {
       add) shift; pw::select_keychain; pw::add "$@" ;;
       edit) shift; pw::select_keychain; pw::edit "$@" ;;
       rm) shift; pw::select_keychain; pw::rm "$@" ;;
-      ls) shift; pw::select_keychain; pw::plugin_ls ;;
+      ls) shift; pw::select_keychain; pw::plugin_ls "$@" ;;
       gen) shift; pw::gen ${print} ;;
       open) shift; pw::select_keychain; pw::plugin_open ;;
       lock) shift; pw::select_keychain; pw::plugin_lock ;;
