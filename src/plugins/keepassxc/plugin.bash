@@ -1,102 +1,81 @@
-: "${PW_KEEPASSXC:="/Applications/KeePassXC.app/Contents/MacOS/keepassxc-cli"}"
+if ! command -v keepassxc-cli > /dev/null; then
+  cat << EOF >&2
+command not found: keepassxc-cli
+Please make sure that KeePassXC is installed and the keepassxc-cli is in your PATH.
+EOF
+  exit 1
+fi
 
-_set_password() {
+pw::prepare_keychain() {
   if [[ ! -v PW_KEEPASSXC_PASSWORD ]]; then
-    read -rsp "Enter password to unlock ${PW_KEYCHAIN}:"$'\n' PW_KEEPASSXC_PASSWORD </dev/tty
+    if [[ -p /dev/stdin ]]; then
+      IFS= read -r PW_KEEPASSXC_PASSWORD
+    else
+      read -rsp "Enter password to unlock ${PW_KEYCHAIN}:"$'\n' PW_KEEPASSXC_PASSWORD </dev/tty
+    fi
   fi
 }
 
-_keepassxc-cli() { "${PW_KEEPASSXC}" "$@"; }
-_keepassxc-cli_with_db_password() { _set_password; _keepassxc-cli "$@" <<< "${PW_KEEPASSXC_PASSWORD}"; }
-_keepassxc-cli_with_db_password_and_entry_password() {
-  _set_password
-  local password="$1"; shift
-  _keepassxc-cli "$@" << EOF
-${PW_KEEPASSXC_PASSWORD}
+pw::plugin_init() {
+  if [[ -p /dev/stdin ]]; then
+    IFS= read -r password
+    keepassxc-cli db-create -qp "${PW_KEYCHAIN}" << EOF
 ${password}
+${password}
+EOF
+  else
+    keepassxc-cli db-create -p "${PW_KEYCHAIN}"
+  fi
+}
+
+pw::plugin_add() {
+  keepassxc-cli add -qp "${PW_KEYCHAIN}" ${2:+-u "$2"} "$1" << EOF
+${PW_KEEPASSXC_PASSWORD}
+$3
 EOF
 }
 
-PW_ENTRY=""
-declare -ig PW_FZF=0
-
-pw::init() { _keepassxc-cli db-create -p "${PW_KEYCHAIN}"; }
-pw::open() { open -a "KeePassXC" "${PW_KEYCHAIN}"; }
-pw::lock() { echo "not available for keepassxc-cli"; }
-pw::unlock() { _keepassxc-cli open "${PW_KEYCHAIN}"; }
-
-pw::add() {
-  _addOrEdit 0 "$@"
+pw::plugin_edit() {
+  keepassxc-cli edit -qp "${PW_KEYCHAIN}" "$1" << EOF
+${PW_KEEPASSXC_PASSWORD}
+$3
+EOF
 }
 
-pw::edit() {
-  pw::select_entry_with_prompt edit "$@"
-  _addOrEdit 1 "${PW_ENTRY}"
+pw::plugin_get() {
+  keepassxc-cli show -qsa password "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
-_addOrEdit() {
-  local -i edit=$1; shift
-  local entry account
-  entry="$1" account="${2:-}"
-  pw::prompt_password "${entry}"
-
-  if ((edit))
-  then _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" edit -qp "${PW_KEYCHAIN}" "${entry}"
-  else _keepassxc-cli_with_db_password_and_entry_password "${PW_PASSWORD}" add -qp "${PW_KEYCHAIN}" -u "${account}" "${entry}"
-  fi
+pw::plugin_rm() {
+  keepassxc-cli rm -q "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
-pw::get() {
-  local -i print=$1; shift
-  if ((print))
-  then pw::select_entry_with_prompt print "$@"
-  else pw::select_entry_with_prompt copy "$@"
-  fi
-  local password
-  password="$(_keepassxc-cli_with_db_password show -qsa Password "${PW_KEYCHAIN}" "${PW_ENTRY}")"
-  if ((print)); then
-    echo "${password}"
-  else
-    pw::clip_and_forget "${password}"
-  fi
-}
-
-pw::rm() {
-  local -i remove=1
-  pw::select_entry_with_prompt remove "$@"
-  if ((PW_FZF)); then
-    read -rp "Do you really want to remove ${PW_ENTRY} from ${PW_KEYCHAIN}? (y / N): "
-    [[ "${REPLY}" == "y" ]] || remove=0
-  fi
-  ((!remove)) || _keepassxc-cli_with_db_password rm -q "${PW_KEYCHAIN}" "${PW_ENTRY}"
-}
-
-pw::list() {
-  local list
-  if ! list="$(_keepassxc-cli_with_db_password ls -qfR "${PW_KEYCHAIN}" \
-    | grep -v -e '/$' -e 'Recycle Bin/' \
-    | sort)"
+pw::plugin_ls() {
+  local format="${1:-default}" list
+  if ! list="$(keepassxc-cli ls -qfR "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" \
+    | { grep -v -e '/$' -e 'Recycle Bin/' || true; } \
+    | LC_ALL=C sort)"
   then
     echo "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again." >&2
     exit 1
   fi
 
-  [[ "${list}" == "[empty]" ]] || echo "${list}"
+  if [[ "${list}" != "[empty]" ]]; then
+    case "${format}" in
+      fzf) echo "${list}" | awk '{print $0 "\t\t" $0}' ;;
+      *) echo "${list}" ;;
+    esac
+  fi
 }
 
-pw::select_entry_with_prompt() {
-  _set_password
-  local fzf_prompt="$1"; shift
-  if (($#)); then
-    PW_ENTRY="$1"
-    PW_FZF=0
-  else
-    local list
-    list="$(pw::list)"
-    PW_ENTRY="$(echo "${list}" | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
-              --preview="\"${PW_KEEPASSXC}\" show -q \"${PW_KEYCHAIN}\" {} <<< \"${PW_KEEPASSXC_PASSWORD}\"")"
-    [[ -n "${PW_ENTRY}" ]] || exit 1
-    # shellcheck disable=SC2034
-    PW_FZF=1
-  fi
+pw::plugin_open() {
+  open -a "KeePassXC" "${PW_KEYCHAIN}"
+}
+
+pw::plugin_lock() {
+  echo "not available for keepassxc"
+}
+
+pw::plugin_unlock() {
+  keepassxc-cli open "${PW_KEYCHAIN}"
 }

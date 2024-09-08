@@ -1,3 +1,7 @@
+pw::prepare_keychain() {
+  : # this plugin does not require any preparation
+}
+
 pw::plugin_init() {
   if [[ -p /dev/stdin ]]; then
     IFS= read -r password

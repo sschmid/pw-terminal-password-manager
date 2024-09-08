@@ -231,17 +231,20 @@ pw::init() {
 }
 
 pw::add() {
+  pw::prepare_keychain "add"
   pw::prompt_password "$1"
   pw::plugin_add "$1" "${2:-}" "${PW_PASSWORD}"
 }
 
 pw::edit() {
+  pw::prepare_keychain "edit"
   pw::select_item_with_prompt edit "$@"
   pw::prompt_password "${PW_NAME}"
   pw::plugin_edit "${PW_NAME}" "${PW_ACCOUNT}" "${PW_PASSWORD}"
 }
 
 pw::get() {
+  pw::prepare_keychain "get"
   local -i print=$1; shift
   if ((print))
   then pw::select_item_with_prompt print "$@"
@@ -256,6 +259,7 @@ pw::get() {
 }
 
 pw::rm() {
+  pw::prepare_keychain "rm"
   local -i remove=1
   pw::select_item_with_prompt remove "$@"
   if ((PW_FZF)); then
@@ -263,6 +267,11 @@ pw::rm() {
     [[ "${REPLY}" == "y" ]] || remove=0
   fi
   ((!remove)) || pw::plugin_rm "${PW_NAME}" "${PW_ACCOUNT}"
+}
+
+pw::ls() {
+  pw::prepare_keychain "ls"
+  pw::plugin_ls "$@"
 }
 
 pw::select_item_with_prompt() {
@@ -304,7 +313,7 @@ main() {
       add) shift; pw::select_keychain; pw::add "$@" ;;
       edit) shift; pw::select_keychain; pw::edit "$@" ;;
       rm) shift; pw::select_keychain; pw::rm "$@" ;;
-      ls) shift; pw::select_keychain; pw::plugin_ls "$@" ;;
+      ls) shift; pw::select_keychain; pw::ls "$@" ;;
       gen) shift; pw::gen ${print} ;;
       open) shift; pw::select_keychain; pw::plugin_open ;;
       lock) shift; pw::select_keychain; pw::plugin_lock ;;
