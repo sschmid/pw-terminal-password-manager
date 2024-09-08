@@ -10,8 +10,9 @@ _create_fake_keychain() {
   touch "${PW_KEYCHAIN}"
 }
 
-_set_plugin_1() { export PW_TEST_PLUGIN_1=1; }
-_set_plugin_2() { export PW_TEST_PLUGIN_2=1; }
+_set_plugin_1()    { export PW_TEST_PLUGIN_1=1; }
+_set_plugin_2()    { export PW_TEST_PLUGIN_2=1; }
+_set_plugin_fail() { export PW_TEST_PLUGIN_FAIL=1; }
 
 @test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
   _set_pwrc_with_keychains "pw_test.keychain"
@@ -54,6 +55,7 @@ Could not detect plugin for ${PW_KEYCHAIN}
 Supported file types are:
 Test File Type 1
 Test File Type 2
+Test File Type Fail
 EOF
 }
 
@@ -65,6 +67,7 @@ Could not detect plugin for test.keychain
 Supported extensions are:
 test-keychain-1 (Test File Type 1)
 test-keychain-2 (Test File Type 2)
+test-keychain-fail (Test File Type Fail)
 EOF
 }
 
@@ -138,6 +141,14 @@ EOF
   sleep 2
   run pbpaste
   assert_output "after"
+}
+
+@test "fails when item selection fails" {
+  _create_fake_keychain
+  _set_plugin_fail
+  run pw
+  assert_failure
+  refute_output
 }
 
 @test "adds item" {
