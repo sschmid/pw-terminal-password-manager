@@ -1,97 +1,69 @@
-# This a sample plugin that you can copy paste as a template for your own plugins.
+# This is a sample plugin that you can copy and paste as a template for your own plugins.
 # This sample plugin is ignored by pw and will not be loaded.
-# Relevanted places are marked with TOBEIMPLEMENTED.
-# This sample resambles the behavior of the default plugin.
-# Change the behavior to match your needs.
 
-PW_ENTRY=""
-declare -ig PW_FZF=0
-
-_log() { echo "[Sample Plugin] $*"; }
-
-# TOBEIMPLEMENTED
-pw::init() { _log "Creating new keychain '${PW_KEYCHAIN}'"; }
-
-# TOBEIMPLEMENTED
-pw::open() { _log "Opening keychain '${PW_KEYCHAIN}'"; }
-
-# TOBEIMPLEMENTED
-pw::lock() { _log "Locking keychain '${PW_KEYCHAIN}'"; }
-
-# TOBEIMPLEMENTED
-pw::unlock() { _log "Unlocking keychain '${PW_KEYCHAIN}'"; }
-
-pw::add() {
-  _addOrEdit 0 "$@"
+pw::prepare_keychain() {
+  : # Prepare the keychain if necessary, e.g. by unlocking it
 }
 
-pw::edit() {
-  pw::select_entry_with_prompt edit "$@"
-  _addOrEdit 1 "${PW_ENTRY}"
+pw::plugin_init() {
+  echo "[Sample Plugin] Creating new keychain '${PW_KEYCHAIN}'"
 }
 
-_addOrEdit() {
-  local -i edit=$1; shift
-  local entry account
-  entry="$1" account="${2:-}"
-  pw::prompt_password "${entry}"
-
-  if ((edit))
-  # TOBEIMPLEMENTED
-  then _log "Editing entry '${entry}' with account '${account}' in keychain '${PW_KEYCHAIN}'"
-  # TOBEIMPLEMENTED
-  else _log "Adding entry '${entry}' with account '${account}' to keychain '${PW_KEYCHAIN}'"
-  fi
+pw::plugin_add() {
+  echo "[Sample Plugin] Adding item '$1' with account '$2' to keychain '${PW_KEYCHAIN}'"
 }
 
-pw::get() {
-  local -i print=$1; shift
-  if ((print))
-  then pw::select_entry_with_prompt print "$@"
-  else pw::select_entry_with_prompt copy "$@"
-  fi
-  local password
-
-  # TOBEIMPLEMENTED
-  # shellcheck disable=SC2116
-  password="$(echo "sample-password")"
-
-  if ((print)); then
-    echo "${password}"
-  else
-    pw::clip_and_forget "${password}"
-  fi
+pw::plugin_edit() {
+  echo "[Sample Plugin] Editing item '$1' with account '$2' in keychain '${PW_KEYCHAIN}'"
 }
 
-pw::rm() {
-  local -i remove=1
-  pw::select_entry_with_prompt remove "$@"
-  if ((PW_FZF)); then
-    read -rp "Do you really want to remove ${PW_ENTRY} from ${PW_KEYCHAIN}? (y / N): "
-    [[ "${REPLY}" == "y" ]] || remove=0
-  fi
-
-  # TOBEIMPLEMENTED
-  ((!remove)) || _log "Removing entry '${PW_ENTRY}' from keychain '${PW_KEYCHAIN}'"
+pw::plugin_get() {
+  echo "sample-password"
 }
 
-pw::list() {
-  # TOBEIMPLEMENTED
-  echo -e "sample entry1\nsample entry2\nsample entry3"
+pw::plugin_rm() {
+  echo "[Sample Plugin] Removing item '$1' from keychain '${PW_KEYCHAIN}'"
 }
 
-pw::select_entry_with_prompt() {
-  local fzf_prompt="$1"; shift
-  if (($#)); then
-    PW_ENTRY="$1"
-    PW_FZF=0
-  else
+pw::plugin_ls() {
+  local format="${1:-default}"
+  local -a sample_items=(
+    "sample_item1"
+    "sample_item2"
+    "sample_item3"
+  )
+  local -a sample_accounts=(
+    "sample_account1"
+    "sample_account2"
+    "sample_account3"
+  )
+  local name account
+  case "${format}" in
+    fzf)
+      for i in "${!sample_items[@]}"; do
+        name="${sample_items[$i]}"
+        account="${sample_accounts[$i]}"
+        printf "%-40s\t%s\t%s\t%s\n" "${name}" "${account}" "${name}" "${account}"
+      done
+      ;;
+    *)
+      for i in "${!sample_items[@]}"; do
+        name="${sample_items[$i]}"
+        account="${sample_accounts[$i]}"
+        printf "%-40s\t%s\n" "${name}" "${account}"
+      done
+      ;;
+  esac
+}
 
-    # TOBEIMPLEMENTED
-    PW_ENTRY="$(pw::list | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden)"
+pw::plugin_open() {
+  echo "[Sample Plugin] Opening keychain '${PW_KEYCHAIN}'"
+}
 
-    [[ -n "${PW_ENTRY}" ]] || exit 1
-    # shellcheck disable=SC2034
-    PW_FZF=1
-  fi
+pw::plugin_lock() {
+  echo "[Sample Plugin] Locking keychain '${PW_KEYCHAIN}'"
+}
+
+pw::plugin_unlock() {
+  echo "[Sample Plugin] Unlocking keychain '${PW_KEYCHAIN}'"
 }
