@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.0] - 2024-09-09
+### Added
+- Added shorter bash version check
+- Added optional `fzf` format to `ls`
+- Added more tests
+- Added `_skip_if_github_action()` for tests
+- Added uninstall instructions. Closes #5
+
+### Fixed
+- Support leading and trailing spaces in entry name and account
+- Clear clipboard after generating password
+- `macos_keychain`: Fix getting entry with empty name or account
+- `macos_keychain`: Fix removing entry with empty name or account
+- `macos_keychain`: Fix `ls` splitting on `=`
+- `macos_keychain`: Accept keychain password from stdin to init
+- `macos_keychain`: Accept keychain password from stdin to unlock
+
+### Changed
+- Drastically simplified plugin architecture and tests
+- Migrated `macos_keychain` and tests to new plugin structure
+- Migrated `keepassxc` and tests to new plugin structure
+
 ## [6.1.2] - 2024-05-18
 ### Fixed
 - `macos_keychain:` Fix not opening keychains with absolute path
@@ -149,7 +171,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw/compare/6.1.2...HEAD
+[Unreleased]: https://github.com/sschmid/pw/compare/7.0.0...HEAD
+[7.0.0]: https://github.com/sschmid/pw/compare/6.1.2...7.0.0
 [6.1.2]: https://github.com/sschmid/pw/compare/6.1.1...6.1.2
 [6.1.1]: https://github.com/sschmid/pw/compare/6.1.0...6.1.1
 [6.1.0]: https://github.com/sschmid/pw/compare/6.0.0...6.1.0
