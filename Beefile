@@ -5,5 +5,5 @@ BEE_PLUGINS=(release)
 
 bee::secrets() { [[ ! -f ~/.bee/secrets.bash ]] || source ~/.bee/secrets.bash; }
 
-GITHUB_REPO="sschmid/${BEE_PROJECT}"
+GITHUB_REPO="sschmid/pw-terminal-password-manager"
 CHANGELOG_URL="https://github.com/${GITHUB_REPO}"
