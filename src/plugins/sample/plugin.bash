@@ -56,6 +56,12 @@ pw::plugin_ls() {
   esac
 }
 
+pw::plugin_fzf_preview() {
+  # 3: item name
+  # 4: account name
+  echo "echo {3} {4}"
+}
+
 pw::plugin_open() {
   echo "[Sample Plugin] Opening keychain '${PW_KEYCHAIN}'"
 }

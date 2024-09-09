@@ -55,6 +55,10 @@ pw::plugin_ls() {
   esac
 }
 
+pw::plugin_fzf_preview() {
+  : # this plugin does not implement fzf preview
+}
+
 pw::plugin_open() {
   if [[ -f "${PW_KEYCHAIN}" ]]; then
     open -a "Keychain Access" "${PW_KEYCHAIN}"

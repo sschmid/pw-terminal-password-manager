@@ -283,7 +283,8 @@ pw::select_item_with_prompt() {
     local item
     item="$(pw::plugin_ls "fzf")"
     item="$(echo "${item}" | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
-                                 --delimiter='\t' --with-nth=1,2 --nth=1,2)"
+                                 --delimiter='\t' --with-nth=1,2 --nth=1,2 \
+                                 --preview="$(pw::plugin_fzf_preview)")"
     PW_NAME="$(awk -F '\t' '{print $3}' <<< "${item}")"
     PW_ACCOUNT="$(awk -F '\t' '{print $4}' <<< "${item}")"
     [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" ]] || exit 1

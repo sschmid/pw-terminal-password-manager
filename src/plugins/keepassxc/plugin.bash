@@ -68,6 +68,10 @@ pw::plugin_ls() {
   fi
 }
 
+pw::plugin_fzf_preview() {
+  echo "keepassxc-cli show -q \"${PW_KEYCHAIN}\" {3} <<< \"${PW_KEEPASSXC_PASSWORD}\""
+}
+
 pw::plugin_open() {
   open -a "KeePassXC" "${PW_KEYCHAIN}"
 }
