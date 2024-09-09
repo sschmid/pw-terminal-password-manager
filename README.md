@@ -29,6 +29,13 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install)
 brew install fzf
 ```
 
+# Uninstall pw and fzf
+
+```bash
+/usr/local/opt/pw/install --uninstall
+brew uninstall fzf
+```
+
 # Usage
 
 ```

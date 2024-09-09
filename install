@@ -9,13 +9,19 @@ set -e
 LOCAL_REPO=/usr/local/opt/pw
 REPO=https://github.com/sschmid/pw
 
-if [[ -d "${LOCAL_REPO}" ]]; then
-  echo "It seems like pw is already installed at ${LOCAL_REPO}"
-  echo "Run 'pw update' to update pw to the latest version"
+if [[ $1 == "--uninstall" ]]; then
+  rm -rf "${LOCAL_REPO}"
+  rm /usr/local/bin/pw
+  echo "pw has been uninstalled successfully"
 else
-  git clone "${REPO}" "${LOCAL_REPO}"
-  echo "Linking ${LOCAL_REPO}/src/pw to /usr/local/bin/pw"
-  mkdir -p /usr/local/bin
-  ln -s "${LOCAL_REPO}/src/pw" /usr/local/bin/pw
-  echo "pw has been installed successfully"
+  if [[ -d "${LOCAL_REPO}" ]]; then
+    echo "It seems like pw is already installed at ${LOCAL_REPO}"
+    echo "Run 'pw update' to update pw to the latest version"
+  else
+    git clone "${REPO}" "${LOCAL_REPO}"
+    echo "Linking ${LOCAL_REPO}/src/pw to /usr/local/bin/pw"
+    mkdir -p /usr/local/bin
+    ln -s "${LOCAL_REPO}/src/pw" /usr/local/bin/pw
+    echo "pw has been installed successfully"
+  fi
 fi
