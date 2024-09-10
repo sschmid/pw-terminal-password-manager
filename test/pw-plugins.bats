@@ -65,9 +65,9 @@ EOF
   cat << EOF | assert_output -
 Could not detect plugin for test.keychain
 Supported extensions are:
-test-keychain-1 (Test File Type 1)
-test-keychain-2 (Test File Type 2)
-test-keychain-fail (Test File Type Fail)
+ext1          - Test File Type 1
+ext2          - Test File Type 2
+extf          - Test File Type Fail
 EOF
 }
 
@@ -85,7 +85,11 @@ EOF
   _set_plugin_2
   run pw init "test.keychain"
   assert_failure
-  assert_output "pw: Multiple plugins found for test.keychain"
+  cat << EOF | assert_output -
+pw: Multiple plugins found for test.keychain
+${BATS_TEST_DIRNAME}/fixtures/plugins/test1
+${BATS_TEST_DIRNAME}/fixtures/plugins/test2
+EOF
 }
 
 @test "inits keychain" {

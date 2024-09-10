@@ -116,34 +116,35 @@ EOF
 
 pw::infer_plugin() {
   PW_KEYCHAIN="$1"
-  local extension="${PW_KEYCHAIN##*.}"
-  extension="${extension,,}"
+  local -a plugins=()
   local -a file_types=()
   local -a file_extensions=()
-  local -i found=0
-  while read -r file; do
-    source "${file}"
+  local extension
+  extension="$(tr '[:upper:]' '[:lower:]' <<< "${PW_KEYCHAIN##*.}")"
+  while read -r hook; do
+    source "${hook}"
     file_types+=("${FILE_TYPE}")
     file_extensions+=("${FILE_EXTENSION}")
     if register_with_extension "${extension}"; then
-      if ((found)); then
-        echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
-        exit 1
-      fi
-      source "$(dirname "${file}")/plugin.bash"
-      found=1
+      plugins+=("$(dirname "${hook}")")
     fi
   done < <(pw::plugins)
 
-  if ((!found)); then
+  local -i n=${#plugins[@]}
+  if ((n == 1)); then
+    source "${plugins[0]}/plugin.bash"
+  elif ((n > 1)); then
+    echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
+    printf '%s\n' "${plugins[@]}" >&2
+    exit 1
+  else
     cat << EOF >&2
 Could not detect plugin for ${PW_KEYCHAIN}
 Supported extensions are:
 EOF
     for i in "${!file_extensions[@]}"; do
-      printf "%s (%s)\n" "${file_extensions[$i]}" "${file_types[$i]}" >&2
+      printf "%-13s - %s\n" "${file_extensions[$i]}" "${file_types[$i]}" >&2
     done
-
     exit 1
   fi
 }
