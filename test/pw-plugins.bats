@@ -2,7 +2,7 @@
 setup() {
   load 'pw'
   _setup
-  export PW_PLUGINS="${PROJECT_ROOT}/test/fixtures/plugins"
+  export PW_PLUGINS="${BATS_TEST_DIRNAME}/fixtures/plugins"
 }
 
 _create_fake_keychain() {
@@ -77,7 +77,11 @@ EOF
   _set_plugin_2
   run pw ls
   assert_failure
-  assert_output "pw: Multiple plugins found for ${PW_KEYCHAIN}"
+  cat << EOF | assert_output -
+pw: Multiple plugins found for ${PW_KEYCHAIN}
+${BATS_TEST_DIRNAME}/fixtures/plugins/test1
+${BATS_TEST_DIRNAME}/fixtures/plugins/test2
+EOF
 }
 
 @test "fails when multiple plugins match with file extension" {
