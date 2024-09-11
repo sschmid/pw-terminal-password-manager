@@ -1,7 +1,7 @@
 if ! command -v keepassxc-cli > /dev/null; then
   cat << EOF >&2
 command not found: keepassxc-cli
-Please make sure that KeePassXC is installed and the keepassxc-cli is in your PATH.
+Please make sure that KeePassXC is installed and keepassxc-cli is in your PATH.
 EOF
   exit 1
 fi
