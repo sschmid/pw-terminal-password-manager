@@ -70,6 +70,7 @@ Legend:
 | Add a new entry with name and account                                           | ✅             | ✅                                   | ❌             |
 | Add a new entry with account only                                               | ✅             | ❌                                   | ❌             |
 | Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                   | ❌             |
+| Add a new entry in group                                                        | ❌             | ✅ (if group already exists)         | ✅             |
 | Edit entry                                                                      | ✅             | ✅                                   | ✅             |
 | Get entry by name                                                               | ✅             | ✅                                   | ✅             |
 | Get entry by name and account                                                   | ✅             | ❌                                   | ❌             |
@@ -100,6 +101,13 @@ you can add the account to the name:
 ```
 pw add "Google (Work)" work@example.com
 pw add "Google (Personal)" personal@example.com
+```
+
+## Add entry in group
+
+```
+pw add Coding/GitHub
+pw add Coding/JetBrains
 ```
 
 ## Edit entry
