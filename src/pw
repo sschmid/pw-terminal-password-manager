@@ -56,7 +56,7 @@ commands:
   edit [<name>] [<account>]   edit entry (leave password empty to generate one)
   rm [<name>] [<account>]     remove entry
   ls                          list all entries
-  gen                         generate password
+  gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])
   open                        open keychain in native gui
   lock                        lock keychain
   unlock                      unlock keychain

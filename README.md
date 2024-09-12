@@ -150,6 +150,19 @@ pw rm Google work@example.com
 pw rm Google personal@example.com
 ```
 
+# Example: Generate a password
+
+```
+gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])
+```
+
+```
+pw gen
+pw gen 16
+pw gen 24 '[:alnum:]'
+pw gen 32 '[:digit:]'
+```
+
 # Example: Specifying a keychain
 
 There are multiple ways to specify a keychain:
