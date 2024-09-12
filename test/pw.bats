@@ -18,7 +18,7 @@ setup() {
 
 @test "generates and copies password" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  export PW_GEN_LENGTH=5
+  PW_GEN_LENGTH=5
   run pw gen
   assert_success
   refute_output
@@ -47,9 +47,18 @@ setup() {
 
 @test "generates and prints password" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  export PW_GEN_LENGTH=5
+  PW_GEN_LENGTH=5
   run pw -p gen
   assert_success
   assert_output
   (("${#output}" == "${PW_GEN_LENGTH}"))
+}
+
+@test "generates password with specified length" {
+  _skip_if_github_action "Doesn't work with GitHub actions for some reason"
+  PW_GEN_LENGTH=5
+  run pw -p gen 8
+  assert_success
+  assert_output
+  (("${#output}" == 8))
 }

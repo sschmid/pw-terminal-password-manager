@@ -33,8 +33,8 @@ EOF
 declare -a PW_KEYCHAINS
 declare -i PW_GEN_LENGTH PW_CLIP_TIME
 source "${PW_RC}"
-: "${PW_GEN_LENGTH:=35}"
-: "${PW_CLIP_TIME:=45}"
+: ${PW_GEN_LENGTH:=35}
+: ${PW_CLIP_TIME:=45}
 : "${PW_PLUGINS:="${PW_HOME}/src/plugins"}"
 
 pw::help() {
@@ -205,8 +205,9 @@ pw::clip_and_forget() {
 
 pw::gen() {
   local -i print=$1; shift
+  local -i length=${1:-${PW_GEN_LENGTH}}
   local password
-  password="$(LC_CTYPE=C tr -dc '[:graph:]' < /dev/urandom | head -c ${PW_GEN_LENGTH} || true)"
+  password="$(LC_CTYPE=C tr -dc '[:graph:]' < /dev/urandom | head -c ${length} || true)"
   if ((print))
   then echo "${password}"
   else pw::clip_and_forget "${password}"
@@ -323,7 +324,7 @@ main() {
       edit) shift; pw::select_keychain; pw::edit "$@" ;;
       rm) shift; pw::select_keychain; pw::rm "$@" ;;
       ls) shift; pw::select_keychain; pw::ls "$@" ;;
-      gen) shift; pw::gen ${print} ;;
+      gen) shift; pw::gen ${print} "$@" ;;
       open) shift; pw::select_keychain; pw::plugin_open ;;
       lock) shift; pw::select_keychain; pw::plugin_lock ;;
       unlock) shift; pw::select_keychain; pw::plugin_unlock ;;
