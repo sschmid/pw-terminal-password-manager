@@ -62,3 +62,10 @@ setup() {
   assert_output
   (("${#output}" == 8))
 }
+
+@test "generates password with specified character class" {
+  _skip_if_github_action "Doesn't work with GitHub actions for some reason"
+  run pw -p gen 5 '[:digit:]'
+  assert_success
+  assert_output --regexp '[0-9]{5}'
+}

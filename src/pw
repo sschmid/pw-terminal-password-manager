@@ -206,8 +206,8 @@ pw::clip_and_forget() {
 pw::gen() {
   local -i print=$1; shift
   local -i length=${1:-${PW_GEN_LENGTH}}
-  local password
-  password="$(LC_CTYPE=C tr -dc '[:graph:]' < /dev/urandom | head -c ${length} || true)"
+  local password class="${2:-"[:graph:]"}"
+  password="$(LC_CTYPE=C tr -dc "${class}" < /dev/urandom | head -c ${length} || true)"
   if ((print))
   then echo "${password}"
   else pw::clip_and_forget "${password}"
