@@ -7,8 +7,8 @@ It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
 you to interact with [various keychains](#example-using-multiple-keychains) effortlessly.
 
-[![Tests](https://github.com/sschmid/pw/actions/workflows/tests.yaml/badge.svg)](https://github.com/sschmid/pw/actions/workflows/tests.yaml)
-[![Latest release](https://img.shields.io/github/release/sschmid/pw.svg)](https://github.com/sschmid/pw/releases)
+[![Tests](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/tests.yaml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/tests.yaml)
+[![Latest release](https://img.shields.io/github/release/sschmid/pw-terminal-password-manager.svg)](https://github.com/sschmid/pw-terminal-password-manager/releases)
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
 
 # Why `pw`?
@@ -26,7 +26,7 @@ you to interact with [various keychains](#example-using-multiple-keychains) effo
 
 ```bash
 # install
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
 brew install fzf
 
 # update
