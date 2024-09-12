@@ -218,6 +218,25 @@ Use `pw` to avoid leaking secrets in scripts that you share or commit.
 curl -s -H "Authorization: token $(pw -p GITHUB_TOKEN)" https://api.github.com/user
 ```
 
+# Example: Provide passwords via `STDIN`
+
+To avoid password prompts that can interrupt scripts,
+you can provide passwords via `STDIN`.
+
+```bash
+echo "my-password" | pw init ~/secrets.kdbx
+echo "my-password" | pw add Google personal@example.com
+echo "my-password" | pw unlock
+```
+
+If your shell supports `STDIN` with here string (like `bash`), you can use it like this:
+
+```bash
+pw init ~/secrets.kdbx <<< "my-password"
+pw add Google personal@example.com <<< "my-password"
+pw unlock <<< "my-password"
+```
+
 # Customization
 
 Export or provide the following variables to customize and change `pw`'s default behaviour:
