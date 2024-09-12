@@ -1,8 +1,8 @@
 # 🔐 `pw` - Terminal Password Manager powered by `fzf`
 
 `pw` is a command-line password manager unifying trusted password managers
-like [macOS Keychain](https://developer.apple.com/documentation/security/keychain_services)
-and [KeePassXC](https://keepassxc.org) in a single interface within the terminal.
+like [macOS Keychain](https://developer.apple.com/documentation/security/keychain_services),
+[KeePassXC](https://keepassxc.org) and [GnuPG](https://www.gnupg.org) in a single interface within the terminal.
 It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
 you to interact with [various keychains](#example-using-multiple-keychains) effortlessly.
@@ -22,80 +22,124 @@ you to interact with [various keychains](#example-using-multiple-keychains) effo
 
 ![pw-fzf](readme/pw-fzf.png)
 
-# Install pw and fzf
+# Install and update `pw`
 
 ```bash
+# install
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install)"
 brew install fzf
-```
 
-# Uninstall pw and fzf
+# update
+pw update
+brew upgrade fzf
 
-```bash
+# uninstall
 /usr/local/opt/pw/install --uninstall
 brew uninstall fzf
 ```
 
-# Usage
+# How `pw` works
+
+`pw` provides a unified interface to interact with various keychains and
+forwards commands to the respective password manager using plugins.
+Plugins are simple bash scripts that implement the following functions (see [plugins](src/plugins)):
+
+- `init`
+- `add`
+- `edit`
+- `get`
+- `rm`
+- `ls`
+- `open`
+- `lock`
+- `unlock`
+
+Password managers may vary in their capabilities, so `pw` provides a
+consistent interface by implementing workarounds where necessary.
+
+Here's an overview of which features are supported by each plugin:
+
+Legend:
+- ✅: native support by the password manager
+- ❌: not supported by the password manager
+
+| Feature                                                                         | macOS Keychain | KeePassXC                           | GnuPG          |
+|--------------------------------------------------------------------------------:|:--------------:|:-----------------------------------:|:--------------:|
+| Create a new keychain                                                           | ✅             | ✅                                   | ✅ (directory) |
+| Add a new entry with name                                                       | ✅             | ✅                                   | ✅             |
+| Add a new entry with name and account                                           | ✅             | ✅                                   | ❌             |
+| Add a new entry with account only                                               | ✅             | ❌                                   | ❌             |
+| Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                   | ❌             |
+| Edit entry                                                                      | ✅             | ✅                                   | ✅             |
+| Get entry by name                                                               | ✅             | ✅                                   | ✅             |
+| Get entry by name and account                                                   | ✅             | ❌                                   | ❌             |
+| Get entry by account only                                                       | ✅             | ❌                                   | ❌             |
+| Remove entry                                                                    | ✅             | ✅                                   | ✅             |
+| List entries                                                                    | ✅             | ✅                                   | ✅             |
+| Open keychain                                                                   | ✅             | ✅                                   | ✅             |
+| Lock keychain                                                                   | ✅             | ❌ (keychain is never left unlocked) | ✅             |
+| Unlock keychain                                                                 | ✅             | ✅                                   | ✅             |
+
+# Examples
+
+## Add entry with name and optional account
 
 ```
-$ pw --help
-██████╗ ██╗    ██╗
-██╔══██╗██║    ██║
-██████╔╝██║ █╗ ██║
-██╔═══╝ ██║███╗██║
-██║     ╚███╔███╔╝
-╚═╝      ╚══╝╚══╝
-
-usage: pw [--help | -h]
-          [-p] [-k <keychain>] [<commands>]
-
-options:
-  -p              print password instead of copying
-  -k <keychain>   use given keychain
-
-commands:
-  [-p] no command             copy (or print) password using fuzzy finder
-  [-p] <name> [<account>]     copy (or print) password
-  init <keychain>             create keychain
-  add <name> [<account>]      add entry (leave password empty to generate one)
-  edit [<name>] [<account>]   edit entry (leave password empty to generate one)
-  rm [<name>] [<account>]     remove entry
-  ls                          list all entries
-  gen                         generate password
-  open                        open keychain in native gui
-  lock                        lock keychain
-  unlock                      unlock keychain
-  update                      update pw
-
-customization:
-  PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain-db)
-  PW_GEN_LENGTH               length of generated passwords (default: 35)
-  PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
-  PW_RC                       path to the configuration file (default: ~/.pwrc)
+pw add <name> [<account>]      add entry (leave password empty to generate one)
 ```
 
-# Example: Adding entries and copying passwords
+```
+pw add GitHub
+pw add Google work@example.com
+pw add Google personal@example.com
+```
+
+If a plugin doesn't support multiple entries with the same name,
+you can add the account to the name:
 
 ```
-$ pw add github                   # add new entry for github
-Enter password for github:
-Retype password for github:
+pw add "Google (Work)" work@example.com
+pw add "Google (Personal)" personal@example.com
+```
 
-$ pw github                       # copy password for github
+## Edit entry
 
-$ pw add slack me@work.com        # add new entry for slack with account
-Enter password for slack:         # leave empty to generate a password
+```
+pw edit [<name>] [<account>]   edit entry (leave password empty to generate one)
+```
 
-$ pw                              # open fzf and copy password for selected entry
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ >                                                                            │
-│   github                                          login.keychain-db          │
-│ > slack                   me@work.com             login.keychain-db          │
-│                                                                              │
-│                                                                              │
-│                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────╯
+```
+pw                                    # starts fzf to select an entry
+pw edit GitHub
+pw edit Google work@example.com
+pw edit Google personal@example.com
+```
+
+## Get entry
+
+```
+pw [-p] no command             copy (or print) password using fzf
+pw [-p] <name> [<account>]     copy (or print) password
+```
+
+```
+pw                               # starts fzf to select an entry
+pw GitHub
+pw Google work@example.com
+pw Google personal@example.com
+```
+
+## Remove entry
+
+```
+rm [<name>] [<account>]     remove entry
+```
+
+```
+pw rm                               # starts fzf to select an entry
+pw rm GitHub
+pw rm Google work@example.com
+pw rm Google personal@example.com
 ```
 
 # Example: Specifying a keychain
@@ -119,15 +163,14 @@ pw
 ```
 
 ```
-$ pw init secrets.keychain-db
+pw init secrets.keychain-db
+pw -k secrets.keychain-db add GitHub sschmid
+Enter password for github:
 
-$ pw -k secrets.keychain-db add twitter s_schmid
-Enter password for twitter:
-
-$ pw -k secrets.keychain-db -p
+pw -k secrets.keychain-db -p
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │ >                                                                            │
-│ > twitter                 s_schmid                secrets.keychain-db        │
+│ > GitHub                  sschmid                 secrets.keychain-db        │
 │                                                                              │
 │                                                                              │
 │                                                                              │
@@ -177,7 +220,7 @@ curl -s -H "Authorization: token $(pw -p GITHUB_TOKEN)" https://api.github.com/u
 
 # Customization
 
-Export or provide the following variables to customize pw's default behaviour:
+Export or provide the following variables to customize and change `pw`'s default behaviour:
 
 ```bash
 # Default keychain used when not specified with -k
