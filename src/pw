@@ -205,7 +205,6 @@ pw::clip_and_forget() {
 
 pw::gen() {
   local -i print=$1; shift
-  # shellcheck disable=SC2005
   local password
   password="$(LC_CTYPE=C tr -dc '[:graph:]' < /dev/urandom | head -c ${PW_GEN_LENGTH} || true)"
   if ((print))
@@ -296,7 +295,6 @@ pw::select_item_with_prompt() {
     PW_NAME="$(awk -F '\t' '{print $3}' <<< "${item}")"
     PW_ACCOUNT="$(awk -F '\t' '{print $4}' <<< "${item}")"
     [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" ]] || exit 1
-    # shellcheck disable=SC2034
     PW_FZF=1
   fi
 }

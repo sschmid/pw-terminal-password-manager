@@ -172,7 +172,6 @@ EOF
 }
 
 @test "clears clipboard after copying item" {
-  # shellcheck disable=SC2030,SC2031
   export PW_CLIP_TIME=1
   _create_fake_keychain
   _set_plugin_1
@@ -183,7 +182,6 @@ EOF
 }
 
 @test "doesn't clear clipboard when changed" {
-  # shellcheck disable=SC2030,SC2031
   export PW_CLIP_TIME=1
   _create_fake_keychain
   _set_plugin_1

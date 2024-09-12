@@ -18,7 +18,6 @@ setup() {
 
 @test "generates and copies password" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  # shellcheck disable=SC2030,SC2031
   export PW_GEN_LENGTH=5
   run pw gen
   assert_success
@@ -48,7 +47,6 @@ setup() {
 
 @test "generates and prints password" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  # shellcheck disable=SC2030,SC2031
   export PW_GEN_LENGTH=5
   run pw -p gen
   assert_success
