@@ -1,7 +1,9 @@
 setup_file() {
   export GNUPGHOME="${BATS_FILE_TMPDIR}/.gnupg"
   gpg --batch --pinentry-mode loopback --passphrase pw_test_password \
-      --import "${BATS_TEST_DIRNAME}/fixtures/gpg.key"
+      --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_1.key"
+  gpg --batch --pinentry-mode loopback --passphrase pw_test_password \
+      --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_2.key"
 }
 
 teardown_file() {

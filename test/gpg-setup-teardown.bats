@@ -1,7 +1,7 @@
 setup_file() {
   export GNUPGHOME="${BATS_FILE_TMPDIR}/.gnupg"
   gpg --batch --pinentry-mode loopback --passphrase pw_test_password \
-      --import "${BATS_TEST_DIRNAME}/fixtures/gpg.key"
+      --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_1.key"
 }
 
 teardown_file() {
@@ -34,5 +34,5 @@ setup() {
 @test "uses test key" {
   run gpg -K
   assert_success
-  assert_output --partial "D520721A5712B7B8B3517F399F2E5ED80579EFDB"
+  assert_output --partial "8F1F7B428DC46AD4AD2E5123691ED007F1E410B0"
 }
