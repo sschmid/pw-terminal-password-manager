@@ -19,40 +19,40 @@ pw::prepare_keychain() {
 pw::plugin_init() {
   if [[ -p /dev/stdin ]]; then
     IFS= read -r password
-    keepassxc-cli db-create -qp "${PW_KEYCHAIN}" << EOF
+    keepassxc-cli db-create --quiet --set-password "${PW_KEYCHAIN}" << EOF
 ${password}
 ${password}
 EOF
   else
-    keepassxc-cli db-create -p "${PW_KEYCHAIN}"
+    keepassxc-cli db-create --set-password "${PW_KEYCHAIN}"
   fi
 }
 
 pw::plugin_add() {
-  keepassxc-cli add -qp "${PW_KEYCHAIN}" ${2:+-u "$2"} "$1" << EOF
+  keepassxc-cli add --quiet --password-prompt "${PW_KEYCHAIN}" ${2:+-u "$2"} "$1" << EOF
 ${PW_KEEPASSXC_PASSWORD}
 $3
 EOF
 }
 
 pw::plugin_edit() {
-  keepassxc-cli edit -qp "${PW_KEYCHAIN}" "$1" << EOF
+  keepassxc-cli edit --quiet --password-prompt "${PW_KEYCHAIN}" "$1" << EOF
 ${PW_KEEPASSXC_PASSWORD}
 $3
 EOF
 }
 
 pw::plugin_get() {
-  keepassxc-cli show -qsa password "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  keepassxc-cli show --quiet --show-protected --attributes password "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 pw::plugin_rm() {
-  keepassxc-cli rm -q "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  keepassxc-cli rm --quiet "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 pw::plugin_ls() {
   local format="${1:-default}" list
-  if ! list="$(keepassxc-cli ls -qfR "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" \
+  if ! list="$(keepassxc-cli ls --quiet --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" \
     | { grep -v -e '/$' -e 'Recycle Bin/' || true; } \
     | LC_ALL=C sort)"
   then
@@ -69,7 +69,7 @@ pw::plugin_ls() {
 }
 
 pw::plugin_fzf_preview() {
-  echo "keepassxc-cli show -q \"${PW_KEYCHAIN}\" {3} <<< \"${PW_KEEPASSXC_PASSWORD}\""
+  echo "keepassxc-cli show --quiet \"${PW_KEYCHAIN}\" {3} <<< \"${PW_KEEPASSXC_PASSWORD}\""
 }
 
 pw::plugin_open() {
