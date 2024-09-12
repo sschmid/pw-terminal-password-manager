@@ -19,7 +19,21 @@ _set_plugin_fail() { export PW_TEST_PLUGIN_FAIL=1; }
   _set_plugin_1
   run pw ls
   assert_success
-  assert_output "plugin 1 ls pw_test.keychain"
+  cat << EOF | assert_output -
+plugin 1 ls pw_test.keychain
+plugin 1 metadata:
+EOF
+}
+
+@test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS and separates metadata" {
+  _set_pwrc_with_keychains "pw_test.keychain:metadata1:metadata2"
+  _set_plugin_1
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls pw_test.keychain
+plugin 1 metadata:metadata1:metadata2
+EOF
 }
 
 @test "PW_KEYCHAIN overwrites PW_KEYCHAINS" {
@@ -28,7 +42,22 @@ _set_plugin_fail() { export PW_TEST_PLUGIN_FAIL=1; }
   _set_plugin_1
   run pw ls
   assert_success
-  assert_output "plugin 1 ls pw_test2.keychain"
+  cat << EOF | assert_output -
+plugin 1 ls pw_test2.keychain
+plugin 1 metadata:
+EOF
+}
+
+@test "PW_KEYCHAIN overwrites PW_KEYCHAINS and separates metadata" {
+  _set_pwrc_with_keychains "pw_test1.keychain"
+  export PW_KEYCHAIN="pw_test2.keychain:metadata1:metadata2"
+  _set_plugin_1
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls pw_test2.keychain
+plugin 1 metadata:metadata1:metadata2
+EOF
 }
 
 @test "pw -k overwrites PW_KEYCHAINS" {
@@ -36,7 +65,21 @@ _set_plugin_fail() { export PW_TEST_PLUGIN_FAIL=1; }
   _set_plugin_1
   run pw -k pw_test2.keychain ls
   assert_success
-  assert_output "plugin 1 ls pw_test2.keychain"
+  cat << EOF | assert_output -
+plugin 1 ls pw_test2.keychain
+plugin 1 metadata:
+EOF
+}
+
+@test "pw -k overwrites PW_KEYCHAINS and separates metadata" {
+  _set_pwrc_with_keychains "pw_test1.keychain"
+  _set_plugin_1
+  run pw -k pw_test2.keychain:metadata1:metadata2 ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls pw_test2.keychain
+plugin 1 metadata:metadata1:metadata2
+EOF
 }
 
 @test "fails when keychain does not exist" {
@@ -188,7 +231,10 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  assert_output "plugin 1 ls ${PW_KEYCHAIN}"
+  cat << EOF | assert_output -
+plugin 1 ls ${PW_KEYCHAIN}
+plugin 1 metadata:
+EOF
 }
 
 @test "opens keychain" {

@@ -77,11 +77,11 @@ EOF
 
 pw::select_keychain() {
   if [[ -v PW_KEYCHAIN ]]; then
-    : # do nothing
+    pw::set_keychain "${PW_KEYCHAIN}"
   elif ((${#PW_KEYCHAINS[@]} == 1)); then
-    PW_KEYCHAIN="${PW_KEYCHAINS[0]}"
+    pw::set_keychain "${PW_KEYCHAINS[0]}"
   else
-    PW_KEYCHAIN="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="keychain> " --layout=reverse --info=hidden)"
+    pw::set_keychain "$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="keychain> " --layout=reverse --info=hidden)"
   fi
 
   local -a plugins=()
@@ -147,6 +147,17 @@ EOF
       printf "%-13s - %s\n" "${file_extensions[$i]}" "${file_types[$i]}" >&2
     done
     exit 1
+  fi
+}
+
+# shellcheck disable=SC2034
+pw::set_keychain() {
+  if [[ "$1" == *:* ]]; then
+    PW_KEYCHAIN="${1%%:*}"
+    PW_KEYCHAIN_METADATA="${1#*:}"
+  else
+    PW_KEYCHAIN="$1"
+    PW_KEYCHAIN_METADATA=""
   fi
 }
 
