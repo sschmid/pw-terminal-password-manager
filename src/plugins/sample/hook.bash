@@ -10,7 +10,7 @@ FILE_EXTENSION="Put the file extension here. e.g. 'xyz'"
 # macOS Keychain, because it supports not only file paths but also keychain names
 # which it can look up in different locations.
 # Add other checks as needed.
-register() {
+pw::register() {
   [[ -f "${PW_KEYCHAIN}" ]]
   [[ "$(file -b "${PW_KEYCHAIN}")" == "${FILE_TYPE}" ]]
 }
@@ -19,6 +19,6 @@ register() {
 # This is only called when creating a new keychain with 'pw init my-keychain.xyz'.
 # As the file doesn't exist yet and is yet to be created, we can't check the file type.
 # If your plugin can handle the file extension, return 0, otherwise return 1.
-register_with_extension() {
+pw::register_with_extension() {
   [[ "$1" == "${FILE_EXTENSION}" ]]
 }

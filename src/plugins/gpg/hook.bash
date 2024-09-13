@@ -2,10 +2,10 @@
 FILE_TYPE="PGP"
 FILE_EXTENSION="/, gpg, asc"
 
-register() {
+pw::register() {
   [[ -d "${PW_KEYCHAIN}" ]]
 }
 
-register_with_extension() {
+pw::register_with_extension() {
   [[ "$1" == */ ]]
 }

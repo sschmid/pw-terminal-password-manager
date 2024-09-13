@@ -84,9 +84,7 @@ pw::select_keychain() {
   while read -r hook; do
     source "${hook}"
     file_types+=("${FILE_TYPE}")
-    if register; then
-      plugins+=("$(dirname "${hook}")")
-    fi
+    pw::register && plugins+=("$(dirname "${hook}")")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}
@@ -121,9 +119,7 @@ pw::infer_plugin() {
     source "${hook}"
     file_types+=("${FILE_TYPE}")
     file_extensions+=("${FILE_EXTENSION}")
-    if register_with_extension "${extension}"; then
-      plugins+=("$(dirname "${hook}")")
-    fi
+    pw::register_with_extension "${extension}" && plugins+=("$(dirname "${hook}")")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}
