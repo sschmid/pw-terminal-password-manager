@@ -13,7 +13,7 @@ _skip_manual_test() {
     # shellcheck disable=SC2154
     echo "${output}" >&3
   else
-    skip "requires user input"
+    skip "Requires user input. Use PW_TEST_RUN_MANUAL_TESTS=1 test/run to also run manual tests."
   fi
 }
 
