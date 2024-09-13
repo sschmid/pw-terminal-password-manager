@@ -129,7 +129,7 @@ pw edit [<name>] [<account>]   edit entry (leave password empty to generate one)
 ```
 
 ```
-pw                                    # starts fzf to select an entry
+pw edit                               # starts fzf to select an entry
 pw edit GitHub
 pw edit Google work@example.com
 pw edit Google personal@example.com
