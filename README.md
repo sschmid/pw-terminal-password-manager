@@ -165,7 +165,8 @@ pw rm Google personal@example.com
 ## Generate a password
 
 ```
-pw gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])
+pw gen [<length>] [<class>]    generate password with given length and
+                               character class (default: 35 [:graph:])
 ```
 
 ```
