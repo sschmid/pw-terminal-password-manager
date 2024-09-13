@@ -81,7 +81,7 @@ Legend:
 | Lock keychain                                                                   | ✅             | ❌ (keychain is never left unlocked) | ✅             |
 | Unlock keychain                                                                 | ✅             | ✅                                   | ✅             |
 
-# Examples
+# Usage
 
 ## Create keychain
 
@@ -162,7 +162,7 @@ pw rm Google work@example.com
 pw rm Google personal@example.com
 ```
 
-# Example: Generate a password
+## Generate a password
 
 ```
 pw gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])
@@ -175,7 +175,7 @@ pw gen 24 '[:alnum:]'
 pw gen 32 '[:digit:]'
 ```
 
-# Example: Specifying a keychain
+## Specifying a keychain
 
 There are multiple ways to specify a keychain:
 
@@ -210,7 +210,7 @@ pw -k secrets.keychain-db -p
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
-# Example: Using multiple keychains
+## Using multiple keychains
 
 `pw` allows you to interact with multiple keychains from different password
 managers. This feature is particularly useful when you have keychains stored
@@ -244,14 +244,14 @@ one from `PW_KEYCHAINS` using the fuzzy finder.
 
 ![pw-fzf](readme/pw-dbs.png)
 
-# Example: Using `pw` in a command or script
+## Using `pw` in a command or script
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
 
 ```bash
 curl -s -H "Authorization: token $(pw -p GITHUB_TOKEN)" https://api.github.com/user
 ```
 
-# Example: Provide passwords via `STDIN`
+## Provide passwords via `STDIN`
 
 To avoid password prompts that can interrupt scripts,
 you can provide passwords via `STDIN`.
