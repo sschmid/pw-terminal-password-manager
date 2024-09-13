@@ -83,6 +83,18 @@ Legend:
 
 # Examples
 
+## Create keychain
+
+```
+pw init <keychain>             create keychain
+```
+
+```
+pw init secrets.keychain-db
+pw init ~/secrets.kdbx
+pw init ~/secrets/            # end with `/` to create a directory for GnuPG
+```
+
 ## Add entry with name and optional account
 
 ```
@@ -140,7 +152,7 @@ pw Google personal@example.com
 ## Remove entry
 
 ```
-rm [<name>] [<account>]     remove entry
+pw rm [<name>] [<account>]     remove entry
 ```
 
 ```
@@ -153,7 +165,7 @@ pw rm Google personal@example.com
 # Example: Generate a password
 
 ```
-gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])
+pw gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])
 ```
 
 ```
