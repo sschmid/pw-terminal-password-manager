@@ -13,6 +13,10 @@ _gpg() {
   fi
 }
 
+_gpg_encrypt() {
+  _gpg --encrypt ${PW_KEYCHAIN_METADATA:+--default-key "${PW_KEYCHAIN_METADATA}"} --default-recipient-self "$@"
+}
+
 _mk_owner_dir() {
   # shellcheck disable=SC2174
   mkdir -m 700 -p "$1"
@@ -35,13 +39,13 @@ pw::plugin_add() {
   _mk_owner_dir "${PW_KEYCHAIN}"
   mkdir -p "${PW_KEYCHAIN}/$(dirname "$1")"
   if [[ "${1##*.}" == "asc" ]]
-  then _gpg --output "${PW_KEYCHAIN}/$1" --encrypt ${PW_KEYCHAIN_METADATA:+--default-key "${PW_KEYCHAIN_METADATA}"} --armor --default-recipient-self <<< "$3"
-  else _gpg --output "${PW_KEYCHAIN}/$1" --encrypt ${PW_KEYCHAIN_METADATA:+--default-key "${PW_KEYCHAIN_METADATA}"} --default-recipient-self <<< "$3"
+  then _gpg_encrypt --output "${PW_KEYCHAIN}/$1" --armor <<< "$3"
+  else _gpg_encrypt --output "${PW_KEYCHAIN}/$1" <<< "$3"
   fi
 }
 
 pw::plugin_edit() {
-  _gpg --yes --output "${PW_KEYCHAIN}/$1" --encrypt ${PW_KEYCHAIN_METADATA:+--default-key "${PW_KEYCHAIN_METADATA}"} --default-recipient-self <<< "$3"
+  _gpg_encrypt --output "${PW_KEYCHAIN}/$1" --yes <<< "$3"
 }
 
 pw::plugin_get() {
@@ -77,10 +81,6 @@ pw::plugin_lock() {
 }
 
 pw::plugin_unlock() {
-  if [[ -p /dev/stdin ]]; then
-    IFS= read -r PW_GPG_PASSWORD
-  fi
-  echo \
-    | _gpg --encrypt ${PW_KEYCHAIN_METADATA:+--default-key "${PW_KEYCHAIN_METADATA}"} --default-recipient-self \
-    | _gpg --decrypt > /dev/null
+  [[ -p /dev/stdin ]] && IFS= read -r PW_GPG_PASSWORD
+  echo | _gpg_encrypt | _gpg --decrypt > /dev/null
 }
