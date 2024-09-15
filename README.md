@@ -282,7 +282,7 @@ Export or provide the following variables to customize and change `pw`'s default
 
 ```bash
 # Default keychain used when not specified with -k
-# otherwise, PW_KEYCHAINS is used to select a keychain
+# otherwise, PW_KEYCHAINS is used to select a keychain with fzf
 export PW_KEYCHAIN=secrets.keychain-db
 
 # Generated password length
@@ -301,8 +301,28 @@ Configure keychains in `~/.pwrc`
 PW_KEYCHAINS=(
   login.keychain-db
   secrets.keychain-db
-  ~/path/to/keepassxc.kdbx
   ~/path/to/myproject.keychain-db
+  ~/path/to/keepassxc.kdbx
+  ~/path/to/gpg/secrets
+)
+```
+
+# Plugin specific configuration
+
+## GnuPG
+
+To set a different gpg key as the default for encryption, you can specify the
+key ID by appending it to the keychain path:
+
+```bash
+pw -k ~/path/to/gpg/secrets:634419040D678764
+```
+
+```bash
+PW_KEYCHAINS=(
+  ...
+  ~/path/to/gpg/secrets:634419040D678764
+  ...
 )
 ```
 
