@@ -257,18 +257,23 @@ curl -s -H "Authorization: token $(pw -p GITHUB_TOKEN)" https://api.github.com/u
 To avoid password prompts that can interrupt scripts,
 you can provide passwords via `STDIN`.
 
+> ⚠️ Warning: Avoid providing passwords in plain text, because they can be
+  exposed in process listings, shell history, logs, and through insecure network
+  transmissions, making them vulnerable to theft or misuse. Instead, use secure
+  methods like environment variables to protect sensitive information.
+
 ```bash
-echo "my-password" | pw init ~/secrets.kdbx
-echo "my-password" | pw add Google personal@example.com
-echo "my-password" | pw unlock
+echo "${MY_PASSWORD}" | pw init ~/secrets.kdbx
+echo "${MY_PASSWORD}" | pw add Google personal@example.com
+echo "${MY_PASSWORD}" | pw unlock
 ```
 
 If your shell supports `STDIN` with here string (like `bash`), you can use it like this:
 
 ```bash
-pw init ~/secrets.kdbx <<< "my-password"
-pw add Google personal@example.com <<< "my-password"
-pw unlock <<< "my-password"
+pw init ~/secrets.kdbx <<< "${MY_PASSWORD}"
+pw add Google personal@example.com <<< "${MY_PASSWORD}"
+pw unlock <<< "${MY_PASSWORD}"
 ```
 
 # Customization
