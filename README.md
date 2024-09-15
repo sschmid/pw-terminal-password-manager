@@ -326,5 +326,28 @@ PW_KEYCHAINS=(
 )
 ```
 
-# Dependencies
-- [fzf](https://github.com/junegunn/fzf)
+# Requirements
+
+## `pw`
+
+```bash
+brew install fzf
+```
+
+## `pw` plugins (optional):
+
+### macos_keychain
+
+Nothing to install, `security` is already installed on macOS.
+
+### keepassxc
+
+```bash
+brew install --cask keepassxc
+```
+
+### gpg
+
+```bash
+brew install gnupg
+```
