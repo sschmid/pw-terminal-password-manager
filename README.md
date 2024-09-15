@@ -89,7 +89,7 @@ Legend:
 pw init <keychain>             create keychain
 ```
 
-```
+```bash
 pw init secrets.keychain-db
 pw init ~/secrets.kdbx
 pw init ~/secrets/            # end with `/` to create a directory for GnuPG
@@ -101,7 +101,7 @@ pw init ~/secrets/            # end with `/` to create a directory for GnuPG
 pw add <name> [<account>]      add entry (leave password empty to generate one)
 ```
 
-```
+```bash
 pw add GitHub
 pw add Google work@example.com
 pw add Google personal@example.com
@@ -110,14 +110,14 @@ pw add Google personal@example.com
 If a plugin doesn't support multiple entries with the same name,
 you can add the account to the name:
 
-```
+```bash
 pw add "Google (Work)" work@example.com
 pw add "Google (Personal)" personal@example.com
 ```
 
 ## Add entry in group
 
-```
+```bash
 pw add Coding/GitHub
 pw add Coding/JetBrains
 ```
@@ -128,7 +128,7 @@ pw add Coding/JetBrains
 pw edit [<name>] [<account>]   edit entry (leave password empty to generate one)
 ```
 
-```
+```bash
 pw edit                               # starts fzf to select an entry
 pw edit GitHub
 pw edit Google work@example.com
@@ -142,7 +142,7 @@ pw [-p] no command             copy (or print) password using fzf
 pw [-p] <name> [<account>]     copy (or print) password
 ```
 
-```
+```bash
 pw                               # starts fzf to select an entry
 pw GitHub
 pw Google work@example.com
@@ -155,7 +155,7 @@ pw Google personal@example.com
 pw rm [<name>] [<account>]     remove entry
 ```
 
-```
+```bash
 pw rm                               # starts fzf to select an entry
 pw rm GitHub
 pw rm Google work@example.com
@@ -169,7 +169,7 @@ pw gen [<length>] [<class>]    generate password with given length and
                                character class (default: 35 [:graph:])
 ```
 
-```
+```bash
 pw gen
 pw gen 16
 pw gen 24 '[:alnum:]'
