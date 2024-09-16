@@ -10,8 +10,6 @@ _common_setup() {
 _skip_manual_test() {
   if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
     echo "# Please enter '$1'${2:+ "$2"}" >&3
-    # shellcheck disable=SC2154
-    echo "${output}" >&3
   else
     skip "Requires user input. Use PW_TEST_RUN_MANUAL_TESTS=1 test/run to also run manual tests."
   fi

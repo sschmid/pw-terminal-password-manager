@@ -20,7 +20,7 @@ teardown() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw::plugin_init <<< " test password "
+  run pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
   assert_failure
   assert_output "File ${PW_KEYCHAIN} already exists."
 }
