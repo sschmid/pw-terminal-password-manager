@@ -330,8 +330,7 @@ PW_KEYCHAINS=(
 
 ## GnuPG
 
-To set a different gpg key as the default for encryption, you can specify the
-key ID by appending it to the keychain path:
+To set a different gpg key as the default for encryption, you can specify the key id:
 
 ```bash
 pw -k ~/path/to/gpg/secrets:key=634419040D678764
