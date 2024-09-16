@@ -76,7 +76,9 @@ pw::select_keychain() {
   elif ((${#PW_KEYCHAINS[@]} == 1)); then
     pw::set_keychain "${PW_KEYCHAINS[0]}"
   else
-    pw::set_keychain "$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="keychain> " --layout=reverse --info=hidden)"
+    local keychain
+    keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="keychain> " --layout=reverse --info=hidden)"
+    pw::set_keychain "${keychain}"
   fi
 
   local -a plugins=()
