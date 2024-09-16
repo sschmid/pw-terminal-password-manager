@@ -95,12 +95,13 @@ assert_adds_item() {
 }
 
 @test "adds item with key id" {
-  PW_KEYCHAIN_METADATA="634419040D678764"
+  local key_id="634419040D678764"
+  PW_KEYCHAIN_METADATA="key=${key_id}"
   assert_adds_item "${nameA}" "" "${pw1}"
   run gpg --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
           --list-packets "${PW_KEYCHAIN}/${nameA}"
   assert_success
-  assert_output --partial "keyid ${PW_KEYCHAIN_METADATA}"
+  assert_output --partial "keyid ${key_id}"
 }
 
 ################################################################################
@@ -161,16 +162,18 @@ assert_adds_item() {
   assert_item_exists "${pw2}" "${nameA}"
 }
 
+# shellcheck disable=SC2034
 @test "edits item with key id" {
-  PW_KEYCHAIN_METADATA="634419040D678764"
+  PW_KEYCHAIN_METADATA="key=634419040D678764"
   assert_adds_item "${nameA}" "" "${pw1}"
 
-  PW_KEYCHAIN_METADATA="8593E03F5A33D9AC"
+  local key_id="8593E03F5A33D9AC"
+  PW_KEYCHAIN_METADATA="key=${key_id}"
   run pw::plugin_edit "${nameA}" "" "${pw2}"
   run gpg --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
           --list-packets "${PW_KEYCHAIN}/${nameA}"
   assert_success
-  assert_output --partial "keyid ${PW_KEYCHAIN_METADATA}"
+  assert_output --partial "keyid ${key_id}"
 }
 
 ################################################################################

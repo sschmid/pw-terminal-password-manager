@@ -14,7 +14,16 @@ _gpg() {
 }
 
 _gpg_encrypt() {
-  _gpg --encrypt ${PW_KEYCHAIN_METADATA:+--default-key "${PW_KEYCHAIN_METADATA}"} --default-recipient-self "$@"
+  local -a options=()
+  if [[ -n "$PW_KEYCHAIN_METADATA" ]]; then
+    local IFS=, key value
+    for pair in ${PW_KEYCHAIN_METADATA}; do
+      key="${pair%%=*}"
+      value="${pair#*=}"
+      [[ "${key}" == "key" ]] && options+=("--default-key" "${value}")
+    done
+  fi
+  _gpg --encrypt "${options[@]}" --default-recipient-self "$@"
 }
 
 _mk_owner_dir() {
