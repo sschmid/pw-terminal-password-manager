@@ -315,13 +315,13 @@ To set a different gpg key as the default for encryption, you can specify the
 key ID by appending it to the keychain path:
 
 ```bash
-pw -k ~/path/to/gpg/secrets:634419040D678764
+pw -k ~/path/to/gpg/secrets:key=634419040D678764
 ```
 
 ```bash
 PW_KEYCHAINS=(
   ...
-  ~/path/to/gpg/secrets:634419040D678764
+  ~/path/to/gpg/secrets:key=634419040D678764
   ...
 )
 ```
