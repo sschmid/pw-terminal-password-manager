@@ -309,6 +309,25 @@ PW_KEYCHAINS=(
 
 # Plugin specific configuration
 
+Some plugins support additional configuration options by appending them to the
+keychain path after a colon `:`, e.g. `/path/to/keychain:key=value`.
+
+## KeePassXC
+
+If you're using a YubiKey with KeePassXC, you can specify the slot to use:
+
+```bash
+pw -k ~/secrets.kdbx:yubikey=1:23456789
+```
+
+```bash
+PW_KEYCHAINS=(
+  ...
+  ~/secrets.kdbx:yubikey=1:23456789
+  ...
+)
+```
+
 ## GnuPG
 
 To set a different gpg key as the default for encryption, you can specify the
