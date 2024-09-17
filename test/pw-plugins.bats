@@ -143,7 +143,20 @@ EOF
   _set_plugin_1
   run pw init "test.keychain"
   assert_success
-  assert_output "plugin 1 init test.keychain"
+  cat << EOF | assert_output -
+plugin 1 init test.keychain
+plugin 1 metadata:
+EOF
+}
+
+@test "inits keychain and separates metadata" {
+  _set_plugin_1
+  run pw init "test.keychain:metadata1:metadata2"
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 init test.keychain
+plugin 1 metadata:metadata1:metadata2
+EOF
 }
 
 @test "init fails when keychain already exists" {

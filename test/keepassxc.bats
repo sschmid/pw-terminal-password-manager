@@ -11,6 +11,7 @@ setup() {
   pw2=" 2 test pw "
 }
 
+# shellcheck disable=SC2034
 _init_with_key_file() {
   local path="${BATS_TEST_TMPDIR}/pw_keepassxc_test_keyfile.kdbx"
   echo "pw_keepassxc_test_keyfile" > "${path}"

@@ -111,7 +111,7 @@ EOF
 }
 
 pw::infer_plugin() {
-  PW_KEYCHAIN="$1"
+  pw::set_keychain "$1"
   local -a plugins=()
   local -a file_types=()
   local -a file_extensions=()
