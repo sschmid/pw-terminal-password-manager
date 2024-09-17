@@ -41,7 +41,7 @@ pw::help() {
   cat << EOF
 🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager powered by fzf
 
-usage: pw [--help | -h]
+usage: pw [-h]
           [-p] [-k <keychain>] [<commands>]
 
 options:
@@ -307,13 +307,15 @@ main() {
   pw::require_fzf
 
   local -i print=0
-  while (($#)); do case "$1" in
-    -p) shift; print=1 ;;
-    -k) PW_KEYCHAIN="$2"; shift 2 ;;
-    --help | -h) pw::help; return ;;
-    --) shift; break ;;
-    *) break ;;
-  esac done
+  while getopts ":hpk:" options; do
+    case "${options}" in
+      h) pw::help; return ;;
+      p) print=1 ;;
+      k) PW_KEYCHAIN="${OPTARG}" ;;
+      *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
+    esac
+  done
+  shift $((OPTIND - 1))
 
   if (($#)); then
     case "$1" in

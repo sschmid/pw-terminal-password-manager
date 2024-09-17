@@ -162,6 +162,14 @@ EOF
   assert_output "plugin 1 get name account ${PW_KEYCHAIN}"
 }
 
+@test "prints item password with -pk" {
+  _create_fake_keychain
+  _set_plugin_1
+  run pw -pk "${PW_KEYCHAIN}" name account
+  assert_success
+  assert_output "plugin 1 get name account ${PW_KEYCHAIN}"
+}
+
 @test "copies item password" {
   _create_fake_keychain
   _set_plugin_1

@@ -6,14 +6,20 @@ setup() {
 @test "loads pwrc when specified" {
   _set_pwrc_with_keychains "test-keychain"
   echo 'echo "# test pwrc sourced"' >> "${PW_RC}"
-  run pw --help
+  run pw -h
   assert_output --partial "# test pwrc sourced"
 }
 
 @test "creates pwrc" {
   export PW_RC="${BATS_TEST_TMPDIR}/mypwrc.bash"
-  run pw --help
+  run pw -h
   assert_file_exists "${PW_RC}"
+}
+
+@test "exits when invalid option" {
+  run pw -x -h
+  assert_failure
+  assert_output "Invalid option: -x"
 }
 
 @test "generates and copies password" {
