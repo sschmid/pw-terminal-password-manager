@@ -80,6 +80,7 @@ Legend:
 | Open keychain                                                                   | ✅             | ✅                                   | ✅             |
 | Lock keychain                                                                   | ✅             | ❌ (keychain is never left unlocked) | ✅             |
 | Unlock keychain                                                                 | ✅             | ✅                                   | ✅             |
+| Key file support                                                                | ❌             | ✅                                   | ❌             |
 | YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
 
 # Usage
