@@ -9,16 +9,17 @@ fi
 _keepassxc-cli_with_metadata() {
   local command="$1"; shift
   local -a options=()
+  local -i quiet=1
   if [[ -n "$PW_KEYCHAIN_METADATA" ]]; then
     local IFS=, key value
     for pair in ${PW_KEYCHAIN_METADATA}; do
       key="${pair%%=*}"
       value="${pair#*=}"
-      [[ "${key}" == "yubikey" ]] && options+=("--yubikey" "${value}")
+      [[ "${key}" == "yubikey" ]] && options+=("--yubikey" "${value}") && quiet=0
+      [[ "${key}" == "keyfile" ]] && options+=("--key-file" "${value}")
     done
-  else
-    options+=("--quiet")
   fi
+  ((quiet)) && options+=("--quiet")
   keepassxc-cli "${command}" "${options[@]}" "$@"
 }
 
@@ -33,14 +34,24 @@ pw::prepare_keychain() {
 }
 
 pw::plugin_init() {
+  local -a options=()
+  if [[ -n "$PW_KEYCHAIN_METADATA" ]]; then
+    local IFS=, key value
+    for pair in ${PW_KEYCHAIN_METADATA}; do
+      key="${pair%%=*}"
+      value="${pair#*=}"
+      [[ "${key}" == "keyfile" ]] && options+=("--set-key-file" "${value}")
+    done
+  fi
+
   if [[ -p /dev/stdin ]]; then
     IFS= read -r password
-    keepassxc-cli db-create --quiet --set-password "${PW_KEYCHAIN}" << EOF
+    keepassxc-cli db-create --quiet "${options[@]}" --set-password "${PW_KEYCHAIN}" << EOF
 ${password}
 ${password}
 EOF
   else
-    keepassxc-cli db-create --set-password "${PW_KEYCHAIN}"
+    keepassxc-cli db-create "${options[@]}" --set-password "${PW_KEYCHAIN}"
   fi
 }
 

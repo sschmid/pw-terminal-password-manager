@@ -11,6 +11,14 @@ setup() {
   pw2=" 2 test pw "
 }
 
+_init_with_key_file() {
+  local path="${BATS_TEST_TMPDIR}/pw_keepassxc_test_keyfile.kdbx"
+  echo "pw_keepassxc_test_keyfile" > "${path}"
+  PW_KEYCHAIN_METADATA="keyfile=${path}"
+  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_keepassxc_test_with_keyfile.kdbx"
+  pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
+}
+
 teardown() {
   _delete_keychain
 }
@@ -23,6 +31,11 @@ teardown() {
   run pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
   assert_failure
   assert_output "File ${PW_KEYCHAIN} already exists."
+}
+
+@test "inits keychain with key-file" {
+  _init_with_key_file
+  assert_item_not_exists "${nameA}"
 }
 
 ################################################################################
@@ -50,6 +63,11 @@ assert_item_recycled() {
 }
 
 @test "doesn't have item" {
+  assert_item_not_exists "${nameA}"
+}
+
+@test "get with key-file" {
+  _init_with_key_file
   assert_item_not_exists "${nameA}"
 }
 
@@ -82,6 +100,12 @@ assert_username() {
   assert_adds_item "${nameA}" "${accountA}" "${pw1}"
   assert_item_exists "${pw1}" "${nameA}"
   assert_username "${nameA}" "${accountA}"
+}
+
+@test "adds item with key-file" {
+  _init_with_key_file
+  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_item_exists "${pw1}" "${nameA}"
 }
 
 ################################################################################
@@ -120,6 +144,14 @@ assert_username() {
   assert_item_exists "${pw2}" "${nameB}"
 }
 
+@test "removes item with key-file" {
+  _init_with_key_file
+  assert_adds_item "${nameA}" "" "${pw1}"
+  run pw::plugin_rm "${nameA}"
+  assert_success
+  refute_output
+}
+
 ################################################################################
 # rm non existing item
 ################################################################################
@@ -140,6 +172,14 @@ assert_username() {
   assert_success
   refute_output
   assert_item_exists "${pw2}" "${nameA}"
+}
+
+@test "edits item with key-file" {
+  _init_with_key_file
+  assert_adds_item "${nameA}" "" "${pw1}"
+  run pw::plugin_edit "${nameA}" "" "${pw2}"
+  assert_success
+  refute_output
 }
 
 ################################################################################
@@ -190,4 +230,16 @@ EOF
   run pw::plugin_ls
   assert_success
   refute_output
+}
+
+@test "lists sorted items with key-file" {
+  _init_with_key_file
+  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
+  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  run pw::plugin_ls
+  assert_success
+  cat << EOF | assert_output -
+${nameA}
+${nameB}
+EOF
 }
