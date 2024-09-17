@@ -313,20 +313,33 @@ PW_KEYCHAINS=(
 Some plugins support additional configuration options by appending them to the
 keychain path after a colon `:`, e.g. `/path/to/keychain:key=value`.
 
-## KeePassXC
-
-If you're using a YubiKey with KeePassXC, you can specify the slot to use:
+This syntax can be used everywhere a keychain is specified, e.g.:
 
 ```bash
-pw -k ~/secrets.kdbx:yubikey=1:23456789
+pw -k ~/secrets.kdbx:key1=value1,key2=value2
 ```
 
 ```bash
 PW_KEYCHAINS=(
   ...
-  ~/secrets.kdbx:yubikey=1:23456789
+  ~/secrets.kdbx:key1=value1,key2=value2
   ...
 )
+```
+
+## KeePassXC
+
+If you want to use a key file for unlocking the database,
+you can specify the path to the key file:
+
+```bash
+PW_KEYCHAINS=(~/secrets.kdbx:keyfile=/path/to/keyfile)
+```
+
+If you're using a YubiKey with KeePassXC, you can specify the slot to use:
+
+```bash
+PW_KEYCHAINS=(~/secrets.kdbx:yubikey=1:23456789)
 ```
 
 ## GnuPG
@@ -334,15 +347,7 @@ PW_KEYCHAINS=(
 To set a different gpg key as the default for encryption, you can specify the key id:
 
 ```bash
-pw -k ~/path/to/gpg/secrets:key=634419040D678764
-```
-
-```bash
-PW_KEYCHAINS=(
-  ...
-  ~/path/to/gpg/secrets:key=634419040D678764
-  ...
-)
+PW_KEYCHAINS=(~/path/to/gpg/secrets:key=634419040D678764)
 ```
 
 # Requirements
