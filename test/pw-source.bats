@@ -76,8 +76,8 @@ _intercept_prompt_password() {
   run _intercept_prompt_password
   assert_success
   cat << EOF | assert_output -
-Enter password for name:
-Retype password for name:
+Enter password for 'name' (leave empty to generate password):
+Retype password for 'name':
 test
 EOF
 }
@@ -88,8 +88,8 @@ EOF
   run _intercept_prompt_password
   assert_failure
   cat << EOF | assert_output -
-Enter password for name:
-Retype password for name:
+Enter password for 'name' (leave empty to generate password):
+Retype password for 'name':
 Error: the entered passwords do not match.
 EOF
 }
@@ -99,7 +99,7 @@ EOF
   _source_pw
   run _intercept_prompt_password
   assert_success
-  assert_line --index 0 "Enter password for name:"
+  assert_line --index 0 "Enter password for 'name' (leave empty to generate password):"
   (("${#lines[1]}" == "${PW_GEN_LENGTH}"))
 }
 
