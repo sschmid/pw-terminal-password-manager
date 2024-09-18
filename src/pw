@@ -180,10 +180,10 @@ pw::prompt_password() {
   if [[ -p /dev/stdin ]]; then
     IFS= read -r PW_PASSWORD
   else
-    local name="$1" retype
-    read -rsp "Enter password for ${name}:"$'\n' PW_PASSWORD
+    local retype
+    read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' PW_PASSWORD
     if [[ -n "${PW_PASSWORD}" ]]; then
-      read -rsp "Retype password for ${name}:"$'\n' retype
+      read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
       if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
         echo "Error: the entered passwords do not match." >&2
         exit 1
@@ -243,14 +243,22 @@ pw::init() {
 
 pw::add() {
   pw::prepare_keychain "add"
-  pw::prompt_password "$1"
-  pw::plugin_add "$1" "${2:-}" "${PW_PASSWORD}"
+
+  if (($#)); then
+    PW_NAME="$1" PW_ACCOUNT="${2:-}"
+  else
+    IFS= read -rp "Title: " PW_NAME </dev/tty
+    IFS= read -rp "Username: " PW_ACCOUNT </dev/tty
+  fi
+
+  pw::prompt_password
+  pw::plugin_add "${PW_NAME}" "${PW_ACCOUNT}" "${PW_PASSWORD}"
 }
 
 pw::edit() {
   pw::prepare_keychain "edit"
   pw::select_item_with_prompt edit "$@"
-  pw::prompt_password "${PW_NAME}"
+  pw::prompt_password
   pw::plugin_edit "${PW_NAME}" "${PW_ACCOUNT}" "${PW_PASSWORD}"
 }
 

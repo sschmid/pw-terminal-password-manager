@@ -57,7 +57,9 @@ assert_pw_home() {
 }
 
 _intercept_prompt_password() {
-  pw::prompt_password "name"
+  # shellcheck disable=SC2034
+  PW_NAME="name"
+  pw::prompt_password
   echo "${PW_PASSWORD}"
 }
 
