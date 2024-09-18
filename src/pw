@@ -53,8 +53,8 @@ commands:
   [-p] no command             copy (or print) password using fuzzy finder
   [-p] <name> [<account>]     copy (or print) password
   init <keychain>             create keychain
-  add <name> [<account>]      add entry (leave password empty to generate one)
-  edit [<name>] [<account>]   edit entry (leave password empty to generate one)
+  add [<name>] [<account>]    add entry (leave empty to generate password)
+  edit [<name>] [<account>]   edit entry (leave empty to generate password)
   rm [<name>] [<account>]     remove entry
   ls                          list all entries
   gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])

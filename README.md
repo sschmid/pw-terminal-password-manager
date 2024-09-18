@@ -100,10 +100,11 @@ pw init ~/secrets/            # end with `/` to create a directory for GnuPG
 ## Add entry with name and optional account
 
 ```
-pw add <name> [<account>]      add entry (leave password empty to generate one)
+pw add [<name>] [<account>]    add entry (leave empty to generate password)
 ```
 
 ```bash
+pw add                               # add interactively
 pw add GitHub
 pw add Google work@example.com
 pw add Google personal@example.com
