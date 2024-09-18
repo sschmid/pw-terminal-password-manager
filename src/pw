@@ -35,6 +35,7 @@ declare -A PW_KEYCHAIN_ARGS
 declare -i PW_GEN_LENGTH PW_CLIP_TIME
 source "${PW_RC}"
 : ${PW_GEN_LENGTH:=35}
+: "${PW_GEN_CLASS:="[:graph:]"}"
 : ${PW_CLIP_TIME:=45}
 : "${PW_PLUGINS:="${PW_HOME}/src/plugins"}"
 
@@ -208,7 +209,7 @@ pw::clip_and_forget() {
 pw::gen() {
   local -i print=$1; shift
   local -i length=${1:-${PW_GEN_LENGTH}}
-  local password class="${2:-"[:graph:]"}"
+  local password class="${2:-"${PW_GEN_CLASS}"}"
   password="$(LC_CTYPE=C tr -dc "${class}" < /dev/urandom | head -c ${length} || true)"
   if ((print))
   then echo "${password}"

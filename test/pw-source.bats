@@ -1,3 +1,4 @@
+# shellcheck disable=SC2030,SC2031
 setup() {
   load 'pw'
   _setup
@@ -97,10 +98,14 @@ EOF
 @test "generates password when empty" {
   _skip_manual_test "nothing"
   _source_pw
+  export PW_GEN_LENGTH=5
+  export PW_GEN_CLASS="1"
   run _intercept_prompt_password
   assert_success
-  assert_line --index 0 "Enter password for 'name' (leave empty to generate password):"
-  (("${#lines[1]}" == "${PW_GEN_LENGTH}"))
+  cat << EOF | assert_output -
+Enter password for 'name' (leave empty to generate password):
+11111
+EOF
 }
 
 _intercept_prompt_keychain_password() {

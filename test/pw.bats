@@ -1,3 +1,4 @@
+# shellcheck disable=SC2030,SC2031
 setup() {
   load 'pw'
   _setup
@@ -24,16 +25,16 @@ setup() {
 
 @test "generates and copies password" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  PW_GEN_LENGTH=5
+  export PW_GEN_LENGTH=5
+  export PW_GEN_CLASS="1"
   run pw gen
   assert_success
   refute_output
   run pbpaste
-  (("${#output}" == "${PW_GEN_LENGTH}"))
+  assert_output "11111"
 }
 
 @test "clears clipboard after generating password" {
-  # shellcheck disable=SC2030,SC2031
   export PW_CLIP_TIME=1
   run pw gen
   sleep 2
@@ -42,7 +43,6 @@ setup() {
 }
 
 @test "doesn't clear clipboard when changed" {
-  # shellcheck disable=SC2030,SC2031
   export PW_CLIP_TIME=1
   run pw gen
   echo -n "after" | pbcopy
@@ -53,25 +53,27 @@ setup() {
 
 @test "generates and prints password" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  PW_GEN_LENGTH=5
+  export PW_GEN_LENGTH=5
+  export PW_GEN_CLASS="1"
   run pw -p gen
   assert_success
-  assert_output
-  (("${#output}" == "${PW_GEN_LENGTH}"))
+  assert_output "11111"
 }
 
 @test "generates password with specified length" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  PW_GEN_LENGTH=5
+  export PW_GEN_LENGTH=5
+  export PW_GEN_CLASS="1"
   run pw -p gen 8
   assert_success
-  assert_output
-  (("${#output}" == 8))
+  assert_output "11111111"
 }
 
 @test "generates password with specified character class" {
   _skip_if_github_action "Doesn't work with GitHub actions for some reason"
-  run pw -p gen 5 '[:digit:]'
+  export PW_GEN_LENGTH=5
+  export PW_GEN_CLASS="1"
+  run pw -p gen 8 "2"
   assert_success
-  assert_output --regexp '[0-9]{5}'
+  assert_output "22222222"
 }
