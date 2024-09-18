@@ -31,6 +31,7 @@ PW_KEYCHAINS=(login.keychain-db)
 EOF
 
 declare -a PW_KEYCHAINS
+declare -A PW_KEYCHAIN_ARGS
 declare -i PW_GEN_LENGTH PW_CLIP_TIME
 source "${PW_RC}"
 : ${PW_GEN_LENGTH:=35}
@@ -145,12 +146,15 @@ EOF
 
 # shellcheck disable=SC2034
 pw::set_keychain() {
+  PW_KEYCHAIN_ARGS=()
   if [[ "$1" == *:* ]]; then
     PW_KEYCHAIN="${1%%:*}"
-    PW_KEYCHAIN_METADATA="${1#*:}"
+    local IFS=,
+    for pair in ${1#*:}; do
+      PW_KEYCHAIN_ARGS["${pair%%=*}"]="${pair#*=}"
+    done
   else
     PW_KEYCHAIN="$1"
-    PW_KEYCHAIN_METADATA=""
   fi
 }
 

@@ -13,6 +13,7 @@ teardown_file() {
 setup() {
   load 'gpg'
   _setup
+  declare -Ag PW_KEYCHAIN_ARGS=()
   PW_GPG_PASSWORD="pw_test_password"
   pw::plugin_init
 
@@ -96,7 +97,7 @@ assert_adds_item() {
 
 @test "adds item with key id" {
   local key_id="634419040D678764"
-  PW_KEYCHAIN_METADATA="key=${key_id}"
+  PW_KEYCHAIN_ARGS["key"]="${key_id}"
   assert_adds_item "${nameA}" "" "${pw1}"
   run gpg --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
           --list-packets "${PW_KEYCHAIN}/${nameA}"
@@ -164,11 +165,11 @@ assert_adds_item() {
 
 # shellcheck disable=SC2034
 @test "edits item with key id" {
-  PW_KEYCHAIN_METADATA="key=634419040D678764"
+  PW_KEYCHAIN_ARGS["key"]="634419040D678764"
   assert_adds_item "${nameA}" "" "${pw1}"
 
   local key_id="8593E03F5A33D9AC"
-  PW_KEYCHAIN_METADATA="key=${key_id}"
+  PW_KEYCHAIN_ARGS["key"]="${key_id}"
   run pw::plugin_edit "${nameA}" "" "${pw2}"
   run gpg --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
           --list-packets "${PW_KEYCHAIN}/${nameA}"

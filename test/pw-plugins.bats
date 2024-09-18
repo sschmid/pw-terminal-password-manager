@@ -21,18 +21,18 @@ _set_plugin_fail() { export PW_TEST_PLUGIN_FAIL=1; }
   assert_success
   cat << EOF | assert_output -
 plugin 1 ls pw_test.keychain
-plugin 1 metadata:
+declare -A PW_KEYCHAIN_ARGS=()
 EOF
 }
 
-@test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS and separates metadata" {
-  _set_pwrc_with_keychains "pw_test.keychain:metadata1:metadata2"
+@test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS and separates args" {
+  _set_pwrc_with_keychains "pw_test.keychain:key1=value1,key2=value2"
   _set_plugin_1
   run pw ls
   assert_success
   cat << EOF | assert_output -
 plugin 1 ls pw_test.keychain
-plugin 1 metadata:metadata1:metadata2
+declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
 EOF
 }
 
@@ -44,19 +44,19 @@ EOF
   assert_success
   cat << EOF | assert_output -
 plugin 1 ls pw_test2.keychain
-plugin 1 metadata:
+declare -A PW_KEYCHAIN_ARGS=()
 EOF
 }
 
-@test "PW_KEYCHAIN overwrites PW_KEYCHAINS and separates metadata" {
+@test "PW_KEYCHAIN overwrites PW_KEYCHAINS and separates args" {
   _set_pwrc_with_keychains "pw_test1.keychain"
-  export PW_KEYCHAIN="pw_test2.keychain:metadata1:metadata2"
+  export PW_KEYCHAIN="pw_test2.keychain:key1=value1,key2=value2"
   _set_plugin_1
   run pw ls
   assert_success
   cat << EOF | assert_output -
 plugin 1 ls pw_test2.keychain
-plugin 1 metadata:metadata1:metadata2
+declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
 EOF
 }
 
@@ -67,18 +67,18 @@ EOF
   assert_success
   cat << EOF | assert_output -
 plugin 1 ls pw_test2.keychain
-plugin 1 metadata:
+declare -A PW_KEYCHAIN_ARGS=()
 EOF
 }
 
-@test "pw -k overwrites PW_KEYCHAINS and separates metadata" {
+@test "pw -k overwrites PW_KEYCHAINS and separates args" {
   _set_pwrc_with_keychains "pw_test1.keychain"
   _set_plugin_1
-  run pw -k pw_test2.keychain:metadata1:metadata2 ls
+  run pw -k pw_test2.keychain:key1=value1,key2=value2 ls
   assert_success
   cat << EOF | assert_output -
 plugin 1 ls pw_test2.keychain
-plugin 1 metadata:metadata1:metadata2
+declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
 EOF
 }
 
@@ -145,17 +145,17 @@ EOF
   assert_success
   cat << EOF | assert_output -
 plugin 1 init test.keychain
-plugin 1 metadata:
+declare -A PW_KEYCHAIN_ARGS=()
 EOF
 }
 
-@test "inits keychain and separates metadata" {
+@test "inits keychain and separates args" {
   _set_plugin_1
-  run pw init "test.keychain:metadata1:metadata2"
+  run pw init "test.keychain:key1=value1,key2=value2"
   assert_success
   cat << EOF | assert_output -
 plugin 1 init test.keychain
-plugin 1 metadata:metadata1:metadata2
+declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
 EOF
 }
 
@@ -252,7 +252,7 @@ EOF
   assert_success
   cat << EOF | assert_output -
 plugin 1 ls ${PW_KEYCHAIN}
-plugin 1 metadata:
+declare -A PW_KEYCHAIN_ARGS=()
 EOF
 }
 

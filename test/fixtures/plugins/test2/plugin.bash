@@ -6,7 +6,7 @@ pw::plugin_get()         { echo "plugin 2 get $1 $2 ${PW_KEYCHAIN}"; }
 pw::plugin_rm()          { echo "plugin 2 rm $1 $2 ${PW_KEYCHAIN}"; }
 pw::plugin_ls()          {
                             echo "plugin 2 ls ${PW_KEYCHAIN}"
-                            echo "plugin 2 metadata:${PW_KEYCHAIN_METADATA}"
+                            declare -p PW_KEYCHAIN_ARGS
                          }
 pw::plugin_fzf_preview() { :; }
 pw::plugin_open()        { echo "plugin 2 open ${PW_KEYCHAIN}"; }

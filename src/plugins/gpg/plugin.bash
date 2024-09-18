@@ -15,14 +15,7 @@ _gpg() {
 
 _gpg_encrypt() {
   local -a options=()
-  if [[ -n "$PW_KEYCHAIN_METADATA" ]]; then
-    local IFS=, key value
-    for pair in ${PW_KEYCHAIN_METADATA}; do
-      key="${pair%%=*}"
-      value="${pair#*=}"
-      [[ "${key}" == "key" ]] && options+=("--default-key" "${value}")
-    done
-  fi
+  [[ -v PW_KEYCHAIN_ARGS["key"] ]] && options+=("--default-key" "${PW_KEYCHAIN_ARGS["key"]}")
   _gpg --encrypt "${options[@]}" --default-recipient-self "$@"
 }
 

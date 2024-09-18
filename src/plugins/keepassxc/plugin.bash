@@ -6,19 +6,12 @@ EOF
   exit 1
 fi
 
-_keepassxc-cli_with_metadata() {
+_keepassxc-cli_with_args() {
   local command="$1"; shift
   local -a options=()
   local -i quiet=1
-  if [[ -n "$PW_KEYCHAIN_METADATA" ]]; then
-    local IFS=, key value
-    for pair in ${PW_KEYCHAIN_METADATA}; do
-      key="${pair%%=*}"
-      value="${pair#*=}"
-      [[ "${key}" == "yubikey" ]] && options+=("--yubikey" "${value}") && quiet=0
-      [[ "${key}" == "keyfile" ]] && options+=("--key-file" "${value}")
-    done
-  fi
+  [[ -v PW_KEYCHAIN_ARGS["yubikey"] ]] && options+=("--yubikey" "${PW_KEYCHAIN_ARGS["yubikey"]}") && quiet=0
+  [[ -v PW_KEYCHAIN_ARGS["keyfile"] ]] && options+=("--key-file" "${PW_KEYCHAIN_ARGS["keyfile"]}")
   ((quiet)) && options+=("--quiet")
   keepassxc-cli "${command}" "${options[@]}" "$@"
 }
@@ -35,15 +28,7 @@ pw::prepare_keychain() {
 
 pw::plugin_init() {
   local -a options=()
-  if [[ -n "$PW_KEYCHAIN_METADATA" ]]; then
-    local IFS=, key value
-    for pair in ${PW_KEYCHAIN_METADATA}; do
-      key="${pair%%=*}"
-      value="${pair#*=}"
-      [[ "${key}" == "keyfile" ]] && options+=("--set-key-file" "${value}")
-    done
-  fi
-
+  [[ -v PW_KEYCHAIN_ARGS["keyfile"] ]] && options+=("--set-key-file" "${PW_KEYCHAIN_ARGS["keyfile"]}")
   if [[ -p /dev/stdin ]]; then
     IFS= read -r password
     keepassxc-cli db-create --quiet "${options[@]}" --set-password "${PW_KEYCHAIN}" << EOF
@@ -56,30 +41,30 @@ EOF
 }
 
 pw::plugin_add() {
-  _keepassxc-cli_with_metadata add --password-prompt "${PW_KEYCHAIN}" ${2:+-u "$2"} "$1" << EOF
+  _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" ${2:+-u "$2"} "$1" << EOF
 ${PW_KEEPASSXC_PASSWORD}
 $3
 EOF
 }
 
 pw::plugin_edit() {
-  _keepassxc-cli_with_metadata edit --password-prompt "${PW_KEYCHAIN}" "$1" << EOF
+  _keepassxc-cli_with_args edit --password-prompt "${PW_KEYCHAIN}" "$1" << EOF
 ${PW_KEEPASSXC_PASSWORD}
 $3
 EOF
 }
 
 pw::plugin_get() {
-  _keepassxc-cli_with_metadata show --show-protected --attributes password "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  _keepassxc-cli_with_args show --show-protected --attributes password "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 pw::plugin_rm() {
-  _keepassxc-cli_with_metadata rm "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  _keepassxc-cli_with_args rm "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 pw::plugin_ls() {
   local format="${1:-default}" list
-  if ! list="$(_keepassxc-cli_with_metadata ls --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" \
+  if ! list="$(_keepassxc-cli_with_args ls --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" \
     | { grep -v -e '/$' -e 'Recycle Bin/' || true; } \
     | LC_ALL=C sort)"
   then
@@ -96,19 +81,9 @@ pw::plugin_ls() {
 }
 
 pw::plugin_fzf_preview() {
-  local -i can_preview=1
-  if [[ -v PW_KEYCHAIN_METADATA ]]; then
-    local IFS=, key value
-    for pair in ${PW_KEYCHAIN_METADATA}; do
-      key="${pair%%=*}"
-      value="${pair#*=}"
-      [[ "${key}" == "yubikey" ]] && can_preview=0
-    done
-  fi
-
-  if ((can_preview))
-  then echo "keepassxc-cli show --quiet \"${PW_KEYCHAIN}\" {3} <<< \"${PW_KEEPASSXC_PASSWORD}\""
-  else echo "echo 'Preview not available with YubiKey'"
+  if [[ -v PW_KEYCHAIN_ARGS["yubikey"] ]]
+  then echo "echo 'Preview not available with YubiKey'"
+  else echo "keepassxc-cli show --quiet \"${PW_KEYCHAIN}\" {3} <<< \"${PW_KEEPASSXC_PASSWORD}\""
   fi
 }
 
@@ -121,5 +96,5 @@ pw::plugin_lock() {
 }
 
 pw::plugin_unlock() {
-  _keepassxc-cli_with_metadata open "${PW_KEYCHAIN}"
+  _keepassxc-cli_with_args open "${PW_KEYCHAIN}"
 }

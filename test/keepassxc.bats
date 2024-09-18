@@ -1,6 +1,7 @@
 setup() {
   load 'keepassxc'
   _setup
+  declare -Ag PW_KEYCHAIN_ARGS=()
   PW_KEEPASSXC_PASSWORD=" test password "
   pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
 
@@ -15,7 +16,7 @@ setup() {
 _init_with_key_file() {
   local path="${BATS_TEST_TMPDIR}/pw_keepassxc_test_keyfile.kdbx"
   echo "pw_keepassxc_test_keyfile" > "${path}"
-  PW_KEYCHAIN_METADATA="keyfile=${path}"
+  PW_KEYCHAIN_ARGS["keyfile"]="${path}"
   PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_keepassxc_test_with_keyfile.kdbx"
   pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
 }
