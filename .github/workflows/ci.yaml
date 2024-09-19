@@ -1,4 +1,4 @@
-name: Tests
+name: CI
 
 on:
   push:
@@ -21,9 +21,6 @@ jobs:
           submodules: recursive
 
       - name: "Run tests"
-        run: test/run
-
-      - name: "Test coverage"
         run: test/coverage
 
       - name: "Upload coverage report"
@@ -31,3 +28,14 @@ jobs:
         with:
           name: ${{ github.event.repository.name }} coverage report
           path: coverage
+
+      - name: "Generate lcov"
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          reportgenerator -reports:"coverage/**/cobertura.xml" -targetdir:"coverage" -reporttypes:"lcov"
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: "coverage/lcov.info"
