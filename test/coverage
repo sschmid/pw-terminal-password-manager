@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+[[ ! -f test/bats/bin/bats ]] && git submodule update --init --recursive
+kcov \
+  --bash-parser="$(which bash)" \
+  --include-path=src \
+  --exclude-line='done <,: #' \
+  coverage \
+  test/bats/bin/bats --tap "${@:-test}"
