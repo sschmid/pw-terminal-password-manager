@@ -283,7 +283,7 @@ pw::rm() {
   pw::select_item_with_prompt remove "$@"
   if ((PW_FZF)); then
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
-    [[ "${REPLY}" == "y" ]] || remove=0
+    [[ "${REPLY}" == [yY] ]] || remove=0
   fi
   ((!remove)) || pw::plugin_rm "${PW_NAME}" "${PW_ACCOUNT}"
 }
