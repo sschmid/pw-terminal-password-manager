@@ -1,3 +1,4 @@
+# shellcheck disable=SC2030,SC2031
 setup_file() {
   export GNUPGHOME="${BATS_FILE_TMPDIR}/.gnupg"
   gpg --batch --pinentry-mode loopback --passphrase pw_test_password \

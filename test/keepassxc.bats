@@ -1,7 +1,7 @@
 setup() {
   load 'keepassxc'
   _setup
-  export PW_KEEPASSXC_PASSWORD=" test password "
+  export PW_KEEPASSXC_PASSWORD="${KEYCHAIN_TEST_PASSWORD}"
   pw init "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}"
 
   nameA=" a test name "

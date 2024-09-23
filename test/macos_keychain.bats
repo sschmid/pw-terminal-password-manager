@@ -1,7 +1,7 @@
 setup() {
   load 'macos_keychain'
   _setup
-  pw init "${PW_KEYCHAIN}" <<< " test password "
+  pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
   nameA=" a test name "
   nameB=" b test name "
@@ -21,7 +21,7 @@ teardown() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw init "${PW_KEYCHAIN}" <<< " test password "
+  run pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_failure
   assert_output "pw: ${PW_KEYCHAIN}: File already exists"
 }

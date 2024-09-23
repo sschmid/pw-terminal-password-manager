@@ -5,6 +5,9 @@ _common_setup() {
 
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." > /dev/null 2>&1 && pwd)"
   PATH="${PROJECT_ROOT}/src:${PATH}"
+
+  # shellcheck disable=SC2034
+  KEYCHAIN_TEST_PASSWORD=" test password "
 }
 
 _skip_manual_test() {

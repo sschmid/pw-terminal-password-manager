@@ -5,13 +5,13 @@ setup() {
 
 @test "creates keychain" {
   assert_file_not_exists "${PW_KEYCHAIN}"
-  run pw init "${PW_KEYCHAIN}" <<< " test password "
+  run pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   assert_file_exists "${PW_KEYCHAIN}"
 }
 
 @test "deletes keychain" {
-  pw init "${PW_KEYCHAIN}" <<< " test password "
+  pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   run _delete_keychain
   assert_success
   assert_file_not_exists "${PW_KEYCHAIN}"
