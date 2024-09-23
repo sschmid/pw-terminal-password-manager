@@ -1,9 +1,8 @@
 setup() {
   load 'keepassxc'
   _setup
-  declare -Ag PW_KEYCHAIN_ARGS=()
-  PW_KEEPASSXC_PASSWORD=" test password "
-  pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
+  export PW_KEEPASSXC_PASSWORD=" test password "
+  pw init "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}"
 
   nameA=" a test name "
   nameB=" b test name "
@@ -14,11 +13,10 @@ setup() {
 
 # shellcheck disable=SC2034
 _init_with_key_file() {
-  local path="${BATS_TEST_TMPDIR}/pw_keepassxc_test_keyfile.kdbx"
-  echo "pw_keepassxc_test_keyfile" > "${path}"
-  PW_KEYCHAIN_ARGS["keyfile"]="${path}"
-  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_keepassxc_test_with_keyfile.kdbx"
-  pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
+  local keyfile="${BATS_TEST_TMPDIR}/pw_keepassxc_test_keyfile.kdbx"
+  echo "pw_keepassxc_test_keyfile" > "${keyfile}"
+  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_keepassxc_test_with_keyfile.kdbx:keyfile=${keyfile}"
+  pw init "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 teardown() {
@@ -30,14 +28,9 @@ teardown() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw::plugin_init <<< "${PW_KEEPASSXC_PASSWORD}"
+  run pw init "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}"
   assert_failure
-  assert_output "File ${PW_KEYCHAIN} already exists."
-}
-
-@test "inits keychain with key-file" {
-  _init_with_key_file
-  assert_item_not_exists "${nameA}"
+  assert_output "pw: ${PW_KEYCHAIN}: File already exists"
 }
 
 ################################################################################
@@ -46,20 +39,20 @@ teardown() {
 
 assert_item_exists() {
   local password="$1"; shift
-  run pw::plugin_get "$@"
+  run pw -p "$@"
   assert_success
   assert_output "${password}"
 }
 
 assert_item_not_exists() {
-  run pw::plugin_get "$@"
+  run pw -p "$@"
   assert_failure
   assert_output "Could not find entry with path $1."
 }
 
 assert_item_recycled() {
   local password="$1"; shift
-  run pw::plugin_get "/Recycle Bin/$1"
+  run pw -p "/Recycle Bin/$1"
   assert_success
   assert_output "${password}"
 }
@@ -78,7 +71,8 @@ assert_item_recycled() {
 ################################################################################
 
 assert_adds_item() {
-  run pw::plugin_add "$@"
+  local password="$1"; shift
+  run pw add "$@" <<< "${password}"
   assert_success
   refute_output
 }
@@ -93,20 +87,20 @@ assert_username() {
 }
 
 @test "adds item with name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_adds_item "${pw1}" "${nameA}"
   assert_item_exists "${pw1}" "${nameA}"
   assert_username "${nameA}"
 }
 
 @test "adds item with name and account" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
   assert_item_exists "${pw1}" "${nameA}"
   assert_username "${nameA}" "${accountA}"
 }
 
 @test "adds item with key-file" {
   _init_with_key_file
-  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_adds_item "${pw1}" "${nameA}"
   assert_item_exists "${pw1}" "${nameA}"
 }
 
@@ -115,8 +109,8 @@ assert_username() {
 ################################################################################
 
 @test "adds item with different name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  assert_adds_item "${nameB}" "" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_adds_item "${pw2}" "${nameB}"
   assert_item_exists "${pw1}" "${nameA}"
   assert_item_exists "${pw2}" "${nameB}"
 }
@@ -125,11 +119,16 @@ assert_username() {
 # add duplicate
 ################################################################################
 
-@test "fails when adding item with existing name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  run pw::plugin_add "${nameA}" "" "${pw2}"
+assert_item_already_exists() {
+  local password="$1"; shift
+  run pw add "$@" <<< "${password}"
   assert_failure
-  assert_output "Could not create entry with path ${nameA}."
+  assert_output "Could not create entry with path $1."
+}
+
+@test "fails when adding item with existing name" {
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_item_already_exists "${pw2}" "${nameA}"
 }
 
 ################################################################################
@@ -137,9 +136,9 @@ assert_username() {
 ################################################################################
 
 @test "removes item" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  assert_adds_item "${nameB}" "" "${pw2}"
-  run pw::plugin_rm "${nameA}"
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_adds_item "${pw2}" "${nameB}"
+  run pw rm "${nameA}"
   assert_success
   refute_output
   assert_item_recycled "${pw1}" "${nameA}"
@@ -148,8 +147,8 @@ assert_username() {
 
 @test "removes item with key-file" {
   _init_with_key_file
-  assert_adds_item "${nameA}" "" "${pw1}"
-  run pw::plugin_rm "${nameA}"
+  assert_adds_item "${pw1}" "${nameA}"
+  run pw rm "${nameA}"
   assert_success
   refute_output
 }
@@ -159,7 +158,7 @@ assert_username() {
 ################################################################################
 
 @test "fails when deleting non existing item" {
-  run pw::plugin_rm "${nameA}"
+  run pw rm "${nameA}"
   assert_failure
   assert_output "Entry ${nameA} not found."
 }
@@ -168,20 +167,23 @@ assert_username() {
 # edit
 ################################################################################
 
-@test "edits item" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  run pw::plugin_edit "${nameA}" "" "${pw2}"
+assert_edits_item() {
+  local password="$1"; shift
+  run pw edit "$@" <<< "${password}"
   assert_success
   refute_output
+}
+
+@test "edits item" {
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_edits_item "${pw2}" "${nameA}"
   assert_item_exists "${pw2}" "${nameA}"
 }
 
 @test "edits item with key-file" {
   _init_with_key_file
-  assert_adds_item "${nameA}" "" "${pw1}"
-  run pw::plugin_edit "${nameA}" "" "${pw2}"
-  assert_success
-  refute_output
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_edits_item "${pw2}" "${nameA}"
 }
 
 ################################################################################
@@ -189,7 +191,7 @@ assert_username() {
 ################################################################################
 
 @test "fails when editing non existing item" {
-  run pw::plugin_edit "${nameA}" "" "${pw2}"
+  run pw edit "${nameA}" <<< "${pw2}"
   assert_failure
   assert_output "Could not find entry with path ${nameA}."
 }
@@ -199,15 +201,15 @@ assert_username() {
 ################################################################################
 
 @test "lists no items" {
-  run pw::plugin_ls
+  run pw ls
   assert_success
   refute_output
 }
 
 @test "lists sorted items" {
-  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  run pw::plugin_ls
+  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  run pw ls
   assert_success
   cat << EOF | assert_output -
 ${nameA}
@@ -216,10 +218,10 @@ EOF
 }
 
 @test "filters Recycle Bin/" {
-  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  run pw::plugin_rm "${nameA}"
-  run pw::plugin_ls
+  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  run pw rm "${nameA}"
+  run pw ls
   assert_success
   cat << EOF | assert_output -
 ${nameB}
@@ -227,18 +229,18 @@ EOF
 }
 
 @test "lists no items after filtering" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  run pw::plugin_rm "${nameA}"
-  run pw::plugin_ls
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  run pw rm "${nameA}"
+  run pw ls
   assert_success
   refute_output
 }
 
 @test "lists sorted items with key-file" {
   _init_with_key_file
-  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  run pw::plugin_ls
+  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  run pw ls
   assert_success
   cat << EOF | assert_output -
 ${nameA}
