@@ -17,6 +17,38 @@ teardown() {
   _delete_keychain
 }
 
+assert_item_not_exists_output() {
+  assert_output "Could not find entry with path $1."
+}
+
+assert_item_already_exists_output() {
+  assert_output "Could not create entry with path $1."
+}
+
+assert_removes_item_output() {
+  refute_output
+}
+
+assert_rm_not_found_output() {
+  assert_output "Entry $1 not found."
+}
+
+assert_username() {
+  run keepassxc-cli show -qsa username "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  assert_success
+  if (($# == 2))
+  then assert_output "$2"
+  else refute_output
+  fi
+}
+
+assert_item_recycled() {
+  local password="$1"; shift
+  run pw -p "/Recycle Bin/$1"
+  assert_success
+  assert_output "${password}"
+}
+
 ################################################################################
 # init
 ################################################################################
@@ -31,26 +63,6 @@ teardown() {
 # get
 ################################################################################
 
-assert_item_exists() {
-  local password="$1"; shift
-  run pw -p "$@"
-  assert_success
-  assert_output "${password}"
-}
-
-assert_item_not_exists() {
-  run pw -p "$@"
-  assert_failure
-  assert_output "Could not find entry with path $1."
-}
-
-assert_item_recycled() {
-  local password="$1"; shift
-  run pw -p "/Recycle Bin/$1"
-  assert_success
-  assert_output "${password}"
-}
-
 @test "doesn't have item" {
   assert_item_not_exists "${NAME_A}"
 }
@@ -63,22 +75,6 @@ assert_item_recycled() {
 ################################################################################
 # add
 ################################################################################
-
-assert_adds_item() {
-  local password="$1"; shift
-  run pw add "$@" <<< "${password}"
-  assert_success
-  refute_output
-}
-
-assert_username() {
-  run keepassxc-cli show -qsa username "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
-  assert_success
-  if (($# == 2))
-  then assert_output "$2"
-  else refute_output
-  fi
-}
 
 @test "adds item with name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
@@ -113,13 +109,6 @@ assert_username() {
 # add duplicate
 ################################################################################
 
-assert_item_already_exists() {
-  local password="$1"; shift
-  run pw add "$@" <<< "${password}"
-  assert_failure
-  assert_output "Could not create entry with path $1."
-}
-
 @test "fails when adding item with existing name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_item_already_exists "${PW_2}" "${NAME_A}"
@@ -132,9 +121,7 @@ assert_item_already_exists() {
 @test "removes item" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_adds_item "${PW_2}" "${NAME_B}"
-  run pw rm "${NAME_A}"
-  assert_success
-  refute_output
+  assert_removes_item "${NAME_A}"
   assert_item_recycled "${PW_1}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_B}"
 }
@@ -142,9 +129,7 @@ assert_item_already_exists() {
 @test "removes item with key-file" {
   _init_with_key_file
   assert_adds_item "${PW_1}" "${NAME_A}"
-  run pw rm "${NAME_A}"
-  assert_success
-  refute_output
+  assert_removes_item "${NAME_A}"
 }
 
 ################################################################################
@@ -152,21 +137,12 @@ assert_item_already_exists() {
 ################################################################################
 
 @test "fails when deleting non existing item" {
-  run pw rm "${NAME_A}"
-  assert_failure
-  assert_output "Entry ${NAME_A} not found."
+  assert_rm_not_found "${NAME_A}"
 }
 
 ################################################################################
 # edit
 ################################################################################
-
-assert_edits_item() {
-  local password="$1"; shift
-  run pw edit "$@" <<< "${password}"
-  assert_success
-  refute_output
-}
 
 @test "edits item" {
   assert_adds_item "${PW_1}" "${NAME_A}"
@@ -187,7 +163,7 @@ assert_edits_item() {
 @test "fails when editing non existing item" {
   run pw edit "${NAME_A}" <<< "${PW_2}"
   assert_failure
-  assert_output "Could not find entry with path ${NAME_A}."
+  assert_item_not_exists_output "${NAME_A}"
 }
 
 ################################################################################

@@ -8,6 +8,22 @@ teardown() {
   _delete_keychain
 }
 
+assert_item_not_exists_output() {
+  assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
+}
+
+assert_item_already_exists_output() {
+  assert_output "security: SecKeychainItemCreateFromContent (${PW_KEYCHAIN}): The specified item already exists in the keychain."
+}
+
+assert_removes_item_output() {
+  assert_output "password has been deleted."
+}
+
+assert_rm_not_found_output() {
+  assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
+}
+
 ################################################################################
 # init
 ################################################################################
@@ -21,19 +37,6 @@ teardown() {
 ################################################################################
 # get
 ################################################################################
-
-assert_item_exists() {
-  local password="$1"; shift
-  run pw -p "$@"
-  assert_success
-  assert_output "${password}"
-}
-
-assert_item_not_exists() {
-  run pw "$@"
-  assert_failure
-  assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
-}
 
 @test "doesn't have item with name" {
   assert_item_not_exists "${NAME_A}"
@@ -50,13 +53,6 @@ assert_item_not_exists() {
 ################################################################################
 # add
 ################################################################################
-
-assert_adds_item() {
-  local password="$1"; shift
-  run pw add "$@" <<< "${password}"
-  assert_success
-  refute_output
-}
 
 @test "adds item with name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
@@ -123,13 +119,6 @@ assert_adds_item() {
 # add duplicate
 ################################################################################
 
-assert_item_already_exists() {
-  local password="$1"; shift
-  run pw add "$@" <<< "${password}"
-  assert_failure
-  assert_output "security: SecKeychainItemCreateFromContent (${PW_KEYCHAIN}): The specified item already exists in the keychain."
-}
-
 @test "fails when adding item with existing name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_item_already_exists "${PW_2}" "${NAME_A}"
@@ -148,12 +137,6 @@ assert_item_already_exists() {
 ################################################################################
 # rm
 ################################################################################
-
-assert_removes_item() {
-  run pw rm "$@"
-  assert_success
-  assert_output "password has been deleted."
-}
 
 @test "removes item with name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
@@ -176,7 +159,7 @@ assert_removes_item() {
   assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
   assert_adds_item "${PW_3}" "${NAME_A}" "${ACCOUNT_B}"
   assert_removes_item "${NAME_A}" "${ACCOUNT_A}"
-  assert_item_not_exists "${ACCOUNT_A}" "${ACCOUNT_A}"
+  assert_item_not_exists "${NAME_A}" "${ACCOUNT_A}"
   assert_item_exists "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
   assert_item_exists "${PW_3}" "${NAME_A}" "${ACCOUNT_B}"
 }
@@ -184,12 +167,6 @@ assert_removes_item() {
 ################################################################################
 # rm non existing item
 ################################################################################
-
-assert_rm_not_found() {
-  run pw rm "$@"
-  assert_failure
-  assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
-}
 
 @test "fails when deleting non existing item with name" {
   assert_rm_not_found "${NAME_A}"
@@ -206,13 +183,6 @@ assert_rm_not_found() {
 ################################################################################
 # edit
 ################################################################################
-
-assert_edits_item() {
-  local password="$1"; shift
-  run pw edit "$@" <<< "${password}"
-  assert_success
-  refute_output
-}
 
 @test "edits item with name" {
   assert_adds_item "${PW_1}" "${NAME_A}"

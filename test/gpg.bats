@@ -22,6 +22,25 @@ teardown() {
   _delete_keychain
 }
 
+assert_item_not_exists_output() {
+  cat << EOF | assert_output -
+gpg: can't open '${PW_KEYCHAIN}/$1': No such file or directory
+gpg: decrypt_message failed: No such file or directory
+EOF
+}
+
+assert_item_already_exists_output() {
+  assert_output "gpg: [stdin]: encryption failed: File exists"
+}
+
+assert_removes_item_output() {
+  refute_output
+}
+
+assert_rm_not_found_output() {
+  assert_output "rm: ${PW_KEYCHAIN}/$1: No such file or directory"
+}
+
 ################################################################################
 # init
 ################################################################################
@@ -36,22 +55,6 @@ teardown() {
 # get
 ################################################################################
 
-assert_item_exists() {
-  local password="$1"; shift
-  run pw -p "$@"
-  assert_success
-  assert_output "${password}"
-}
-
-assert_item_not_exists() {
-  run pw -p "$@"
-  assert_failure
-  cat << EOF | assert_output -
-gpg: can't open '${PW_KEYCHAIN}/$1': No such file or directory
-gpg: decrypt_message failed: No such file or directory
-EOF
-}
-
 @test "doesn't have item" {
   assert_item_not_exists "${NAME_A}"
 }
@@ -59,13 +62,6 @@ EOF
 ################################################################################
 # add
 ################################################################################
-
-assert_adds_item() {
-  local password="$1"; shift
-  run pw add "$@" <<< "${password}"
-  assert_success
-  refute_output
-}
 
 @test "adds item with name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
@@ -117,13 +113,6 @@ assert_adds_item() {
 # add duplicate
 ################################################################################
 
-assert_item_already_exists() {
-  local password="$1"; shift
-  run pw add "$@" <<< "${password}"
-  assert_failure
-  assert_output "gpg: [stdin]: encryption failed: File exists"
-}
-
 @test "fails when adding item with existing name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_item_already_exists "${PW_2}" "${NAME_A}"
@@ -136,9 +125,7 @@ assert_item_already_exists() {
 @test "removes item" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_adds_item "${PW_2}" "${NAME_B}"
-  run pw rm "${NAME_A}"
-  assert_success
-  refute_output
+  assert_removes_item "${NAME_A}"
   assert_item_not_exists "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_B}"
 }
@@ -148,21 +135,12 @@ assert_item_already_exists() {
 ################################################################################
 
 @test "fails when deleting non existing item" {
-  run pw rm "${NAME_A}"
-  assert_failure
-  assert_output "rm: ${PW_KEYCHAIN}/${NAME_A}: No such file or directory"
+  assert_rm_not_found "${NAME_A}"
 }
 
 ################################################################################
 # edit
 ################################################################################
-
-assert_edits_item() {
-  local password="$1"; shift
-  run pw edit "$@" <<< "${password}"
-  assert_success
-  refute_output
-}
 
 @test "edits item" {
   assert_adds_item "${PW_1}" "${NAME_A}"

@@ -18,6 +18,52 @@ _common_setup() {
   PW_3=" 3 test pw "
 }
 
+assert_item_exists() {
+  local password="$1"; shift
+  run pw -p "$@"
+  assert_success
+  assert_output "${password}"
+}
+
+assert_item_not_exists() {
+  run pw "$@"
+  assert_failure
+  assert_item_not_exists_output "$@"
+}
+
+assert_adds_item() {
+  local password="$1"; shift
+  run pw add "$@" <<< "${password}"
+  assert_success
+  refute_output
+}
+
+assert_item_already_exists() {
+  local password="$1"; shift
+  run pw add "$@" <<< "${password}"
+  assert_failure
+  assert_item_already_exists_output "$@"
+}
+
+assert_removes_item() {
+  run pw rm "$@"
+  assert_success
+  assert_removes_item_output "$@"
+}
+
+assert_rm_not_found() {
+  run pw rm "$@"
+  assert_failure
+  assert_rm_not_found_output "$@"
+}
+
+assert_edits_item() {
+  local password="$1"; shift
+  run pw edit "$@" <<< "${password}"
+  assert_success
+  refute_output
+}
+
 _skip_manual_test() {
   if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
     echo "# Please enter '$1'${2:+ "$2"}" >&3
