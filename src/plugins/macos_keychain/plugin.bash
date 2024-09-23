@@ -12,19 +12,37 @@ pw::plugin_init() {
 }
 
 pw::plugin_add() {
-  security add-generic-password -s "${PW_NAME}" -a "${PW_ACCOUNT}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
+  security add-generic-password \
+    -l "${PW_NAME:-"${PW_URL}"}" \
+    -a "${PW_ACCOUNT}" \
+    -s "${PW_URL:="${PW_NAME}"}" \
+    -w "${PW_PASSWORD}" \
+    "${PW_KEYCHAIN}"
 }
 
 pw::plugin_edit() {
-  security add-generic-password -U -s "${PW_NAME}" -a "${PW_ACCOUNT}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
+  security add-generic-password -U \
+    -l "${PW_NAME:-"${PW_URL}"}" \
+    -a "${PW_ACCOUNT}" \
+    -s "${PW_URL:="${PW_NAME}"}" \
+    -w "${PW_PASSWORD}" \
+    "${PW_KEYCHAIN}"
 }
 
 pw::plugin_get() {
-  security find-generic-password ${PW_NAME:+-s "${PW_NAME}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -w "${PW_KEYCHAIN}"
+  security find-generic-password \
+    ${PW_NAME:+-l "${PW_NAME}"} \
+    ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} \
+    ${PW_URL:+-s "${PW_URL}"} \
+    -w "${PW_KEYCHAIN}"
 }
 
 pw::plugin_rm() {
-  security delete-generic-password ${PW_NAME:+-s "${PW_NAME}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} "${PW_KEYCHAIN}" > /dev/null
+  security delete-generic-password \
+    ${PW_NAME:+-l "${PW_NAME}"} \
+    ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} \
+    ${PW_URL:+-s "${PW_URL}"} \
+    "${PW_KEYCHAIN}" > /dev/null
 }
 
 pw::plugin_ls() {
@@ -33,23 +51,29 @@ pw::plugin_ls() {
     fzf)
       security dump-keychain "${PW_KEYCHAIN}" | awk '
         BEGIN { FS="<blob>="; }
+        /0x00000007 / {
+          label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+        }
         /"acct"/ {
           account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
         }
         /"svce"/ {
-          name = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-          printf "%-40s\t%s\t%s\t%s\n", name, account, name, account
+          service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+          printf "%-24s\t%-24s\t%s\t%s\t%s\t%s\n", label, account, service, label, account, service
         }' | LC_ALL=C sort
       ;;
     *)
       security dump-keychain "${PW_KEYCHAIN}" | awk '
         BEGIN { FS="<blob>="; }
+        /0x00000007 / {
+          label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+        }
         /"acct"/ {
           account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
         }
         /"svce"/ {
-          name = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-          printf "%-40s\t%s\n", name, account
+          service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+          printf "%-24s\t%-24s\t%s\n", label, account, service
         }' | LC_ALL=C sort
       ;;
   esac

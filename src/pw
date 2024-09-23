@@ -240,6 +240,7 @@ pw::update() {
 
 PW_NAME=""
 PW_ACCOUNT=""
+PW_URL=""
 declare -ig PW_FZF=0
 
 pw::init() {
@@ -255,10 +256,11 @@ pw::add() {
   pw::prepare_keychain "add"
 
   if (($#)); then
-    PW_NAME="$1" PW_ACCOUNT="${2:-}"
+    pw::select_item_with_prompt add "$@"
   else
     IFS= read -rp "Title: " PW_NAME </dev/tty
     IFS= read -rp "Username: " PW_ACCOUNT </dev/tty
+    IFS= read -rp "URL: " PW_URL </dev/tty
   fi
 
   pw::prompt_password
@@ -306,16 +308,20 @@ pw::ls() {
 pw::select_item_with_prompt() {
   local fzf_prompt="$1"; shift
   if (($#)); then
-    PW_NAME="$1" PW_ACCOUNT="${2:-}" PW_FZF=0
+    PW_NAME="$1"
+    PW_ACCOUNT="${2:-}"
+    PW_URL="${3:-}"
+    PW_FZF=0
   else
     local item
     item="$(pw::plugin_ls "fzf")"
     item="$(echo "${item}" | fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
-                                 --delimiter='\t' --with-nth=1,2 --nth=1,2 \
+                                 --delimiter='\t' --with-nth=1,2,3 --nth=1,2,3 \
                                  --preview="$(pw::plugin_fzf_preview)")"
-    PW_NAME="$(awk -F '\t' '{print $3}' <<< "${item}")"
-    PW_ACCOUNT="$(awk -F '\t' '{print $4}' <<< "${item}")"
-    [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" ]] || exit 1
+    PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
+    PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"
+    PW_URL="$(awk -F '\t' '{print $6}' <<< "${item}")"
+    [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" || -n "${PW_URL}" ]] || exit 1
     PW_FZF=1
   fi
 }

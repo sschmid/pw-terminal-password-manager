@@ -71,6 +71,57 @@ assert_rm_not_found_output() {
   assert_item_exists "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
 }
 
+@test "adds item with name and url" {
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "" "${URL_B}"
+
+  assert_item_exists "${PW_2}" "${NAME_B}"
+  assert_item_exists "${PW_2}" "" "" "${URL_B}"
+
+  assert_item_exists "${PW_2}" "${NAME_B}" "" "${URL_B}"
+}
+
+@test "label swizzling: name-only is label and service" {
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  run security find-generic-password -l "${NAME_A}" -w "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "${PW_1}"
+
+  run security find-generic-password -s "${NAME_A}" -w "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "${PW_1}"
+}
+
+@test "label swizzling: url-only is label and service" {
+  assert_adds_item "${PW_1}" "" "" "${URL_A}"
+  assert_item_exists "${PW_1}" "" "" "${URL_A}"
+
+  run security find-generic-password -s "${URL_A}" -w "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "${PW_1}"
+
+  run security find-generic-password -l "${URL_A}" -w "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "${PW_1}"
+}
+
+@test "label swizzling: name and url are label and service" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "" "" "${URL_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" "" "${URL_A}"
+
+  run security find-generic-password -l "${NAME_A}" -w "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "${PW_1}"
+
+  run security find-generic-password -s "${URL_A}" -w "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "${PW_1}"
+}
+
 ################################################################################
 # add another
 ################################################################################
@@ -113,6 +164,13 @@ assert_rm_not_found_output() {
 
   assert_item_exists "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
   assert_item_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_B}"
+}
+
+@test "adds item with different url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_adds_item "${PW_2}" "${NAME_A}" "" "${URL_B}"
+  assert_item_exists "${PW_1}" "" "" "${URL_A}"
+  assert_item_exists "${PW_2}" "" "" "${URL_B}"
 }
 
 ################################################################################
@@ -164,6 +222,22 @@ assert_rm_not_found_output() {
   assert_item_exists "${PW_3}" "${NAME_A}" "${ACCOUNT_B}"
 }
 
+@test "removes item with name and url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "" "${URL_B}"
+  assert_removes_item "${NAME_A}" "" "${URL_A}"
+  assert_item_not_exists "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}"
+}
+
+@test "removes item with url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "" "${URL_B}"
+  assert_removes_item "" "" "${URL_A}"
+  assert_item_not_exists "" "" "${URL_A}"
+  assert_item_exists "${PW_2}" "" "" "${URL_B}"
+}
+
 ################################################################################
 # rm non existing item
 ################################################################################
@@ -202,6 +276,18 @@ assert_rm_not_found_output() {
   assert_item_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
 }
 
+@test "edits item with name and url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}" "" "${URL_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" "" "${URL_A}"
+}
+
+@test "edits item with url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_edits_item "${PW_2}" "" "" "${URL_A}"
+  assert_item_exists "${PW_2}" "" "" "${URL_A}"
+}
+
 ################################################################################
 # edit non existing item
 ################################################################################
@@ -232,13 +318,13 @@ assert_rm_not_found_output() {
 }
 
 @test "lists sorted items" {
-  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_B}"
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_B}" "${URL_B}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
   run pw ls
   assert_success
   cat << EOF | assert_output -
-${NAME_A}                           	${ACCOUNT_A}
-${NAME_B}                           	${ACCOUNT_B}
+${NAME_A}           	${ACCOUNT_A}        	${URL_A}
+${NAME_B}           	${ACCOUNT_B}        	${URL_B}
 EOF
 }
 
@@ -246,31 +332,31 @@ EOF
   assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
   run pw ls
   assert_success
-  assert_output "                                        	${ACCOUNT_A}"
+  assert_output "                        	${ACCOUNT_A}        	"
 }
 
 @test "ls handles <NULL> account" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   run pw ls
   assert_success
-  assert_output "${NAME_A}                           	"
+  assert_output "${NAME_A}           	                        	${NAME_A}"
 }
 
 @test "ls handles = in name" {
   assert_adds_item "${PW_1}" "te=st"
   run pw ls
   assert_success
-  assert_output "te=st                                   	"
+  assert_output "te=st                   	                        	te=st"
 }
 
 @test "lists sorted items with fzf format" {
-  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_B}"
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_B}" "${URL_B}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
   run pw ls fzf
   assert_success
   cat << EOF | assert_output -
-${NAME_A}                           	${ACCOUNT_A}	${NAME_A}	${ACCOUNT_A}
-${NAME_B}                           	${ACCOUNT_B}	${NAME_B}	${ACCOUNT_B}
+${NAME_A}           	${ACCOUNT_A}        	${URL_A}	${NAME_A}	${ACCOUNT_A}	${URL_A}
+${NAME_B}           	${ACCOUNT_B}        	${URL_B}	${NAME_B}	${ACCOUNT_B}	${URL_B}
 EOF
 }
 
