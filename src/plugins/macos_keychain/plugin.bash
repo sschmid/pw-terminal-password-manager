@@ -46,37 +46,24 @@ pw::plugin_rm() {
 }
 
 pw::plugin_ls() {
-  local format="${1:-default}"
+  local format="${1:-default}" printf_format
   case "${format}" in
-    fzf)
-      security dump-keychain "${PW_KEYCHAIN}" | awk '
-        BEGIN { FS="<blob>="; }
-        /0x00000007 / {
-          label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-        }
-        /"acct"/ {
-          account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-        }
-        /"svce"/ {
-          service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-          printf "%-24s\t%-24s\t%s\t%s\t%s\t%s\n", label, account, service, label, account, service
-        }' | LC_ALL=C sort
-      ;;
-    *)
-      security dump-keychain "${PW_KEYCHAIN}" | awk '
-        BEGIN { FS="<blob>="; }
-        /0x00000007 / {
-          label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-        }
-        /"acct"/ {
-          account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-        }
-        /"svce"/ {
-          service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-          printf "%-24s\t%-24s\t%s\n", label, account, service
-        }' | LC_ALL=C sort
-      ;;
+    fzf) printf_format="%-24s\t%-24s\t%s\t%s\t%s\t%s\n" ;;
+    *) printf_format="%-24s\t%-24s\t%s\n" ;;
   esac
+
+  security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" '
+    BEGIN { FS="<blob>="; }
+    /0x00000007 / {
+      label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+    }
+    /"acct"/ {
+      account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+    }
+    /"svce"/ {
+      service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+      printf printf_format, label, account, service, label, account, service
+    }' | LC_ALL=C sort
 }
 
 pw::plugin_fzf_preview() {
