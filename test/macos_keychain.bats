@@ -1,7 +1,7 @@
 setup() {
   load 'macos_keychain'
   _setup
-  pw::plugin_init <<< " test password "
+  pw init "${PW_KEYCHAIN}" <<< " test password "
 
   nameA=" a test name "
   nameB=" b test name "
@@ -21,9 +21,9 @@ teardown() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw::plugin_init <<< " test password "
+  run pw init "${PW_KEYCHAIN}" <<< " test password "
   assert_failure
-  assert_output "security: SecKeychainCreate ${PW_KEYCHAIN}: A keychain with the same name already exists."
+  assert_output "pw: ${PW_KEYCHAIN}: File already exists"
 }
 
 ################################################################################
@@ -32,13 +32,13 @@ teardown() {
 
 assert_item_exists() {
   local password="$1"; shift
-  run pw::plugin_get "$@"
+  run pw -p "$@"
   assert_success
   assert_output "${password}"
 }
 
 assert_item_not_exists() {
-  run pw::plugin_get "$@"
+  run pw "$@"
   assert_failure
   assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
 }
@@ -60,23 +60,24 @@ assert_item_not_exists() {
 ################################################################################
 
 assert_adds_item() {
-  run pw::plugin_add "$@"
+  local password="$1"; shift
+  run pw add "$@" <<< "${password}"
   assert_success
   refute_output
 }
 
 @test "adds item with name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
+  assert_adds_item "${pw1}" "${nameA}"
   assert_item_exists "${pw1}" "${nameA}"
 }
 
 @test "adds item with account" {
-  assert_adds_item "" "${accountA}" "${pw1}"
+  assert_adds_item "${pw1}" "" "${accountA}"
   assert_item_exists "${pw1}" "" "${accountA}"
 }
 
 @test "adds item with name and account" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
   assert_item_exists "${pw1}" "${nameA}"
   assert_item_exists "${pw1}" "" "${accountA}"
   assert_item_exists "${pw1}" "${nameA}" "${accountA}"
@@ -87,22 +88,22 @@ assert_adds_item() {
 ################################################################################
 
 @test "adds item with different name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  assert_adds_item "${nameB}" "" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_adds_item "${pw2}" "${nameB}"
   assert_item_exists "${pw1}" "${nameA}"
   assert_item_exists "${pw2}" "${nameB}"
 }
 
 @test "adds item with different account" {
-  assert_adds_item "" "${accountA}" "${pw1}"
-  assert_adds_item "" "${accountB}" "${pw2}"
+  assert_adds_item "${pw1}" "" "${accountA}"
+  assert_adds_item "${pw2}" "" "${accountB}"
   assert_item_exists "${pw1}" "" "${accountA}"
   assert_item_exists "${pw2}" "" "${accountB}"
 }
 
 @test "adds item with different name and same account" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
 
   assert_item_exists "${pw1}" "${nameA}"
   assert_item_exists "${pw2}" "${nameB}"
@@ -114,8 +115,8 @@ assert_adds_item() {
 }
 
 @test "adds item with same name and different account" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  assert_adds_item "${nameA}" "${accountB}" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_adds_item "${pw2}" "${nameA}" "${accountB}"
 
   assert_item_exists "${pw1}" "${nameA}"
 
@@ -131,24 +132,25 @@ assert_adds_item() {
 ################################################################################
 
 assert_item_already_exists() {
-  run pw::plugin_add "$@"
+  local password="$1"; shift
+  run pw add "$@" <<< "${password}"
   assert_failure
   assert_output "security: SecKeychainItemCreateFromContent (${PW_KEYCHAIN}): The specified item already exists in the keychain."
 }
 
 @test "fails when adding item with existing name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  assert_item_already_exists "${nameA}" "" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_item_already_exists "${pw2}" "${nameA}"
 }
 
 @test "fails when adding item with existing account" {
-  assert_adds_item "" "${accountA}" "${pw1}"
-  assert_item_already_exists "" "${accountA}" "${pw2}"
+  assert_adds_item "${pw1}" "" "${accountA}"
+  assert_item_already_exists "${pw2}" "" "${accountA}"
 }
 
 @test "fails when adding item with existing name and account" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  assert_item_already_exists "${nameA}" "${accountA}" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_item_already_exists "${pw2}" "${nameA}" "${accountA}"
 }
 
 ################################################################################
@@ -156,31 +158,31 @@ assert_item_already_exists() {
 ################################################################################
 
 assert_removes_item() {
-  run pw::plugin_rm "$@"
+  run pw rm "$@"
   assert_success
   assert_output "password has been deleted."
 }
 
 @test "removes item with name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  assert_adds_item "${nameB}" "" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_adds_item "${pw2}" "${nameB}"
   assert_removes_item "${nameA}"
   assert_item_not_exists "${nameA}"
   assert_item_exists "${pw2}" "${nameB}"
 }
 
 @test "removes item with account" {
-  assert_adds_item "" "${accountA}" "${pw1}"
-  assert_adds_item "" "${accountB}" "${pw2}"
+  assert_adds_item "${pw1}" "" "${accountA}"
+  assert_adds_item "${pw2}" "" "${accountB}"
   assert_removes_item "" "${accountA}"
   assert_item_not_exists "" "${accountA}"
   assert_item_exists "${pw2}" "" "${accountB}"
 }
 
 @test "removes item with name and account" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  assert_adds_item "${nameB}" "${accountA}" "${pw2}"
-  assert_adds_item "${nameA}" "${accountB}" "${pw3}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
+  assert_adds_item "${pw3}" "${nameA}" "${accountB}"
   assert_removes_item "${nameA}" "${accountA}"
   assert_item_not_exists "${accountA}" "${accountA}"
   assert_item_exists "${pw2}" "${nameB}" "${accountA}"
@@ -192,7 +194,7 @@ assert_removes_item() {
 ################################################################################
 
 assert_rm_not_found() {
-  run pw::plugin_rm "$@"
+  run pw rm "$@"
   assert_failure
   assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
 }
@@ -214,26 +216,27 @@ assert_rm_not_found() {
 ################################################################################
 
 assert_edits_item() {
-  run pw::plugin_edit "$@"
+  local password="$1"; shift
+  run pw edit "$@" <<< "${password}"
   assert_success
   refute_output
 }
 
 @test "edits item with name" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  assert_edits_item "${nameA}" "" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}"
+  assert_edits_item "${pw2}" "${nameA}"
   assert_item_exists "${pw2}" "${nameA}"
 }
 
 @test "edits item with account" {
-  assert_adds_item "" "${accountA}" "${pw1}"
-  assert_edits_item "" "${accountA}" "${pw2}"
+  assert_adds_item "${pw1}" "" "${accountA}"
+  assert_edits_item "${pw2}" "" "${accountA}"
   assert_item_exists "${pw2}" "" "${accountA}"
 }
 
 @test "edits item with name and account" {
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  assert_edits_item "${nameA}" "${accountA}" "${pw2}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_edits_item "${pw2}" "${nameA}" "${accountA}"
   assert_item_exists "${pw2}" "${nameA}" "${accountA}"
 }
 
@@ -242,17 +245,17 @@ assert_edits_item() {
 ################################################################################
 
 @test "adds item when editing non existing item with name" {
-  assert_edits_item "${nameA}" "" "${pw2}"
+  assert_edits_item "${pw2}" "${nameA}"
   assert_item_exists "${pw2}" "${nameA}"
 }
 
 @test "adds item when editing non existing item with account" {
-  assert_edits_item "" "${accountA}" "${pw2}"
+  assert_edits_item "${pw2}" "" "${accountA}"
   assert_item_exists "${pw2}" "" "${accountA}"
 }
 
 @test "adds item when editing non existing item with name and account" {
-  assert_edits_item "${nameA}" "${accountA}" "${pw2}"
+  assert_edits_item "${pw2}" "${nameA}" "${accountA}"
   assert_item_exists "${pw2}" "${nameA}" "${accountA}"
 }
 
@@ -261,15 +264,15 @@ assert_edits_item() {
 ################################################################################
 
 @test "lists no items" {
-  run pw::plugin_ls
+  run pw ls
   assert_success
   refute_output
 }
 
 @test "lists sorted items" {
-  assert_adds_item "${nameB}" "${accountB}" "${pw2}"
-  assert_adds_item "${nameA}" "${accountA}" "${pw1}"
-  run pw::plugin_ls
+  assert_adds_item "${pw2}" "${nameB}" "${accountB}"
+  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  run pw ls
   assert_success
   cat << EOF | assert_output -
 ${nameA}                           	${accountA}
@@ -278,22 +281,22 @@ EOF
 }
 
 @test "ls handles <NULL> name" {
-  assert_adds_item "" "${accountA}" "${pw1}"
-  run pw::plugin_ls
+  assert_adds_item "${pw1}" "" "${accountA}"
+  run pw ls
   assert_success
   assert_output "                                        	${accountA}"
 }
 
 @test "ls handles <NULL> account" {
-  assert_adds_item "${nameA}" "" "${pw1}"
-  run pw::plugin_ls
+  assert_adds_item "${pw1}" "${nameA}"
+  run pw ls
   assert_success
   assert_output "${nameA}                           	"
 }
 
 @test "ls handles = in name" {
-  assert_adds_item "te=st" "" "${pw1}"
-  run pw::plugin_ls
+  assert_adds_item "${pw1}" "te=st"
+  run pw ls
   assert_success
   assert_output "te=st                                   	"
 }
