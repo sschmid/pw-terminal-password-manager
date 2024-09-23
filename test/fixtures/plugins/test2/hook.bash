@@ -2,6 +2,8 @@
 FILE_TYPE="Test File Type 2"
 FILE_EXTENSION="ext2"
 
+pw::discover_keychains() { :; }
+
 pw::register() {
   [[ -v PW_TEST_PLUGIN_2 ]]
 }

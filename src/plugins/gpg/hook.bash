@@ -2,6 +2,8 @@
 FILE_TYPE="PGP"
 FILE_EXTENSION="/, gpg, asc"
 
+pw::discover_keychains() { :; }
+
 pw::register() {
   [[ -d "${PW_KEYCHAIN}" ]]
 }

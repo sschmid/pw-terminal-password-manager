@@ -2,6 +2,8 @@
 FILE_TYPE="Test File Type Fail"
 FILE_EXTENSION="extf"
 
+pw::discover_keychains() { :; }
+
 pw::register() {
   [[ -v PW_TEST_PLUGIN_FAIL ]]
 }
