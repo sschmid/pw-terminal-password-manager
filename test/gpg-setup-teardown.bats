@@ -15,7 +15,7 @@ setup() {
 
 @test "creates keychain" {
   assert_dir_not_exists "${PW_KEYCHAIN}"
-  run pw::plugin_init
+  run pw init "${PW_KEYCHAIN}"
   assert_success
   assert_dir_exists "${PW_KEYCHAIN}"
 
@@ -25,7 +25,7 @@ setup() {
 }
 
 @test "deletes keychain" {
-  pw::plugin_init
+  pw init "${PW_KEYCHAIN}"
   run _delete_keychain
   assert_success
   assert_dir_not_exists "${PW_KEYCHAIN}"
