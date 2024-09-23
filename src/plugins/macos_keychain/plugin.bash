@@ -12,19 +12,19 @@ pw::plugin_init() {
 }
 
 pw::plugin_add() {
-  security add-generic-password -s "$1" -a "$2" -w "$3" "${PW_KEYCHAIN}"
+  security add-generic-password -s "${PW_NAME}" -a "${PW_ACCOUNT}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
 }
 
 pw::plugin_edit() {
-  security add-generic-password -U -s "$1" -a "$2" -w "$3" "${PW_KEYCHAIN}"
+  security add-generic-password -U -s "${PW_NAME}" -a "${PW_ACCOUNT}" -w "${PW_PASSWORD}" "${PW_KEYCHAIN}"
 }
 
 pw::plugin_get() {
-  security find-generic-password ${1:+-s "$1"} ${2:+-a "$2"} -w "${PW_KEYCHAIN}"
+  security find-generic-password ${PW_NAME:+-s "${PW_NAME}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} -w "${PW_KEYCHAIN}"
 }
 
 pw::plugin_rm() {
-  security delete-generic-password ${1:+-s "$1"} ${2:+-a "$2"} "${PW_KEYCHAIN}" > /dev/null
+  security delete-generic-password ${PW_NAME:+-s "${PW_NAME}"} ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} "${PW_KEYCHAIN}" > /dev/null
 }
 
 pw::plugin_ls() {

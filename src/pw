@@ -252,14 +252,14 @@ pw::add() {
   fi
 
   pw::prompt_password
-  pw::plugin_add "${PW_NAME}" "${PW_ACCOUNT}" "${PW_PASSWORD}"
+  pw::plugin_add
 }
 
 pw::edit() {
   pw::prepare_keychain "edit"
   pw::select_item_with_prompt edit "$@"
   pw::prompt_password
-  pw::plugin_edit "${PW_NAME}" "${PW_ACCOUNT}" "${PW_PASSWORD}"
+  pw::plugin_edit
 }
 
 pw::get() {
@@ -270,7 +270,7 @@ pw::get() {
   else pw::select_item_with_prompt copy "$@"
   fi
   local password
-  password="$(pw::plugin_get "${PW_NAME}" "${PW_ACCOUNT}")"
+  password="$(pw::plugin_get)"
   if ((print))
   then echo "${password}"
   else pw::clip_and_forget "${password}"
@@ -285,7 +285,7 @@ pw::rm() {
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
     [[ "${REPLY}" == [yY] ]] || remove=0
   fi
-  ((!remove)) || pw::plugin_rm "${PW_NAME}" "${PW_ACCOUNT}"
+  ((!remove)) || pw::plugin_rm
 }
 
 pw::ls() {

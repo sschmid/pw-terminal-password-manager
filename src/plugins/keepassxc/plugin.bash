@@ -41,25 +41,25 @@ EOF
 }
 
 pw::plugin_add() {
-  _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" ${2:+-u "$2"} "$1" << EOF
+  _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" ${PW_ACCOUNT:+-u "${PW_ACCOUNT}"} "${PW_NAME}" << EOF
 ${PW_KEEPASSXC_PASSWORD}
-$3
+${PW_PASSWORD}
 EOF
 }
 
 pw::plugin_edit() {
-  _keepassxc-cli_with_args edit --password-prompt "${PW_KEYCHAIN}" "$1" << EOF
+  _keepassxc-cli_with_args edit --password-prompt "${PW_KEYCHAIN}" "${PW_NAME}" << EOF
 ${PW_KEEPASSXC_PASSWORD}
-$3
+${PW_PASSWORD}
 EOF
 }
 
 pw::plugin_get() {
-  _keepassxc-cli_with_args show --show-protected --attributes password "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  _keepassxc-cli_with_args show --show-protected --attributes password "${PW_KEYCHAIN}" "${PW_NAME}" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 pw::plugin_rm() {
-  _keepassxc-cli_with_args rm "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  _keepassxc-cli_with_args rm "${PW_KEYCHAIN}" "${PW_NAME}" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 pw::plugin_ls() {

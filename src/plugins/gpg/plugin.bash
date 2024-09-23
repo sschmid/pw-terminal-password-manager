@@ -39,23 +39,23 @@ pw::plugin_init() {
 
 pw::plugin_add() {
   _mk_owner_dir "${PW_KEYCHAIN}"
-  mkdir -p "${PW_KEYCHAIN}/$(dirname "$1")"
-  if [[ "${1##*.}" == "asc" ]]
-  then _gpg_encrypt --output "${PW_KEYCHAIN}/$1" --armor <<< "$3"
-  else _gpg_encrypt --output "${PW_KEYCHAIN}/$1" <<< "$3"
+  mkdir -p "${PW_KEYCHAIN}/$(dirname "${PW_NAME}")"
+  if [[ "${PW_NAME##*.}" == "asc" ]]
+  then _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --armor <<< "${PW_PASSWORD}"
+  else _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" <<< "${PW_PASSWORD}"
   fi
 }
 
 pw::plugin_edit() {
-  _gpg_encrypt --output "${PW_KEYCHAIN}/$1" --yes <<< "$3"
+  _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --yes <<< "${PW_PASSWORD}"
 }
 
 pw::plugin_get() {
-  _gpg --decrypt "${PW_KEYCHAIN}/$1"
+  _gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}"
 }
 
 pw::plugin_rm() {
-  rm "${PW_KEYCHAIN}/$1"
+  rm "${PW_KEYCHAIN}/${PW_NAME}"
 }
 
 pw::plugin_ls() {
