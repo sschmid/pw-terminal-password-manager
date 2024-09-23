@@ -2,14 +2,6 @@ setup() {
   load 'macos_keychain'
   _setup
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
-
-  nameA=" a test name "
-  nameB=" b test name "
-  accountA=" a test account "
-  accountB=" b test account "
-  pw1=" 1 test pw "
-  pw2=" 2 test pw "
-  pw3=" 3 test pw "
 }
 
 teardown() {
@@ -44,15 +36,15 @@ assert_item_not_exists() {
 }
 
 @test "doesn't have item with name" {
-  assert_item_not_exists "${nameA}"
+  assert_item_not_exists "${NAME_A}"
 }
 
 @test "doesn't have item with account" {
-  assert_item_not_exists "" "${accountA}"
+  assert_item_not_exists "" "${ACCOUNT_A}"
 }
 
 @test "doesn't have item with name and account" {
-  assert_item_not_exists "${nameA}" "${accountA}"
+  assert_item_not_exists "${NAME_A}" "${ACCOUNT_A}"
 }
 
 ################################################################################
@@ -67,20 +59,20 @@ assert_adds_item() {
 }
 
 @test "adds item with name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_item_exists "${pw1}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
 }
 
 @test "adds item with account" {
-  assert_adds_item "${pw1}" "" "${accountA}"
-  assert_item_exists "${pw1}" "" "${accountA}"
+  assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
+  assert_item_exists "${PW_1}" "" "${ACCOUNT_A}"
 }
 
 @test "adds item with name and account" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  assert_item_exists "${pw1}" "${nameA}"
-  assert_item_exists "${pw1}" "" "${accountA}"
-  assert_item_exists "${pw1}" "${nameA}" "${accountA}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "" "${ACCOUNT_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
 }
 
 ################################################################################
@@ -88,43 +80,43 @@ assert_adds_item() {
 ################################################################################
 
 @test "adds item with different name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_adds_item "${pw2}" "${nameB}"
-  assert_item_exists "${pw1}" "${nameA}"
-  assert_item_exists "${pw2}" "${nameB}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}"
 }
 
 @test "adds item with different account" {
-  assert_adds_item "${pw1}" "" "${accountA}"
-  assert_adds_item "${pw2}" "" "${accountB}"
-  assert_item_exists "${pw1}" "" "${accountA}"
-  assert_item_exists "${pw2}" "" "${accountB}"
+  assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
+  assert_adds_item "${PW_2}" "" "${ACCOUNT_B}"
+  assert_item_exists "${PW_1}" "" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "" "${ACCOUNT_B}"
 }
 
 @test "adds item with different name and same account" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
 
-  assert_item_exists "${pw1}" "${nameA}"
-  assert_item_exists "${pw2}" "${nameB}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}"
 
-  assert_item_exists "${pw1}" "" "${accountA}"
+  assert_item_exists "${PW_1}" "" "${ACCOUNT_A}"
 
-  assert_item_exists "${pw1}" "${nameA}" "${accountA}"
-  assert_item_exists "${pw2}" "${nameB}" "${accountA}"
+  assert_item_exists "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
 }
 
 @test "adds item with same name and different account" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  assert_adds_item "${pw2}" "${nameA}" "${accountB}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_2}" "${NAME_A}" "${ACCOUNT_B}"
 
-  assert_item_exists "${pw1}" "${nameA}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
 
-  assert_item_exists "${pw1}" "" "${accountA}"
-  assert_item_exists "${pw2}" "" "${accountB}"
+  assert_item_exists "${PW_1}" "" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "" "${ACCOUNT_B}"
 
-  assert_item_exists "${pw1}" "${nameA}" "${accountA}"
-  assert_item_exists "${pw2}" "${nameA}" "${accountB}"
+  assert_item_exists "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_B}"
 }
 
 ################################################################################
@@ -139,18 +131,18 @@ assert_item_already_exists() {
 }
 
 @test "fails when adding item with existing name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_item_already_exists "${pw2}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_item_already_exists "${PW_2}" "${NAME_A}"
 }
 
 @test "fails when adding item with existing account" {
-  assert_adds_item "${pw1}" "" "${accountA}"
-  assert_item_already_exists "${pw2}" "" "${accountA}"
+  assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
+  assert_item_already_exists "${PW_2}" "" "${ACCOUNT_A}"
 }
 
 @test "fails when adding item with existing name and account" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  assert_item_already_exists "${pw2}" "${nameA}" "${accountA}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_already_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
 }
 
 ################################################################################
@@ -164,29 +156,29 @@ assert_removes_item() {
 }
 
 @test "removes item with name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_adds_item "${pw2}" "${nameB}"
-  assert_removes_item "${nameA}"
-  assert_item_not_exists "${nameA}"
-  assert_item_exists "${pw2}" "${nameB}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}"
+  assert_removes_item "${NAME_A}"
+  assert_item_not_exists "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}"
 }
 
 @test "removes item with account" {
-  assert_adds_item "${pw1}" "" "${accountA}"
-  assert_adds_item "${pw2}" "" "${accountB}"
-  assert_removes_item "" "${accountA}"
-  assert_item_not_exists "" "${accountA}"
-  assert_item_exists "${pw2}" "" "${accountB}"
+  assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
+  assert_adds_item "${PW_2}" "" "${ACCOUNT_B}"
+  assert_removes_item "" "${ACCOUNT_A}"
+  assert_item_not_exists "" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "" "${ACCOUNT_B}"
 }
 
 @test "removes item with name and account" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
-  assert_adds_item "${pw3}" "${nameA}" "${accountB}"
-  assert_removes_item "${nameA}" "${accountA}"
-  assert_item_not_exists "${accountA}" "${accountA}"
-  assert_item_exists "${pw2}" "${nameB}" "${accountA}"
-  assert_item_exists "${pw3}" "${nameA}" "${accountB}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_3}" "${NAME_A}" "${ACCOUNT_B}"
+  assert_removes_item "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_not_exists "${ACCOUNT_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_3}" "${NAME_A}" "${ACCOUNT_B}"
 }
 
 ################################################################################
@@ -200,15 +192,15 @@ assert_rm_not_found() {
 }
 
 @test "fails when deleting non existing item with name" {
-  assert_rm_not_found "${nameA}"
+  assert_rm_not_found "${NAME_A}"
 }
 
 @test "fails when deleting non existing item with account" {
-  assert_rm_not_found "" "${accountA}"
+  assert_rm_not_found "" "${ACCOUNT_A}"
 }
 
 @test "fails when deleting non existing item with name and account" {
-  assert_rm_not_found "${nameA}" "${accountA}"
+  assert_rm_not_found "${NAME_A}" "${ACCOUNT_A}"
 }
 
 ################################################################################
@@ -223,21 +215,21 @@ assert_edits_item() {
 }
 
 @test "edits item with name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_edits_item "${pw2}" "${nameA}"
-  assert_item_exists "${pw2}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}"
 }
 
 @test "edits item with account" {
-  assert_adds_item "${pw1}" "" "${accountA}"
-  assert_edits_item "${pw2}" "" "${accountA}"
-  assert_item_exists "${pw2}" "" "${accountA}"
+  assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
+  assert_edits_item "${PW_2}" "" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "" "${ACCOUNT_A}"
 }
 
 @test "edits item with name and account" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  assert_edits_item "${pw2}" "${nameA}" "${accountA}"
-  assert_item_exists "${pw2}" "${nameA}" "${accountA}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
 }
 
 ################################################################################
@@ -245,18 +237,18 @@ assert_edits_item() {
 ################################################################################
 
 @test "adds item when editing non existing item with name" {
-  assert_edits_item "${pw2}" "${nameA}"
-  assert_item_exists "${pw2}" "${nameA}"
+  assert_edits_item "${PW_2}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}"
 }
 
 @test "adds item when editing non existing item with account" {
-  assert_edits_item "${pw2}" "" "${accountA}"
-  assert_item_exists "${pw2}" "" "${accountA}"
+  assert_edits_item "${PW_2}" "" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "" "${ACCOUNT_A}"
 }
 
 @test "adds item when editing non existing item with name and account" {
-  assert_edits_item "${pw2}" "${nameA}" "${accountA}"
-  assert_item_exists "${pw2}" "${nameA}" "${accountA}"
+  assert_edits_item "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
 }
 
 ################################################################################
@@ -270,32 +262,32 @@ assert_edits_item() {
 }
 
 @test "lists sorted items" {
-  assert_adds_item "${pw2}" "${nameB}" "${accountB}"
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_B}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
   run pw ls
   assert_success
   cat << EOF | assert_output -
-${nameA}                           	${accountA}
-${nameB}                           	${accountB}
+${NAME_A}                           	${ACCOUNT_A}
+${NAME_B}                           	${ACCOUNT_B}
 EOF
 }
 
 @test "ls handles <NULL> name" {
-  assert_adds_item "${pw1}" "" "${accountA}"
+  assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
   run pw ls
   assert_success
-  assert_output "                                        	${accountA}"
+  assert_output "                                        	${ACCOUNT_A}"
 }
 
 @test "ls handles <NULL> account" {
-  assert_adds_item "${pw1}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
   run pw ls
   assert_success
-  assert_output "${nameA}                           	"
+  assert_output "${NAME_A}                           	"
 }
 
 @test "ls handles = in name" {
-  assert_adds_item "${pw1}" "te=st"
+  assert_adds_item "${PW_1}" "te=st"
   run pw ls
   assert_success
   assert_output "te=st                                   	"

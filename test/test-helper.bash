@@ -1,3 +1,4 @@
+# shellcheck disable=SC2034
 _common_setup() {
   load 'test_helper/bats-support/load.bash'
   load 'test_helper/bats-assert/load.bash'
@@ -6,8 +7,15 @@ _common_setup() {
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." > /dev/null 2>&1 && pwd)"
   PATH="${PROJECT_ROOT}/src:${PATH}"
 
-  # shellcheck disable=SC2034
   KEYCHAIN_TEST_PASSWORD=" test password "
+
+  NAME_A=" a test name "
+  NAME_B=" b test name "
+  ACCOUNT_A=" a test account "
+  ACCOUNT_B=" b test account "
+  PW_1=" 1 test pw "
+  PW_2=" 2 test pw "
+  PW_3=" 3 test pw "
 }
 
 _skip_manual_test() {

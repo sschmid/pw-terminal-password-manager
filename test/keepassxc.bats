@@ -3,12 +3,6 @@ setup() {
   _setup
   export PW_KEEPASSXC_PASSWORD="${KEYCHAIN_TEST_PASSWORD}"
   pw init "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}"
-
-  nameA=" a test name "
-  nameB=" b test name "
-  accountA=" a test account "
-  pw1=" 1 test pw "
-  pw2=" 2 test pw "
 }
 
 # shellcheck disable=SC2034
@@ -58,12 +52,12 @@ assert_item_recycled() {
 }
 
 @test "doesn't have item" {
-  assert_item_not_exists "${nameA}"
+  assert_item_not_exists "${NAME_A}"
 }
 
 @test "get with key-file" {
   _init_with_key_file
-  assert_item_not_exists "${nameA}"
+  assert_item_not_exists "${NAME_A}"
 }
 
 ################################################################################
@@ -87,21 +81,21 @@ assert_username() {
 }
 
 @test "adds item with name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_item_exists "${pw1}" "${nameA}"
-  assert_username "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_username "${NAME_A}"
 }
 
 @test "adds item with name and account" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  assert_item_exists "${pw1}" "${nameA}"
-  assert_username "${nameA}" "${accountA}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_username "${NAME_A}" "${ACCOUNT_A}"
 }
 
 @test "adds item with key-file" {
   _init_with_key_file
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_item_exists "${pw1}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
 }
 
 ################################################################################
@@ -109,10 +103,10 @@ assert_username() {
 ################################################################################
 
 @test "adds item with different name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_adds_item "${pw2}" "${nameB}"
-  assert_item_exists "${pw1}" "${nameA}"
-  assert_item_exists "${pw2}" "${nameB}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}"
 }
 
 ################################################################################
@@ -127,8 +121,8 @@ assert_item_already_exists() {
 }
 
 @test "fails when adding item with existing name" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_item_already_exists "${pw2}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_item_already_exists "${PW_2}" "${NAME_A}"
 }
 
 ################################################################################
@@ -136,19 +130,19 @@ assert_item_already_exists() {
 ################################################################################
 
 @test "removes item" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_adds_item "${pw2}" "${nameB}"
-  run pw rm "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}"
+  run pw rm "${NAME_A}"
   assert_success
   refute_output
-  assert_item_recycled "${pw1}" "${nameA}"
-  assert_item_exists "${pw2}" "${nameB}"
+  assert_item_recycled "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}"
 }
 
 @test "removes item with key-file" {
   _init_with_key_file
-  assert_adds_item "${pw1}" "${nameA}"
-  run pw rm "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  run pw rm "${NAME_A}"
   assert_success
   refute_output
 }
@@ -158,9 +152,9 @@ assert_item_already_exists() {
 ################################################################################
 
 @test "fails when deleting non existing item" {
-  run pw rm "${nameA}"
+  run pw rm "${NAME_A}"
   assert_failure
-  assert_output "Entry ${nameA} not found."
+  assert_output "Entry ${NAME_A} not found."
 }
 
 ################################################################################
@@ -175,15 +169,15 @@ assert_edits_item() {
 }
 
 @test "edits item" {
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_edits_item "${pw2}" "${nameA}"
-  assert_item_exists "${pw2}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}"
 }
 
 @test "edits item with key-file" {
   _init_with_key_file
-  assert_adds_item "${pw1}" "${nameA}"
-  assert_edits_item "${pw2}" "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}"
 }
 
 ################################################################################
@@ -191,9 +185,9 @@ assert_edits_item() {
 ################################################################################
 
 @test "fails when editing non existing item" {
-  run pw edit "${nameA}" <<< "${pw2}"
+  run pw edit "${NAME_A}" <<< "${PW_2}"
   assert_failure
-  assert_output "Could not find entry with path ${nameA}."
+  assert_output "Could not find entry with path ${NAME_A}."
 }
 
 ################################################################################
@@ -207,30 +201,30 @@ assert_edits_item() {
 }
 
 @test "lists sorted items" {
-  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
   run pw ls
   assert_success
   cat << EOF | assert_output -
-${nameA}
-${nameB}
+${NAME_A}
+${NAME_B}
 EOF
 }
 
 @test "filters Recycle Bin/" {
-  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  run pw rm "${nameA}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  run pw rm "${NAME_A}"
   run pw ls
   assert_success
   cat << EOF | assert_output -
-${nameB}
+${NAME_B}
 EOF
 }
 
 @test "lists no items after filtering" {
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
-  run pw rm "${nameA}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  run pw rm "${NAME_A}"
   run pw ls
   assert_success
   refute_output
@@ -238,12 +232,12 @@ EOF
 
 @test "lists sorted items with key-file" {
   _init_with_key_file
-  assert_adds_item "${pw2}" "${nameB}" "${accountA}"
-  assert_adds_item "${pw1}" "${nameA}" "${accountA}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
   run pw ls
   assert_success
   cat << EOF | assert_output -
-${nameA}
-${nameB}
+${NAME_A}
+${NAME_B}
 EOF
 }
