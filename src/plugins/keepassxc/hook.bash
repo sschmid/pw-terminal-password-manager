@@ -6,7 +6,7 @@ pw::discover_keychains() {
   while read -r path; do
     filetype="$(file -b "${path}")"
     [[ "${filetype}" != "${FILE_TYPE}" ]] || echo "${path}"
-  done < <(find . -type f -maxdepth 1)
+  done < <(find "${PWD}" -type f -maxdepth 1)
 }
 
 pw::register() {
