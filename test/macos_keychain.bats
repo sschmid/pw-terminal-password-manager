@@ -273,3 +273,18 @@ ${NAME_A}                           	${ACCOUNT_A}	${NAME_A}	${ACCOUNT_A}
 ${NAME_B}                           	${ACCOUNT_B}	${NAME_B}	${ACCOUNT_B}
 EOF
 }
+
+@test "discovers no keychains" {
+  source "${PROJECT_ROOT}/src/plugins/macos_keychain/hook.bash"
+  run pw::discover_keychains
+  assert_success
+  refute_output
+}
+
+@test "discovers keychains" {
+  source "${PROJECT_ROOT}/src/plugins/macos_keychain/hook.bash"
+  cd "${BATS_TEST_TMPDIR}"
+  run pw::discover_keychains
+  assert_success
+  assert_output "${PW_KEYCHAIN}"
+}
