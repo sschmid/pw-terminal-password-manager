@@ -93,9 +93,13 @@ pw init <keychain>             create keychain
 ```
 
 ```bash
-pw init secrets.keychain-db
+pw init ~/secrets.keychain-db
 pw init ~/secrets.kdbx
-pw init ~/secrets/            # end with `/` to create a directory for GnuPG
+pw init ~/secrets/              # end with `/` to create a directory for GnuPG
+
+# macos_keychain special behaviour
+pw init secrets.keychain-db            # will create a keychain in ~/Library/Keychains
+pw init "${PWD}/secrets.keychain-db"   # will create a keychain in the current directory
 ```
 
 ## Add entry with name and optional account
