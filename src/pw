@@ -41,13 +41,13 @@ source "${PW_RC}"
 
 pw::help() {
   cat << EOF
-🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager powered by fzf
+🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager
 
-usage: pw [-h]
-          [-p] [-k <keychain>] [<commands>]
+usage: pw [-p] [-k <keychain>] [<commands>]
 
 options:
-  -p              print password instead of copying
+  -h              show usage
+  -p              print instead of copy to clipboard
   -k <keychain>   use given keychain
 
 commands:
@@ -66,7 +66,8 @@ commands:
 
 customization:
   PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain-db)
-  PW_GEN_LENGTH               length of generated passwords (default: 35)
+  PW_GEN_LENGTH               default length of generated passwords (default: 35)
+  PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
   PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
   PW_RC                       path to the configuration file (default: ~/.pwrc)
 EOF

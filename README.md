@@ -289,10 +289,10 @@ Export or provide the following variables to customize and change `pw`'s default
 # otherwise, PW_KEYCHAINS is used to select a keychain with fzf
 export PW_KEYCHAIN=secrets.keychain-db
 
-# Generated password length
+# Default length of generated passwords
 export PW_GEN_LENGTH=35
 
-# Generated password character class
+# Default character class for generated passwords
 export PW_GEN_CLASS='[:graph:]'
 
 # Time after which the password is cleared from the clipboard
