@@ -199,3 +199,14 @@ EOF
   assert_success
   refute_output
 }
+
+@test "lists sorted items with fzf format" {
+  assert_adds_item "${PW_2}" "${NAME_B}"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  run pw ls fzf
+  assert_success
+  cat << EOF | assert_output -
+./${NAME_A}		./${NAME_A}
+./${NAME_B}		./${NAME_B}
+EOF
+}
