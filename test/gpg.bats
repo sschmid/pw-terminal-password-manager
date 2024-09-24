@@ -211,6 +211,10 @@ EOF
 EOF
 }
 
+################################################################################
+# discover
+################################################################################
+
 @test "discovers no keychains" {
   source "${PROJECT_ROOT}/src/plugins/gpg/hook.bash"
   run pw::discover_keychains

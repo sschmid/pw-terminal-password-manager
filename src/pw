@@ -43,26 +43,27 @@ pw::help() {
   cat << EOF
 🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager
 
-usage: pw [-p] [-k <keychain>] [<commands>]
+usage: pw [-p] [-k <keychain>] [<command>] [<args>]
 
 options:
   -h              show usage
   -p              print instead of copy to clipboard
   -k <keychain>   use given keychain
 
+args: [<name>] [<account>] [<url>] [<notes>]
+
 commands:
-  [-p] no command             copy (or print) password using fuzzy finder
-  [-p] <name> [<account>]     copy (or print) password
-  init <keychain>             create keychain
-  add [<name>] [<account>]    add entry (leave empty to generate password)
-  edit [<name>] [<account>]   edit entry (leave empty to generate password)
-  rm [<name>] [<account>]     remove entry
-  ls                          list all entries
-  gen [<length>] [<class>]    generate password with given length and character class (default: 35 [:graph:])
-  open                        open keychain in native gui
-  lock                        lock keychain
-  unlock                      unlock keychain
-  update                      update pw
+  [-p] [<args>]              copy (or print) password. If no args, fzf mode
+  init <keychain>            create keychain
+  add [<args>]               add entry. If no args, interactive mode
+  edit [<args>]              edit entry. If no args, fzf mode
+  rm [<args>]                remove entry. If no args, fzf mode
+  ls                         list all entries
+  gen [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
+  open                       open keychain in native gui
+  lock                       lock keychain
+  unlock                     unlock keychain
+  update                     update pw
 
 customization:
   PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain-db)

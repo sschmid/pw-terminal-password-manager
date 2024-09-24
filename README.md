@@ -66,30 +66,29 @@ Legend:
 
 | Feature                                                                         | macOS Keychain | KeePassXC                           | GnuPG          |
 |--------------------------------------------------------------------------------:|:--------------:|:-----------------------------------:|:--------------:|
-| Create a new keychain                                                           | ✅             | ✅                                   | ✅ (directory) |
-| Add a new entry with name                                                       | ✅             | ✅                                   | ✅             |
-| Add a new entry with name and account                                           | ✅             | ✅                                   | ❌             |
-| Add a new entry with account only                                               | ✅             | ❌                                   | ❌             |
+| Create keychain                                                                 | ✅             | ✅                                   | ✅ (directory) |
+| Add entry with name and password                                                | ✅             | ✅                                   | ✅             |
+| Add entry with name, account, url, notes and password                           | ✅             | ✅                                   | ❌             |
 | Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                   | ❌             |
-| Add a new entry in group                                                        | ❌             | ✅ (if group already exists)         | ✅             |
+| Add entry in group                                                              | ❌             | ✅ (if group already exists)         | ✅             |
 | Edit entry                                                                      | ✅             | ✅                                   | ✅             |
-| Get entry by name                                                               | ✅             | ✅                                   | ✅             |
-| Get entry by name and account                                                   | ✅             | ❌                                   | ❌             |
-| Get entry by account only                                                       | ✅             | ❌                                   | ❌             |
 | Remove entry                                                                    | ✅             | ✅                                   | ✅             |
 | List entries                                                                    | ✅             | ✅                                   | ✅             |
 | Open keychain                                                                   | ✅             | ✅                                   | ✅             |
 | Lock keychain                                                                   | ✅             | ❌ (keychain is never left unlocked) | ✅             |
-| Unlock keychain                                                                 | ✅             | ✅                                   | ✅             |
+| Unlock keychain                                                                 | ✅             | ✅ (starts interactive session)      | ✅             |
 | Key file support                                                                | ❌             | ✅                                   | ❌             |
 | YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
 
 # Usage
 
+In all following examples, `[<args>]` refers to the optional
+arguments `name`, `account`, `url`, `notes` in that order.
+
 ## Create keychain
 
 ```
-pw init <keychain>             create keychain
+pw init <keychain>            create keychain
 ```
 
 ```bash
@@ -105,7 +104,7 @@ pw init "${PWD}/secrets.keychain-db"   # will create a keychain in the current d
 ## Add entry with name and optional account
 
 ```
-pw add [<name>] [<account>]    add entry (leave empty to generate password)
+pw add [<args>]               add entry. If no args, interactive mode used
 ```
 
 ```bash
@@ -113,6 +112,8 @@ pw add                               # add interactively
 pw add GitHub
 pw add Google work@example.com
 pw add Google personal@example.com
+pw add Homepage admin https://example.com
+pw add Coveralls "" https://coveralls.io "login via GitHub"
 ```
 
 If a plugin doesn't support multiple entries with the same name,
@@ -133,7 +134,7 @@ pw add Coding/JetBrains
 ## Edit entry
 
 ```
-pw edit [<name>] [<account>]   edit entry (leave password empty to generate one)
+pw edit [<args>]              edit entry. If no args, fzf mode
 ```
 
 ```bash
@@ -146,8 +147,7 @@ pw edit Google personal@example.com
 ## Get entry
 
 ```
-pw [-p] no command             copy (or print) password using fzf
-pw [-p] <name> [<account>]     copy (or print) password
+pw [-p] [<args>]              copy (or print) password. If no args, fzf mode
 ```
 
 ```bash
@@ -160,7 +160,7 @@ pw Google personal@example.com
 ## Remove entry
 
 ```
-pw rm [<name>] [<account>]     remove entry
+pw rm [<args>]                remove entry. If no args, fzf mode
 ```
 
 ```bash

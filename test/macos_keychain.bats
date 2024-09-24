@@ -399,7 +399,7 @@ EOF
   refute_output
 }
 
-@test "show fzf preview" {
+@test "shows fzf preview" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
