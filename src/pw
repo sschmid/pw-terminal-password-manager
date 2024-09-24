@@ -85,6 +85,8 @@ pw::select_keychain() {
       [[ -z "${keychains}" ]] || PW_KEYCHAINS=("${keychains}" "${PW_KEYCHAINS[@]}")
     done < <(pw::plugins)
 
+    mapfile -t PW_KEYCHAINS < <(printf "%s\n" "${PW_KEYCHAINS[@]}" | awk '!line[$0]++')
+
     if ((${#PW_KEYCHAINS[@]} == 1)); then
       pw::set_keychain "${PW_KEYCHAINS[0]}"
     else

@@ -82,6 +82,14 @@ declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
 EOF
 }
 
+@test "discovers keychains without duplicates" {
+  _set_pwrc_with_keychains ""
+  _set_plugin_2
+  run pw -p name account
+  assert_success
+  assert_output "plugin 2 get name account test 2 keychain"
+}
+
 @test "fails when keychain does not exist" {
   export PW_KEYCHAIN="doesNotExist.keychain"
   run pw ls
