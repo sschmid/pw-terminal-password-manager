@@ -71,8 +71,9 @@ _intercept_prompt_password() {
   assert_output "stdin test"
 }
 
+# bats test_tags=tag:manual_test
 @test "prompts item password when no stdin" {
-  _skip_manual_test "test" "twice"
+  _skip_manual_test "'test' twice"
   _source_pw
   run _intercept_prompt_password
   assert_success
@@ -83,8 +84,9 @@ test
 EOF
 }
 
+# bats test_tags=tag:manual_test
 @test "prompts and fails if retyped password does not match" {
-  _skip_manual_test "test1" "and 'test2'"
+  _skip_manual_test "'test1' and 'test2'"
   _source_pw
   run _intercept_prompt_password
   assert_failure
@@ -95,6 +97,7 @@ Error: the entered passwords do not match.
 EOF
 }
 
+# bats test_tags=tag:manual_test
 @test "generates password when empty" {
   _skip_manual_test "nothing"
   _source_pw
@@ -120,8 +123,9 @@ _intercept_prompt_keychain_password() {
   assert_output "stdin test"
 }
 
+# bats test_tags=tag:manual_test
 @test "prompts keychain password when no stdin" {
-  _skip_manual_test "test"
+  _skip_manual_test "'test'"
   _source_pw
   run _intercept_prompt_keychain_password
   assert_success
@@ -131,8 +135,9 @@ test
 EOF
 }
 
+# bats test_tags=tag:manual_test
 @test "prompts keychain password only once" {
-  _skip_manual_test "test"
+  _skip_manual_test "'test'"
   _source_pw
   pw::prompt_keychain_password
   run _intercept_prompt_keychain_password
