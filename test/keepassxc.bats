@@ -42,6 +42,15 @@ assert_username() {
   fi
 }
 
+assert_url() {
+  run keepassxc-cli show -qsa url "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  assert_success
+  if (($# == 2))
+  then assert_output "$2"
+  else refute_output
+  fi
+}
+
 assert_item_recycled() {
   local password="$1"; shift
   run pw -p "/Recycle Bin/$1"
@@ -80,12 +89,19 @@ assert_item_recycled() {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
   assert_username "${NAME_A}"
+  assert_url "${NAME_A}"
 }
 
 @test "adds item with name and account" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
   assert_username "${NAME_A}" "${ACCOUNT_A}"
+}
+
+@test "adds item with name and url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_url "${NAME_A}" "${URL_A}"
 }
 
 @test "adds item with key-file" {
@@ -224,8 +240,8 @@ EOF
   run pw ls fzf
   assert_success
   cat << EOF | assert_output -
-${NAME_A}		${NAME_A}
-${NAME_B}		${NAME_B}
+${NAME_A}			${NAME_A}
+${NAME_B}			${NAME_B}
 EOF
 }
 

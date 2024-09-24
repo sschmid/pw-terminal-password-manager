@@ -41,7 +41,10 @@ EOF
 }
 
 pw::plugin_add() {
-  _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" ${PW_ACCOUNT:+-u "${PW_ACCOUNT}"} "${PW_NAME}" << EOF
+  _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" \
+    ${PW_ACCOUNT:+--username "${PW_ACCOUNT}"} \
+    ${PW_URL:+--url "${PW_URL}"} \
+    "${PW_NAME}" << EOF
 ${PW_KEEPASSXC_PASSWORD}
 ${PW_PASSWORD}
 EOF
@@ -74,7 +77,7 @@ pw::plugin_ls() {
 
   if [[ "${list}" != "[empty]" ]]; then
     case "${format}" in
-      fzf) echo "${list}" | awk '{print $0 "\t\t" $0}' ;;
+      fzf) echo "${list}" | awk '{print $0 "\t\t\t" $0}' ;;
       *) echo "${list}" ;;
     esac
   fi
@@ -83,7 +86,7 @@ pw::plugin_ls() {
 pw::plugin_fzf_preview() {
   if [[ -v PW_KEYCHAIN_ARGS["yubikey"] ]]
   then echo "echo 'Preview not available with YubiKey'"
-  else echo "keepassxc-cli show --quiet \"${PW_KEYCHAIN}\" {3} <<< \"${PW_KEEPASSXC_PASSWORD}\""
+  else echo "keepassxc-cli show --quiet \"${PW_KEYCHAIN}\" {4} <<< \"${PW_KEEPASSXC_PASSWORD}\""
   fi
 }
 
