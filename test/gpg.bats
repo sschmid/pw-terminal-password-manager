@@ -217,3 +217,25 @@ EOF
   assert_success
   refute_output
 }
+
+@test "discovers .gpg" {
+  assert_adds_item "${PW_1}" "${NAME_A}.gpg"
+  assert_item_exists "${PW_1}" "${NAME_A}.gpg"
+
+  source "${PROJECT_ROOT}/src/plugins/gpg/hook.bash"
+  cd "${PW_KEYCHAIN}"
+  run pw::discover_keychains
+  assert_success
+  assert_output "${PW_KEYCHAIN}"
+}
+
+@test "discovers .asc" {
+  assert_adds_item "${PW_1}" "${NAME_A}.asc"
+  assert_item_exists "${PW_1}" "${NAME_A}.asc"
+
+  source "${PROJECT_ROOT}/src/plugins/gpg/hook.bash"
+  cd "${PW_KEYCHAIN}"
+  run pw::discover_keychains
+  assert_success
+  assert_output "${PW_KEYCHAIN}"
+}
