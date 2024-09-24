@@ -44,6 +44,7 @@ pw::plugin_add() {
   _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" \
     ${PW_ACCOUNT:+--username "${PW_ACCOUNT}"} \
     ${PW_URL:+--url "${PW_URL}"} \
+    ${PW_NOTES:+--notes "${PW_NOTES}"} \
     "${PW_NAME}" << EOF
 ${PW_KEEPASSXC_PASSWORD}
 ${PW_PASSWORD}

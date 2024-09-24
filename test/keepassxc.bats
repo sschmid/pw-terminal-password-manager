@@ -51,6 +51,15 @@ assert_url() {
   fi
 }
 
+assert_notes() {
+  run keepassxc-cli show -qsa notes "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
+  assert_success
+  if (($# == 2))
+  then assert_output "$2"
+  else refute_output
+  fi
+}
+
 assert_item_recycled() {
   local password="$1"; shift
   run pw -p "/Recycle Bin/$1"
@@ -90,6 +99,7 @@ assert_item_recycled() {
   assert_item_exists "${PW_1}" "${NAME_A}"
   assert_username "${NAME_A}"
   assert_url "${NAME_A}"
+  assert_notes "${NAME_A}"
 }
 
 @test "adds item with name and account" {
@@ -102,6 +112,12 @@ assert_item_recycled() {
   assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
   assert_url "${NAME_A}" "${URL_A}"
+}
+
+@test "adds item with name and notes" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_notes "${NAME_A}" "${NOTES_A}"
 }
 
 @test "adds item with key-file" {
@@ -244,6 +260,10 @@ ${NAME_A}			${NAME_A}
 ${NAME_B}			${NAME_B}
 EOF
 }
+
+################################################################################
+# discover
+################################################################################
 
 @test "discovers no keychains" {
   source "${PROJECT_ROOT}/src/plugins/keepassxc/hook.bash"
