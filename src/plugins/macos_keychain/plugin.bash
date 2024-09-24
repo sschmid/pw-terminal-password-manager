@@ -16,6 +16,7 @@ pw::plugin_add() {
     -l "${PW_NAME:-"${PW_URL}"}" \
     -a "${PW_ACCOUNT}" \
     -s "${PW_URL:="${PW_NAME}"}" \
+    ${PW_NOTES:+-j "${PW_NOTES}"} \
     -w "${PW_PASSWORD}" \
     "${PW_KEYCHAIN}"
 }
@@ -67,7 +68,21 @@ pw::plugin_ls() {
 }
 
 pw::plugin_fzf_preview() {
-  : # this plugin does not implement fzf preview
+  # unlocks the keychain if necessary and only previews if the keychain is unlocked
+  if security show-keychain-info "${PW_KEYCHAIN}" &> /dev/null; then
+    local security_cmd awk_cmd
+    security_cmd="security find-generic-password -l {4} -a {5} -s {6} -g \"${PW_KEYCHAIN}\" 2> /dev/null"
+    awk_cmd=$(cat <<'EOF'
+awk '
+  BEGIN { FS="<blob>="; }
+  /"icmt"/ {
+    comment = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+    printf "Comment:\n%s", comment
+  }'
+EOF
+    )
+    echo "${security_cmd} | ${awk_cmd}"
+  fi
 }
 
 pw::plugin_open() {

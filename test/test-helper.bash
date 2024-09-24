@@ -15,6 +15,7 @@ _common_setup() {
   ACCOUNT_B=" b test account "
   URL_A=" a test url "
   URL_B=" b test url "
+  NOTES_A=" a test note "
   PW_1=" 1 test pw "
   PW_2=" 2 test pw "
   PW_3=" 3 test pw "

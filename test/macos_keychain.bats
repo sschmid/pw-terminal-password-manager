@@ -122,6 +122,27 @@ assert_rm_not_found_output() {
   assert_output "${PW_1}"
 }
 
+@test "adds item with name and notes" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  _get_note() {
+    security find-generic-password -j "${NOTES_A}" -g "${PW_KEYCHAIN}" 2>&1 | awk '
+      BEGIN { FS="<blob>="; }
+      /"icmt"/ {
+        comment = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+        printf "Comment:\n%s", comment
+      }'
+  }
+
+  run _get_note
+  assert_success
+  cat << EOF | assert_output -
+Comment:
+${NOTES_A}
+EOF
+}
+
 ################################################################################
 # add another
 ################################################################################
@@ -359,6 +380,47 @@ ${NAME_A}           	${ACCOUNT_A}        	${URL_A}	${NAME_A}	${ACCOUNT_A}	${URL_
 ${NAME_B}           	${ACCOUNT_B}        	${URL_B}	${NAME_B}	${ACCOUNT_B}	${URL_B}
 EOF
 }
+
+################################################################################
+# fzf preview
+################################################################################
+
+# bats test_tags=tag:manual_test
+@test "doesn't show fzf preview when locked" {
+  _skip_manual_test "no password and cancel"
+
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
+  run pw lock
+  run pw::plugin_fzf_preview
+  assert_success
+  refute_output
+}
+
+@test "show fzf preview" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
+  local cmd
+  cmd="$(pw::plugin_fzf_preview)"
+  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
+  cmd=${cmd/\{5\}/"\"${ACCOUNT_A}\""}
+  cmd=${cmd/\{6\}/"\"${URL_A}\""}
+
+  run eval "${cmd}"
+  assert_success
+  cat << EOF | assert_output -
+Comment:
+${NOTES_A}
+EOF
+}
+
+################################################################################
+# discover
+################################################################################
 
 @test "discovers no keychains" {
   source "${PROJECT_ROOT}/src/plugins/macos_keychain/hook.bash"
