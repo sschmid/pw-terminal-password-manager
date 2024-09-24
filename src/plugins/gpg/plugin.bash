@@ -65,7 +65,7 @@ pw::plugin_ls() {
   popd > /dev/null || exit 1
 
   case "${format}" in
-    fzf) echo "${list}" | awk '{print $0 "\t\t" $0}' ;;
+    fzf) echo "${list}" | awk '{print $0 "\t\t\t" $0}' ;;
     *) echo "${list}" ;;
   esac
 }

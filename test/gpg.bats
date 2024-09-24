@@ -206,8 +206,8 @@ EOF
   run pw ls fzf
   assert_success
   cat << EOF | assert_output -
-./${NAME_A}		./${NAME_A}
-./${NAME_B}		./${NAME_B}
+./${NAME_A}			./${NAME_A}
+./${NAME_B}			./${NAME_B}
 EOF
 }
 
