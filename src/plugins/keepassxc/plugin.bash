@@ -12,6 +12,7 @@ _keepassxc-cli_with_args() {
   local -i quiet=1
   [[ -v PW_KEYCHAIN_ARGS["yubikey"] ]] && options+=("--yubikey" "${PW_KEYCHAIN_ARGS["yubikey"]}") && quiet=0
   [[ -v PW_KEYCHAIN_ARGS["keyfile"] ]] && options+=("--key-file" "${PW_KEYCHAIN_ARGS["keyfile"]}")
+  [[ "${command}" == "open" ]] && quiet=0
   ((quiet)) && options+=("--quiet")
   keepassxc-cli "${command}" "${options[@]}" "$@"
 }
