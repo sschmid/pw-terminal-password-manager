@@ -262,6 +262,30 @@ EOF
 }
 
 ################################################################################
+# fzf preview
+################################################################################
+
+@test "shows fzf preview" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  source "${PROJECT_ROOT}/src/plugins/keepassxc/plugin.bash"
+  local cmd
+  cmd="$(pw::plugin_fzf_preview)"
+  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
+
+  run eval "${cmd}"
+  assert_success
+  cat << EOF | assert_output --partial -
+Title: ${NAME_A}
+UserName: ${ACCOUNT_A}
+Password: PROTECTED
+URL: ${URL_A}
+Notes: ${NOTES_A}
+EOF
+}
+
+################################################################################
 # discover
 ################################################################################
 
