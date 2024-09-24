@@ -79,6 +79,7 @@ Legend:
 | Unlock keychain                                                                 | ✅             | ✅ (starts interactive session)      | ✅             |
 | Key file support                                                                | ❌             | ✅                                   | ❌             |
 | YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
+| Automatic keychain discovery                                                    | ✅             | ✅                                   | ✅             |
 
 # Usage
 
@@ -252,6 +253,13 @@ is specified with `-k` or by setting `PW_KEYCHAIN`, `pw` allows you to select
 one from `PW_KEYCHAINS` using the fuzzy finder.
 
 ![pw-fzf](readme/pw-dbs.png)
+
+## Automatic keychain discovery
+
+Plugins that support automatic keychain discovery will automatically search
+for keychains in the current directory and add them to the `PW_KEYCHAINS` array.
+This way you can keep your keychains in the same directory as your project
+and `pw` will automatically discover and use them.
 
 ## Using `pw` in a command or script
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
