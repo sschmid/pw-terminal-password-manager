@@ -107,6 +107,7 @@ Supported file types are:
 Test File Type 1
 Test File Type 2
 Test File Type Fail
+Test File Type Modify
 EOF
 }
 
@@ -119,6 +120,7 @@ Supported extensions are:
 ext1          - Test File Type 1
 ext2          - Test File Type 2
 extf          - Test File Type Fail
+extm          - Test File Type Modify
 EOF
 }
 

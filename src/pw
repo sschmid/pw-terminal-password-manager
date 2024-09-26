@@ -74,14 +74,29 @@ customization:
 EOF
 }
 
+# shellcheck disable=SC2153
+pw::run_hook_register() {
+  source "$1"
+  echo "${FILE_TYPE}"
+  pw::register && echo 1 || echo 0
+}
+
+# shellcheck disable=SC2153
+pw::run_hook_register_with_extension() {
+  source "$1"
+  echo "${FILE_TYPE}"
+  echo "${FILE_EXTENSION}"
+  pw::register_with_extension "$2" && echo 1 || echo 0
+}
+
 pw::select_keychain() {
   if [[ -v PW_KEYCHAIN ]]; then
     pw::set_keychain "${PW_KEYCHAIN}"
   else
     local keychains
     while read -r hook; do
-      source "${hook}"
-      keychains="$(pw::discover_keychains)"
+      # Run hook in a subshell to avoid affecting the current shell
+      keychains="$(source "${hook}"; pw::discover_keychains)"
       [[ -z "${keychains}" ]] || PW_KEYCHAINS=("${keychains}" "${PW_KEYCHAINS[@]}")
     done < <(pw::plugins)
 
@@ -99,9 +114,14 @@ pw::select_keychain() {
   local -a plugins=()
   local -a file_types=()
   while read -r hook; do
-    source "${hook}"
-    file_types+=("${FILE_TYPE}")
-    pw::register && plugins+=("$(dirname "${hook}")")
+    # Run hook in a subshell to avoid affecting the current shell
+    while true; do
+      read -r file_type
+      read -r register
+      file_types+=("${file_type}")
+      ((register)) && plugins+=("$(dirname "${hook}")")
+      break
+    done < <(pw::run_hook_register "${hook}")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}
@@ -133,10 +153,16 @@ pw::infer_plugin() {
   local extension
   extension="$(tr '[:upper:]' '[:lower:]' <<< "${PW_KEYCHAIN##*.}")"
   while read -r hook; do
-    source "${hook}"
-    file_types+=("${FILE_TYPE}")
-    file_extensions+=("${FILE_EXTENSION}")
-    pw::register_with_extension "${extension}" && plugins+=("$(dirname "${hook}")")
+    # Run hook in a subshell to avoid affecting the current shell
+    while true; do
+      read -r file_type
+      read -r file_extension
+      read -r register
+      file_types+=("${file_type}")
+      file_extensions+=("${file_extension}")
+      ((register)) && plugins+=("$(dirname "${hook}")")
+      break
+    done < <(pw::run_hook_register_with_extension "${hook}" "${extension}")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}
