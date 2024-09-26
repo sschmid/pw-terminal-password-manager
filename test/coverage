@@ -5,5 +5,6 @@ kcov \
   --bash-parser="$(which bash)" \
   --include-path=src \
   --exclude-line='done <,: #' \
+  --exclude-region='# KCOV_EXCL_START:# KCOV_EXCL_STOP' \
   coverage \
   test/bats/bin/bats --tap "${@:-test}"

@@ -53,12 +53,14 @@ pw::plugin_ls() {
     *) printf_format="%-24s\t%-24s\t%s\n" ;;
   esac
 
+  # KCOV_EXCL_START
   # shellcheck disable=SC2016
   local awk_cmd='BEGIN { FS="<blob>="; }
     /0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
     /"acct"/ { account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
     /"svce"/ { service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
       printf printf_format, label, account, service, label, account, service }'
+  # KCOV_EXCL_STOP
 
   security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" "${awk_cmd}" | LC_ALL=C sort
 }
@@ -68,6 +70,8 @@ pw::plugin_fzf_preview() {
   if security show-keychain-info "${PW_KEYCHAIN}" &> /dev/null; then
     local security_cmd awk_cmd
     security_cmd="security find-generic-password -l {4} -a {5} -s {6} -g \"${PW_KEYCHAIN}\" 2> /dev/null"
+
+    # KCOV_EXCL_START
     awk_cmd=$(cat <<'EOF'
 awk '
   BEGIN { FS="<blob>="; }
@@ -76,6 +80,7 @@ awk '
     printf "Comment:\n%s", comment
   }'
 EOF
+    # KCOV_EXCL_STOP
     )
     echo "${security_cmd} | ${awk_cmd}"
   fi
