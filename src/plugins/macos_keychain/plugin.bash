@@ -53,18 +53,14 @@ pw::plugin_ls() {
     *) printf_format="%-24s\t%-24s\t%s\n" ;;
   esac
 
-  security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" '
-    BEGIN { FS="<blob>="; }
-    /0x00000007 / {
-      label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-    }
-    /"acct"/ {
-      account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-    }
-    /"svce"/ {
-      service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-      printf printf_format, label, account, service, label, account, service
-    }' | LC_ALL=C sort
+  # shellcheck disable=SC2016
+  local awk_cmd='BEGIN { FS="<blob>="; }
+    /0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
+    /"acct"/ { account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
+    /"svce"/ { service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
+      printf printf_format, label, account, service, label, account, service }'
+
+  security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" "${awk_cmd}" | LC_ALL=C sort
 }
 
 pw::plugin_fzf_preview() {

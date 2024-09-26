@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: "Install dependencies"
         run: |
-          brew install bash fzf gnupg kcov shellcheck
+          brew install bash fzf kcov shellcheck
           brew install --cask keepassxc
 
       - name: "Checkout"
