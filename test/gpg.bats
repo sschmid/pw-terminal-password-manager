@@ -22,6 +22,9 @@ teardown() {
   _delete_keychain
 }
 
+# shellcheck disable=SC2009
+_ps() { ps -A | grep "gpg-agent" | grep -v grep; }
+
 assert_item_not_exists_output() {
   cat << EOF | assert_output -
 gpg: can't open '${PW_KEYCHAIN}/$1': No such file or directory
@@ -209,6 +212,32 @@ EOF
 ./${NAME_A}			./${NAME_A}
 ./${NAME_B}			./${NAME_B}
 EOF
+}
+
+################################################################################
+# lock
+################################################################################
+
+@test "unlocks keychain" {
+  run _ps
+  assert_success
+  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
+
+  run pw lock
+  assert_success
+  refute_output
+
+  run _ps
+  assert_failure
+  refute_output
+
+  run pw unlock <<< "${PW_GPG_PASSWORD}"
+  assert_success
+  refute_output
+
+  run _ps
+  assert_success
+  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
 }
 
 ################################################################################

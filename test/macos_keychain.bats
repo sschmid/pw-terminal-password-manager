@@ -382,6 +382,28 @@ EOF
 }
 
 ################################################################################
+# lock
+################################################################################
+
+@test "unlocks keychain" {
+  run security show-keychain-info "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "Keychain \"${PW_KEYCHAIN}\" lock-on-sleep timeout=300s"
+
+  run pw lock
+  assert_success
+  refute_output
+
+  run pw unlock <<< "${KEYCHAIN_TEST_PASSWORD}"
+  assert_success
+  refute_output
+
+  run security show-keychain-info "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "Keychain \"${PW_KEYCHAIN}\" lock-on-sleep timeout=300s"
+}
+
+################################################################################
 # fzf preview
 ################################################################################
 
