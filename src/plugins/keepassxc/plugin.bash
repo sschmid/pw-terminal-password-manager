@@ -55,11 +55,7 @@ pw::plugin_add() {
     _keepassxc-cli_with_args mkdir "${PW_KEYCHAIN}" "${dirs[i]::-1}" <<< "${PW_KEEPASSXC_PASSWORD}" &> /dev/null || true
   done
 
-  _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" \
-    ${PW_ACCOUNT:+--username "${PW_ACCOUNT}"} \
-    ${PW_URL:+--url "${PW_URL}"} \
-    ${PW_NOTES:+--notes "${PW_NOTES}"} \
-    "${PW_NAME}" << EOF
+  _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" ${PW_ACCOUNT:+--username "${PW_ACCOUNT}"} ${PW_URL:+--url "${PW_URL}"} ${PW_NOTES:+--notes "${PW_NOTES}"} "${PW_NAME}" << EOF
 ${PW_KEEPASSXC_PASSWORD}
 ${PW_PASSWORD}
 EOF
@@ -82,9 +78,7 @@ pw::plugin_rm() {
 
 pw::plugin_ls() {
   local format="${1:-default}" list
-  if ! list="$(_keepassxc-cli_with_args ls --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" \
-    | { grep -v -e '/$' -e 'Recycle Bin/' || true; } \
-    | LC_ALL=C sort)"
+  if ! list="$(_keepassxc-cli_with_args ls --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" | { grep -v -e '/$' -e 'Recycle Bin/' || true; } | LC_ALL=C sort)"
   then
     echo "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again." >&2
     exit 1
