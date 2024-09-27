@@ -120,6 +120,16 @@ assert_item_recycled() {
   assert_notes "${NAME_A}" "${NOTES_A}"
 }
 
+@test "adds item in subfolder" {
+  assert_adds_item "${PW_1}" "group/${NAME_A}"
+  assert_item_exists "${PW_1}" "group/${NAME_A}"
+}
+
+@test "adds item in subfolder multiple levels deep" {
+  assert_adds_item "${PW_1}" "group1/group2/group3/${NAME_A}"
+  assert_item_exists "${PW_1}" "group1/group2/group3/${NAME_A}"
+}
+
 @test "adds item with key-file" {
   _init_with_key_file
   assert_adds_item "${PW_1}" "${NAME_A}"
@@ -156,6 +166,18 @@ assert_item_recycled() {
   assert_removes_item "${NAME_A}"
   assert_item_recycled "${PW_1}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_B}"
+}
+
+@test "removes item item in subfolder multiple levels deep" {
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  assert_adds_item "${PW_2}" "group1/${NAME_A}"
+  assert_adds_item "${PW_3}" "group1/group2/${NAME_A}"
+
+  assert_removes_item "group1/${NAME_A}"
+  assert_item_recycled "${PW_2}" "${NAME_A}"
+
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_3}" "group1/group2/${NAME_A}"
 }
 
 @test "removes item with key-file" {

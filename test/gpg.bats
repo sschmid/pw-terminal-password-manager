@@ -76,6 +76,11 @@ assert_rm_not_found_output() {
   assert_item_exists "${PW_1}" "group/${NAME_A}"
 }
 
+@test "adds item in subfolder multiple levels deep" {
+  assert_adds_item "${PW_1}" "group1/group2/group3/${NAME_A}"
+  assert_item_exists "${PW_1}" "group1/group2/group3/${NAME_A}"
+}
+
 @test "adds item with .gpg extension" {
   assert_adds_item "${PW_1}" "${NAME_A}.gpg"
   assert_item_exists "${PW_1}" "${NAME_A}.gpg"

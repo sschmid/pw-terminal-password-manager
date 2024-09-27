@@ -41,7 +41,20 @@ EOF
   fi
 }
 
+_iterate_dirs() {
+  local IFS=/ path=""
+  for dir in ${PW_NAME}; do
+    path+="${dir}/"
+    echo "${path}"
+  done
+}
+
 pw::plugin_add() {
+  mapfile -t dirs < <(_iterate_dirs)
+  for ((i = 0; i < ${#dirs[@]} - 1; i++)); do
+    _keepassxc-cli_with_args mkdir "${PW_KEYCHAIN}" "${dirs[i]::-1}" <<< "${PW_KEEPASSXC_PASSWORD}" &> /dev/null || true
+  done
+
   _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" \
     ${PW_ACCOUNT:+--username "${PW_ACCOUNT}"} \
     ${PW_URL:+--url "${PW_URL}"} \
