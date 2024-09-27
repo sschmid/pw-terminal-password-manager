@@ -69,7 +69,7 @@ Legend:
 |--------------------------------------------------------------------------------:|:--------------:|:-----------------------------------:|:--------------:|
 | Create keychain                                                                 | ✅             | ✅                                   | ✅ (directory) |
 | Add entry with name and password                                                | ✅             | ✅                                   | ✅             |
-| Add entry with name, account, url, notes and password                           | ✅             | ✅                                   | ❌             |
+| Add entry with name, account, url, notes and password                           | ✅             | ✅                                   | 🤩             |
 | Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                   | ❌             |
 | Add entry in groups (e.g. Coding/GitHub)                                        | ❌             | 🤩                                   | ✅             |
 | Edit entry                                                                      | ✅             | ✅                                   | ✅             |
