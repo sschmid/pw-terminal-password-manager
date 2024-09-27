@@ -81,6 +81,11 @@ assert_item_recycled() {
 # get
 ################################################################################
 
+@test "reads keychain password from stdin" {
+  unset PW_KEEPASSXC_PASSWORD
+  assert_item_not_exists "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
 @test "doesn't have item" {
   assert_item_not_exists "${NAME_A}"
 }
