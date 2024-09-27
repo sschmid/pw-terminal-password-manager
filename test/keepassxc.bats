@@ -265,6 +265,14 @@ EOF
   refute_output
 }
 
+@test "lists no items when wrong keychain password" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  PW_KEEPASSXC_PASSWORD="wrong"
+  run pw ls
+  assert_failure
+  assert_output "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again."
+}
+
 @test "lists sorted items with key-file" {
   _init_with_key_file
   assert_adds_item "${PW_2}" "${NAME_B}" "${ACCOUNT_A}"
