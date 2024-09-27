@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [8.0.0] - 2024-09-27
+### Added
+- Added `gpg` plugin
+- Added support for adding url and notes for all plugins with `pw add [<name>] [<account>] [<url>] [<notes>]`
+- Added `fzf` preview to all plugins when selecting an entry with `pw`
+- `keepassxc`: Added support for creating items in groups
+- `keepassxc`: Added key-file support
+- `keepassxc`: Added YubiKey support
+- Added automatic keychain discovery
+- Added adding new entries interactively with `pw add`
+- Accept `PW_GEN_LENGTH` and `PW_GEN_CLASS` as arguments for `pw gen [<length>] [<class>]`
+- Accept combined `pw` options like `pw -pk my-keychain`
+- Accept lower and upper case reply when asking to delete item
+- Run hooks in a subshell to avoid affecting the current shell
+- Print all matching plugins when multiple plugins match file type or file extension
+
+### Fixed
+- `keepassxc`: Fixed not showing password prompt with pw unlock
+
+### Changed
+- Renamed hook functions to `pw::register` and `pw::register_with_extension`
+- Plugins use `PW_NAME`, `PW_ACCOUNT`, `PW_URL` and `PW_NOTES` instead of positional arguments
+
+### Removed
+- Removed `pw --help`
+
+### Other
+- Added test coverage with `kcov`
+
 ## [7.0.0] - 2024-09-09
 ### Added
 - Added shorter bash version check
@@ -171,7 +200,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/7.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.0.0...HEAD
+[8.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/7.0.0...8.0.0
 [7.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/6.1.2...7.0.0
 [6.1.2]: https://github.com/sschmid/pw-terminal-password-manager/compare/6.1.1...6.1.2
 [6.1.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/6.1.0...6.1.1
