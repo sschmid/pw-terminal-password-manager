@@ -80,8 +80,8 @@ awk '
     printf "Comment:\n%s", comment
   }'
 EOF
-    # KCOV_EXCL_STOP
     )
+    # KCOV_EXCL_STOP
     echo "${security_cmd} | ${awk_cmd}"
   fi
 }

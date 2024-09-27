@@ -40,9 +40,15 @@ pw::plugin_init() {
 pw::plugin_add() {
   _mk_owner_dir "${PW_KEYCHAIN}"
   mkdir -p "${PW_KEYCHAIN}/$(dirname "${PW_NAME}")"
+
+  local content="${PW_PASSWORD}
+${PW_ACCOUNT}
+${PW_URL}
+${PW_NOTES}"
+
   if [[ "${PW_NAME##*.}" == "asc" ]]
-  then _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --armor <<< "${PW_PASSWORD}"
-  else _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" <<< "${PW_PASSWORD}"
+  then _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --armor <<< "${content}"
+  else _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" <<< "${content}"
   fi
 }
 
@@ -51,7 +57,7 @@ pw::plugin_edit() {
 }
 
 pw::plugin_get() {
-  _gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}"
+  _gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}" | sed -n 1p
 }
 
 pw::plugin_rm() {
@@ -71,7 +77,22 @@ pw::plugin_ls() {
 }
 
 pw::plugin_fzf_preview() {
-  : # this plugin does not implement fzf preview
+  if echo | _gpg_encrypt | _gpg --decrypt &> /dev/null; then
+    local gpg_cmd awk_cmd
+    gpg_cmd="gpg --quiet --decrypt \"${PW_KEYCHAIN}/\"{4}"
+
+    # KCOV_EXCL_START
+    awk_cmd=$(cat <<'EOF'
+awk '
+  NR==2 { account=$0 }
+  NR==3 { url=$0 }
+  NR>=4 { notes=$0 }
+  END { printf "Account: %s\nURL: %s\nNotes: %s", account, url, notes }'
+EOF
+    )
+    # KCOV_EXCL_STOP
+    echo "${gpg_cmd} | ${awk_cmd}"
+  fi
 }
 
 pw::plugin_open() {

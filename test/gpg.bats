@@ -44,6 +44,40 @@ assert_rm_not_found_output() {
   assert_output "rm: ${PW_KEYCHAIN}/$1: No such file or directory"
 }
 
+_gpg_decrypt() {
+  gpg --quiet --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
+    --decrypt "${PW_KEYCHAIN}/$1" \
+  | sed -n "$2"
+}
+
+assert_username() {
+  run _gpg_decrypt "$1" 2p
+  assert_success
+  if (($# == 2))
+  then assert_output "$2"
+  else refute_output
+  fi
+}
+
+assert_url() {
+  run _gpg_decrypt "$1" 3p
+  assert_success
+  if (($# == 2))
+  then assert_output "$2"
+  else refute_output
+  fi
+}
+
+assert_notes() {
+  # shellcheck disable=SC2016
+  run _gpg_decrypt "$1" '4,$p'
+  assert_success
+  if (($# == 2))
+  then assert_output "$2"
+  else refute_output
+  fi
+}
+
 ################################################################################
 # init
 ################################################################################
@@ -69,6 +103,27 @@ assert_rm_not_found_output() {
 @test "adds item with name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_username "${NAME_A}"
+  assert_url "${NAME_A}"
+  assert_notes "${NAME_A}"
+}
+
+@test "adds item with name and account" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_username "${NAME_A}" "${ACCOUNT_A}"
+}
+
+@test "adds item with name and url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_url "${NAME_A}" "${URL_A}"
+}
+
+@test "adds item with name and notes" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_notes "${NAME_A}" "${NOTES_A}"
 }
 
 @test "adds item in subfolder" {
@@ -249,11 +304,22 @@ EOF
 # fzf preview
 ################################################################################
 
-@test "doesn't show fzf preview" {
+@test "shows fzf preview" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
   source "${PROJECT_ROOT}/src/plugins/gpg/plugin.bash"
-  run pw::plugin_fzf_preview
+  local cmd
+  cmd="$(pw::plugin_fzf_preview)"
+  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
+
+  run eval "${cmd}"
   assert_success
-  refute_output
+  cat << EOF | assert_output -
+Account: ${ACCOUNT_A}
+URL: ${URL_A}
+Notes: ${NOTES_A}
+EOF
 }
 
 ################################################################################
