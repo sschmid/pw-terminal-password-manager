@@ -53,7 +53,7 @@ _gpg_decrypt() {
 assert_username() {
   run _gpg_decrypt "$1" 2p
   assert_success
-  if (($# == 2))
+  if (( $# == 2 ))
   then assert_output "$2"
   else refute_output
   fi
@@ -62,7 +62,7 @@ assert_username() {
 assert_url() {
   run _gpg_decrypt "$1" 3p
   assert_success
-  if (($# == 2))
+  if (( $# == 2 ))
   then assert_output "$2"
   else refute_output
   fi
@@ -72,7 +72,7 @@ assert_notes() {
   # shellcheck disable=SC2016
   run _gpg_decrypt "$1" '4,$p'
   assert_success
-  if (($# == 2))
+  if (( $# == 2 ))
   then assert_output "$2"
   else refute_output
   fi

@@ -13,7 +13,7 @@ _keepassxc-cli_with_args() {
   [[ -v PW_KEYCHAIN_ARGS["yubikey"] ]] && options+=("--yubikey" "${PW_KEYCHAIN_ARGS["yubikey"]}") && quiet=0
   [[ -v PW_KEYCHAIN_ARGS["keyfile"] ]] && options+=("--key-file" "${PW_KEYCHAIN_ARGS["keyfile"]}")
   [[ "${command}" == "open" ]] && quiet=0
-  ((quiet)) && options+=("--quiet")
+  (( quiet )) && options+=("--quiet")
   keepassxc-cli "${command}" "${options[@]}" "$@"
 }
 
@@ -51,7 +51,7 @@ _iterate_dirs() {
 
 pw::plugin_add() {
   mapfile -t dirs < <(_iterate_dirs)
-  for ((i = 0; i < ${#dirs[@]} - 1; i++)); do
+  for (( i = 0; i < ${#dirs[@]} - 1; i++ )); do
     _keepassxc-cli_with_args mkdir "${PW_KEYCHAIN}" "${dirs[i]::-1}" <<< "${PW_KEEPASSXC_PASSWORD}" &> /dev/null || true
   done
 

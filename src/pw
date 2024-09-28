@@ -102,7 +102,7 @@ pw::select_keychain() {
 
     mapfile -t PW_KEYCHAINS < <(printf "%s\n" "${PW_KEYCHAINS[@]}" | awk '!line[$0]++')
 
-    if ((${#PW_KEYCHAINS[@]} == 1)); then
+    if (( ${#PW_KEYCHAINS[@]} == 1 )); then
       pw::set_keychain "${PW_KEYCHAINS[0]}"
     else
       local keychain
@@ -119,15 +119,15 @@ pw::select_keychain() {
       read -r file_type
       read -r register
       file_types+=("${file_type}")
-      ((register)) && plugins+=("$(dirname "${hook}")")
+      (( register )) && plugins+=("$(dirname "${hook}")")
       break
     done < <(pw::run_hook_register "${hook}")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}
-  if ((n == 1)); then
+  if (( n == 1 )); then
     source "${plugins[0]}/plugin.bash"
-  elif ((n > 1)); then
+  elif (( n > 1 )); then
     echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
     printf '%s\n' "${plugins[@]}" >&2
     exit 1
@@ -160,15 +160,15 @@ pw::infer_plugin() {
       read -r register
       file_types+=("${file_type}")
       file_extensions+=("${file_extension}")
-      ((register)) && plugins+=("$(dirname "${hook}")")
+      (( register )) && plugins+=("$(dirname "${hook}")")
       break
     done < <(pw::run_hook_register_with_extension "${hook}" "${extension}")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}
-  if ((n == 1)); then
+  if (( n == 1 )); then
     source "${plugins[0]}/plugin.bash"
-  elif ((n > 1)); then
+  elif (( n > 1 )); then
     echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
     printf '%s\n' "${plugins[@]}" >&2
     exit 1
@@ -248,10 +248,10 @@ pw::gen() {
   local -i print=$1; shift
   local -i length=${1:-${PW_GEN_LENGTH}}
   local password="" class="${2:-"${PW_GEN_CLASS}"}"
-  while (("${#password}" != length)); do
-    password+=$(dd if=/dev/urandom bs=1024 count=1 2> /dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $((length - ${#password})) || true)
+  while (( "${#password}" != length )); do
+    password+=$(dd if=/dev/urandom bs=1024 count=1 2> /dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $(( length - ${#password} )) || true)
   done
-  if ((print))
+  if (( print ))
   then echo "${password}"
   else pw::clip_and_forget "${password}"
   fi
@@ -287,7 +287,7 @@ pw::init() {
 pw::add() {
   pw::prepare_keychain "add"
 
-  if (($#)); then
+  if (( $# )); then
     pw::select_item_with_prompt add "$@"
   else
     IFS= read -rp "Title: " PW_NAME </dev/tty
@@ -310,13 +310,13 @@ pw::edit() {
 pw::get() {
   pw::prepare_keychain "get"
   local -i print=$1; shift
-  if ((print))
+  if (( print ))
   then pw::select_item_with_prompt print "$@"
   else pw::select_item_with_prompt copy "$@"
   fi
   local password
   password="$(pw::plugin_get)"
-  if ((print))
+  if (( print ))
   then echo "${password}"
   else pw::clip_and_forget "${password}"
   fi
@@ -326,11 +326,11 @@ pw::rm() {
   pw::prepare_keychain "rm"
   local -i remove=1
   pw::select_item_with_prompt remove "$@"
-  if ((PW_FZF)); then
+  if (( PW_FZF )); then
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
     [[ "${REPLY}" == [yY] ]] || remove=0
   fi
-  ((!remove)) || pw::plugin_rm
+  (( ! remove )) || pw::plugin_rm
 }
 
 pw::ls() {
@@ -340,7 +340,7 @@ pw::ls() {
 
 pw::select_item_with_prompt() {
   local fzf_prompt="$1"; shift
-  if (($#)); then
+  if (( $# )); then
     PW_NAME="$1"
     PW_ACCOUNT="${2:-}"
     PW_URL="${3:-}"
@@ -385,9 +385,9 @@ main() {
       *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
     esac
   done
-  shift $((OPTIND - 1))
+  shift $(( OPTIND - 1 ))
 
-  if (($#)); then
+  if (( $# )); then
     case "$1" in
       init) shift; pw::infer_plugin "$@"; pw::init ;;
       add) shift; pw::select_keychain; pw::add "$@" ;;

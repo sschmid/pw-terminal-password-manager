@@ -36,7 +36,7 @@ assert_rm_not_found_output() {
 assert_username() {
   run keepassxc-cli show -qsa username "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
   assert_success
-  if (($# == 2))
+  if (( $# == 2 ))
   then assert_output "$2"
   else refute_output
   fi
@@ -45,7 +45,7 @@ assert_username() {
 assert_url() {
   run keepassxc-cli show -qsa url "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
   assert_success
-  if (($# == 2))
+  if (( $# == 2 ))
   then assert_output "$2"
   else refute_output
   fi
@@ -54,7 +54,7 @@ assert_url() {
 assert_notes() {
   run keepassxc-cli show -qsa notes "${PW_KEYCHAIN}" "$1" <<< "${PW_KEEPASSXC_PASSWORD}"
   assert_success
-  if (($# == 2))
+  if (( $# == 2 ))
   then assert_output "$2"
   else refute_output
   fi
