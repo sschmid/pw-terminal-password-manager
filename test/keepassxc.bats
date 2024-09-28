@@ -267,6 +267,7 @@ EOF
 
 @test "lists no items when wrong keychain password" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
+  # shellcheck disable=SC2030
   PW_KEEPASSXC_PASSWORD="wrong"
   run pw ls
   assert_failure
