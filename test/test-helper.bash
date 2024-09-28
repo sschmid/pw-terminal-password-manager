@@ -74,7 +74,3 @@ _skip_manual_test() {
     skip "Requires user input. Use PW_TEST_RUN_MANUAL_TESTS=1 test/run to also run manual tests."
   fi
 }
-
-_skip_if_github_action() {
-  [[ "${PROJECT_ROOT}" != "/Users/runner/work/"* ]] || skip "$@"
-}

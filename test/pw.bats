@@ -24,7 +24,6 @@ setup() {
 }
 
 @test "generates and copies password" {
-  _skip_if_github_action "Doesn't work with GitHub actions for some reason"
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"
   run pw gen
@@ -52,7 +51,6 @@ setup() {
 }
 
 @test "generates and prints password" {
-  _skip_if_github_action "Doesn't work with GitHub actions for some reason"
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"
   run pw -p gen
@@ -61,7 +59,6 @@ setup() {
 }
 
 @test "generates password with specified length" {
-  _skip_if_github_action "Doesn't work with GitHub actions for some reason"
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"
   run pw -p gen 8
@@ -70,7 +67,6 @@ setup() {
 }
 
 @test "generates password with specified character class" {
-  _skip_if_github_action "Doesn't work with GitHub actions for some reason"
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"
   run pw -p gen 8 "2"
