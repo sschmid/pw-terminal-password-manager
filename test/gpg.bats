@@ -121,9 +121,9 @@ assert_notes() {
 }
 
 @test "adds item with name and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
-  assert_notes "${NAME_A}" "${NOTES_A}"
+  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
 }
 
 @test "adds item in subfolder" {
@@ -316,7 +316,7 @@ EOF
 ################################################################################
 
 @test "shows fzf preview" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   source "${PROJECT_ROOT}/src/plugins/gpg/plugin.bash"

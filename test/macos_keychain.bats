@@ -123,11 +123,11 @@ assert_rm_not_found_output() {
 }
 
 @test "adds item with name and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   _get_note() {
-    security find-generic-password -j "${NOTES_A}" -g "${PW_KEYCHAIN}" 2>&1 | awk '
+    security find-generic-password -j "${MULTILINE_NOTES_A}" -g "${PW_KEYCHAIN}" 2>&1 | awk '
       BEGIN { FS="<blob>="; }
       /"icmt"/ {
         comment = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
@@ -139,7 +139,7 @@ assert_rm_not_found_output() {
   assert_success
   cat << EOF | assert_output -
 Comment:
-${NOTES_A}
+${MULTILINE_NOTES_A}
 EOF
 }
 
@@ -411,7 +411,7 @@ EOF
 @test "doesn't show fzf preview when locked" {
   _skip_manual_test "no password and cancel"
 
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
@@ -422,7 +422,7 @@ EOF
 }
 
 @test "shows fzf preview" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
@@ -436,7 +436,7 @@ EOF
   assert_success
   cat << EOF | assert_output -
 Comment:
-${NOTES_A}
+${MULTILINE_NOTES_A}
 EOF
 }
 

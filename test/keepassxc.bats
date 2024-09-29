@@ -120,9 +120,9 @@ assert_item_recycled() {
 }
 
 @test "adds item with name and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
-  assert_notes "${NAME_A}" "${NOTES_A}"
+  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
 }
 
 @test "adds item in subfolder" {
@@ -207,6 +207,15 @@ assert_item_recycled() {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_edits_item "${PW_2}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_A}"
+}
+
+@test "edits item and keeps account, url and notes" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}"
+  assert_username "${NAME_A}" "${ACCOUNT_A}"
+  assert_url "${NAME_A}" "${URL_A}"
+  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
 }
 
 @test "edits item with key-file" {
@@ -312,7 +321,7 @@ EOF
 ################################################################################
 
 @test "shows fzf preview" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   source "${PROJECT_ROOT}/src/plugins/keepassxc/plugin.bash"
@@ -327,7 +336,7 @@ Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
 URL: ${URL_A}
-Notes: ${NOTES_A}
+Notes: ${MULTILINE_NOTES_A}
 EOF
 }
 
