@@ -65,24 +65,22 @@ pw::plugin_ls() {
   security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" "${awk_cmd}" | LC_ALL=C sort
 }
 
+# shellcheck disable=SC1083
+_plugin_fzf_preview() {
+  local comment
+  comment="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null | awk 'BEGIN { FS="<blob>="; } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
+  echo "Comment:"
+  if [[ "${comment}" == "0x"* ]]
+  then xxd -r -p <<< "${comment%%  *}"
+  else echo "${comment:1:-1}"
+  fi
+}
+
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked
   if security show-keychain-info "${PW_KEYCHAIN}" &> /dev/null; then
-    local security_cmd awk_cmd
-    security_cmd="security find-generic-password -l {4} -a {5} -s {6} -g \"${PW_KEYCHAIN}\" 2> /dev/null"
-
-    # KCOV_EXCL_START
-    awk_cmd=$(cat <<'EOF'
-awk '
-  BEGIN { FS="<blob>="; }
-  /"icmt"/ {
-    comment = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-    printf "Comment:\n%s", comment
-  }'
-EOF
-    )
-    # KCOV_EXCL_STOP
-    echo "${security_cmd} | ${awk_cmd}"
+    declare -f _plugin_fzf_preview
+    echo "_plugin_fzf_preview \"${PW_KEYCHAIN}\""
   fi
 }
 

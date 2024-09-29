@@ -122,23 +122,38 @@ assert_rm_not_found_output() {
   assert_output "${PW_1}"
 }
 
-@test "adds item with name and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
+@test "adds item with name and single line notes" {
+  local notes="single line notes"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${notes}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   _get_note() {
-    security find-generic-password -j "${MULTILINE_NOTES_A}" -g "${PW_KEYCHAIN}" 2>&1 | awk '
-      BEGIN { FS="<blob>="; }
-      /"icmt"/ {
-        comment = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-        printf "Comment:\n%s", comment
-      }'
+    local comment
+    comment="$(security find-generic-password -j "${notes}" -g "${PW_KEYCHAIN}" 2>&1 \
+      | awk 'BEGIN { FS="<blob>="; } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
+    echo "${comment:1:-1}"
   }
 
   run _get_note
   assert_success
   cat << EOF | assert_output -
-Comment:
+${notes}
+EOF
+}
+
+@test "adds item with name and multiline notes" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  _get_note() {
+    security find-generic-password -j "${MULTILINE_NOTES_A}" -g "${PW_KEYCHAIN}" 2>&1 \
+      | awk 'BEGIN { FS="<blob>="; } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }' \
+      | xxd -r -p
+  }
+
+  run _get_note
+  assert_success
+  cat << EOF | assert_output -
 ${MULTILINE_NOTES_A}
 EOF
 }
@@ -421,7 +436,27 @@ EOF
   refute_output
 }
 
-@test "shows fzf preview" {
+@test "shows fzf preview for single line notes" {
+  local notes="single line notes"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${notes}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
+  local cmd
+  cmd="$(pw::plugin_fzf_preview)"
+  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
+  cmd=${cmd/\{5\}/"\"${ACCOUNT_A}\""}
+  cmd=${cmd/\{6\}/"\"${URL_A}\""}
+
+  run eval "${cmd}"
+  assert_success
+  cat << EOF | assert_output -
+Comment:
+${notes}
+EOF
+}
+
+@test "shows fzf preview for multiline notes" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
