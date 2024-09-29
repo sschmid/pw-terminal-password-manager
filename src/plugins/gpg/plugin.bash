@@ -54,9 +54,11 @@ ${PW_NOTES}"
 
 pw::plugin_edit() {
   local content
-  content="${PW_PASSWORD}
-$(_gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}" | sed -n 2,\$p)"
-  _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --yes <<< "${content}"
+  content="$(_gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}" | sed -n 2,\$p)"
+  _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --yes << EOF
+${PW_PASSWORD}
+${content}
+EOF
 }
 
 pw::plugin_get() {
@@ -79,6 +81,7 @@ pw::plugin_ls() {
   esac
 }
 
+# KCOV_EXCL_START
 # shellcheck disable=SC1083
 _plugin_fzf_preview() {
   gpg --quiet --decrypt "$1/"{4} | awk '
@@ -87,6 +90,7 @@ _plugin_fzf_preview() {
     NR>=4 { notes = (notes ? notes "\n" : "") $0 }
     END { printf "Account: %s\nURL: %s\nNotes:\n%s", account, url, notes }'
 }
+# KCOV_EXCL_STOP
 
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked

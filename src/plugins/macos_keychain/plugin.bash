@@ -65,6 +65,7 @@ pw::plugin_ls() {
   security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" "${awk_cmd}" | LC_ALL=C sort
 }
 
+# KCOV_EXCL_START
 # shellcheck disable=SC1083
 _plugin_fzf_preview() {
   local comment
@@ -75,6 +76,7 @@ _plugin_fzf_preview() {
   else echo "${comment:1:-1}"
   fi
 }
+# KCOV_EXCL_STOP
 
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked
