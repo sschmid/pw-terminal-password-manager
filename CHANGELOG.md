@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [8.1.0] - 2024-09-29
+### Added
+- Refactored password generation to ensure desired length in low entropy environments
+- `macos_keychain`: Added support for displaying multiline comments in fzf preview
+
+### Fixed
+- `gpg`: Fixed edit removes account, url and notes
+- `gpg`: Fixed only printing first line of notes in fzf preview
+
 ## [8.0.0] - 2024-09-27
 ### Added
 - Added `gpg` plugin
@@ -200,7 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.1.0...HEAD
+[8.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/7.0.0...8.0.0
 [7.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/6.1.2...7.0.0
 [6.1.2]: https://github.com/sschmid/pw-terminal-password-manager/compare/6.1.1...6.1.2
