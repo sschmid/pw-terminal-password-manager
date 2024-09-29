@@ -329,7 +329,8 @@ EOF
   cat << EOF | assert_output -
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
-Notes: ${NOTES_A}
+Notes:
+${MULTILINE_NOTES_A}
 EOF
 }
 

@@ -89,8 +89,8 @@ pw::plugin_fzf_preview() {
 awk '
   NR==2 { account=$0 }
   NR==3 { url=$0 }
-  NR>=4 { notes=$0 }
-  END { printf "Account: %s\nURL: %s\nNotes: %s", account, url, notes }'
+  NR>=4 { notes = (notes ? notes "\n" : "") $0 }
+  END { printf "Account: %s\nURL: %s\nNotes:\n%s", account, url, notes }'
 EOF
     )
     # KCOV_EXCL_STOP
