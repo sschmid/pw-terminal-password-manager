@@ -57,9 +57,10 @@ pw::plugin_ls() {
 }
 
 pw::plugin_fzf_preview() {
-  # 3: item name
-  # 4: account name
-  echo "echo {3} {4}"
+  # 4: name
+  # 5: account
+  # 6: url
+  echo "echo {4}, {5}, {6}"
 }
 
 pw::plugin_open() {
