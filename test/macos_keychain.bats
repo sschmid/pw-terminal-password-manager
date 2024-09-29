@@ -127,6 +127,7 @@ assert_rm_not_found_output() {
   assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${notes}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
+  # shellcheck disable=SC2317
   _get_note() {
     local comment
     comment="$(security find-generic-password -j "${notes}" -g "${PW_KEYCHAIN}" 2>&1 \
