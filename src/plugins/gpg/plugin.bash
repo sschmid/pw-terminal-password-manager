@@ -79,22 +79,20 @@ pw::plugin_ls() {
   esac
 }
 
-pw::plugin_fzf_preview() {
-  if echo | _gpg_encrypt | _gpg --decrypt &> /dev/null; then
-    local gpg_cmd awk_cmd
-    gpg_cmd="gpg --quiet --decrypt \"${PW_KEYCHAIN}/\"{4}"
+# shellcheck disable=SC1083
+_plugin_fzf_preview() {
+  gpg --quiet --decrypt "$1/"{4} | awk '
+    NR==2 { account=$0 }
+    NR==3 { url=$0 }
+    NR>=4 { notes = (notes ? notes "\n" : "") $0 }
+    END { printf "Account: %s\nURL: %s\nNotes:\n%s", account, url, notes }'
+}
 
-    # KCOV_EXCL_START
-    awk_cmd=$(cat <<'EOF'
-awk '
-  NR==2 { account=$0 }
-  NR==3 { url=$0 }
-  NR>=4 { notes = (notes ? notes "\n" : "") $0 }
-  END { printf "Account: %s\nURL: %s\nNotes:\n%s", account, url, notes }'
-EOF
-    )
-    # KCOV_EXCL_STOP
-    echo "${gpg_cmd} | ${awk_cmd}"
+pw::plugin_fzf_preview() {
+  # unlocks the keychain if necessary and only previews if the keychain is unlocked
+  if echo | _gpg_encrypt | _gpg --decrypt &> /dev/null; then
+    declare -f _plugin_fzf_preview
+    echo "_plugin_fzf_preview \"${PW_KEYCHAIN}\""
   fi
 }
 
