@@ -53,7 +53,10 @@ ${PW_NOTES}"
 }
 
 pw::plugin_edit() {
-  _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --yes <<< "${PW_PASSWORD}"
+  local content
+  content="${PW_PASSWORD}
+$(_gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}" | sed -n 2,\$p)"
+  _gpg_encrypt --output "${PW_KEYCHAIN}/${PW_NAME}" --yes <<< "${content}"
 }
 
 pw::plugin_get() {

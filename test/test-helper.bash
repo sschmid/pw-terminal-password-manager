@@ -16,6 +16,9 @@ _common_setup() {
   URL_A=" a test url "
   URL_B=" b test url "
   NOTES_A=" a test note "
+  MULTILINE_NOTES_A=" a test note
+with multiple lines
+and spaces "
   PW_1=" 1 test pw "
   PW_2=" 2 test pw "
   PW_3=" 3 test pw "

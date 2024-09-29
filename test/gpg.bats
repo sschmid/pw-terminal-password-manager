@@ -211,6 +211,15 @@ assert_notes() {
   assert_item_exists "${PW_2}" "${NAME_A}"
 }
 
+@test "edits item and keeps account, url and notes" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}"
+  assert_username "${NAME_A}" "${ACCOUNT_A}"
+  assert_url "${NAME_A}" "${URL_A}"
+  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
+}
+
 # shellcheck disable=SC2034
 @test "edits item with key id" {
   local keychain="${PW_KEYCHAIN}"
@@ -230,9 +239,11 @@ assert_notes() {
 # edit non existing item
 ################################################################################
 
-@test "adds item when editing non existing item" {
-  assert_edits_item "${PW_2}" "${NAME_A}"
-  assert_item_exists "${PW_2}" "${NAME_A}"
+@test "fails when editing non existing item" {
+  run pw edit "${NAME_A}" <<< "${PW_2}"
+  assert_failure
+  assert_item_not_exists_output "${NAME_A}"
+  assert_item_not_exists "${NAME_A}"
 }
 
 ################################################################################
