@@ -27,7 +27,7 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 
 : "${PW_RC:="${HOME}/.pwrc"}"
 [[ ! -f "${PW_RC}" ]] && cat << 'EOF' > "${PW_RC}"
-PW_KEYCHAINS=(login.keychain-db)
+PW_KEYCHAINS=()
 EOF
 
 declare -a PW_KEYCHAINS
@@ -66,7 +66,7 @@ commands:
   update                     update pw
 
 customization:
-  PW_KEYCHAIN                 keychain to use when not specified with -k (default: login.keychain-db)
+  PW_KEYCHAIN                 keychain to use when not specified with -k
   PW_GEN_LENGTH               default length of generated passwords (default: 35)
   PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
   PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)

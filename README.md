@@ -234,7 +234,7 @@ within the `~/.pwrc` configuration file. Here's an example of how the
 default `~/.pwrc` file looks:
 
 ```bash
-PW_KEYCHAINS=(login.keychain-db)
+PW_KEYCHAINS=()
 ```
 
 To use multiple keychains, modify the `PW_KEYCHAINS` array to include
@@ -242,10 +242,10 @@ the paths to your desired keychains, e.g.:
 
 ```bash
 PW_KEYCHAINS=(
-  login.keychain-db
   secrets.keychain-db
-  ~/path/to/keepassxc.kdbx
   ~/path/to/myproject.keychain-db
+  ~/path/to/keepassxc.kdbx
+  ~/path/to/gpg/secrets
 )
 ```
 
@@ -319,7 +319,6 @@ Configure keychains in `~/.pwrc`
 
 ```bash
 PW_KEYCHAINS=(
-  login.keychain-db
   secrets.keychain-db
   ~/path/to/myproject.keychain-db
   ~/path/to/keepassxc.kdbx
