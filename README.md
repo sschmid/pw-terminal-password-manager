@@ -87,6 +87,11 @@ Legend:
 In all following examples, `[<args>]` refers to the optional
 arguments `name`, `account`, `url`, `notes` in that order.
 
+When using fzf mode to select an entry, such as when getting, editing,
+or removing an entry, you can toggle the entry preview by pressing the `TAB` key.
+Entry preview shows additional information like the account, url, and notes and
+is off by default.
+
 ## Create keychain
 
 ```
