@@ -21,6 +21,13 @@ and spaces "
   PW_1=" 1 test pw "
   PW_2=" 2 test pw "
   PW_3=" 3 test pw "
+
+  export PW_RC="${BATS_TEST_TMPDIR}/pwrc.bash"
+}
+
+_set_pwrc_with_keychains() {
+  export PW_RC="${BATS_TEST_TMPDIR}/pwrc.bash"
+  echo "PW_KEYCHAINS=($1)" > "${PW_RC}"
 }
 
 assert_item_exists() {
