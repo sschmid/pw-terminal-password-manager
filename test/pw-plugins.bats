@@ -85,9 +85,9 @@ EOF
 @test "discovers keychains without duplicates" {
   _set_pwrc_with_keychains ""
   _set_plugin_2
-  run pw -p name account
+  run pw -p name account url
   assert_success
-  assert_output "plugin 2 get name account test 2 keychain"
+  assert_output "plugin 2 get name account url test 2 keychain"
 }
 
 @test "fails when keychain does not exist" {
@@ -180,33 +180,33 @@ EOF
 @test "prints item password" {
   _create_fake_keychain
   _set_plugin_1
-  run pw -p name account
+  run pw -p name account url
   assert_success
-  assert_output "plugin 1 get name account ${PW_KEYCHAIN}"
+  assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
 }
 
 @test "prints item password with -pk" {
   _create_fake_keychain
   _set_plugin_1
-  run pw -pk "${PW_KEYCHAIN}" name account
+  run pw -pk "${PW_KEYCHAIN}" name account url
   assert_success
-  assert_output "plugin 1 get name account ${PW_KEYCHAIN}"
+  assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
 }
 
 @test "copies item password" {
   _create_fake_keychain
   _set_plugin_1
-  pw name account
+  pw name account url
   run pbpaste
   assert_success
-  assert_output "plugin 1 get name account ${PW_KEYCHAIN}"
+  assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
 }
 
 @test "clears clipboard after copying item" {
   export PW_CLIP_TIME=1
   _create_fake_keychain
   _set_plugin_1
-  pw name account
+  pw name
   sleep 2
   run pbpaste
   refute_output
@@ -216,7 +216,7 @@ EOF
   export PW_CLIP_TIME=1
   _create_fake_keychain
   _set_plugin_1
-  pw name account
+  pw name
   echo -n "after" | pbcopy
   sleep 2
   run pbpaste
@@ -234,25 +234,25 @@ EOF
 @test "adds item" {
   _create_fake_keychain
   _set_plugin_1
-  run pw add name account <<< password
+  run pw add name account url <<< password
   assert_success
-  assert_output "plugin 1 add name account password ${PW_KEYCHAIN}"
+  assert_output "plugin 1 add name account url password ${PW_KEYCHAIN}"
 }
 
 @test "removes item" {
   _create_fake_keychain
   _set_plugin_1
-  run pw rm name account
+  run pw rm name account url
   assert_success
-  assert_output "plugin 1 rm name account ${PW_KEYCHAIN}"
+  assert_output "plugin 1 rm name account url ${PW_KEYCHAIN}"
 }
 
 @test "edits item" {
   _create_fake_keychain
   _set_plugin_1
-  run pw edit name account <<< password2
+  run pw edit name account url <<< password2
   assert_success
-  assert_output "plugin 1 edit name account password2 ${PW_KEYCHAIN}"
+  assert_output "plugin 1 edit name account url password2 ${PW_KEYCHAIN}"
 }
 
 @test "lists items" {
