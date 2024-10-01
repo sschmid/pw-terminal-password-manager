@@ -31,6 +31,12 @@ _set_pwrc_with_keychains() {
   echo "PW_KEYCHAINS=($1)" > "${PW_RC}"
 }
 
+assert_init_fails() {
+  run pw init "${PW_KEYCHAIN}"
+  assert_failure
+  assert_output "pw: ${PW_KEYCHAIN} already exists."
+}
+
 assert_item_exists() {
   local password="$1"; shift
   run pw -p "$@"

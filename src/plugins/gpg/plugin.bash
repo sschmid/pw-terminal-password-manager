@@ -25,7 +25,6 @@ pw::prepare_keychain() {
 }
 
 pw::plugin_init() {
-  [[ -d "${PW_KEYCHAIN}" ]] && pw::exit "${PW_KEYCHAIN} already exists."
   _mk_owner_dir "${PW_KEYCHAIN}"
 }
 

@@ -182,9 +182,7 @@ EOF
 @test "init fails when keychain already exists" {
   _create_fake_keychain
   _set_plugin_1
-  run pw init "${PW_KEYCHAIN}"
-  assert_failure
-  assert_output "pw: ${PW_KEYCHAIN}: File already exists"
+  assert_init_fails
 }
 
 @test "prints item password" {

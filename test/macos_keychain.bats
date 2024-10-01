@@ -29,9 +29,7 @@ assert_rm_not_found_output() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
-  assert_failure
-  assert_output "pw: ${PW_KEYCHAIN}: File already exists"
+  assert_init_fails <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 ################################################################################

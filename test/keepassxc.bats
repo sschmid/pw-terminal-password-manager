@@ -72,9 +72,7 @@ assert_item_recycled() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw init "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}"
-  assert_failure
-  assert_output "pw: ${PW_KEYCHAIN}: File already exists"
+  assert_init_fails <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
 ################################################################################

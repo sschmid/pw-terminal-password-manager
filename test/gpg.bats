@@ -83,9 +83,7 @@ assert_notes() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  run pw init "${PW_KEYCHAIN}"
-  assert_failure
-  assert_output "${PW_KEYCHAIN} already exists."
+  assert_init_fails
 }
 
 ################################################################################

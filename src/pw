@@ -254,7 +254,7 @@ PW_NOTES=""
 declare -ig PW_FZF=0
 
 pw::init() {
-  [[ -f "${PW_KEYCHAIN}" ]] && pw::exit "pw: ${PW_KEYCHAIN}: File already exists"
+  [[ -e "${PW_KEYCHAIN}" ]] && pw::exit "pw: ${PW_KEYCHAIN} already exists."
   pw::plugin_init
 }
 
@@ -262,7 +262,7 @@ pw::add() {
   pw::prepare_keychain "add"
 
   if (( $# )); then
-    pw::select_item_with_prompt add "$@"
+    pw::select_item_with_prompt "add" "$@"
   else
     IFS= read -rp "Title: " PW_NAME </dev/tty
     IFS= read -rp "Username: " PW_ACCOUNT </dev/tty
@@ -276,7 +276,7 @@ pw::add() {
 
 pw::edit() {
   pw::prepare_keychain "edit"
-  pw::select_item_with_prompt edit "$@"
+  pw::select_item_with_prompt "edit" "$@"
   pw::prompt_password
   pw::plugin_edit
 }
@@ -285,8 +285,8 @@ pw::get() {
   pw::prepare_keychain "get"
   local -i print=$1; shift
   if (( print ))
-  then pw::select_item_with_prompt print "$@"
-  else pw::select_item_with_prompt copy "$@"
+  then pw::select_item_with_prompt "print" "$@"
+  else pw::select_item_with_prompt "copy" "$@"
   fi
   local password
   password="$(pw::plugin_get)"
@@ -299,7 +299,7 @@ pw::get() {
 pw::rm() {
   pw::prepare_keychain "rm"
   local -i remove=1
-  pw::select_item_with_prompt remove "$@"
+  pw::select_item_with_prompt "remove" "$@"
   if (( PW_FZF )); then
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
     [[ "${REPLY}" == [yY] ]] || remove=0
