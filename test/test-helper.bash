@@ -22,6 +22,7 @@ and spaces "
   PW_2=" 2 test pw "
   PW_3=" 3 test pw "
 
+  export LC_ALL="en_US.UTF-8"
   export PW_RC="${BATS_TEST_TMPDIR}/pwrc.bash"
 }
 

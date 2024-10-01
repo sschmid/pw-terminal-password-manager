@@ -78,7 +78,7 @@ pw::plugin_rm() {
 
 pw::plugin_ls() {
   local format="${1:-default}" list
-  if ! list="$(_keepassxc-cli_with_args ls --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" | { grep -v -e '/$' -e 'Recycle Bin/' || true; } | LC_ALL=C sort)"
+  if ! list="$(_keepassxc-cli_with_args ls --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" | { grep -v -e '/$' -e 'Recycle Bin/' || true; } | sort -f)"
   then
     echo "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again." >&2
     exit 1

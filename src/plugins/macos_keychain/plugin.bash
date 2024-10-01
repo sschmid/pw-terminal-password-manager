@@ -62,7 +62,7 @@ pw::plugin_ls() {
       printf printf_format, label, account, service, label, account, service }'
   # KCOV_EXCL_STOP
 
-  security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" "${awk_cmd}" | LC_ALL=C sort
+  security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" "${awk_cmd}" | sort -f
 }
 
 # KCOV_EXCL_START

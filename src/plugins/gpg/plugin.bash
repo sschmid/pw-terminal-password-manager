@@ -72,7 +72,7 @@ pw::plugin_rm() {
 pw::plugin_ls() {
   local format="${1:-default}" list
   pushd "${PW_KEYCHAIN}" > /dev/null || exit 1
-    list="$(find . -type f ! -name .DS_Store | LC_ALL=C sort)"
+    list="$(find . -type f ! -name .DS_Store | sort -f)"
   popd > /dev/null || exit 1
 
   case "${format}" in
