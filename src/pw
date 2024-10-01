@@ -194,15 +194,6 @@ pw::plugins() {
   | LC_ALL="C.UTF-8" sort
 }
 
-pw::prompt_keychain_password() {
-  if [[ ! -v PW_KEYCHAIN_PASSWORD ]]; then
-    if [[ -p /dev/stdin ]]
-    then IFS= read -r PW_KEYCHAIN_PASSWORD
-    else IFS= read -rsp "Please enter the keychain password:"$'\n' PW_KEYCHAIN_PASSWORD </dev/tty
-    fi
-  fi
-}
-
 PW_PASSWORD=""
 pw::prompt_password() {
   if [[ -p /dev/stdin ]]; then

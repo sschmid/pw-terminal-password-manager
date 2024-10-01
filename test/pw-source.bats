@@ -111,48 +111,6 @@ Enter password for 'name' (leave empty to generate password):
 EOF
 }
 
-_intercept_prompt_keychain_password() {
-  pw::prompt_keychain_password
-  echo "${PW_KEYCHAIN_PASSWORD}"
-}
-
-@test "reads keychain password from stdin" {
-  _source_pw
-  run _intercept_prompt_keychain_password <<< "stdin test"
-  assert_success
-  assert_output "stdin test"
-}
-
-# bats test_tags=tag:manual_test
-@test "prompts keychain password when no stdin" {
-  _skip_manual_test "'test'"
-  _source_pw
-  run _intercept_prompt_keychain_password
-  assert_success
-  cat << EOF | assert_output -
-Please enter the keychain password:
-test
-EOF
-}
-
-# bats test_tags=tag:manual_test
-@test "prompts keychain password only once" {
-  _skip_manual_test "'test'"
-  _source_pw
-  pw::prompt_keychain_password
-  run _intercept_prompt_keychain_password
-  assert_success
-  assert_output "test"
-}
-
-@test "skips prompt when PW_KEYCHAIN_PASSWORD is set" {
-  _source_pw
-  export PW_KEYCHAIN_PASSWORD="env test"
-  run _intercept_prompt_keychain_password
-  assert_success
-  assert_output "env test"
-}
-
 @test "ignores sample plugin" {
   _source_pw
   run pw::plugins
