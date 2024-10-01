@@ -82,6 +82,16 @@ declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
 EOF
 }
 
+@test "fails when PW_KEYCHAIN is empty" {
+  _set_pwrc_with_keychains ""
+  run pw -p name
+  assert_failure
+  cat << EOF | assert_output -
+pw: no keychain was set!
+Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC}).
+EOF
+}
+
 @test "discovers keychains without duplicates" {
   _set_pwrc_with_keychains ""
   _set_plugin_2

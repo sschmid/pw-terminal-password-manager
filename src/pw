@@ -196,6 +196,14 @@ pw::set_keychain() {
   else
     PW_KEYCHAIN="$1"
   fi
+
+  if [[ -z "${PW_KEYCHAIN}" ]]; then
+    cat << EOF >&2
+pw: no keychain was set!
+Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC}).
+EOF
+    exit 1
+  fi
 }
 
 pw::plugins() {
