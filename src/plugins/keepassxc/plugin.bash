@@ -1,10 +1,6 @@
-if ! command -v keepassxc-cli > /dev/null; then
-  cat << EOF >&2
-command not found: keepassxc-cli
-Please make sure that KeePassXC is installed and keepassxc-cli is in your PATH.
-EOF
-  exit 1
-fi
+command -v keepassxc-cli > /dev/null || pw::exit \
+  "command not found: keepassxc-cli" \
+  "Please make sure that KeePassXC is installed and keepassxc-cli is in your PATH."
 
 _keepassxc-cli_with_args() {
   local command="$1"; shift
@@ -80,8 +76,7 @@ pw::plugin_ls() {
   local format="${1:-default}" list
   if ! list="$(_keepassxc-cli_with_args ls --flatten --recursive "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}" | { grep -v -e '/$' -e 'Recycle Bin/' || true; } | sort -f)"
   then
-    echo "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again." >&2
-    exit 1
+    pw::exit "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again."
   fi
 
   if [[ "${list}" != "[empty]" ]]; then

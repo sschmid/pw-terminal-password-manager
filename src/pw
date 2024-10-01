@@ -2,21 +2,20 @@
 # shellcheck disable=SC1090,SC1091,SC2119
 set -euo pipefail
 
+pw::exit() {
+  printf "%s\n" "$@" >&2
+  exit 1
+}
+
 pw::require_bash_version() {
   if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
-    cat << EOF >&2
-pw requires bash-4.2 or later. Installed: ${BASH_VERSION}
-Please install a newer version of bash.
-EOF
-    exit 1
+    pw::exit "pw requires bash-4.2 or later. Installed: ${BASH_VERSION}" \
+             "Please install a newer version of bash."
   fi
 }
 
 pw::require_fzf() {
-  if ! command -v fzf > /dev/null; then
-    echo "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf" >&2
-    exit 1
-  fi
+  command -v fzf > /dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
 }
 
 PW_HOME="${BASH_SOURCE[0]}"
@@ -112,13 +111,13 @@ pw::select_keychain() {
   fi
 
   local -a plugins=()
-  local -a file_types=()
+  local -a types=()
   while read -r hook; do
     # Run hook in a subshell to avoid affecting the current shell
     while true; do
       read -r file_type
       read -r register
-      file_types+=("${file_type}")
+      types+=("${file_type}")
       (( register )) && plugins+=("$(dirname "${hook}")")
       break
     done < <(pw::run_hook_register "${hook}")
@@ -128,28 +127,21 @@ pw::select_keychain() {
   if (( n == 1 )); then
     source "${plugins[0]}/plugin.bash"
   elif (( n > 1 )); then
-    echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
-    printf '%s\n' "${plugins[@]}" >&2
-    exit 1
+    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "$(printf '%s\n' "${plugins[@]}")"
   else
-    if [[ -f "${PW_KEYCHAIN}" ]]; then
-      cat << EOF >&2
-Could not detect plugin for ${PW_KEYCHAIN}
-Supported file types are:
-EOF
-      printf '%s\n' "${file_types[@]}" >&2
-    else
-      echo "pw: ${PW_KEYCHAIN}: No such file or directory" >&2
+    if [[ -f "${PW_KEYCHAIN}" ]]
+    then pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
+                  "Supported file types are:" "$(printf '%s\n' "${types[@]}")"
+    else pw::exit "pw: ${PW_KEYCHAIN}: No such file or directory"
     fi
-    exit 1
   fi
 }
 
 pw::infer_plugin() {
   pw::set_keychain "$1"
   local -a plugins=()
-  local -a file_types=()
-  local -a file_extensions=()
+  local -a types=()
+  local -a exts=()
   local extension
   extension="$(tr '[:upper:]' '[:lower:]' <<< "${PW_KEYCHAIN##*.}")"
   while read -r hook; do
@@ -158,8 +150,8 @@ pw::infer_plugin() {
       read -r file_type
       read -r file_extension
       read -r register
-      file_types+=("${file_type}")
-      file_extensions+=("${file_extension}")
+      types+=("${file_type}")
+      exts+=("${file_extension}")
       (( register )) && plugins+=("$(dirname "${hook}")")
       break
     done < <(pw::run_hook_register_with_extension "${hook}" "${extension}")
@@ -169,18 +161,11 @@ pw::infer_plugin() {
   if (( n == 1 )); then
     source "${plugins[0]}/plugin.bash"
   elif (( n > 1 )); then
-    echo "pw: Multiple plugins found for ${PW_KEYCHAIN}" >&2
-    printf '%s\n' "${plugins[@]}" >&2
-    exit 1
+    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "$(printf '%s\n' "${plugins[@]}")"
   else
-    cat << EOF >&2
-Could not detect plugin for ${PW_KEYCHAIN}
-Supported extensions are:
-EOF
-    for i in "${!file_extensions[@]}"; do
-      printf "%-13s - %s\n" "${file_extensions[$i]}" "${file_types[$i]}" >&2
-    done
-    exit 1
+    pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
+             "Supported extensions are:" \
+             "$(for i in "${!exts[@]}"; do printf "%-13s - %s\n" "${exts[$i]}" "${types[$i]}"; done)"
   fi
 }
 
@@ -197,13 +182,8 @@ pw::set_keychain() {
     PW_KEYCHAIN="$1"
   fi
 
-  if [[ -z "${PW_KEYCHAIN}" ]]; then
-    cat << EOF >&2
-pw: no keychain was set!
-Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC}).
-EOF
-    exit 1
-  fi
+  [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
+    "Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC})."
 }
 
 pw::plugins() {
@@ -233,8 +213,7 @@ pw::prompt_password() {
     if [[ -n "${PW_PASSWORD}" ]]; then
       read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
       if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
-        echo "Error: the entered passwords do not match." >&2
-        exit 1
+        pw::exit "Error: the entered passwords do not match."
       fi
     else
       PW_PASSWORD="$(pw::gen 1)"
@@ -284,11 +263,7 @@ PW_NOTES=""
 declare -ig PW_FZF=0
 
 pw::init() {
-  if [[ -f "${PW_KEYCHAIN}" ]]; then
-    echo "pw: ${PW_KEYCHAIN}: File already exists" >&2
-    exit 1
-  fi
-
+  [[ -f "${PW_KEYCHAIN}" ]] && pw::exit "pw: ${PW_KEYCHAIN}: File already exists"
   pw::plugin_init
 }
 
@@ -392,7 +367,7 @@ main() {
       h) pw::help; return ;;
       p) print=1 ;;
       k) PW_KEYCHAIN="${OPTARG}" ;;
-      *) echo "Invalid option: -${OPTARG}" >&2; exit 1 ;;
+      *) pw::exit "Invalid option: -${OPTARG}" ;;
     esac
   done
   shift $(( OPTIND - 1 ))

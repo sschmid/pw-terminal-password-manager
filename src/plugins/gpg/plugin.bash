@@ -1,10 +1,6 @@
-if ! command -v gpg > /dev/null; then
-  cat << EOF >&2
-command not found: gpg
-Please make sure that GnuPG is installed and gpg is in your PATH.
-EOF
-  exit 1
-fi
+command -v gpg > /dev/null || pw::exit \
+  "command not found: gpg" \
+  "Please make sure that GnuPG is installed and gpg is in your PATH."
 
 _gpg() {
   if [[ -v PW_GPG_PASSWORD ]]
@@ -29,11 +25,7 @@ pw::prepare_keychain() {
 }
 
 pw::plugin_init() {
-  if [[ -d "${PW_KEYCHAIN}" ]]; then
-    echo "${PW_KEYCHAIN} already exists." >&2
-    exit 1
-  fi
-
+  [[ -d "${PW_KEYCHAIN}" ]] && pw::exit "${PW_KEYCHAIN} already exists."
   _mk_owner_dir "${PW_KEYCHAIN}"
 }
 
