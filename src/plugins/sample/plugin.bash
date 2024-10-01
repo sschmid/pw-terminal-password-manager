@@ -10,57 +10,68 @@ pw::plugin_init() {
 }
 
 pw::plugin_add() {
-  echo "[Sample Plugin] Adding item '$1' with account '$2' to keychain '${PW_KEYCHAIN}'"
+  cat << EOF
+[Sample Plugin] ${PW_KEYCHAIN} add
+Name: ${PW_NAME}
+Account: ${PW_ACCOUNT}
+URL: ${PW_URL}
+Notes: ${PW_NOTES}
+Password: ${PW_PASSWORD}
+EOF
 }
 
 pw::plugin_edit() {
-  echo "[Sample Plugin] Editing item '$1' with account '$2' in keychain '${PW_KEYCHAIN}'"
+  cat << EOF
+[Sample Plugin] ${PW_KEYCHAIN} edit
+Name: ${PW_NAME}
+Account: ${PW_ACCOUNT}
+URL: ${PW_URL}
+Password: ${PW_PASSWORD}
+EOF
 }
 
 pw::plugin_get() {
-  echo "sample-password"
+  cat << EOF
+[Sample Plugin] ${PW_KEYCHAIN} get
+Name: ${PW_NAME}
+Account: ${PW_ACCOUNT}
+URL: ${PW_URL}
+EOF
 }
 
 pw::plugin_rm() {
-  echo "[Sample Plugin] Removing item '$1' from keychain '${PW_KEYCHAIN}'"
+  cat << EOF
+[Sample Plugin] ${PW_KEYCHAIN} rm
+Name: ${PW_NAME}
+Account: ${PW_ACCOUNT}
+URL: ${PW_URL}
+EOF
 }
 
 pw::plugin_ls() {
   local format="${1:-default}"
-  local -a sample_items=(
-    "sample_item1"
-    "sample_item2"
-    "sample_item3"
-  )
-  local -a sample_accounts=(
-    "sample_account1"
-    "sample_account2"
-    "sample_account3"
-  )
-  local name account
+  local -a items=("sample_item1" "sample_item2" "sample_item3")
+  local -a accounts=("sample_account1" "sample_account2" "sample_account3")
+  local -a urls=("sample_url1" "sample_url2" "sample_url3")
+
   case "${format}" in
-    fzf)
-      for i in "${!sample_items[@]}"; do
-        name="${sample_items[$i]}"
-        account="${sample_accounts[$i]}"
-        printf "%-40s\t%s\t%s\t%s\n" "${name}" "${account}" "${name}" "${account}"
-      done
-      ;;
-    *)
-      for i in "${!sample_items[@]}"; do
-        name="${sample_items[$i]}"
-        account="${sample_accounts[$i]}"
-        printf "%-40s\t%s\n" "${name}" "${account}"
-      done
-      ;;
+    fzf) printf_format="%-24s\t%-24s\t%s\t%s\t%s\t%s\n" ;;
+    *) printf_format="%-24s\t%-24s\t%s\n" ;;
   esac
+
+  local name account url
+  for i in "${!items[@]}"; do
+    name="${items[$i]}"
+    account="${accounts[$i]}"
+    url="${urls[$i]}"
+    # shellcheck disable=SC2059
+    printf "${printf_format}" "${name}" "${account}" "${url}" "${name}" "${account}" "${url}"
+  done
 }
 
 pw::plugin_fzf_preview() {
-  # 4: name
-  # 5: account
-  # 6: url
-  echo "echo {4}, {5}, {6}"
+  # shellcheck disable=SC2028
+  echo 'printf "Name: %s\nAccount: %s\nURL: %s\n" {4} {5} {6}'
 }
 
 pw::plugin_open() {

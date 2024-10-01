@@ -3,6 +3,16 @@
 FILE_TYPE="Put the file type here. Use 'file -b <file>' to get it, e.g. 'file -b my-keychain.xyz'"
 FILE_EXTENSION="Put the file extension here. e.g. 'xyz'"
 
+# This function is called by pw to discover keychains.
+# Typically, you would list all keychains in the current directory.
+pw::discover_keychains() {
+  local filetype
+  while read -r path; do
+    filetype="$(file -b "${path}")"
+    [[ "${filetype}" != "${FILE_TYPE}" ]] || echo "${path}"
+  done < <(find "${PWD}" -type f -maxdepth 1)
+}
+
 # This function is called by pw to try to register this plugin for a given file type.
 # If your plugin can handle the file type, return 0, otherwise return 1.
 # It's a good idea to check if the file exists and if it's the correct type.
