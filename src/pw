@@ -97,7 +97,7 @@ pw::select_keychain() {
     while read -r hook; do
       # Run hook in a subshell to avoid affecting the current shell
       keychains="$(source "${hook}"; pw::discover_keychains)"
-      [[ -z "${keychains}" ]] || PW_KEYCHAINS=("${keychains}" "${PW_KEYCHAINS[@]}")
+      [[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
     done < <(pw::plugins)
 
     mapfile -t PW_KEYCHAINS < <(printf "%s\n" "${PW_KEYCHAINS[@]}" | awk '!line[$0]++')
@@ -106,7 +106,7 @@ pw::select_keychain() {
       pw::set_keychain "${PW_KEYCHAINS[0]}"
     else
       local keychain
-      keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | fzf --prompt="keychain> " --layout=reverse --info=hidden)"
+      keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | sort -f | fzf --prompt="keychain> " --layout=reverse --info=hidden)"
       pw::set_keychain "${keychain}"
     fi
   fi
