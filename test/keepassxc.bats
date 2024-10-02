@@ -1,3 +1,4 @@
+# shellcheck disable=SC2030,SC2031
 setup() {
   load 'keepassxc'
   _setup
@@ -75,6 +76,15 @@ assert_item_recycled() {
   assert_init_fails <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
+# bats test_tags=tag:manual_test
+@test "inits keychain and prompts keychain password" {
+  _skip_manual_test "'test' twice"
+  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/manual pw_keepassxc test.kdbx"
+  run pw init "${PW_KEYCHAIN}"
+  assert_success
+  assert_file_exists "${PW_KEYCHAIN}"
+}
+
 ################################################################################
 # get
 ################################################################################
@@ -137,6 +147,20 @@ assert_item_recycled() {
   _init_with_key_file
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
+}
+
+# bats test_tags=tag:manual_test
+@test "prompts keychain password" {
+  _skip_manual_test "'${KEYCHAIN_TEST_PASSWORD}'"
+  assert_adds_item "${PW_1}" "${NAME_A}"
+
+  unset PW_KEEPASSXC_PASSWORD
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+Enter password to unlock ${PW_KEYCHAIN}:
+${NAME_A}
+EOF
 }
 
 ################################################################################
@@ -336,6 +360,17 @@ Password: PROTECTED
 URL: ${URL_A}
 Notes: ${MULTILINE_NOTES_A}
 EOF
+}
+
+@test "doesn't show fzf preview with yubikey" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+
+  declare -Ag PW_KEYCHAIN_ARGS["yubikey"]="1:23456789"
+  source "${PROJECT_ROOT}/src/plugins/keepassxc/plugin.bash"
+  run pw::plugin_fzf_preview
+  assert_success
+  assert_output "echo 'Preview not available with YubiKey'"
 }
 
 ################################################################################

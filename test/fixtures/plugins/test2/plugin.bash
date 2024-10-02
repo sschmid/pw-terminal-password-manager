@@ -6,8 +6,9 @@ pw::plugin_get()         { echo "plugin 2 get ${PW_NAME} ${PW_ACCOUNT} ${PW_URL}
 pw::plugin_show()        { echo "plugin 2 show ${PW_NAME} ${PW_ACCOUNT} ${PW_URL} ${PW_KEYCHAIN}"; }
 pw::plugin_rm()          { echo "plugin 2 rm ${PW_NAME} ${PW_ACCOUNT} ${PW_URL} ${PW_KEYCHAIN}"; }
 pw::plugin_ls()          {
-                            echo "plugin 2 ls ${PW_KEYCHAIN}"
-                            declare -p PW_KEYCHAIN_ARGS
+                            echo -e "name 1\taccount 1\turl 1\tname 1\taccount 1\turl 1"
+                            echo -e "name 2\taccount 2\turl 2\tname 2\taccount 2\turl 2"
+                            echo -e "name 3\taccount 3\turl 3\tname 3\taccount 3\turl 3"
                          }
 pw::plugin_fzf_preview() { :; }
 pw::plugin_open()        { echo "plugin 2 open ${PW_KEYCHAIN}"; }

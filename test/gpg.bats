@@ -46,8 +46,7 @@ assert_rm_not_found_output() {
 
 _gpg_decrypt() {
   gpg --quiet --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
-    --decrypt "${PW_KEYCHAIN}/$1" \
-  | sed -n "$2"
+      --decrypt "${PW_KEYCHAIN}/$1" | sed -n "$2"
 }
 
 assert_username() {
@@ -284,6 +283,16 @@ EOF
 }
 
 ################################################################################
+# open
+################################################################################
+
+@test "opens keychain" {
+  run pw open
+  assert_success
+  refute_output
+}
+
+################################################################################
 # lock
 ################################################################################
 
@@ -301,6 +310,33 @@ EOF
   refute_output
 
   run pw unlock <<< "${PW_GPG_PASSWORD}"
+  assert_success
+  refute_output
+
+  run _ps
+  assert_success
+  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
+}
+
+# bats test_tags=tag:manual_test
+@test "unlocks keychain and prompts keychain password" {
+  unset PW_GPG_PASSWORD
+  _skip_manual_test "pw_test_password - Press enter to continue ..."
+  read -rsp "Press enter to continue ..."
+
+  run _ps
+  assert_success
+  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
+
+  run pw lock
+  assert_success
+  refute_output
+
+  run _ps
+  assert_failure
+  refute_output
+
+  run pw unlock
   assert_success
   refute_output
 

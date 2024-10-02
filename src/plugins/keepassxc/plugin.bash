@@ -18,7 +18,7 @@ pw::prepare_keychain() {
     if [[ -p /dev/stdin ]]; then
       IFS= read -r PW_KEEPASSXC_PASSWORD
     else
-      read -rsp "Enter password to unlock ${PW_KEYCHAIN}:"$'\n' PW_KEEPASSXC_PASSWORD </dev/tty
+      IFS= read -rsp "Enter password to unlock ${PW_KEYCHAIN}:"$'\n' PW_KEEPASSXC_PASSWORD </dev/tty
     fi
   fi
 }

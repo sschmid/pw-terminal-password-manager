@@ -82,6 +82,22 @@ declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
 EOF
 }
 
+# bats test_tags=tag:manual_test
+@test "selects keychain with fzf" {
+  _skip_manual_test "please select 'pw_test2.keychain'"
+  read -rsp "Press enter to continue ..."
+
+  _set_pwrc_with_keychains "pw_test1.keychain pw_test2.keychain"
+  _set_plugin_1
+  run pw ls
+
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls pw_test2.keychain
+declare -A PW_KEYCHAIN_ARGS=()
+EOF
+}
+
 @test "fails when PW_KEYCHAIN is empty" {
   _set_pwrc_with_keychains ""
   run pw -p name
@@ -247,12 +263,39 @@ EOF
   assert_output "plugin 1 add name account url password ${PW_KEYCHAIN}"
 }
 
+# bats test_tags=tag:manual_test
+@test "adds item interactively" {
+  _skip_manual_test "name account url notes pass pass"
+  _create_fake_keychain
+  _set_plugin_1
+  run pw add
+  assert_success
+  cat << EOF | assert_output -
+Title: Username: URL: Notes: Enter password for 'name' (leave empty to generate password):
+Retype password for 'name':
+plugin 1 add name account url pass ${PW_KEYCHAIN}
+EOF
+}
+
 @test "removes item" {
   _create_fake_keychain
   _set_plugin_1
   run pw rm name account url
   assert_success
   assert_output "plugin 1 rm name account url ${PW_KEYCHAIN}"
+}
+
+# bats test_tags=tag:manual_test
+@test "removes item interactively" {
+  _skip_manual_test "select 'name 2', then enter 'y'"
+  read -rsp "Press enter to continue ..."
+  _create_fake_keychain
+  _set_plugin_2
+  run pw rm
+  assert_success
+  cat << EOF | assert_output -
+Do you really want to remove 'name 2' 'account 2' from '${PW_KEYCHAIN}'? (y / N): plugin 2 rm name 2 account 2 url 2 ${PW_KEYCHAIN}
+EOF
 }
 
 @test "edits item" {

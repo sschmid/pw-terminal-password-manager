@@ -1,3 +1,4 @@
+# shellcheck disable=SC2030,SC2031
 setup() {
   load 'macos_keychain'
   _setup
@@ -30,6 +31,15 @@ assert_rm_not_found_output() {
 
 @test "init fails when keychain already exists" {
   assert_init_fails <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+# bats test_tags=tag:manual_test
+@test "inits keychain and prompts keychain password" {
+  _skip_manual_test "'test' twice"
+  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/manual pw_macos_keychain test.keychain-db"
+  run pw init "${PW_KEYCHAIN}"
+  assert_success
+  assert_file_exists "${PW_KEYCHAIN}"
 }
 
 ################################################################################
@@ -409,6 +419,23 @@ EOF
   refute_output
 
   run pw unlock <<< "${KEYCHAIN_TEST_PASSWORD}"
+  assert_success
+  refute_output
+
+  run security show-keychain-info "${PW_KEYCHAIN}"
+  assert_success
+  assert_output "Keychain \"${PW_KEYCHAIN}\" lock-on-sleep timeout=300s"
+}
+
+# bats test_tags=tag:manual_test
+@test "unlocks keychain and prompts keychain password" {
+  _skip_manual_test "'${KEYCHAIN_TEST_PASSWORD}'"
+
+  run pw lock
+  assert_success
+  refute_output
+
+  run pw unlock
   assert_success
   refute_output
 
