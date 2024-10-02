@@ -56,19 +56,6 @@ pw::plugin_ls() {
   security dump-keychain "${PW_KEYCHAIN}" | _plugin_get_details "${printf_format}" | sort -f
 }
 
-# KCOV_EXCL_START
-# shellcheck disable=SC1083
-_plugin_fzf_preview() {
-  local comment
-  comment="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null | _plugin_get_details 'printf "%s\n", comments')"
-  echo "Comment:"
-  if [[ "${comment}" == "0x"* ]]
-  then xxd -r -p <<< "${comment%%  *}"
-  else echo "${comment:1:-1}"
-  fi
-}
-# KCOV_EXCL_STOP
-
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked
   if security show-keychain-info "${PW_KEYCHAIN}" &> /dev/null; then
@@ -110,3 +97,16 @@ _plugin_get_details() {
 
   awk "${awk_cmd} $1 }"
 }
+
+# KCOV_EXCL_START
+# shellcheck disable=SC1083
+_plugin_fzf_preview() {
+  local comment
+  comment="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null | _plugin_get_details 'printf "%s\n", comments')"
+  echo "Comment:"
+  if [[ "${comment}" == "0x"* ]]
+  then xxd -r -p <<< "${comment%%  *}"
+  else echo "${comment:1:-1}"
+  fi
+}
+# KCOV_EXCL_STOP
