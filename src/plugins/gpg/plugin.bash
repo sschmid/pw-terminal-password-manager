@@ -75,7 +75,10 @@ pw::plugin_ls() {
 # KCOV_EXCL_START
 # shellcheck disable=SC1083
 _plugin_fzf_preview() {
-  gpg --quiet --decrypt "$1/"{4} | awk '
+  name={4}
+  echo -n "Name: "
+  basename "${name}"
+  gpg --quiet --decrypt "$1/${name}" | awk '
     NR==2 { account=$0 }
     NR==3 { url=$0 }
     NR>=4 { notes = (notes ? notes "\n" : "") $0 }

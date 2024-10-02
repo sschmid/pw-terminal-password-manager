@@ -361,6 +361,27 @@ EOF
   run eval "${cmd}"
   assert_success
   cat << EOF | assert_output -
+Name: ${NAME_A}
+Account: ${ACCOUNT_A}
+URL: ${URL_A}
+Notes:
+${MULTILINE_NOTES_A}
+EOF
+}
+
+@test "shows fzf preview of item in group" {
+  assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_item_exists "${PW_1}" "group/${NAME_A}"
+
+  source "${PROJECT_ROOT}/src/plugins/gpg/plugin.bash"
+  local cmd
+  cmd="$(pw::plugin_fzf_preview)"
+  cmd=${cmd/\{4\}/"\"group/${NAME_A}\""}
+
+  run eval "${cmd}"
+  assert_success
+  cat << EOF | assert_output -
+Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
 Notes:
