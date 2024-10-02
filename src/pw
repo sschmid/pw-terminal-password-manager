@@ -208,7 +208,7 @@ pw::prompt_password() {
         pw::exit "Error: the entered passwords do not match."
       fi
     else
-      PW_PASSWORD="$(pw::gen 1)"
+      PW_PASSWORD="$(pw::gen)"
     fi
   fi
 }

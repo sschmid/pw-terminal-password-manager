@@ -101,6 +101,7 @@ EOF
 @test "generates password when empty" {
   _skip_manual_test "nothing"
   _source_pw
+  export PW_PRINT=1
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"
   run _intercept_prompt_password
