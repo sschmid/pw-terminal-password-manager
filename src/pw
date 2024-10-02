@@ -330,7 +330,7 @@ pw::select_item_with_prompt() {
     # variables are set with the actual values 4..6
     local item
     item="$(pw::plugin_ls "fzf")"
-    item="$(fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden \
+    item="$(fzf --prompt="${fzf_prompt}> " --layout=reverse --info=hidden --no-mouse \
                 --delimiter='\t' --with-nth=1..3 --nth=1..3 \
                 --preview="$(pw::plugin_fzf_preview)" \
                 --preview-window=hidden \
