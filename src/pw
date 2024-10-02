@@ -268,7 +268,8 @@ pw::add() {
     IFS= read -rp "Title: " PW_NAME </dev/tty
     IFS= read -rp "Username: " PW_ACCOUNT </dev/tty
     IFS= read -rp "URL: " PW_URL </dev/tty
-    IFS= read -rp "Notes: " PW_NOTES </dev/tty
+    echo "Notes: Enter multi-line input (end with Ctrl+D):"
+    PW_NOTES=$(cat)
   fi
 
   pw::prompt_password

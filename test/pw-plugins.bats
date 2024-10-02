@@ -265,13 +265,14 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "adds item interactively" {
-  _skip_manual_test "name account url notes pass pass"
+  _skip_manual_test "name account url notes (2x ctrl+D) pass pass"
   _create_fake_keychain
   _set_plugin_1
   run pw add
   assert_success
   cat << EOF | assert_output -
-Title: Username: URL: Notes: Enter password for 'name' (leave empty to generate password):
+Title: Username: URL: Notes: Enter multi-line input (end with Ctrl+D):
+Enter password for 'name' (leave empty to generate password):
 Retype password for 'name':
 plugin 1 add name account url pass ${PW_KEYCHAIN}
 EOF
