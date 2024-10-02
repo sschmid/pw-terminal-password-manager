@@ -49,27 +49,18 @@ pw::plugin_rm() {
 pw::plugin_ls() {
   local format="${1:-default}" printf_format
   case "${format}" in
-    fzf) printf_format="%-24s\t%-24s\t%s\t%s\t%s\t%s\n" ;;
-    *) printf_format="%-24s\t%-24s\t%s\n" ;;
+    fzf) printf_format='printf "%-24s\t%-24s\t%s\t%s\t%s\t%s\n", label, account, service, label, account, service' ;;
+    *) printf_format='printf "%-24s\t%-24s\t%s\n", label, account, service' ;;
   esac
 
-  # KCOV_EXCL_START
-  # shellcheck disable=SC2016
-  local awk_cmd='BEGIN { FS="<blob>="; }
-    /0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
-    /"acct"/ { account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
-    /"svce"/ { service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2)
-      printf printf_format, label, account, service, label, account, service }'
-  # KCOV_EXCL_STOP
-
-  security dump-keychain "${PW_KEYCHAIN}" | awk -v printf_format="${printf_format}" "${awk_cmd}" | sort -f
+  security dump-keychain "${PW_KEYCHAIN}" | _plugin_get_details "${printf_format}" | sort -f
 }
 
 # KCOV_EXCL_START
 # shellcheck disable=SC1083
 _plugin_fzf_preview() {
   local comment
-  comment="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null | awk 'BEGIN { FS="<blob>="; } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
+  comment="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null | _plugin_get_details 'printf "%s\n", comments')"
   echo "Comment:"
   if [[ "${comment}" == "0x"* ]]
   then xxd -r -p <<< "${comment%%  *}"
@@ -81,7 +72,7 @@ _plugin_fzf_preview() {
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked
   if security show-keychain-info "${PW_KEYCHAIN}" &> /dev/null; then
-    declare -f _plugin_fzf_preview
+    declare -f _plugin_get_details _plugin_fzf_preview
     echo "_plugin_fzf_preview \"${PW_KEYCHAIN}\""
   fi
 }
@@ -105,4 +96,17 @@ pw::plugin_unlock() {
   else
     security unlock-keychain "${PW_KEYCHAIN}"
   fi
+}
+
+_plugin_get_details() {
+  # KCOV_EXCL_START
+  # shellcheck disable=SC2016
+  local awk_cmd='BEGIN { FS="<blob>=" }
+/0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
+/"acct"/ { account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
+/"icmt"/ { comments = ($2 == "<NULL>") ? "" : $2 }
+/"svce"/ { service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2);'
+  # KCOV_EXCL_STOP
+
+  awk "${awk_cmd} $1 }"
 }

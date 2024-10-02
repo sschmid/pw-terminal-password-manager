@@ -139,7 +139,7 @@ assert_rm_not_found_output() {
   _get_note() {
     local comment
     comment="$(security find-generic-password -j "${notes}" -g "${PW_KEYCHAIN}" 2>&1 \
-      | awk 'BEGIN { FS="<blob>="; } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
+      | awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
     echo "${comment:1:-1}"
   }
 
@@ -156,7 +156,7 @@ EOF
 
   _get_note() {
     security find-generic-password -j "${MULTILINE_NOTES_A}" -g "${PW_KEYCHAIN}" 2>&1 \
-      | awk 'BEGIN { FS="<blob>="; } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }' \
+      | awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }' \
       | xxd -r -p
   }
 
