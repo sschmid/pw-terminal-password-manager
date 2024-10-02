@@ -73,14 +73,14 @@ _intercept_prompt_password() {
 
 # bats test_tags=tag:manual_test
 @test "prompts item password when no stdin" {
-  _skip_manual_test "'test' twice"
+  _skip_manual_test "' test' twice (with leading whitespace)"
   _source_pw
   run _intercept_prompt_password
   assert_success
   cat << EOF | assert_output -
 Enter password for 'name' (leave empty to generate password):
 Retype password for 'name':
-test
+ test
 EOF
 }
 

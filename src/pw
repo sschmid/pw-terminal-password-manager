@@ -200,9 +200,9 @@ pw::prompt_password() {
     IFS= read -r PW_PASSWORD
   else
     local retype
-    read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' PW_PASSWORD
+    IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' PW_PASSWORD
     if [[ -n "${PW_PASSWORD}" ]]; then
-      read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
+      IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
       if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
         pw::exit "Error: the entered passwords do not match."
       fi
