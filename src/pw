@@ -334,7 +334,7 @@ pw::select_item_with_prompt() {
                 --delimiter='\t' --with-nth=1..3 --nth=1..3 \
                 --preview="$(pw::plugin_fzf_preview)" \
                 --preview-window=hidden \
-                --bind='tab:toggle-preview' <<< "${item}")"
+                --bind='?:toggle-preview' <<< "${item}")"
 
     PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
     PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"
