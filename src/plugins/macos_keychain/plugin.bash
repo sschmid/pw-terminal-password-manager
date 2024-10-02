@@ -101,12 +101,14 @@ _plugin_get_details() {
 # KCOV_EXCL_START
 # shellcheck disable=SC1083
 _plugin_fzf_preview() {
-  local comment
-  comment="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null | _plugin_get_details 'printf "%s\n", comments')"
-  echo "Comment:"
-  if [[ "${comment}" == "0x"* ]]
-  then xxd -r -p <<< "${comment%%  *}"
-  else echo "${comment:1:-1}"
+  local item comments
+  item="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null)"
+  echo "${item}" | _plugin_get_details 'printf "Name: %s\nAccount: %s\nWhere: %s\n", label, account, service'
+  comments="$(echo "${item}" | _plugin_get_details 'printf "%s\n", comments')"
+  echo "Comments:"
+  if [[ "${comments}" == "0x"* ]]
+  then xxd -r -p <<< "${comments%%  *}"
+  else echo "${comments:1:-1}"
   fi
 }
 # KCOV_EXCL_STOP

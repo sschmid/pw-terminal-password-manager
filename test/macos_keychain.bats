@@ -137,10 +137,10 @@ assert_rm_not_found_output() {
 
   # shellcheck disable=SC2317
   _get_note() {
-    local comment
-    comment="$(security find-generic-password -j "${notes}" -g "${PW_KEYCHAIN}" 2>&1 \
+    local comments
+    comments="$(security find-generic-password -j "${notes}" -g "${PW_KEYCHAIN}" 2>&1 \
       | awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
-    echo "${comment:1:-1}"
+    echo "${comments:1:-1}"
   }
 
   run _get_note
@@ -477,7 +477,10 @@ EOF
   run eval "${cmd}"
   assert_success
   cat << EOF | assert_output -
-Comment:
+Name: ${NAME_A}
+Account: ${ACCOUNT_A}
+Where: ${URL_A}
+Comments:
 ${notes}
 EOF
 }
@@ -496,7 +499,10 @@ EOF
   run eval "${cmd}"
   assert_success
   cat << EOF | assert_output -
-Comment:
+Name: ${NAME_A}
+Account: ${ACCOUNT_A}
+Where: ${URL_A}
+Comments:
 ${MULTILINE_NOTES_A}
 EOF
 }
