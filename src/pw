@@ -31,7 +31,7 @@ EOF
 
 declare -a PW_KEYCHAINS
 declare -A PW_KEYCHAIN_ARGS
-declare -i PW_GEN_LENGTH PW_CLIP_TIME
+declare -i PW_PRINT=0 PW_GEN_LENGTH PW_CLIP_TIME
 source "${PW_RC}"
 : ${PW_GEN_LENGTH:=35}
 : "${PW_GEN_CLASS:="[:graph:]"}"
@@ -212,27 +212,27 @@ pw::prompt_password() {
   fi
 }
 
-pw::clip_and_forget() {
-  local p password="$1"
-  p="pw-$(id -u)"
-  pkill -f "^$p" 2> /dev/null && sleep 0.5
-  echo -n "${password}" | pbcopy
-  ( ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
-    [[ "$(pbpaste)" == "${password}" ]] && echo -n | pbcopy
-  ) > /dev/null 2>&1 & disown
+pw::output() {
+  if (( PW_PRINT )); then
+    echo "$1"
+  else
+    local p
+    p="pw-$(id -u)"
+    pkill -f "^$p" 2> /dev/null && sleep 0.5
+    echo -n "$1" | pbcopy
+    ( ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
+      [[ "$(pbpaste)" == "$1" ]] && echo -n | pbcopy
+    ) > /dev/null 2>&1 & disown
+  fi
 }
 
 pw::gen() {
-  local -i print=$1; shift
   local -i length=${1:-${PW_GEN_LENGTH}}
   local password="" class="${2:-"${PW_GEN_CLASS}"}"
   while (( "${#password}" != length )); do
     password+=$(dd if=/dev/urandom bs=1024 count=1 2> /dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $(( length - ${#password} )) || true)
   done
-  if (( print ))
-  then echo "${password}"
-  else pw::clip_and_forget "${password}"
-  fi
+  pw::output "${password}"
 }
 
 pw::update() {
@@ -283,17 +283,13 @@ pw::edit() {
 
 pw::get() {
   pw::prepare_keychain "get"
-  local -i print=$1; shift
-  if (( print ))
+  if (( PW_PRINT ))
   then pw::select_item_with_prompt "print" "$@"
   else pw::select_item_with_prompt "copy" "$@"
   fi
   local password
   password="$(pw::plugin_get)"
-  if (( print ))
-  then echo "${password}"
-  else pw::clip_and_forget "${password}"
-  fi
+  pw::output "${password}"
 }
 
 pw::rm() {
@@ -352,11 +348,10 @@ main() {
   pw::require_bash_version
   pw::require_fzf
 
-  local -i print=0
   while getopts ":hpk:" options; do
     case "${options}" in
       h) pw::help; return ;;
-      p) print=1 ;;
+      p) PW_PRINT=1 ;;
       k) PW_KEYCHAIN="${OPTARG}" ;;
       *) pw::exit "Invalid option: -${OPTARG}" ;;
     esac
@@ -370,16 +365,16 @@ main() {
       edit) shift; pw::select_keychain; pw::edit "$@" ;;
       rm) shift; pw::select_keychain; pw::rm "$@" ;;
       ls) shift; pw::select_keychain; pw::ls "$@" ;;
-      gen) shift; pw::gen ${print} "$@" ;;
+      gen) shift; pw::gen "$@" ;;
       open) shift; pw::select_keychain; pw::plugin_open ;;
       lock) shift; pw::select_keychain; pw::plugin_lock ;;
       unlock) shift; pw::select_keychain; pw::plugin_unlock ;;
       update) shift; pw::update "$@" ;;
-      *) pw::select_keychain; pw::get ${print} "$@" ;;
+      *) pw::select_keychain; pw::get "$@" ;;
     esac
   else
     pw::select_keychain
-    pw::get ${print}
+    pw::get
   fi
 }
 
