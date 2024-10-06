@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 set -e
 [[ ! -f test/bats/bin/bats ]] && git submodule update --init --recursive
-if (( $# )); then
-  test/bats/bin/bats "$@"
-else
-  test/bats/bin/bats --tap test
-  test/shellcheck
-fi
+test/bats/bin/bats "${@:-test}"
+test/shellcheck
