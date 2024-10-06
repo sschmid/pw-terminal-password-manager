@@ -228,7 +228,7 @@ pw::output() {
     echo -n "$1" | pbcopy
     ( ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
       [[ "$(pbpaste)" == "$1" ]] && echo -n | pbcopy
-    ) >/dev/null 2>&1 & disown
+    ) &>/dev/null & disown
   fi
 }
 
