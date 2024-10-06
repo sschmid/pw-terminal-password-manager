@@ -43,7 +43,7 @@ pw::plugin_rm() {
     ${PW_NAME:+-l "${PW_NAME}"} \
     ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} \
     ${PW_URL:+-s "${PW_URL}"} \
-    "${PW_KEYCHAIN}" > /dev/null
+    "${PW_KEYCHAIN}" >/dev/null
 }
 
 pw::plugin_ls() {
@@ -58,7 +58,7 @@ pw::plugin_ls() {
 
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked
-  if security show-keychain-info "${PW_KEYCHAIN}" &> /dev/null; then
+  if security show-keychain-info "${PW_KEYCHAIN}" &>/dev/null; then
     declare -f _plugin_get_details _plugin_fzf_preview
     echo "_plugin_fzf_preview \"${PW_KEYCHAIN}\""
   fi
@@ -102,7 +102,7 @@ _plugin_get_details() {
 # shellcheck disable=SC1083
 _plugin_fzf_preview() {
   local item comments
-  item="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2> /dev/null)"
+  item="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2>/dev/null)"
   echo "${item}" | _plugin_get_details 'printf "Name: %s\nAccount: %s\nWhere: %s\n", label, account, service'
   comments="$(echo "${item}" | _plugin_get_details 'printf "%s\n", comments')"
   echo "Comments:"

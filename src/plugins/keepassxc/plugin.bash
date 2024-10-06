@@ -1,4 +1,4 @@
-command -v keepassxc-cli > /dev/null || pw::exit \
+command -v keepassxc-cli >/dev/null || pw::exit \
   "command not found: keepassxc-cli" \
   "Please make sure that KeePassXC is installed and keepassxc-cli is in your PATH."
 
@@ -48,7 +48,7 @@ _iterate_dirs() {
 pw::plugin_add() {
   mapfile -t dirs < <(_iterate_dirs)
   for (( i = 0; i < ${#dirs[@]} - 1; i++ )); do
-    _keepassxc-cli_with_args mkdir "${PW_KEYCHAIN}" "${dirs[i]::-1}" <<< "${PW_KEEPASSXC_PASSWORD}" &> /dev/null || true
+    _keepassxc-cli_with_args mkdir "${PW_KEYCHAIN}" "${dirs[i]::-1}" <<< "${PW_KEEPASSXC_PASSWORD}" &>/dev/null || true
   done
 
   _keepassxc-cli_with_args add --password-prompt "${PW_KEYCHAIN}" ${PW_ACCOUNT:+--username "${PW_ACCOUNT}"} ${PW_URL:+--url "${PW_URL}"} ${PW_NOTES:+--notes "${PW_NOTES}"} "${PW_NAME}" << EOF

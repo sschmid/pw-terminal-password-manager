@@ -1,4 +1,4 @@
-command -v gpg > /dev/null || pw::exit \
+command -v gpg >/dev/null || pw::exit \
   "command not found: gpg" \
   "Please make sure that GnuPG is installed and gpg is in your PATH."
 
@@ -62,9 +62,9 @@ pw::plugin_rm() {
 
 pw::plugin_ls() {
   local format="${1:-default}" list
-  pushd "${PW_KEYCHAIN}" > /dev/null || exit 1
+  pushd "${PW_KEYCHAIN}" >/dev/null || exit 1
     list="$(find . -type f ! -name .DS_Store | sort -f)"
-  popd > /dev/null || exit 1
+  popd >/dev/null || exit 1
 
   case "${format}" in
     fzf) echo "${list}" | awk '{print $0 "\t\t\t" $0}' ;;
@@ -88,7 +88,7 @@ _plugin_fzf_preview() {
 
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked
-  if echo | _gpg_encrypt | _gpg --decrypt &> /dev/null; then
+  if echo | _gpg_encrypt | _gpg --decrypt &>/dev/null; then
     declare -f _plugin_fzf_preview
     echo "_plugin_fzf_preview \"${PW_KEYCHAIN}\""
   fi
@@ -99,10 +99,10 @@ pw::plugin_open() {
 }
 
 pw::plugin_lock() {
-  killall gpg-agent 2> /dev/null || true
+  killall gpg-agent 2>/dev/null || true
 }
 
 pw::plugin_unlock() {
   [[ -p /dev/stdin ]] && IFS= read -r PW_GPG_PASSWORD
-  echo | _gpg_encrypt | _gpg --decrypt > /dev/null
+  echo | _gpg_encrypt | _gpg --decrypt >/dev/null
 }

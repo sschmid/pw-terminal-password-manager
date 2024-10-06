@@ -4,7 +4,7 @@ _common_setup() {
   load 'test_helper/bats-assert/load.bash'
   load 'test_helper/bats-file/load.bash'
 
-  PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." > /dev/null 2>&1 && pwd)"
+  PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." >/dev/null 2>&1 && pwd)"
   PATH="${PROJECT_ROOT}/src:${PATH}"
 
   KEYCHAIN_TEST_PASSWORD=" test password "

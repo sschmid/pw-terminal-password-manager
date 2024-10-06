@@ -16,7 +16,7 @@ pw::require_bash_version() {
 }
 
 pw::require_fzf() {
-  command -v fzf > /dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
+  command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
 }
 
 PW_HOME="${BASH_SOURCE[0]}"
@@ -224,11 +224,11 @@ pw::output() {
   else
     local p
     p="pw-$(id -u)"
-    pkill -f "^$p" 2> /dev/null && sleep 0.5
+    pkill -f "^$p" 2>/dev/null && sleep 0.5
     echo -n "$1" | pbcopy
     ( ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
       [[ "$(pbpaste)" == "$1" ]] && echo -n | pbcopy
-    ) > /dev/null 2>&1 & disown
+    ) >/dev/null 2>&1 & disown
   fi
 }
 
@@ -236,17 +236,17 @@ pw::gen() {
   local -i length=${1:-${PW_GEN_LENGTH}}
   local password="" class="${2:-"${PW_GEN_CLASS}"}"
   while (( "${#password}" != length )); do
-    password+=$(dd if=/dev/urandom bs=1024 count=1 2> /dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $(( length - ${#password} )) || true)
+    password+=$(dd if=/dev/urandom bs=1024 count=1 2>/dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $(( length - ${#password} )) || true)
   done
   pw::output "${password}"
 }
 
 pw::update() {
   local branch="${1:-main}"
-  pushd "${PW_HOME}" > /dev/null || exit 1
+  pushd "${PW_HOME}" >/dev/null || exit 1
     git switch "${branch}"
     git pull
-  popd > /dev/null || exit 1
+  popd >/dev/null || exit 1
 }
 
 #

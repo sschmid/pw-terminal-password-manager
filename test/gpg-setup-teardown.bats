@@ -5,7 +5,7 @@ setup_file() {
 }
 
 teardown_file() {
-  killall gpg-agent 2> /dev/null || true
+  killall gpg-agent 2>/dev/null || true
 }
 
 setup() {
