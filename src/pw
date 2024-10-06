@@ -74,6 +74,11 @@ customization:
 EOF
 }
 
+pw::run_hook_discover_keychains() {
+  source "$1"
+  pw::discover_keychains
+}
+
 # shellcheck disable=SC2153
 pw::run_hook_register() {
   source "$1"
@@ -96,7 +101,7 @@ pw::select_keychain() {
     local keychains
     while read -r hook; do
       # Run hook in a subshell to avoid affecting the current shell
-      keychains="$(source "${hook}"; pw::discover_keychains)"
+      keychains="$(pw::run_hook_discover_keychains "${hook}")"
       [[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
     done < <(pw::plugins)
 
