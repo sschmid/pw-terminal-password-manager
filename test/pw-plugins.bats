@@ -217,6 +217,14 @@ EOF
   assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
 }
 
+@test "prints item details" {
+  _create_fake_keychain
+  _set_plugin_1
+  run pw -p show name account url
+  assert_success
+  assert_output "plugin 1 show name account url ${PW_KEYCHAIN}"
+}
+
 @test "copies item password" {
   _create_fake_keychain
   _set_plugin_1
@@ -224,6 +232,15 @@ EOF
   run pbpaste
   assert_success
   assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
+}
+
+@test "copies item details" {
+  _create_fake_keychain
+  _set_plugin_1
+  pw show name account url
+  run pbpaste
+  assert_success
+  assert_output "plugin 1 show name account url ${PW_KEYCHAIN}"
 }
 
 @test "clears clipboard after copying item" {

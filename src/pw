@@ -57,6 +57,7 @@ commands:
   init <keychain>            create keychain
   add [<args>]               add entry. If no args, interactive mode
   edit [<args>]              edit entry. If no args, fzf mode
+  show [<args>]              show entry details. If no args, fzf mode
   rm [<args>]                remove entry. If no args, fzf mode
   ls                         list all entries
   gen [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
@@ -299,6 +300,17 @@ pw::get() {
   pw::output "${password}"
 }
 
+pw::show() {
+  pw::prepare_keychain "show"
+  if (( PW_PRINT ))
+  then pw::select_item_with_prompt "print details" "$@"
+  else pw::select_item_with_prompt "copy details" "$@"
+  fi
+  local details
+  details="$(pw::plugin_show)"
+  pw::output "${details}"
+}
+
 pw::rm() {
   pw::prepare_keychain "rm"
   local -i remove=1
@@ -370,6 +382,7 @@ main() {
       init) shift; pw::infer_plugin "$@"; pw::init ;;
       add) shift; pw::select_keychain; pw::add "$@" ;;
       edit) shift; pw::select_keychain; pw::edit "$@" ;;
+      show) shift; pw::select_keychain; pw::show "$@" ;;
       rm) shift; pw::select_keychain; pw::rm "$@" ;;
       ls) shift; pw::select_keychain; pw::ls "$@" ;;
       gen) shift; pw::gen "$@" ;;

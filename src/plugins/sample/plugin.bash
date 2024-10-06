@@ -39,6 +39,15 @@ URL: ${PW_URL}
 EOF
 }
 
+pw::plugin_show() {
+  cat << EOF
+[Sample Plugin] ${PW_KEYCHAIN} show
+Name: ${PW_NAME}
+Account: ${PW_ACCOUNT}
+URL: ${PW_URL}
+EOF
+}
+
 pw::plugin_rm() {
   cat << EOF
 [Sample Plugin] ${PW_KEYCHAIN} rm

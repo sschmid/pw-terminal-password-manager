@@ -38,6 +38,15 @@ pw::plugin_get() {
     -w "${PW_KEYCHAIN}"
 }
 
+pw::plugin_show() {
+  security find-generic-password \
+    ${PW_NAME:+-l "${PW_NAME}"} \
+    ${PW_ACCOUNT:+-a "${PW_ACCOUNT}"} \
+    ${PW_URL:+-s "${PW_URL}"} \
+    -g "${PW_KEYCHAIN}" 2> /dev/null \
+  | _plugin_get_details 'printf "Name: %s\nAccount: %s\nWhere: %s\nComments:\n%s\n", label, account, service, comments'
+}
+
 pw::plugin_rm() {
   security delete-generic-password \
     ${PW_NAME:+-l "${PW_NAME}"} \
@@ -63,6 +72,14 @@ pw::plugin_fzf_preview() {
     echo "_plugin_fzf_preview \"${PW_KEYCHAIN}\""
   fi
 }
+
+# KCOV_EXCL_START
+# shellcheck disable=SC1083
+_plugin_fzf_preview() {
+  security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2>/dev/null \
+  | _plugin_get_details 'printf "Name: %s\nAccount: %s\nWhere: %s\nComments:\n%s\n", label, account, service, comments'
+}
+# KCOV_EXCL_STOP
 
 pw::plugin_open() {
   if [[ -f "${PW_KEYCHAIN}" ]]; then
@@ -91,24 +108,21 @@ _plugin_get_details() {
   local awk_cmd='BEGIN { FS="<blob>=" }
 /0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
 /"acct"/ { account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
-/"icmt"/ { comments = ($2 == "<NULL>") ? "" : $2 }
+/"icmt"/ {
+  comments = ($2 == "<NULL>") ? "" : $2
+  if (index(comments, "0x") == 1) {
+    cmd = "echo " substr(comments, 1, index(comments, "  ") - 1) " | xxd -r -p"
+    comments = ""
+    while ( ( cmd | getline result ) > 0 ) {
+      comments = comments result "\n"
+    }
+    close(cmd)
+  } else {
+    comments = substr(comments, 2, length(comments) - 2)
+  }
+}
 /"svce"/ { service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2);'
   # KCOV_EXCL_STOP
 
   awk "${awk_cmd} $1 }"
 }
-
-# KCOV_EXCL_START
-# shellcheck disable=SC1083
-_plugin_fzf_preview() {
-  local item comments
-  item="$(security find-generic-password -l {4} -a {5} -s {6} -g "$1" 2>/dev/null)"
-  echo "${item}" | _plugin_get_details 'printf "Name: %s\nAccount: %s\nWhere: %s\n", label, account, service'
-  comments="$(echo "${item}" | _plugin_get_details 'printf "%s\n", comments')"
-  echo "Comments:"
-  if [[ "${comments}" == "0x"* ]]
-  then xxd -r -p <<< "${comments%%  *}"
-  else echo "${comments:1:-1}"
-  fi
-}
-# KCOV_EXCL_STOP

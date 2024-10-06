@@ -238,6 +238,33 @@ EOF
 }
 
 ################################################################################
+# show
+################################################################################
+
+@test "shows no item details" {
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  run pw -p show "${NAME_A}"
+  assert_success
+  assert_line --index 0 "Name: ${NAME_A}"
+  assert_line --index 1 "Account: "
+  assert_line --index 2 "Where: ${NAME_A}"
+  assert_line --index 3 "Comments:"
+}
+
+@test "shows item details" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  run pw -p show "${NAME_A}"
+  assert_success
+  cat << EOF | assert_output -
+Name: ${NAME_A}
+Account: ${ACCOUNT_A}
+Where: ${URL_A}
+Comments:
+${MULTILINE_NOTES_A}
+EOF
+}
+
+################################################################################
 # rm
 ################################################################################
 
@@ -470,9 +497,9 @@ EOF
   source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
   local cmd
   cmd="$(pw::plugin_fzf_preview)"
-  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
-  cmd=${cmd/\{5\}/"\"${ACCOUNT_A}\""}
-  cmd=${cmd/\{6\}/"\"${URL_A}\""}
+  cmd=${cmd//\{4\}/"\"${NAME_A}\""}
+  cmd=${cmd//\{5\}/"\"${ACCOUNT_A}\""}
+  cmd=${cmd//\{6\}/"\"${URL_A}\""}
 
   run eval "${cmd}"
   assert_success
@@ -492,9 +519,9 @@ EOF
   source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
   local cmd
   cmd="$(pw::plugin_fzf_preview)"
-  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
-  cmd=${cmd/\{5\}/"\"${ACCOUNT_A}\""}
-  cmd=${cmd/\{6\}/"\"${URL_A}\""}
+  cmd=${cmd//\{4\}/"\"${NAME_A}\""}
+  cmd=${cmd//\{5\}/"\"${ACCOUNT_A}\""}
+  cmd=${cmd//\{6\}/"\"${URL_A}\""}
 
   run eval "${cmd}"
   assert_success

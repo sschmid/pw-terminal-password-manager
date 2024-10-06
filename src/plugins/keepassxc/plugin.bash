@@ -68,6 +68,10 @@ pw::plugin_get() {
   _keepassxc-cli_with_args show --show-protected --attributes password "${PW_KEYCHAIN}" "${PW_NAME}" <<< "${PW_KEEPASSXC_PASSWORD}"
 }
 
+pw::plugin_show() {
+  _keepassxc-cli_with_args show "${PW_KEYCHAIN}" "${PW_NAME}" <<< "${PW_KEEPASSXC_PASSWORD}"
+}
+
 pw::plugin_rm() {
   _keepassxc-cli_with_args rm "${PW_KEYCHAIN}" "${PW_NAME}" <<< "${PW_KEEPASSXC_PASSWORD}"
 }

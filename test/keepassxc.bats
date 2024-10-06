@@ -184,6 +184,34 @@ EOF
 }
 
 ################################################################################
+# show
+################################################################################
+
+@test "shows no item details" {
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  run pw -p show "${NAME_A}"
+  assert_success
+  assert_line --index 0 "Title: ${NAME_A}"
+  assert_line --index 1 "UserName: "
+  assert_line --index 2 "Password: PROTECTED"
+  assert_line --index 3 "URL: "
+  assert_line --index 4 "Notes: "
+}
+
+@test "shows item details" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  run pw -p show "${NAME_A}"
+  assert_success
+  cat << EOF | assert_output --partial -
+Title: ${NAME_A}
+UserName: ${ACCOUNT_A}
+Password: PROTECTED
+URL: ${URL_A}
+Notes: ${MULTILINE_NOTES_A}
+EOF
+}
+
+################################################################################
 # rm
 ################################################################################
 
@@ -349,7 +377,7 @@ EOF
   source "${PROJECT_ROOT}/src/plugins/keepassxc/plugin.bash"
   local cmd
   cmd="$(pw::plugin_fzf_preview)"
-  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
+  cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
   assert_success

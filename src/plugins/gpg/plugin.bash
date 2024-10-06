@@ -56,6 +56,10 @@ pw::plugin_get() {
   _gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}" | sed -n 1p
 }
 
+pw::plugin_show() {
+  _gpg --decrypt "${PW_KEYCHAIN}/${PW_NAME}" | _plugin_get_details "${PW_NAME}"
+}
+
 pw::plugin_rm() {
   rm "${PW_KEYCHAIN}/${PW_NAME}"
 }
@@ -72,27 +76,20 @@ pw::plugin_ls() {
   esac
 }
 
-# KCOV_EXCL_START
-# shellcheck disable=SC1083
-_plugin_fzf_preview() {
-  name={4}
-  echo -n "Name: "
-  basename "${name}"
-  gpg --quiet --decrypt "$1/${name}" | awk '
-    NR==2 { account=$0 }
-    NR==3 { url=$0 }
-    NR>=4 { notes = (notes ? notes "\n" : "") $0 }
-    END { printf "Account: %s\nURL: %s\nNotes:\n%s", account, url, notes }'
-}
-# KCOV_EXCL_STOP
-
 pw::plugin_fzf_preview() {
   # unlocks the keychain if necessary and only previews if the keychain is unlocked
   if echo | _gpg_encrypt | _gpg --decrypt &>/dev/null; then
-    declare -f _plugin_fzf_preview
+    declare -f _plugin_get_details _plugin_fzf_preview
     echo "_plugin_fzf_preview \"${PW_KEYCHAIN}\""
   fi
 }
+
+# KCOV_EXCL_START
+# shellcheck disable=SC1083
+_plugin_fzf_preview() {
+  gpg --quiet --decrypt "$1/"{4} | _plugin_get_details {4}
+}
+# KCOV_EXCL_STOP
 
 pw::plugin_open() {
   open "${PW_KEYCHAIN}"
@@ -105,4 +102,12 @@ pw::plugin_lock() {
 pw::plugin_unlock() {
   [[ -p /dev/stdin ]] && IFS= read -r PW_GPG_PASSWORD
   echo | _gpg_encrypt | _gpg --decrypt >/dev/null
+}
+
+_plugin_get_details() {
+  awk -v name="$(basename "$1")" '
+    NR==2 { account=$0 }
+    NR==3 { url=$0 }
+    NR>=4 { notes = (notes ? notes "\n" : "") $0 }
+    END { printf "Name: %s\nAccount: %s\nURL: %s\nNotes:\n%s", name, account, url, notes }'
 }

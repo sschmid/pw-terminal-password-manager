@@ -179,6 +179,46 @@ assert_notes() {
 }
 
 ################################################################################
+# show
+################################################################################
+
+@test "shows no item details" {
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  run pw -p show "${NAME_A}"
+  assert_success
+  assert_line --index 0 "Name: ${NAME_A}"
+  assert_line --index 1 "Account: "
+  assert_line --index 2 "URL: "
+  assert_line --index 3 "Notes:"
+}
+
+@test "shows item details" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  run pw -p show "${NAME_A}"
+  assert_success
+  cat << EOF | assert_output -
+Name: ${NAME_A}
+Account: ${ACCOUNT_A}
+URL: ${URL_A}
+Notes:
+${MULTILINE_NOTES_A}
+EOF
+}
+
+@test "shows item details in group" {
+  assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  run pw -p show "group/${NAME_A}"
+  assert_success
+  cat << EOF | assert_output -
+Name: ${NAME_A}
+Account: ${ACCOUNT_A}
+URL: ${URL_A}
+Notes:
+${MULTILINE_NOTES_A}
+EOF
+}
+
+################################################################################
 # rm
 ################################################################################
 
@@ -356,7 +396,7 @@ EOF
   source "${PROJECT_ROOT}/src/plugins/gpg/plugin.bash"
   local cmd
   cmd="$(pw::plugin_fzf_preview)"
-  cmd=${cmd/\{4\}/"\"${NAME_A}\""}
+  cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
   assert_success
@@ -376,7 +416,7 @@ EOF
   source "${PROJECT_ROOT}/src/plugins/gpg/plugin.bash"
   local cmd
   cmd="$(pw::plugin_fzf_preview)"
-  cmd=${cmd/\{4\}/"\"group/${NAME_A}\""}
+  cmd=${cmd//\{4\}/"\"group/${NAME_A}\""}
 
   run eval "${cmd}"
   assert_success
