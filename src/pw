@@ -117,8 +117,7 @@ pw::select_keychain() {
     fi
   fi
 
-  local -a plugins=()
-  local -a types=()
+  local -a plugins=() types=()
   while read -r hook; do
     # Run hook in a subshell to avoid affecting the current shell
     while true; do
@@ -136,19 +135,18 @@ pw::select_keychain() {
   elif (( n > 1 )); then
     pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "$(printf '%s\n' "${plugins[@]}")"
   else
-    if [[ -f "${PW_KEYCHAIN}" ]]
-    then pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
-                  "Supported file types are:" "$(printf '%s\n' "${types[@]}")"
-    else pw::exit "pw: ${PW_KEYCHAIN}: No such file or directory"
+    if [[ -f "${PW_KEYCHAIN}" ]]; then
+      pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
+               "Supported file types are:" "$(printf '%s\n' "${types[@]}")"
+    else
+      pw::exit "pw: ${PW_KEYCHAIN}: No such file or directory"
     fi
   fi
 }
 
 pw::infer_plugin() {
   pw::set_keychain "$1"
-  local -a plugins=()
-  local -a types=()
-  local -a exts=()
+  local -a plugins=() types=() exts=()
   local extension
   extension="$(tr '[:upper:]' '[:lower:]' <<< "${PW_KEYCHAIN##*.}")"
   while read -r hook; do
