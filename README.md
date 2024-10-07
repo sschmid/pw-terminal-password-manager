@@ -89,8 +89,10 @@ arguments `name`, `account`, `url`, `notes` in that order.
 
 When using fzf mode to select an entry, such as when getting, editing,
 or removing an entry, you can toggle the entry preview by pressing `?`.
-Entry preview shows additional information like the account, url, and notes and
+The entry preview shows details like the name, account, url, and notes and
 is off by default.
+
+Press `ctrl-y` on any entry to copy (or print) the details.
 
 ## Create keychain
 
