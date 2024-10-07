@@ -105,9 +105,14 @@ pw::plugin_unlock() {
 }
 
 _plugin_get_details() {
-  awk -v name="$(basename "$1")" '
-    NR==2 { account=$0 }
-    NR==3 { url=$0 }
-    NR>=4 { notes = (notes ? notes "\n" : "") $0 }
-    END { printf "Name: %s\nAccount: %s\nURL: %s\nNotes:\n%s", name, account, url, notes }'
+  # KCOV_EXCL_START
+  # shellcheck disable=SC2016
+  local awk_cmd='
+NR==2 { account=$0 }
+NR==3 { url=$0 }
+NR>=4 { notes = (notes ? notes "\n" : "") $0 }
+END { printf "Name: %s\nAccount: %s\nURL: %s\nNotes:\n%s", name, account, url, notes }'
+  # KCOV_EXCL_STOP
+
+  awk -v name="$(basename "$1")" "${awk_cmd}"
 }
