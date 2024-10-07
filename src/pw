@@ -53,18 +53,18 @@ options:
 args: [<name>] [<account>] [<url>] [<notes>]
 
 commands:
-  [-p] [<args>]              copy (or print) password. If no args, fzf mode
-  init <keychain>            create keychain
-  add [<args>]               add entry. If no args, interactive mode
-  edit [<args>]              edit entry. If no args, fzf mode
-  show [<args>]              show entry details. If no args, fzf mode
-  rm [<args>]                remove entry. If no args, fzf mode
-  ls                         list all entries
-  gen [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
-  open                       open keychain in native gui
-  lock                       lock keychain
-  unlock                     unlock keychain
-  update                     update pw
+  [-p] [<args>]                   copy (or print) password. If no args, fzf mode
+  init <keychain>                 create keychain
+  add [<args>]                    add entry. If no args, interactive mode
+  edit [<args>]                   edit entry. If no args, fzf mode
+  show [-p] [<args>]              copy (or print) details. If no args, fzf mode
+  rm [<args>]                     remove entry. If no args, fzf mode
+  ls                              list all entries
+  gen [-p] [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
+  open                            open keychain in native gui
+  lock                            lock keychain
+  unlock                          unlock keychain
+  update                          update pw
 
 customization:
   PW_KEYCHAIN                 keychain to use when not specified with -k

@@ -95,7 +95,7 @@ is off by default.
 ## Create keychain
 
 ```
-pw init <keychain>            create keychain
+pw init <keychain>                 create keychain
 ```
 
 ```bash
@@ -111,7 +111,7 @@ pw init "${PWD}/secrets.keychain-db"   # will create a keychain in the current d
 ## Add entry with name and optional account
 
 ```
-pw add [<args>]               add entry. If no args, interactive mode used
+pw add [<args>]                    add entry. If no args, interactive mode
 ```
 
 ```bash
@@ -141,27 +141,34 @@ pw add Coding/JetBrains
 ## Edit entry
 
 ```
-pw edit [<args>]              edit entry. If no args, fzf mode
+pw edit [<args>]                   edit entry. If no args, fzf mode
 ```
 
 ```bash
-pw edit                               # starts fzf to select an entry
+pw edit          # starts fzf to select an entry
 pw edit GitHub
-pw edit Google work@example.com
-pw edit Google personal@example.com
 ```
 
 ## Get entry
 
 ```
-pw [-p] [<args>]              copy (or print) password. If no args, fzf mode
+pw [-p] [<args>]                   copy (or print) password. If no args, fzf mode
 ```
 
 ```bash
-pw                               # starts fzf to select an entry
+pw          # starts fzf to select an entry
 pw GitHub
-pw Google work@example.com
-pw Google personal@example.com
+```
+
+## Show entry
+
+```
+pw show [-p] [<args>]              copy (or print) details. If no args, fzf mode
+```
+
+```bash
+pw show          # starts fzf to select an entry
+pw show GitHub
 ```
 
 ## Remove entry
@@ -171,21 +178,19 @@ pw rm [<args>]                remove entry. If no args, fzf mode
 ```
 
 ```bash
-pw rm                               # starts fzf to select an entry
+pw rm          # starts fzf to select an entry
 pw rm GitHub
-pw rm Google work@example.com
-pw rm Google personal@example.com
 ```
 
 ## Generate a password
 
 ```
-pw gen [<length>] [<class>]    generate password with given length and
-                               character class (default: 35 [:graph:])
+pw gen [-p] [<length>] [<class>]   generate password with given length and
+                                   character class (default: 35 [:graph:])
 ```
 
 ```bash
-pw gen
+pw gen                  # equivalent to pw gen 35 '[:graph:]'
 pw gen 16
 pw gen 24 '[:alnum:]'
 pw gen 32 '[:digit:]'
