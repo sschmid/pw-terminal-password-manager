@@ -92,10 +92,9 @@ pw::plugin_ls() {
 }
 
 pw::plugin_fzf_preview() {
-  if [[ -v PW_KEYCHAIN_ARGS["yubikey"] ]]
-  then echo "echo 'Preview not available with YubiKey'"
-  else echo "keepassxc-cli show --quiet \"${PW_KEYCHAIN}\" {4} <<< \"${PW_KEEPASSXC_PASSWORD}\""
-  fi
+  declare -p PW_KEYCHAIN_ARGS
+  declare -f _keepassxc-cli_with_args
+  echo "_keepassxc-cli_with_args show \"${PW_KEYCHAIN}\" {4} <<< \"${PW_KEEPASSXC_PASSWORD}\""
 }
 
 pw::plugin_open() {

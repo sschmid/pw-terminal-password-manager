@@ -8,10 +8,23 @@ setup() {
 
 # shellcheck disable=SC2034
 _init_with_key_file() {
-  local keyfile="${BATS_TEST_TMPDIR}/pw_keepassxc_test_keyfile.kdbx"
-  echo "pw_keepassxc_test_keyfile" > "${keyfile}"
-  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_keepassxc_test_with_keyfile.kdbx:keyfile=${keyfile}"
+  local keyfile="${BATS_TEST_TMPDIR}/pw_keepassxc test_keyfile"
+  echo "pw_keepassxc test_keyfile" > "${keyfile}"
+  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_keepassxc test_with_keyfile.kdbx:keyfile=${keyfile}"
   pw init "${PW_KEYCHAIN}" <<< "${PW_KEEPASSXC_PASSWORD}"
+}
+
+_set_keychain() {
+  declare -Ag PW_KEYCHAIN_ARGS=()
+  if [[ "$1" == *:* ]]; then
+    PW_KEYCHAIN="${1%%:*}"
+    local IFS=,
+    for pair in ${1#*:}; do
+      PW_KEYCHAIN_ARGS["${pair%%=*}"]="${pair#*=}"
+    done
+  else
+    PW_KEYCHAIN="$1"
+  fi
 }
 
 teardown() {
@@ -390,15 +403,26 @@ Notes: ${MULTILINE_NOTES_A}
 EOF
 }
 
-@test "doesn't show fzf preview with yubikey" {
+@test "shows fzf preview with key-file" {
+  _init_with_key_file
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
-  declare -Ag PW_KEYCHAIN_ARGS["yubikey"]="1:23456789"
+  _set_keychain "${PW_KEYCHAIN}"
   source "${PROJECT_ROOT}/src/plugins/keepassxc/plugin.bash"
-  run pw::plugin_fzf_preview
+  local cmd
+  cmd="$(pw::plugin_fzf_preview)"
+  cmd=${cmd//\{4\}/"\"${NAME_A}\""}
+
+  run eval "${cmd}"
   assert_success
-  assert_output "echo 'Preview not available with YubiKey'"
+  cat << EOF | assert_output --partial -
+Title: ${NAME_A}
+UserName: ${ACCOUNT_A}
+Password: PROTECTED
+URL: ${URL_A}
+Notes: ${MULTILINE_NOTES_A}
+EOF
 }
 
 ################################################################################
