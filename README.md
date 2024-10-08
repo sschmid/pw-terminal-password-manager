@@ -96,6 +96,9 @@ echo 'PW_KEYCHAINS=(~/secrets.keychain-db)' > ~/.pwrc
 # add an entry
 pw add GitHub sschmid
 
+# add another entry interactively
+pw add
+
 # copy the password directly by providing the name
 pw GitHub
 
