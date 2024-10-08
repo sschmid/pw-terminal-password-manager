@@ -341,14 +341,16 @@ pw::select_item_with_prompt() {
     #   4:name, 5:account, 6:url
     # fzf will use the pretty printed values 1..3
     # variables are set with the actual values 4..6
-    local item preview yank
+    local item preview yank yank_action
     item="$(pw::plugin_ls "fzf")"
     preview="$(pw::plugin_fzf_preview)"
     yank="PW_PRINT=${PW_PRINT}; PW_CLIP_TIME=${PW_CLIP_TIME}; $(declare -f pw::output); pw::output \"\$(${preview})\""
+    (( PW_PRINT )) && yank_action="print" || yank_action="copy"
     item="$(fzf --prompt "${fzf_prompt}> " --layout reverse --info hidden --no-mouse \
                 --delimiter '\t' --with-nth 1..3 --nth 1..3 \
                 --preview "${preview}" \
                 --preview-window hidden \
+                --header "?: toggle preview, CTRL-Y: ${yank_action} details" \
                 --bind "ctrl-y:execute(${yank})+abort" \
                 --bind '?:toggle-preview' <<< "${item}")"
 
