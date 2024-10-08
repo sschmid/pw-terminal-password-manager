@@ -418,6 +418,16 @@ To set a different gpg key as the default for encryption, you can specify the ke
 PW_KEYCHAINS=(~/path/to/gpg/secrets:key=634419040D678764)
 ```
 
+You can control the gpg output format by specifying a file extension:
+
+```bash
+# output binary format (default)
+pw add GitHub.gpg
+
+# output ASCII-armored format
+pw add GitHub.asc
+```
+
 # Requirements
 
 ## `pw`
