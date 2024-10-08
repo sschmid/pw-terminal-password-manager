@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [8.2.1] - 2024-10-08
+### Fixed
+- Fix generated password being empty
+
 ## [8.2.0] - 2024-10-08
 ### Added
 - Add `pw show` to show details
@@ -230,7 +234,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.1...HEAD
+[8.2.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.0...8.2.1
 [8.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.1.0...8.2.0
 [8.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/7.0.0...8.0.0
