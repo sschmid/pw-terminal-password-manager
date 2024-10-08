@@ -96,10 +96,10 @@ echo 'PW_KEYCHAINS=(~/secrets.keychain-db)' > ~/.pwrc
 # add an entry
 pw add GitHub sschmid
 
-# copy the password
+# copy the password directly by providing the name
 pw GitHub
 
-# print the password using fzf
+# or use fzf to select an entry (-p prints the password instead of copying it)
 pw -p
 ```
 
