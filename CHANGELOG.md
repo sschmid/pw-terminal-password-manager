@@ -8,23 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.1.0] - 2024-09-29
 ### Added
-- Refactored password generation to ensure desired length in low entropy environments
-- `macos_keychain`: Added support for displaying multiline comments in fzf preview
+- Refactor password generation to ensure desired length in low entropy environments
+- `macos_keychain`: Add support for displaying multiline comments in fzf preview
 
 ### Fixed
-- `gpg`: Fixed edit removes account, url and notes
-- `gpg`: Fixed only printing first line of notes in fzf preview
+- `gpg`: Fix edit removes account, url and notes
+- `gpg`: Fix only printing first line of notes in fzf preview
 
 ## [8.0.0] - 2024-09-27
 ### Added
-- Added `gpg` plugin
-- Added support for adding url and notes for all plugins with `pw add [<name>] [<account>] [<url>] [<notes>]`
-- Added `fzf` preview to all plugins when selecting an entry with `pw`
-- `keepassxc`: Added support for creating items in groups
-- `keepassxc`: Added key-file support
-- `keepassxc`: Added YubiKey support
-- Added automatic keychain discovery
-- Added adding new entries interactively with `pw add`
+- Add `gpg` plugin
+- Add support for adding url and notes for all plugins with `pw add [<name>] [<account>] [<url>] [<notes>]`
+- Add `fzf` preview to all plugins when selecting an entry with `pw`
+- `keepassxc`: Add support for creating items in groups
+- `keepassxc`: Add key-file support
+- `keepassxc`: Add YubiKey support
+- Add automatic keychain discovery
+- Add adding new entries interactively with `pw add`
 - Accept `PW_GEN_LENGTH` and `PW_GEN_CLASS` as arguments for `pw gen [<length>] [<class>]`
 - Accept combined `pw` options like `pw -pk my-keychain`
 - Accept lower and upper case reply when asking to delete item
@@ -32,25 +32,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Print all matching plugins when multiple plugins match file type or file extension
 
 ### Fixed
-- `keepassxc`: Fixed not showing password prompt with pw unlock
+- `keepassxc`: Fix not showing password prompt with pw unlock
 
 ### Changed
-- Renamed hook functions to `pw::register` and `pw::register_with_extension`
+- Rename hook functions to `pw::register` and `pw::register_with_extension`
 - Plugins use `PW_NAME`, `PW_ACCOUNT`, `PW_URL` and `PW_NOTES` instead of positional arguments
 
 ### Removed
-- Removed `pw --help`
+- Remove `pw --help`
 
 ### Other
-- Added test coverage with `kcov`
+- Add test coverage with `kcov`
 
 ## [7.0.0] - 2024-09-09
 ### Added
-- Added shorter bash version check
-- Added optional `fzf` format to `ls`
-- Added more tests
-- Added `_skip_if_github_action()` for tests
-- Added uninstall instructions. Closes #5
+- Add shorter bash version check
+- Add optional `fzf` format to `ls`
+- Add more tests
+- Add `_skip_if_github_action()` for tests
+- Add uninstall instructions. Closes #5
 
 ### Fixed
 - Support leading and trailing spaces in entry name and account
@@ -63,8 +63,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Drastically simplified plugin architecture and tests
-- Migrated `macos_keychain` and tests to new plugin structure
-- Migrated `keepassxc` and tests to new plugin structure
+- Migrate `macos_keychain` and tests to new plugin structure
+- Migrate `keepassxc` and tests to new plugin structure
 
 ## [6.1.2] - 2024-05-18
 ### Fixed
@@ -98,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update bats and add bats-file submodule
 
 ### Changed
-- Changed `pw init` to accept keychain name as argument
+- Change `pw init` to accept keychain name as argument
 - Increase entry name padding in `pw ls`
 - Don't automatically append `.keychain`
 
