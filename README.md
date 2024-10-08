@@ -26,7 +26,7 @@ you to interact with [various keychains](#example-using-multiple-keychains) effo
 # Quickstart
 
 ```bash
-# create a keychain
+# create a keychain (.keychain-db for macOS Keychain, .kdbx for KeePassXC)
 pw init ~/secrets.keychain-db
 
 # optionally configure keychains in ~/.pwrc so you can access them from anywhere
@@ -38,6 +38,39 @@ pw add GitHub sschmid
 
 # add another entry interactively
 pw add
+
+# copy the password directly by providing the name
+pw GitHub
+
+# or use fzf to select an entry (-p prints the password instead of copying it)
+pw -p
+```
+
+If you prefer to manage passwords on your own, you can use `pw` with GnuPG to store
+encrypted passwords in a directory:
+
+```bash
+# create a keychain
+pw init ~/secrets/   # end with `/` for GnuPG
+cd ~/secrets
+
+# optionally configure keychains in ~/.pwrc so you can access them from anywhere
+# otherwise, pw will discover gpg encrypted passwords in the current directory
+echo 'PW_KEYCHAINS=(~/secrets/)' > ~/.pwrc
+
+# add an entry
+# if you haven't configured ~/.pwrc yet, you need to specify the keychain once
+# because the directory is empty and pw can't determine the keychain type yet
+pw -k ~/secrets add GitHub sschmid
+
+# add another entry interactively
+pw add
+
+# output binary format (default)
+pw add GitHub.gpg
+
+# output ASCII-armored format
+pw add GitHub.asc
 
 # copy the password directly by providing the name
 pw GitHub
