@@ -46,8 +46,8 @@ pw GitHub
 pw -p
 ```
 
-If you prefer to manage passwords on your own, you can use `pw` with GnuPG to store
-encrypted passwords in a directory:
+If you would like to manage your passwords yourself, you can use `pw` with
+GnuPG to store encrypted passwords in a directory:
 
 ```bash
 # create a keychain
