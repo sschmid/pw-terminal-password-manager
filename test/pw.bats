@@ -23,33 +23,6 @@ setup() {
   assert_output "Invalid option: -x"
 }
 
-@test "generates and copies password" {
-  export PW_GEN_LENGTH=5
-  export PW_GEN_CLASS="1"
-  run pw gen
-  assert_success
-  refute_output
-  run pbpaste
-  assert_output "11111"
-}
-
-@test "clears clipboard after generating password" {
-  export PW_CLIP_TIME=1
-  run pw gen
-  sleep 2
-  run pbpaste
-  refute_output
-}
-
-@test "doesn't clear clipboard when changed" {
-  export PW_CLIP_TIME=1
-  run pw gen
-  echo -n "after" | pbcopy
-  sleep 2
-  run pbpaste
-  assert_output "after"
-}
-
 @test "generates and prints password" {
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"

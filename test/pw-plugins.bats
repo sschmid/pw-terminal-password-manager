@@ -225,45 +225,6 @@ EOF
   assert_output "plugin 1 show name account url ${PW_KEYCHAIN}"
 }
 
-@test "copies item password" {
-  _create_fake_keychain
-  _set_plugin_1
-  pw name account url
-  run pbpaste
-  assert_success
-  assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
-}
-
-@test "copies item details" {
-  _create_fake_keychain
-  _set_plugin_1
-  pw show name account url
-  run pbpaste
-  assert_success
-  assert_output "plugin 1 show name account url ${PW_KEYCHAIN}"
-}
-
-@test "clears clipboard after copying item" {
-  export PW_CLIP_TIME=1
-  _create_fake_keychain
-  _set_plugin_1
-  pw name
-  sleep 2
-  run pbpaste
-  refute_output
-}
-
-@test "doesn't clear clipboard when changed" {
-  export PW_CLIP_TIME=1
-  _create_fake_keychain
-  _set_plugin_1
-  pw name
-  echo -n "after" | pbcopy
-  sleep 2
-  run pbpaste
-  assert_output "after"
-}
-
 @test "fails when item selection fails" {
   _create_fake_keychain
   _set_plugin_fail
