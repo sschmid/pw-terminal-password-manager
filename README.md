@@ -83,6 +83,25 @@ Legend:
 | YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
 | Automatic keychain discovery                                                    | ✅             | ✅                                   | ✅             |
 
+# Quickstart
+
+```bash
+# create a keychain
+pw init ~/secrets.keychain-db
+
+# configure keychains in ~/.pwrc
+echo 'PW_KEYCHAINS=(~/secrets.keychain-db)' > ~/.pwrc
+
+# add an entry
+pw add GitHub sschmid
+
+# copy the password
+pw GitHub
+
+# print the password using fzf
+pw -p
+```
+
 # Usage
 
 In all following examples, `[<args>]` refers to the optional
