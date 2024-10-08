@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [8.2.0] - 2024-10-08
+### Added
+- Add `pw show` to show details
+- Add fzf shortcut `CTRL-Y` to copy (or print) details
+- Add fzf shortcut `?` to toggle preview and make preview hidden by default
+- Sort discovered keychains
+- Display error message when no keychain was set
+- `macos_keychain`: Show name, account, url and notes in fzf preview
+- `keepassxc`: Enable yubikey and key-file fzf preview
+- `gpg`: Add name to fzf preview
+
+### Fixed
+- Fix password prompt did trim whitespace
+- Support multiline notes when adding new entry interactively
+
+### Changed
+- Sort using users default `LC_ALL`
+
+### Removed
+- Remove login.keychain-db as default keychain
+
 ## [8.1.0] - 2024-09-29
 ### Added
 - Refactor password generation to ensure desired length in low entropy environments
@@ -209,7 +230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.1.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.0...HEAD
+[8.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.1.0...8.2.0
 [8.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/7.0.0...8.0.0
 [7.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/6.1.2...7.0.0
