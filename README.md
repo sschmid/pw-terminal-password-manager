@@ -92,7 +92,7 @@ or removing an entry, you can toggle the entry preview by pressing `?`.
 The entry preview shows details like the name, account, url, and notes and
 is off by default.
 
-Press `ctrl-y` on any entry to copy (or print) the details.
+Press `CTRL-Y` on any entry to copy (or print) the details.
 
 ## Create keychain
 
