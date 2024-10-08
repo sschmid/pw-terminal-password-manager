@@ -49,6 +49,7 @@ Plugins are simple bash scripts that implement the following functions (see [plu
 - `add`
 - `edit`
 - `get`
+- `show`
 - `rm`
 - `ls`
 - `open`
