@@ -89,7 +89,8 @@ Legend:
 # create a keychain
 pw init ~/secrets.keychain-db
 
-# configure keychains in ~/.pwrc
+# optionally configure keychains in ~/.pwrc so you can access them from anywhere
+# otherwise, pw will discover keychains in the current directory
 echo 'PW_KEYCHAINS=(~/secrets.keychain-db)' > ~/.pwrc
 
 # add an entry
