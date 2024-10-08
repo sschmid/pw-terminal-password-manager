@@ -23,20 +23,40 @@ you to interact with [various keychains](#example-using-multiple-keychains) effo
 
 ![pw-fzf](readme/pw-fzf.png)
 
+# Quickstart
+
+```bash
+# create a keychain
+pw init ~/secrets.keychain-db
+
+# optionally configure keychains in ~/.pwrc so you can access them from anywhere
+# otherwise, pw will discover keychains in the current directory
+echo 'PW_KEYCHAINS=(~/secrets.keychain-db)' > ~/.pwrc
+
+# add an entry
+pw add GitHub sschmid
+
+# add another entry interactively
+pw add
+
+# copy the password directly by providing the name
+pw GitHub
+
+# or use fzf to select an entry (-p prints the password instead of copying it)
+pw -p
+```
+
 # Install and update `pw`
 
 ```bash
 # install
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
-brew install fzf
 
 # update
 pw update
-brew upgrade fzf
 
 # uninstall
 /usr/local/opt/pw/install --uninstall
-brew uninstall fzf
 ```
 
 # How `pw` works
@@ -83,29 +103,6 @@ Legend:
 | YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
 | Automatic keychain discovery                                                    | ✅             | ✅                                   | ✅             |
 
-# Quickstart
-
-```bash
-# create a keychain
-pw init ~/secrets.keychain-db
-
-# optionally configure keychains in ~/.pwrc so you can access them from anywhere
-# otherwise, pw will discover keychains in the current directory
-echo 'PW_KEYCHAINS=(~/secrets.keychain-db)' > ~/.pwrc
-
-# add an entry
-pw add GitHub sschmid
-
-# add another entry interactively
-pw add
-
-# copy the password directly by providing the name
-pw GitHub
-
-# or use fzf to select an entry (-p prints the password instead of copying it)
-pw -p
-```
-
 # Usage
 
 In all following examples, `[<args>]` refers to the optional
@@ -125,9 +122,9 @@ pw init <keychain>                 create keychain
 ```
 
 ```bash
-pw init ~/secrets.keychain-db
-pw init ~/secrets.kdbx
-pw init ~/secrets/              # end with `/` to create a directory for GnuPG
+pw init ~/secrets.keychain-db   # macOS Keychain
+pw init ~/secrets.kdbx          # KeePassXC
+pw init ~/secrets/              # GnuPG (end with `/` to create a directory)
 
 # macos_keychain special behaviour
 pw init secrets.keychain-db            # will create a keychain in ~/Library/Keychains
@@ -141,12 +138,12 @@ pw add [<args>]                    add entry. If no args, interactive mode
 ```
 
 ```bash
-pw add                               # add interactively
-pw add GitHub
-pw add Google work@example.com
+pw add                                      # add interactively
+pw add GitHub                               # add entry with name
+pw add Google work@example.com              # add entry with name and account
 pw add Google personal@example.com
-pw add Homepage admin https://example.com
-pw add Coveralls "" https://coveralls.io "login via GitHub"
+pw add Homepage admin https://example.com   # add entry with name, account, url
+pw add Coveralls "" https://coveralls.io "login via GitHub" # add entry with name, url, notes
 ```
 
 If a plugin doesn't support multiple entries with the same name,
@@ -222,6 +219,12 @@ pw gen 24 '[:alnum:]'
 pw gen 32 '[:digit:]'
 ```
 
+## Automatic keychain discovery
+
+`pw` automatically searches for keychains in the current directory and adds them
+to the `PW_KEYCHAINS` array. This way you can keep your keychains in the same
+directory as your project and `pw` will automatically discover and use them.
+
 ## Specifying a keychain
 
 There are multiple ways to specify a keychain:
@@ -240,21 +243,6 @@ PW_KEYCHAIN=secrets.keychain-db pw
 # export default keychain for the current shell
 export PW_KEYCHAIN=secrets.keychain-db
 pw
-```
-
-```
-pw init secrets.keychain-db
-pw -k secrets.keychain-db add GitHub sschmid
-Enter password for github:
-
-pw -k secrets.keychain-db -p
-╭──────────────────────────────────────────────────────────────────────────────╮
-│ >                                                                            │
-│ > GitHub                  sschmid                 secrets.keychain-db        │
-│                                                                              │
-│                                                                              │
-│                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## Using multiple keychains
@@ -290,13 +278,6 @@ is specified with `-k` or by setting `PW_KEYCHAIN`, `pw` allows you to select
 one from `PW_KEYCHAINS` using the fuzzy finder.
 
 ![pw-fzf](readme/pw-dbs.png)
-
-## Automatic keychain discovery
-
-Plugins that support automatic keychain discovery will automatically search
-for keychains in the current directory and add them to the `PW_KEYCHAINS` array.
-This way you can keep your keychains in the same directory as your project
-and `pw` will automatically discover and use them.
 
 ## Using `pw` in a command or script
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
