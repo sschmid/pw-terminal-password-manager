@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1"
+
+if [[ -f "${keychain}" ]]; then
+  open -a "Keychain Access" "${keychain}"
+elif [[ -f "${HOME}/Library/Keychains/${keychain}" ]]; then
+  open -a "Keychain Access" "${HOME}/Library/Keychains/${keychain}"
+fi

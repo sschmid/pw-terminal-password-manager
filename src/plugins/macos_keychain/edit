@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1" password="$2" name="$3" account="$4" url="$5"
+
+security add-generic-password -U \
+  -l "${name:-"${url}"}" \
+  -a "${account}" \
+  -s "${url:="${name}"}" \
+  -w "${password}" \
+  "${keychain}"

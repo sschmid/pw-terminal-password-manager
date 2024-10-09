@@ -482,9 +482,8 @@ EOF
   assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
-  source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
   run pw lock
-  run pw::plugin_fzf_preview
+  run "${PROJECT_ROOT}/src/plugins/macos_keychain/fzf_preview" "${PW_KEYCHAIN}"
   assert_success
   refute_output
 }
@@ -494,9 +493,8 @@ EOF
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${notes}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
-  source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
   local cmd
-  cmd="$(pw::plugin_fzf_preview)"
+  cmd="$("${PROJECT_ROOT}/src/plugins/macos_keychain/fzf_preview" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
   cmd=${cmd//\{5\}/"\"${ACCOUNT_A}\""}
   cmd=${cmd//\{6\}/"\"${URL_A}\""}
@@ -516,9 +514,8 @@ EOF
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
-  source "${PROJECT_ROOT}/src/plugins/macos_keychain/plugin.bash"
   local cmd
-  cmd="$(pw::plugin_fzf_preview)"
+  cmd="$("${PROJECT_ROOT}/src/plugins/macos_keychain/fzf_preview" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
   cmd=${cmd//\{5\}/"\"${ACCOUNT_A}\""}
   cmd=${cmd//\{6\}/"\"${URL_A}\""}

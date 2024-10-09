@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1"
+
+if [[ -p /dev/stdin ]]; then
+  IFS= read -r password
+  security create-keychain -p "${password}" "${keychain}"
+else
+  security create-keychain "${keychain}"
+fi

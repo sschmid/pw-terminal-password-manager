@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1" name="$2" account="$3" url="$4"
+
+security delete-generic-password \
+  ${name:+-l "${name}"} \
+  ${account:+-a "${account}"} \
+  ${url:+-s "${url}"} \
+  "${keychain}" >/dev/null
