@@ -354,9 +354,7 @@ pw::select_item_with_prompt() {
                 --bind "ctrl-y:execute(${yank})+abort" \
                 --bind '?:toggle-preview' <<< "${item}")"
 
-    PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
-    PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"
-    PW_URL="$(awk -F '\t' '{print $6}' <<< "${item}")"
+    IFS=$'\t' read -r _ _ _ PW_NAME PW_ACCOUNT PW_URL <<< "${item}"
     [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" || -n "${PW_URL}" ]] || exit 1
     PW_FZF=1
   fi
