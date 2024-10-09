@@ -349,7 +349,7 @@ pw::select_item_with_prompt() {
     # variables are set with the actual values 4..6
     local preview yank yank_action
     preview="$("${PW_PLUGIN}/fzf_preview" "${PW_KEYCHAIN}")"
-    yank="PW_PRINT=${PW_PRINT}; PW_CLIP_TIME=${PW_CLIP_TIME}; $(declare -f pw::output); pw::output \"\$(${preview})\""
+    yank="$(declare -p PW_PRINT PW_CLIP_TIME); $(declare -f pw::output); pw::output \"\$(${preview})\""
     (( PW_PRINT )) && yank_action="print" || yank_action="copy"
     IFS=$'\t' read -r _ _ _ PW_NAME PW_ACCOUNT PW_URL < <("${PW_PLUGIN}/ls" "${PW_KEYCHAIN}" "fzf" \
     | fzf --prompt "${fzf_prompt}> " --layout reverse \
