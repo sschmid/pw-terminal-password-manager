@@ -25,6 +25,64 @@ declare -A PW_KEYCHAIN_ARGS=()
 EOF
 }
 
+@test "removing duplicates and sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
+  _set_pwrc_with_keychains "pw_test.keychain" "pw_test.keychain"
+  _set_plugin_1
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls pw_test.keychain
+declare -A PW_KEYCHAIN_ARGS=()
+EOF
+}
+
+@test "irgnores empty lines and sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
+  _set_pwrc_with_keychains "" "pw_test.keychain" ""
+  _set_plugin_1
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls pw_test.keychain
+declare -A PW_KEYCHAIN_ARGS=()
+EOF
+}
+
+@test "replace ~ with real HOME" {
+  # shellcheck disable=SC2088
+  _set_pwrc_with_keychains '~/pw_test.keychain'
+  _set_plugin_1
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls ${HOME}/pw_test.keychain
+declare -A PW_KEYCHAIN_ARGS=()
+EOF
+}
+
+@test "replace HOME with real HOME" {
+  # shellcheck disable=SC2016
+  _set_pwrc_with_keychains '$HOME/pw_test.keychain'
+  _set_plugin_1
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls ${HOME}/pw_test.keychain
+declare -A PW_KEYCHAIN_ARGS=()
+EOF
+}
+
+@test "replace {HOME} with real HOME" {
+  # shellcheck disable=SC2016
+  _set_pwrc_with_keychains '${HOME}/pw_test.keychain'
+  _set_plugin_1
+  run pw ls
+  assert_success
+  cat << EOF | assert_output -
+plugin 1 ls ${HOME}/pw_test.keychain
+declare -A PW_KEYCHAIN_ARGS=()
+EOF
+}
+
 @test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS and separates args" {
   _set_pwrc_with_keychains "pw_test.keychain:key1=value1,key2=value2"
   _set_plugin_1
