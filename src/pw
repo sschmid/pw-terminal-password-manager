@@ -118,7 +118,7 @@ pw::select_keychain() {
       pw::set_keychain "${PW_KEYCHAINS[0]}"
     else
       local keychain
-      keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | sort -f | fzf --prompt "keychain> " --layout reverse --info hidden)"
+      keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | sort -f | fzf --no-clear --prompt "keychain> " --layout reverse)"
       pw::set_keychain "${keychain}"
     fi
   fi
@@ -347,20 +347,18 @@ pw::select_item_with_prompt() {
     #   4:name, 5:account, 6:url
     # fzf will use the pretty printed values 1..3
     # variables are set with the actual values 4..6
-    local item preview yank yank_action
-    item="$("${PW_PLUGIN}/ls" "${PW_KEYCHAIN}" "fzf")"
+    local preview yank yank_action
     preview="$("${PW_PLUGIN}/fzf_preview" "${PW_KEYCHAIN}")"
     yank="PW_PRINT=${PW_PRINT}; PW_CLIP_TIME=${PW_CLIP_TIME}; $(declare -f pw::output); pw::output \"\$(${preview})\""
     (( PW_PRINT )) && yank_action="print" || yank_action="copy"
-    item="$(fzf --prompt "${fzf_prompt}> " --layout reverse --info hidden \
-                --delimiter '\t' --with-nth 1..3 --nth 1..3 \
-                --preview "${preview}" \
-                --preview-window hidden \
-                --header "?: toggle preview, CTRL-Y: ${yank_action} details" \
-                --bind "ctrl-y:execute(${yank})+abort" \
-                --bind '?:toggle-preview' <<< "${item}")"
+    IFS=$'\t' read -r _ _ _ PW_NAME PW_ACCOUNT PW_URL < <("${PW_PLUGIN}/ls" "${PW_KEYCHAIN}" "fzf" \
+    | fzf --prompt "${fzf_prompt}> " --layout reverse \
+          --delimiter '\t' --with-nth 1..3 --nth 1..3 \
+          --preview "${preview}" --preview-window hidden \
+          --header "?: toggle preview, CTRL-Y: ${yank_action} details" \
+          --bind "ctrl-y:execute(${yank})+abort" \
+          --bind '?:toggle-preview')
 
-    IFS=$'\t' read -r _ _ _ PW_NAME PW_ACCOUNT PW_URL <<< "${item}"
     [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" || -n "${PW_URL}" ]] || exit 1
     PW_FZF=1
   fi
