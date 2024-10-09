@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_keepassxc_cli_with_args="$(dirname "$0")/_keepassxc_cli_with_args"
+
+keychain="$1"
+
+# declare -p PW_KEYCHAIN_ARGS
+echo "\"${_keepassxc_cli_with_args}\" show \"${keychain}\" {4} <<< \"${PW_KEYCHAIN_PASSWORD}\""

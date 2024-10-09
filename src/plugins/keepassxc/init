@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+"$(dirname "$0")/_require"
+
+keychain="$1"
+
+declare -a options=()
+# [[ -v PW_KEYCHAIN_ARGS["keyfile"] ]] && options+=("--set-key-file" "${PW_KEYCHAIN_ARGS["keyfile"]}")
+if [[ -p /dev/stdin ]]; then
+  IFS= read -r password
+  keepassxc-cli db-create --quiet "${options[@]}" --set-password "${keychain}" << EOF
+${password}
+${password}
+EOF
+else
+  keepassxc-cli db-create "${options[@]}" --set-password "${keychain}"
+fi

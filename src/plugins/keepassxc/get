@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_keepassxc_cli_with_args="$(dirname "$0")/_keepassxc_cli_with_args"
+
+keychain="$1" name="$2" account="$3" url="$4"
+
+"${_keepassxc_cli_with_args}" show --show-protected --attributes password "${keychain}" "${name}" <<< "${PW_KEYCHAIN_PASSWORD}"

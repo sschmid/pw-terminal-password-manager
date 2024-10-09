@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_keepassxc_cli_with_args="$(dirname "$0")/_keepassxc_cli_with_args"
+
+keychain="$1"
+
+"${_keepassxc_cli_with_args}" open "${keychain}"

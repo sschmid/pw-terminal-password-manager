@@ -118,7 +118,7 @@ pw::select_keychain() {
       pw::set_keychain "${PW_KEYCHAINS[0]}"
     else
       local keychain
-      keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | sort -f | fzf --no-clear --prompt "keychain> " --layout reverse)"
+      keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | sort -f | fzf --prompt "keychain> " --layout reverse)"
       pw::set_keychain "${keychain}"
     fi
   fi
@@ -211,6 +211,7 @@ pw::prompt_keychain_password() {
     then IFS= read -r PW_KEYCHAIN_PASSWORD
     else IFS= read -rsp "Please enter the keychain password:"$'\n' PW_KEYCHAIN_PASSWORD </dev/tty
     fi
+    export PW_KEYCHAIN_PASSWORD
   fi
 }
 
@@ -273,13 +274,18 @@ PW_URL=""
 PW_NOTES=""
 declare -ig PW_FZF=0
 
+pw::plugin() {
+  local cmd="$1"; shift
+  "${PW_PLUGIN}/${cmd}" "$@";
+}
+
 pw::init() {
   [[ -e "${PW_KEYCHAIN}" ]] && pw::exit "pw: ${PW_KEYCHAIN} already exists."
-  "${PW_PLUGIN}/init" "${PW_KEYCHAIN}"
+  pw::plugin init "${PW_KEYCHAIN}"
 }
 
 pw::add() {
-  pw::prepare_keychain "add"
+  pw::plugin prepare_keychain "add" || pw::prompt_keychain_password
 
   if (( $# )); then
     pw::select_item_with_prompt "add" "$@"
@@ -292,52 +298,52 @@ pw::add() {
   fi
 
   pw::prompt_password
-  "${PW_PLUGIN}/add" "${PW_KEYCHAIN}" "${PW_PASSWORD}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
+  pw::plugin add "${PW_KEYCHAIN}" "${PW_PASSWORD}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
 }
 
 pw::edit() {
-  pw::prepare_keychain "edit"
+  pw::plugin prepare_keychain "edit" || pw::prompt_keychain_password
   pw::select_item_with_prompt "edit" "$@"
   pw::prompt_password
-  "${PW_PLUGIN}/edit" "${PW_KEYCHAIN}" "${PW_PASSWORD}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+  pw::plugin edit "${PW_KEYCHAIN}" "${PW_PASSWORD}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
 }
 
 pw::get() {
-  pw::prepare_keychain "get"
+  pw::plugin prepare_keychain "get" || pw::prompt_keychain_password
   if (( PW_PRINT ))
   then pw::select_item_with_prompt "print" "$@"
   else pw::select_item_with_prompt "copy" "$@"
   fi
   local password
-  password="$("${PW_PLUGIN}/get" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
+  password="$(pw::plugin get "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
   pw::output "${password}"
 }
 
 pw::show() {
-  pw::prepare_keychain "show"
+  pw::plugin prepare_keychain "show" || pw::prompt_keychain_password
   if (( PW_PRINT ))
   then pw::select_item_with_prompt "print details" "$@"
   else pw::select_item_with_prompt "copy details" "$@"
   fi
   local details
-  details="$("${PW_PLUGIN}/show" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
+  details="$(pw::plugin show "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
   pw::output "${details}"
 }
 
 pw::rm() {
-  pw::prepare_keychain "rm"
+  pw::plugin prepare_keychain "rm" || pw::prompt_keychain_password
   local -i remove=1
   pw::select_item_with_prompt "remove" "$@"
   if (( PW_FZF )); then
     read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
     [[ "${REPLY}" == [yY] ]] || remove=0
   fi
-  (( ! remove )) || "${PW_PLUGIN}/rm" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+  (( ! remove )) || pw::plugin rm "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
 }
 
 pw::ls() {
-  pw::prepare_keychain "ls"
-  "${PW_PLUGIN}/ls" "${PW_KEYCHAIN}" "$@"
+  pw::plugin prepare_keychain "ls" || pw::prompt_keychain_password
+  pw::plugin ls "${PW_KEYCHAIN}" "$@"
 }
 
 pw::select_item_with_prompt() {
@@ -357,10 +363,10 @@ pw::select_item_with_prompt() {
     # fzf will use the pretty printed values 1..3
     # variables are set with the actual values 4..6
     local preview yank yank_action
-    preview="$("${PW_PLUGIN}/fzf_preview" "${PW_KEYCHAIN}")"
+    preview="$(pw::plugin fzf_preview "${PW_KEYCHAIN}")"
     yank="$(declare -p PW_PRINT PW_CLIP_TIME); $(declare -f pw::output); pw::output \"\$(${preview})\""
     (( PW_PRINT )) && yank_action="print" || yank_action="copy"
-    IFS=$'\t' read -r _ _ _ PW_NAME PW_ACCOUNT PW_URL < <("${PW_PLUGIN}/ls" "${PW_KEYCHAIN}" "fzf" \
+    IFS=$'\t' read -r _ _ _ PW_NAME PW_ACCOUNT PW_URL < <(pw::plugin ls "${PW_KEYCHAIN}" "fzf" \
     | fzf --prompt "${fzf_prompt}> " --layout reverse \
           --delimiter '\t' --with-nth 1..3 --nth 1..3 \
           --preview "${preview}" --preview-window hidden \
@@ -400,9 +406,9 @@ main() {
       rm) shift; pw::select_keychain; pw::rm "$@" ;;
       ls) shift; pw::select_keychain; pw::ls "$@" ;;
       gen) shift; pw::gen "$@" ;;
-      open) shift; pw::select_keychain; "${PW_PLUGIN}/open" "${PW_KEYCHAIN}" ;;
-      lock) shift; pw::select_keychain; "${PW_PLUGIN}/lock" "${PW_KEYCHAIN}" ;;
-      unlock) shift; pw::select_keychain; "${PW_PLUGIN}/unlock" "${PW_KEYCHAIN}" ;;
+      open) shift; pw::select_keychain; pw::plugin open "${PW_KEYCHAIN}" ;;
+      lock) shift; pw::select_keychain; pw::plugin lock "${PW_KEYCHAIN}" ;;
+      unlock) shift; pw::select_keychain; pw::plugin unlock "${PW_KEYCHAIN}" ;;
       update) shift; pw::update "$@" ;;
       *) pw::select_keychain; pw::get "$@" ;;
     esac
