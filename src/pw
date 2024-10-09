@@ -26,14 +26,14 @@ done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 
 : "${PW_RC:="${HOME}/.pwrc"}"
-[[ ! -f "${PW_RC}" ]] && cat << 'EOF' > "${PW_RC}"
-PW_KEYCHAINS=()
-EOF
+[[ ! -f "${PW_RC}" ]] && touch "${PW_RC}"
 
 declare -a PW_KEYCHAINS
 declare -A PW_KEYCHAIN_ARGS
 declare -i PW_PRINT=0 PW_GEN_LENGTH PW_CLIP_TIME
-source "${PW_RC}"
+
+mapfile -t PW_KEYCHAINS < <(awk 'NF' "${PW_RC}")
+
 : ${PW_GEN_LENGTH:=35}
 : "${PW_GEN_CLASS:="[:graph:]"}"
 : ${PW_CLIP_TIME:=45}

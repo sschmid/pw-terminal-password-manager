@@ -87,7 +87,7 @@ EOF
   _skip_manual_test "please select 'pw_test2.keychain'"
   read -rsp "Press enter to continue ..."
 
-  _set_pwrc_with_keychains "pw_test1.keychain pw_test2.keychain"
+  _set_pwrc_with_keychains "pw_test1.keychain" "pw_test2.keychain"
   _set_plugin_1
   run pw ls
 

@@ -4,11 +4,11 @@ setup() {
   _setup
 }
 
-@test "loads pwrc when specified" {
+@test "does not source pwrc when specified" {
   _set_pwrc_with_keychains "test-keychain"
   echo 'echo "# test pwrc sourced"' >> "${PW_RC}"
   run pw -h
-  assert_output --partial "# test pwrc sourced"
+  refute_output --partial "# test pwrc sourced"
 }
 
 @test "creates pwrc" {
