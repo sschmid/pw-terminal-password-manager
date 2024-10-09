@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1" format="${2:-default}"
+
+echo -e "name 1\taccount 1\turl 1\tname 1\taccount 1\turl 1"
+echo -e "name 2\taccount 2\turl 2\tname 2\taccount 2\turl 2"
+echo -e "name 3\taccount 3\turl 3\tname 3\taccount 3\turl 3"

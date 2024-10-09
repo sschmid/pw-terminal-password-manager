@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1"
+
+echo "plugin 1 unlock ${keychain}"

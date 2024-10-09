@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1" password="$2" name="$3" account="$4" url="$5" notes="$6"
+
+echo "plugin modify add ${name} ${account} ${url} ${password} ${keychain}"
