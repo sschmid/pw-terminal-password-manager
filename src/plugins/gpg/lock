@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1"
+
+killall gpg-agent 2>/dev/null || true

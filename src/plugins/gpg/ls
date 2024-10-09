@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1" format="${2:-default}"
+
+pushd "${keychain}" >/dev/null || exit 1
+  list="$(find . -type f ! -name .DS_Store | sort -f)"
+popd >/dev/null || exit 1
+
+case "${format}" in
+  fzf) echo "${list}" | awk '{print $0 "\t\t\t" $0}' ;;
+  *) echo "${list}" ;;
+esac

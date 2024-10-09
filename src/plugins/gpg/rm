@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+keychain="$1" name="$2" account="$3" url="$4"
+
+rm "${keychain}/${name}"

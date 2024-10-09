@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_gpg="$(dirname "$0")/_gpg"
+_get_details="$(dirname "$0")/_get_details"
+
+keychain="$1" name="$2" account="$3" url="$4"
+
+"${_gpg}" --decrypt "${keychain}/${name}" | "${_get_details}" "${name}"

@@ -15,7 +15,7 @@ teardown_file() {
 setup() {
   load 'gpg'
   _setup
-  export PW_GPG_PASSWORD="pw_test_password"
+  export PW_KEYCHAIN_PASSWORD="pw_test_password"
   pw init "${PW_KEYCHAIN}"
 }
 
@@ -46,7 +46,7 @@ assert_rm_not_found_output() {
 }
 
 _gpg_decrypt() {
-  gpg --quiet --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
+  gpg --quiet --batch --pinentry-mode loopback --passphrase "${PW_KEYCHAIN_PASSWORD}" \
       --decrypt "${PW_KEYCHAIN}/$1" | sed -n "$2"
 }
 
@@ -153,7 +153,7 @@ assert_notes() {
   local key_id="634419040D678764"
   PW_KEYCHAIN="${keychain}:key=${key_id}"
   assert_adds_item "${PW_1}" "${NAME_A}"
-  run gpg --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
+  run gpg --batch --pinentry-mode loopback --passphrase "${PW_KEYCHAIN_PASSWORD}" \
           --list-packets "${keychain}/${NAME_A}"
   assert_success
   assert_output --partial "keyid ${key_id}"
@@ -267,7 +267,7 @@ EOF
   local key_id="8593E03F5A33D9AC"
   PW_KEYCHAIN="${keychain}:key=${key_id}"
   assert_edits_item "${PW_2}" "${NAME_A}"
-  run gpg --batch --pinentry-mode loopback --passphrase "${PW_GPG_PASSWORD}" \
+  run gpg --batch --pinentry-mode loopback --passphrase "${PW_KEYCHAIN_PASSWORD}" \
           --list-packets "${keychain}/${NAME_A}"
   assert_success
   assert_output --partial "keyid ${key_id}"
@@ -350,7 +350,7 @@ EOF
   assert_failure
   refute_output
 
-  run pw unlock <<< "${PW_GPG_PASSWORD}"
+  run pw unlock <<< "${PW_KEYCHAIN_PASSWORD}"
   assert_success
   refute_output
 
@@ -361,7 +361,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "unlocks keychain and prompts keychain password" {
-  unset PW_GPG_PASSWORD
+  unset PW_KEYCHAIN_PASSWORD
   _skip_manual_test "pw_test_password - Press enter to continue ..."
   read -rsp "Press enter to continue ..."
 
@@ -394,9 +394,8 @@ EOF
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
-  source "${PROJECT_ROOT}/src/plugins/gpg/plugin.bash"
   local cmd
-  cmd="$(pw::plugin_fzf_preview)"
+  cmd="$("${PROJECT_ROOT}/src/plugins/gpg/fzf_preview" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
@@ -414,9 +413,8 @@ EOF
   assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
   assert_item_exists "${PW_1}" "group/${NAME_A}"
 
-  source "${PROJECT_ROOT}/src/plugins/gpg/plugin.bash"
   local cmd
-  cmd="$(pw::plugin_fzf_preview)"
+  cmd="$("${PROJECT_ROOT}/src/plugins/gpg/fzf_preview" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"group/${NAME_A}\""}
 
   run eval "${cmd}"

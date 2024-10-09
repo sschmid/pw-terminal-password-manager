@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_gpg="$(dirname "$0")/_gpg"
+
+declare -a options=()
+# [[ -v PW_KEYCHAIN_ARGS["key"] ]] && options+=("--default-key" "${PW_KEYCHAIN_ARGS["key"]}")
+"${_gpg}" --encrypt "${options[@]}" --default-recipient-self "$@"
