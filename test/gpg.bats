@@ -350,7 +350,9 @@ EOF
   assert_failure
   refute_output
 
-  run pw unlock <<< "${PW_KEYCHAIN_PASSWORD}"
+  local p="${PW_KEYCHAIN_PASSWORD}"
+  unset PW_KEYCHAIN_PASSWORD
+  run pw unlock <<< "$p"
   assert_success
   refute_output
 
