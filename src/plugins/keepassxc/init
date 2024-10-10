@@ -2,16 +2,29 @@
 set -euo pipefail
 "$(dirname "$0")/_require"
 
-keychain="$1"
+options="$1" keychain="$2"
 
-declare -a options=()
-# [[ -v PW_KEYCHAIN_ARGS["keyfile"] ]] && options+=("--set-key-file" "${PW_KEYCHAIN_ARGS["keyfile"]}")
+declare -a cmd_options=()
+
+parse_options() {
+  local IFS=, key value
+  for pair in ${options}; do
+    key="${pair%%=*}"
+    value="${pair#*=}"
+    case "${key}" in
+      keyfile) cmd_options+=("--set-key-file" "${value}") ;;
+    esac
+  done
+}
+
+parse_options
+
 if [[ -p /dev/stdin ]]; then
   IFS= read -r password
-  keepassxc-cli db-create --quiet "${options[@]}" --set-password "${keychain}" << EOF
+  keepassxc-cli db-create --quiet "${cmd_options[@]}" --set-password "${keychain}" << EOF
 ${password}
 ${password}
 EOF
 else
-  keepassxc-cli db-create "${options[@]}" --set-password "${keychain}"
+  keepassxc-cli db-create "${cmd_options[@]}" --set-password "${keychain}"
 fi

@@ -2,7 +2,7 @@
 set -euo pipefail
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
-keychain="$1" password="$2" name="$3" account="$4" url="$5" notes="$6"
+options="$1" keychain="$2" password="$3" name="$4" account="$5" url="$6" notes="$7"
 
 # shellcheck disable=SC2174
 mkdir -m 700 -p "${keychain}"
@@ -15,6 +15,6 @@ ${url}
 ${notes}"
 
 if [[ "${name##*.}" == "asc" ]]
-then "${_gpg_encrypt}" --output "${keychain}/${name}" --armor <<< "${content}"
-else "${_gpg_encrypt}" --output "${keychain}/${name}" <<< "${content}"
+then "${_gpg_encrypt}" "${options}" --output "${keychain}/${name}" --armor <<< "${content}"
+else "${_gpg_encrypt}" "${options}" --output "${keychain}/${name}" <<< "${content}"
 fi

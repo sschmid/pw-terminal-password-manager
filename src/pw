@@ -29,7 +29,6 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 [[ ! -f "${PW_RC}" ]] && touch "${PW_RC}"
 
 declare -a PW_KEYCHAINS
-declare -A PW_KEYCHAIN_ARGS
 declare -i PW_PRINT=0 PW_GEN_LENGTH PW_CLIP_TIME
 
 # KCOV_EXCL_START
@@ -180,15 +179,10 @@ pw::infer_plugin() {
   fi
 }
 
-# shellcheck disable=SC2034
 pw::set_keychain() {
-  PW_KEYCHAIN_ARGS=()
   if [[ "$1" == *:* ]]; then
     PW_KEYCHAIN="${1%%:*}"
-    local IFS=,
-    for pair in ${1#*:}; do
-      PW_KEYCHAIN_ARGS["${pair%%=*}"]="${pair#*=}"
-    done
+    PW_KEYCHAIN_OPTIONS="${1#*:}"
   else
     PW_KEYCHAIN="$1"
   fi
@@ -276,7 +270,7 @@ declare -ig PW_FZF=0
 
 pw::plugin() {
   local cmd="$1"; shift
-  "${PW_PLUGIN}/${cmd}" "$@";
+  "${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS:-}" "$@";
 }
 
 pw::init() {

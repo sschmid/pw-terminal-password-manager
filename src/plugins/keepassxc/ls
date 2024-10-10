@@ -2,9 +2,11 @@
 set -euo pipefail
 _keepassxc_cli_with_args="$(dirname "$0")/_keepassxc_cli_with_args"
 
-keychain="$1" format="${2:-default}"
+options="$1" keychain="$2" format="${3:-default}"
 
-if ! list="$("${_keepassxc_cli_with_args}" ls --flatten --recursive "${keychain}" <<< "${PW_KEYCHAIN_PASSWORD}" | { grep -v -e '/$' -e 'Recycle Bin/' || true; } | sort -f)"
+if ! list="$("${_keepassxc_cli_with_args}" "${options}" ls --flatten --recursive "${keychain}" <<< "${PW_KEYCHAIN_PASSWORD}" \
+      | { grep -v -e '/$' -e 'Recycle Bin/' || true; } \
+      | sort -f)"
 then
   echo "Error while reading the database ${keychain}: Invalid credentials were provided, please try again." >&2
   exit 1

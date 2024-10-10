@@ -4,7 +4,7 @@ _gpg="$(dirname "$0")/_gpg"
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 _get_details="$(dirname "$0")/_get_details"
 
-keychain="$1"
+options="$1" keychain="$2"
 
 # KCOV_EXCL_START
 # shellcheck disable=SC1083
@@ -14,7 +14,7 @@ _fzf_preview() {
 # KCOV_EXCL_STOP
 
 # unlocks the keychain if necessary and only previews if the keychain is unlocked
-if echo | "${_gpg_encrypt}" | "${_gpg}" --decrypt &>/dev/null; then
+if echo | "${_gpg_encrypt}" "${options}" | "${_gpg}" --decrypt &>/dev/null; then
   declare -p keychain _get_details
   declare -f _fzf_preview
   echo "_fzf_preview"

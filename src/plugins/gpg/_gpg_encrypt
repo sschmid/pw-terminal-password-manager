@@ -2,6 +2,21 @@
 set -euo pipefail
 _gpg="$(dirname "$0")/_gpg"
 
-declare -a options=()
-# [[ -v PW_KEYCHAIN_ARGS["key"] ]] && options+=("--default-key" "${PW_KEYCHAIN_ARGS["key"]}")
-"${_gpg}" --encrypt "${options[@]}" --default-recipient-self "$@"
+options="$1"; shift
+
+declare -a cmd_options=()
+
+parse_options() {
+  local IFS=, key value
+  for pair in ${options}; do
+    key="${pair%%=*}"
+    value="${pair#*=}"
+    case "${key}" in
+      key) cmd_options+=("--default-key" "${value}") ;;
+    esac
+  done
+}
+
+parse_options
+
+"${_gpg}" --encrypt "${cmd_options[@]}" --default-recipient-self "$@"

@@ -3,7 +3,7 @@ set -euo pipefail
 _gpg="$(dirname "$0")/_gpg"
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
-keychain="$1"
+options="$1" keychain="$2"
 
 [[ -p /dev/stdin ]] && IFS= read -r PW_KEYCHAIN_PASSWORD
-echo | "${_gpg_encrypt}" | "${_gpg}" --decrypt >/dev/null
+echo | "${_gpg_encrypt}" "${options}" | "${_gpg}" --decrypt >/dev/null

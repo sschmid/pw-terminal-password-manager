@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-keychain="$1"
+options="$1" keychain="$2"
 
 if [[ -p /dev/stdin ]]; then
   IFS= read -r password

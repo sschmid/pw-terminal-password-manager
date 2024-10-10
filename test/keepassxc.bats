@@ -15,13 +15,9 @@ _init_with_key_file() {
 }
 
 _set_keychain() {
-  declare -Ag PW_KEYCHAIN_ARGS=()
   if [[ "$1" == *:* ]]; then
     PW_KEYCHAIN="${1%%:*}"
-    local IFS=,
-    for pair in ${1#*:}; do
-      PW_KEYCHAIN_ARGS["${pair%%=*}"]="${pair#*=}"
-    done
+    PW_KEYCHAIN_OPTIONS="${1#*:}"
   else
     PW_KEYCHAIN="$1"
   fi
@@ -388,7 +384,7 @@ EOF
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
@@ -409,7 +405,7 @@ EOF
 
   _set_keychain "${PW_KEYCHAIN}"
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "${PW_KEYCHAIN_OPTIONS}" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"

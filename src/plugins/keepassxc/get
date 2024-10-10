@@ -2,6 +2,6 @@
 set -euo pipefail
 _keepassxc_cli_with_args="$(dirname "$0")/_keepassxc_cli_with_args"
 
-keychain="$1" name="$2" account="$3" url="$4"
+options="$1" keychain="$2" name="$3" account="$4" url="$5"
 
-"${_keepassxc_cli_with_args}" show --show-protected --attributes password "${keychain}" "${name}" <<< "${PW_KEYCHAIN_PASSWORD}"
+"${_keepassxc_cli_with_args}" "${options}" show --show-protected --attributes password "${keychain}" "${name}" <<< "${PW_KEYCHAIN_PASSWORD}"

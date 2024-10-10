@@ -19,10 +19,7 @@ _set_plugin_fail() { export PW_TEST_PLUGIN_FAIL=1; }
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  pw_test.keychain"
 }
 
 @test "removing duplicates and sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
@@ -30,10 +27,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  pw_test.keychain"
 }
 
 @test "irgnores empty lines and sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
@@ -41,10 +35,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  pw_test.keychain"
 }
 
 @test "replace ~ with real HOME" {
@@ -53,10 +44,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls ${HOME}/pw_test.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  ${HOME}/pw_test.keychain"
 }
 
 @test "replace HOME with real HOME" {
@@ -65,10 +53,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls ${HOME}/pw_test.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  ${HOME}/pw_test.keychain"
 }
 
 @test "replace {HOME} with real HOME" {
@@ -77,10 +62,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls ${HOME}/pw_test.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  ${HOME}/pw_test.keychain"
 }
 
 @test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS and separates args" {
@@ -88,10 +70,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test.keychain
-declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
-EOF
+  assert_output "plugin 1 ls key1=value1,key2=value2 pw_test.keychain"
 }
 
 @test "PW_KEYCHAIN overwrites PW_KEYCHAINS" {
@@ -100,10 +79,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test2.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  pw_test2.keychain"
 }
 
 @test "PW_KEYCHAIN overwrites PW_KEYCHAINS and separates args" {
@@ -112,10 +88,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test2.keychain
-declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
-EOF
+  assert_output "plugin 1 ls key1=value1,key2=value2 pw_test2.keychain"
 }
 
 @test "pw -k overwrites PW_KEYCHAINS" {
@@ -123,10 +96,7 @@ EOF
   _set_plugin_1
   run pw -k pw_test2.keychain ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test2.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  pw_test2.keychain"
 }
 
 @test "pw -k overwrites PW_KEYCHAINS and separates args" {
@@ -134,10 +104,7 @@ EOF
   _set_plugin_1
   run pw -k pw_test2.keychain:key1=value1,key2=value2 ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test2.keychain
-declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
-EOF
+  assert_output "plugin 1 ls key1=value1,key2=value2 pw_test2.keychain"
 }
 
 # bats test_tags=tag:manual_test
@@ -150,10 +117,7 @@ EOF
   run pw ls
 
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls pw_test2.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  pw_test2.keychain"
 }
 
 @test "fails when PW_KEYCHAIN is empty" {
@@ -237,20 +201,14 @@ EOF
   _set_plugin_1
   run pw init "test.keychain"
   assert_success
-  cat << EOF | assert_output -
-plugin 1 init test.keychain
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 init  test.keychain"
 }
 
 @test "inits keychain and separates args" {
   _set_plugin_1
   run pw init "test.keychain:key1=value1,key2=value2"
   assert_success
-  cat << EOF | assert_output -
-plugin 1 init test.keychain
-declare -A PW_KEYCHAIN_ARGS=([key2]="value2" [key1]="value1" )
-EOF
+  assert_output "plugin 1 init key1=value1,key2=value2 test.keychain"
 }
 
 @test "init fails when keychain already exists" {
@@ -348,10 +306,7 @@ EOF
   _set_plugin_1
   run pw ls
   assert_success
-  cat << EOF | assert_output -
-plugin 1 ls ${PW_KEYCHAIN}
-declare -A PW_KEYCHAIN_ARGS=()
-EOF
+  assert_output "plugin 1 ls  ${PW_KEYCHAIN}"
 }
 
 @test "opens keychain" {

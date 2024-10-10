@@ -2,11 +2,26 @@
 set -euo pipefail
 "$(dirname "$0")/_require"
 
-command="$1"; shift
-declare -a options=()
+options="$1" command="$2"; shift 2
+
+declare -a cmd_options=()
 declare -i quiet=1
-# [[ -v PW_KEYCHAIN_ARGS["yubikey"] ]] && options+=("--yubikey" "${PW_KEYCHAIN_ARGS["yubikey"]}") && quiet=0
-# [[ -v PW_KEYCHAIN_ARGS["keyfile"] ]] && options+=("--key-file" "${PW_KEYCHAIN_ARGS["keyfile"]}")
-[[ "${command}" == "open" ]] && quiet=0
-(( quiet )) && options+=("--quiet")
-keepassxc-cli "${command}" "${options[@]}" "$@"
+
+parse_options() {
+  local IFS=, key value
+  for pair in ${options}; do
+    key="${pair%%=*}"
+    value="${pair#*=}"
+    case "${key}" in
+      yubikey) cmd_options+=("--yubikey" "${value}"); quiet=0 ;;
+      keyfile) cmd_options+=("--key-file" "${value}") ;;
+    esac
+  done
+
+  [[ "${command}" == "open" ]] && quiet=0
+  (( quiet )) && cmd_options+=("--quiet")
+}
+
+parse_options
+
+keepassxc-cli "${command}" "${cmd_options[@]}" "$@"

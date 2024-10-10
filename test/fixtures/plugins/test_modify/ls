@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-keychain="$1" format="${2:-default}"
+options="$1" keychain="$2" format="${3:-default}"
 
 echo "plugin modify ls ${keychain}"

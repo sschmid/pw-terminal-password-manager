@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-keychain="$1" format="${2:-default}"
+options="$1" keychain="$2" format="${3:-default}"
 
 echo -e "name 1\taccount 1\turl 1\tname 1\taccount 1\turl 1"
 echo -e "name 2\taccount 2\turl 2\tname 2\taccount 2\turl 2"
