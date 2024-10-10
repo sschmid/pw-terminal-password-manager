@@ -1,23 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
+parse_options="$(dirname "$0")/../parse_options"
 "$(dirname "$0")/_require"
 
 options="$1" keychain="$2"
 
 declare -a cmd_options=()
-
-parse_options() {
-  local IFS=, key value
-  for pair in ${options}; do
-    key="${pair%%=*}"
-    value="${pair#*=}"
-    case "${key}" in
-      keyfile) cmd_options+=("--set-key-file" "${value}") ;;
-    esac
-  done
-}
-
-parse_options
+while IFS=$'\t' read -r key value; do
+  case "${key}" in
+    keyfile) cmd_options+=("--set-key-file" "${value}") ;;
+  esac
+done < <("${parse_options}" "${options}")
 
 if [[ -p /dev/stdin ]]; then
   IFS= read -r password

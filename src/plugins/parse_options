@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=,
+for pair in $1; do
+  printf "%s\t%s\n" "${pair%%=*}" "${pair#*=}"
+done

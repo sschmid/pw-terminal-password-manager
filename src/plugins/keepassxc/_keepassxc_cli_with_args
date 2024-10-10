@@ -1,27 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
+parse_options="$(dirname "$0")/../parse_options"
 "$(dirname "$0")/_require"
 
 options="$1" command="$2"; shift 2
 
 declare -a cmd_options=()
 declare -i quiet=1
+while IFS=$'\t' read -r key value; do
+  case "${key}" in
+    yubikey) cmd_options+=("--yubikey" "${value}"); quiet=0 ;;
+    keyfile) cmd_options+=("--key-file" "${value}") ;;
+  esac
+done < <("${parse_options}" "${options}")
 
-parse_options() {
-  local IFS=, key value
-  for pair in ${options}; do
-    key="${pair%%=*}"
-    value="${pair#*=}"
-    case "${key}" in
-      yubikey) cmd_options+=("--yubikey" "${value}"); quiet=0 ;;
-      keyfile) cmd_options+=("--key-file" "${value}") ;;
-    esac
-  done
-
-  [[ "${command}" == "open" ]] && quiet=0
-  (( quiet )) && cmd_options+=("--quiet")
-}
-
-parse_options
+[[ "${command}" == "open" ]] && quiet=0
+(( quiet )) && cmd_options+=("--quiet")
 
 keepassxc-cli "${command}" "${cmd_options[@]}" "$@"

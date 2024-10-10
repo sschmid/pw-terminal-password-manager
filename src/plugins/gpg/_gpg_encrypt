@@ -1,22 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
+parse_options="$(dirname "$0")/../parse_options"
 _gpg="$(dirname "$0")/_gpg"
 
 options="$1"; shift
 
 declare -a cmd_options=()
-
-parse_options() {
-  local IFS=, key value
-  for pair in ${options}; do
-    key="${pair%%=*}"
-    value="${pair#*=}"
-    case "${key}" in
-      key) cmd_options+=("--default-key" "${value}") ;;
-    esac
-  done
-}
-
-parse_options
+while IFS=$'\t' read -r key value; do
+  case "${key}" in
+    key) cmd_options+=("--default-key" "${value}") ;;
+  esac
+done < <("${parse_options}" "${options}")
 
 "${_gpg}" --encrypt "${cmd_options[@]}" --default-recipient-self "$@"
