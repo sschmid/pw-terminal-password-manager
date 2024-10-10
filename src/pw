@@ -3,22 +3,6 @@
 SHELL="$(which bash)"
 set -euo pipefail
 
-pw::exit() {
-  printf "%s\n" "$@" >&2
-  exit 1
-}
-
-pw::require_bash_version() {
-  if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
-    pw::exit "pw requires bash-4.2 or later. Installed: ${BASH_VERSION}" \
-             "Please install a newer version of bash."
-  fi
-}
-
-pw::require_fzf() {
-  command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
-}
-
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
@@ -100,6 +84,22 @@ pw::run_hook_register_with_extension() {
   pw::register_with_extension "$2" && echo 1 || echo 0
 }
 
+pw::plugins() {
+  find "${PW_PLUGINS}" -type f -name "hook.bash" | LC_ALL="C.UTF-8" sort
+}
+
+pw::set_keychain() {
+  if [[ "$1" == *:* ]]; then
+    PW_KEYCHAIN="${1%%:*}"
+    PW_KEYCHAIN_OPTIONS="${1#*:}"
+  else
+    PW_KEYCHAIN="$1"
+  fi
+
+  [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
+    "Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC})."
+}
+
 pw::select_keychain() {
   if [[ -v PW_KEYCHAIN ]]; then
     pw::set_keychain "${PW_KEYCHAIN}"
@@ -179,50 +179,6 @@ pw::infer_plugin() {
   fi
 }
 
-pw::set_keychain() {
-  if [[ "$1" == *:* ]]; then
-    PW_KEYCHAIN="${1%%:*}"
-    PW_KEYCHAIN_OPTIONS="${1#*:}"
-  else
-    PW_KEYCHAIN="$1"
-  fi
-
-  [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
-    "Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC})."
-}
-
-pw::plugins() {
-  find "${PW_PLUGINS}" -type f -name "hook.bash" | LC_ALL="C.UTF-8" sort
-}
-
-pw::prompt_keychain_password() {
-  if [[ ! -v PW_KEYCHAIN_PASSWORD ]]; then
-    if [[ -p /dev/stdin ]]
-    then IFS= read -r PW_KEYCHAIN_PASSWORD
-    else IFS= read -rsp "Please enter the keychain password:"$'\n' PW_KEYCHAIN_PASSWORD </dev/tty
-    fi
-    export PW_KEYCHAIN_PASSWORD
-  fi
-}
-
-PW_PASSWORD=""
-pw::prompt_password() {
-  if [[ -p /dev/stdin ]]; then
-    IFS= read -r PW_PASSWORD
-  else
-    local retype
-    IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' PW_PASSWORD
-    if [[ -n "${PW_PASSWORD}" ]]; then
-      IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
-      if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
-        pw::exit "Error: the entered passwords do not match."
-      fi
-    else
-      PW_PRINT=1 PW_PASSWORD="$(pw::gen)"
-    fi
-  fi
-}
-
 pw::output() {
   if (( PW_PRINT )); then
     echo "$1"
@@ -262,11 +218,39 @@ PW_NAME=""
 PW_ACCOUNT=""
 PW_URL=""
 PW_NOTES=""
+PW_PASSWORD=""
 declare -ig PW_FZF=0
 
 pw::plugin() {
   local cmd="$1"; shift
   "${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS:-}" "$@";
+}
+
+pw::prompt_password() {
+  if [[ -p /dev/stdin ]]; then
+    IFS= read -r PW_PASSWORD
+  else
+    local retype
+    IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' PW_PASSWORD
+    if [[ -n "${PW_PASSWORD}" ]]; then
+      IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
+      if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
+        pw::exit "Error: the entered passwords do not match."
+      fi
+    else
+      PW_PRINT=1 PW_PASSWORD="$(pw::gen)"
+    fi
+  fi
+}
+
+pw::prompt_keychain_password() {
+  if [[ ! -v PW_KEYCHAIN_PASSWORD ]]; then
+    if [[ -p /dev/stdin ]]
+    then IFS= read -r PW_KEYCHAIN_PASSWORD
+    else IFS= read -rsp "Please enter the keychain password:"$'\n' PW_KEYCHAIN_PASSWORD </dev/tty
+    fi
+    export PW_KEYCHAIN_PASSWORD
+  fi
 }
 
 pw::init() {
@@ -372,6 +356,22 @@ pw::select_item_with_prompt() {
 #
 # END plugin
 #
+
+pw::exit() {
+  printf "%s\n" "$@" >&2
+  exit 1
+}
+
+pw::require_bash_version() {
+  if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
+    pw::exit "pw requires bash-4.2 or later. Installed: ${BASH_VERSION}" \
+             "Please install a newer version of bash."
+  fi
+}
+
+pw::require_fzf() {
+  command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
+}
 
 main() {
   pw::require_bash_version
