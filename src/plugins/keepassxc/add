@@ -17,12 +17,7 @@ for (( i = 0; i < ${#dirs[@]} - 1; i++ )); do
   "${_keepassxc_cli_with_args}" "${options}" mkdir "${keychain}" "${dirs[i]::-1}" <<< "${PW_KEYCHAIN_PASSWORD}" &>/dev/null || true
 done
 
-"${_keepassxc_cli_with_args}" "${options}" add --password-prompt \
-  "${keychain}" \
-  ${account:+--username "${account}"} \
-  ${url:+--url "${url}"} \
-  ${notes:+--notes "${notes}"} \
-  "${name}" << EOF
+"${_keepassxc_cli_with_args}" "${options}" add --password-prompt "${keychain}" ${account:+--username "${account}"} ${url:+--url "${url}"} ${notes:+--notes "${notes}"} "${name}" << EOF
 ${PW_KEYCHAIN_PASSWORD}
 ${password}
 EOF
