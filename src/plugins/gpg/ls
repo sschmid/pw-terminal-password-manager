@@ -8,6 +8,6 @@ pushd "${keychain}" >/dev/null || exit 1
 popd >/dev/null || exit 1
 
 case "${format}" in
-  fzf) echo "${list}" | awk '{print $0 "\t\t\t" $0}' ;;
+  fzf) awk '{print $0 "\t\t\t" $0}' <<< "${list}" ;;
   *) echo "${list}" ;;
 esac

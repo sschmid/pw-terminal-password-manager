@@ -14,7 +14,7 @@ fi
 
 if [[ "${list}" != "[empty]" ]]; then
   case "${format}" in
-    fzf) echo "${list}" | awk '{print $0 "\t\t\t" $0}' ;;
+    fzf) awk '{print $0 "\t\t\t" $0}' <<< "${list}" ;;
     *) echo "${list}" ;;
   esac
 fi
