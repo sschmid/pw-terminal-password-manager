@@ -192,11 +192,7 @@ pw::set_keychain() {
 }
 
 pw::plugins() {
-  find "${PW_PLUGINS}" \
-    -path "${PW_PLUGINS}/sample" -prune \
-    -type f -o -name "hook.bash" \
-    -print \
-  | LC_ALL="C.UTF-8" sort
+  find "${PW_PLUGINS}" -type f -name "hook.bash" | LC_ALL="C.UTF-8" sort
 }
 
 pw::prompt_keychain_password() {

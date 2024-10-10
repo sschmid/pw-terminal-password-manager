@@ -153,13 +153,3 @@ EOF
   assert_success
   assert_output "env test"
 }
-
-@test "ignores sample plugin" {
-  _source_pw
-  run pw::plugins
-  assert_output --partial "macos_keychain/hook.bash"
-  assert_output --partial "keepassxc/hook.bash"
-  assert_output --partial "gpg/hook.bash"
-
-  refute_output --partial "sample/hook.bash"
-}
