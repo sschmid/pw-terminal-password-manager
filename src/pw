@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1090,SC1091,SC2119
-SHELL="$(which bash)"
 set -euo pipefail
+IFS=$'\n\t'
+
+# make fzf preview use bash
+SHELL="$(which bash)"
 
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
@@ -111,13 +114,13 @@ pw::select_keychain() {
       [[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
     done < <(pw::plugins)
 
-    mapfile -t PW_KEYCHAINS < <(printf "%s\n" "${PW_KEYCHAINS[@]}" | awk '!line[$0]++')
+    mapfile -t PW_KEYCHAINS < <(awk '!line[$0]++' <<< "${PW_KEYCHAINS[*]}")
 
     if (( ${#PW_KEYCHAINS[@]} == 1 )); then
       pw::set_keychain "${PW_KEYCHAINS[0]}"
     else
       local keychain
-      keychain="$(printf '%s\n' "${PW_KEYCHAINS[@]}" | sort -f | fzf --prompt "keychain> " --layout reverse)"
+      keychain="$(echo "${PW_KEYCHAINS[*]}" | sort -f | fzf --prompt "keychain> " --layout reverse)"
       pw::set_keychain "${keychain}"
     fi
   fi
@@ -138,11 +141,11 @@ pw::select_keychain() {
   if (( n == 1 )); then
     PW_PLUGIN="${plugins[0]}"
   elif (( n > 1 )); then
-    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "$(printf '%s\n' "${plugins[@]}")"
+    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
   else
     if [[ -f "${PW_KEYCHAIN}" ]]; then
       pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
-               "Supported file types are:" "$(printf '%s\n' "${types[@]}")"
+               "Supported file types are:" "${types[*]}"
     else
       pw::exit "pw: ${PW_KEYCHAIN}: No such file or directory"
     fi
@@ -171,7 +174,7 @@ pw::infer_plugin() {
   if (( n == 1 )); then
     PW_PLUGIN="${plugins[0]}"
   elif (( n > 1 )); then
-    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "$(printf '%s\n' "${plugins[@]}")"
+    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
   else
     pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
              "Supported extensions are:" \
@@ -309,7 +312,7 @@ pw::rm() {
   local -i remove=1
   pw::select_item_with_prompt "remove" "$@"
   if (( PW_FZF )); then
-    read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
+    IFS= read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
     [[ "${REPLY}" == [yY] ]] || remove=0
   fi
   (( ! remove )) || pw::plugin rm "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
