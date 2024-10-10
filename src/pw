@@ -67,28 +67,8 @@ customization:
 EOF
 }
 
-pw::run_hook_discover_keychains() {
-  source "$1"
-  pw::discover_keychains
-}
-
-# shellcheck disable=SC2153
-pw::run_hook_register() {
-  source "$1"
-  echo "${FILE_TYPE}"
-  pw::register && echo 1 || echo 0
-}
-
-# shellcheck disable=SC2153
-pw::run_hook_register_with_extension() {
-  source "$1"
-  echo "${FILE_TYPE}"
-  echo "${FILE_EXTENSION}"
-  pw::register_with_extension "$2" && echo 1 || echo 0
-}
-
 pw::plugins() {
-  find "${PW_PLUGINS}" -type f -name "hook.bash" | LC_ALL="C.UTF-8" sort
+  find "${PW_PLUGINS}" -type f -name "hook" | LC_ALL="C.UTF-8" sort
 }
 
 pw::set_keychain() {
@@ -109,8 +89,7 @@ pw::select_keychain() {
   else
     local keychains
     while read -r hook; do
-      # Run hook in a subshell to avoid affecting the current shell
-      keychains="$(pw::run_hook_discover_keychains "${hook}")"
+      keychains="$("${hook}" "discover_keychains")"
       [[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
     done < <(pw::plugins)
 
@@ -127,14 +106,13 @@ pw::select_keychain() {
 
   local -a plugins=() types=()
   while read -r hook; do
-    # Run hook in a subshell to avoid affecting the current shell
     while true; do
       read -r file_type
       read -r register
       types+=("${file_type}")
-      (( register )) && plugins+=("$(dirname "${hook}")")
+      [[ "${register}" == no ]] || plugins+=("$(dirname "${hook}")")
       break
-    done < <(pw::run_hook_register "${hook}")
+    done < <("${hook}" "register_with_keychain" "${PW_KEYCHAIN}")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}
@@ -158,16 +136,15 @@ pw::infer_plugin() {
   local extension
   extension="$(tr '[:upper:]' '[:lower:]' <<< "${PW_KEYCHAIN##*.}")"
   while read -r hook; do
-    # Run hook in a subshell to avoid affecting the current shell
     while true; do
       read -r file_type
       read -r file_extension
       read -r register
       types+=("${file_type}")
       exts+=("${file_extension}")
-      (( register )) && plugins+=("$(dirname "${hook}")")
+      [[ "${register}" == no ]] || plugins+=("$(dirname "${hook}")")
       break
-    done < <(pw::run_hook_register_with_extension "${hook}" "${extension}")
+    done < <("${hook}" "register_with_extension" "${extension}")
   done < <(pw::plugins)
 
   local -i n=${#plugins[@]}

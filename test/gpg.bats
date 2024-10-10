@@ -435,8 +435,7 @@ EOF
 ################################################################################
 
 @test "discovers no keychains" {
-  source "${PROJECT_ROOT}/src/plugins/gpg/hook.bash"
-  run pw::discover_keychains
+  run "${PROJECT_ROOT}/src/plugins/gpg/hook" "discover_keychains"
   assert_success
   refute_output
 }
@@ -445,9 +444,8 @@ EOF
   assert_adds_item "${PW_1}" "${NAME_A}.gpg"
   assert_item_exists "${PW_1}" "${NAME_A}.gpg"
 
-  source "${PROJECT_ROOT}/src/plugins/gpg/hook.bash"
   cd "${PW_KEYCHAIN}"
-  run pw::discover_keychains
+  run "${PROJECT_ROOT}/src/plugins/gpg/hook" "discover_keychains"
   assert_success
   assert_output "${PW_KEYCHAIN}"
 }
@@ -456,9 +454,8 @@ EOF
   assert_adds_item "${PW_1}" "${NAME_A}.asc"
   assert_item_exists "${PW_1}" "${NAME_A}.asc"
 
-  source "${PROJECT_ROOT}/src/plugins/gpg/hook.bash"
   cd "${PW_KEYCHAIN}"
-  run pw::discover_keychains
+  run "${PROJECT_ROOT}/src/plugins/gpg/hook" "discover_keychains"
   assert_success
   assert_output "${PW_KEYCHAIN}"
 }
