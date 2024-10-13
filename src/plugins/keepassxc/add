@@ -2,7 +2,7 @@
 set -euo pipefail
 _keepassxc_cli_with_args="$(dirname "$0")/_keepassxc_cli_with_args"
 
-options="$1" keychain="$2" password="$3" name="$4" account="$5" url="$6" notes="$7"
+options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" account="$6" url="$7" notes="$8"
 
 _iterate_dirs() {
   local IFS=/ path=""
@@ -14,10 +14,10 @@ _iterate_dirs() {
 
 mapfile -t dirs < <(_iterate_dirs)
 for (( i = 0; i < ${#dirs[@]} - 1; i++ )); do
-  "${_keepassxc_cli_with_args}" "${options}" mkdir "${keychain}" "${dirs[i]::-1}" <<< "${PW_KEYCHAIN_PASSWORD}" &>/dev/null || true
+  "${_keepassxc_cli_with_args}" "${options}" mkdir "${keychain}" "${dirs[i]::-1}" <<< "${keychain_password}" &>/dev/null || true
 done
 
 "${_keepassxc_cli_with_args}" "${options}" add --password-prompt "${keychain}" ${account:+--username "${account}"} ${url:+--url "${url}"} ${notes:+--notes "${notes}"} "${name}" << EOF
-${PW_KEYCHAIN_PASSWORD}
+${keychain_password}
 ${password}
 EOF

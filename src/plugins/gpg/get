@@ -2,6 +2,6 @@
 set -euo pipefail
 _gpg="$(dirname "$0")/_gpg"
 
-options="$1" keychain="$2" name="$3" account="$4" url="$5"
+options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
 
 "${_gpg}" --decrypt "${keychain}/${name}" | sed -n 1p

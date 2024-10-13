@@ -3,7 +3,7 @@ set -euo pipefail
 _gpg="$(dirname "$0")/_gpg"
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
-options="$1" keychain="$2" password="$3" name="$4" account="$5" url="$6"
+options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" account="$6" url="$7"
 
 content="$("${_gpg}" --decrypt "${keychain}/${name}" | sed -n 2,\$p)"
 "${_gpg_encrypt}" "${options}" --output "${keychain}/${name}" --yes << EOF

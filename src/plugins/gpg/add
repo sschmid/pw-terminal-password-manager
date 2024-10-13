@@ -2,7 +2,7 @@
 set -euo pipefail
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
-options="$1" keychain="$2" password="$3" name="$4" account="$5" url="$6" notes="$7"
+options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" account="$6" url="$7" notes="$8"
 
 # shellcheck disable=SC2174
 mkdir -m 700 -p "${keychain}"

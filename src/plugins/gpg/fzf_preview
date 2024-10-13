@@ -4,7 +4,7 @@ _gpg="$(dirname "$0")/_gpg"
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 _get_details="$(dirname "$0")/_get_details"
 
-options="$1" keychain="$2"
+options="$1" keychain_password="$2" keychain="$3"
 
 # KCOV_EXCL_START
 # shellcheck disable=SC1083
