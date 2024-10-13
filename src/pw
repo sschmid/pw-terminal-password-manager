@@ -230,7 +230,7 @@ pw::init() {
 
 pw::add() {
   local keychain_password
-  keychain_password="$(pw::plugin cache_keychain_password "add" "${PW_KEYCHAIN}")"
+  keychain_password="$(pw::plugin keychain_password "add" "${PW_KEYCHAIN}")"
   if (( $# )); then
     pw::select_item_with_prompt "add" "${keychain_password}" "$@"
   else
@@ -247,7 +247,7 @@ pw::add() {
 
 pw::edit() {
   local keychain_password
-  keychain_password="$(pw::plugin cache_keychain_password "edit" "${PW_KEYCHAIN}")"
+  keychain_password="$(pw::plugin keychain_password "edit" "${PW_KEYCHAIN}")"
   pw::select_item_with_prompt "edit" "${keychain_password}" "$@"
   pw::plugin edit "${keychain_password}" "${PW_KEYCHAIN}" "$(pw::prompt_password)" \
                   "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
@@ -255,7 +255,7 @@ pw::edit() {
 
 pw::get() {
   local keychain_password
-  keychain_password="$(pw::plugin cache_keychain_password "get" "${PW_KEYCHAIN}")"
+  keychain_password="$(pw::plugin keychain_password "get" "${PW_KEYCHAIN}")"
   if (( PW_PRINT ))
   then pw::select_item_with_prompt "print" "${keychain_password}" "$@"
   else pw::select_item_with_prompt "copy" "${keychain_password}" "$@"
@@ -267,7 +267,7 @@ pw::get() {
 
 pw::show() {
   local keychain_password
-  keychain_password="$(pw::plugin cache_keychain_password "show" "${PW_KEYCHAIN}")"
+  keychain_password="$(pw::plugin keychain_password "show" "${PW_KEYCHAIN}")"
   if (( PW_PRINT ))
   then pw::select_item_with_prompt "print details" "${keychain_password}" "$@"
   else pw::select_item_with_prompt "copy details" "${keychain_password}" "$@"
@@ -279,7 +279,7 @@ pw::show() {
 
 pw::rm() {
   local keychain_password
-  keychain_password="$(pw::plugin cache_keychain_password "rm" "${PW_KEYCHAIN}")"
+  keychain_password="$(pw::plugin keychain_password "rm" "${PW_KEYCHAIN}")"
   local -i remove=1
   pw::select_item_with_prompt "remove" "${keychain_password}" "$@"
   if (( PW_FZF )); then
@@ -292,7 +292,7 @@ pw::rm() {
 
 pw::ls() {
   local keychain_password
-  keychain_password="$(pw::plugin cache_keychain_password "ls" "${PW_KEYCHAIN}")"
+  keychain_password="$(pw::plugin keychain_password "ls" "${PW_KEYCHAIN}")"
   pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "$@"
 }
 
