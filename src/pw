@@ -197,7 +197,6 @@ PW_NAME=""
 PW_ACCOUNT=""
 PW_URL=""
 PW_NOTES=""
-PW_PASSWORD=""
 declare -i PW_FZF=0
 
 pw::plugin() {
@@ -206,20 +205,22 @@ pw::plugin() {
 }
 
 pw::prompt_password() {
+  local password
   if [[ -p /dev/stdin ]]; then
-    IFS= read -r PW_PASSWORD
+    IFS= read -r password
   else
-    IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' PW_PASSWORD
-    if [[ -n "${PW_PASSWORD}" ]]; then
+    IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' password
+    if [[ -n "${password}" ]]; then
       local retype
       IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
-      if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
+      if [[ "${retype}" != "${password}" ]]; then
         pw::exit "Error: the entered passwords do not match."
       fi
     else
-      PW_PRINT=1 PW_PASSWORD="$(pw::gen)"
+      PW_PRINT=1 password="$(pw::gen)"
     fi
   fi
+  echo "${password}"
 }
 
 pw::prompt_keychain_password() {
@@ -250,15 +251,13 @@ pw::add() {
     PW_NOTES=$(cat)
   fi
 
-  pw::prompt_password
-  pw::plugin add "${PW_KEYCHAIN}" "${PW_PASSWORD}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
+  pw::plugin add "${PW_KEYCHAIN}" "$(pw::prompt_password)" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
 }
 
 pw::edit() {
   pw::plugin prepare_keychain "edit" || pw::prompt_keychain_password
   pw::select_item_with_prompt "edit" "$@"
-  pw::prompt_password
-  pw::plugin edit "${PW_KEYCHAIN}" "${PW_PASSWORD}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+  pw::plugin edit "${PW_KEYCHAIN}" "$(pw::prompt_password)" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
 }
 
 pw::get() {

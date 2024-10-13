@@ -1,4 +1,4 @@
-# shellcheck disable=SC2030,SC2031
+# shellcheck disable=SC2030,SC2031,SC2034
 setup() {
   load 'pw'
   _setup
@@ -57,16 +57,9 @@ assert_pw_home() {
   assert_pw_home
 }
 
-_intercept_prompt_password() {
-  # shellcheck disable=SC2034
-  PW_NAME="name"
-  pw::prompt_password
-  echo "${PW_PASSWORD}"
-}
-
 @test "reads item password from stdin" {
   _source_pw
-  run _intercept_prompt_password <<< "stdin test"
+  run pw::prompt_password <<< "stdin test"
   assert_success
   assert_output "stdin test"
 }
@@ -75,7 +68,8 @@ _intercept_prompt_password() {
 @test "prompts item password when no stdin" {
   _skip_manual_test "' test' twice (with leading whitespace)"
   _source_pw
-  run _intercept_prompt_password
+  PW_NAME="name"
+  run pw::prompt_password
   assert_success
   cat << EOF | assert_output -
 Enter password for 'name' (leave empty to generate password):
@@ -88,7 +82,8 @@ EOF
 @test "prompts and fails if retyped password does not match" {
   _skip_manual_test "'test1' and 'test2'"
   _source_pw
-  run _intercept_prompt_password
+  PW_NAME="name"
+  run pw::prompt_password
   assert_failure
   cat << EOF | assert_output -
 Enter password for 'name' (leave empty to generate password):
@@ -104,7 +99,8 @@ EOF
   export PW_PRINT=1
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"
-  run _intercept_prompt_password
+  PW_NAME="name"
+  run pw::prompt_password
   assert_success
   cat << EOF | assert_output -
 Enter password for 'name' (leave empty to generate password):
