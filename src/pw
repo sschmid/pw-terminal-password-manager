@@ -226,7 +226,7 @@ pw::prompt_keychain_password() {
   if [[ ! -v PW_KEYCHAIN_PASSWORD ]]; then
     if [[ -p /dev/stdin ]]
     then IFS= read -r PW_KEYCHAIN_PASSWORD
-    else IFS= read -rsp "Please enter the keychain password:"$'\n' PW_KEYCHAIN_PASSWORD </dev/tty
+    else IFS= read -rsp "Please enter the keychain password:"$'\n' PW_KEYCHAIN_PASSWORD
     fi
     export PW_KEYCHAIN_PASSWORD
   fi
@@ -243,9 +243,9 @@ pw::add() {
   if (( $# )); then
     pw::select_item_with_prompt "add" "$@"
   else
-    IFS= read -rp "Title: " PW_NAME </dev/tty
-    IFS= read -rp "Username: " PW_ACCOUNT </dev/tty
-    IFS= read -rp "URL: " PW_URL </dev/tty
+    IFS= read -rp "Title: " PW_NAME
+    IFS= read -rp "Username: " PW_ACCOUNT
+    IFS= read -rp "URL: " PW_URL
     echo "Notes: Enter multi-line input (end with Ctrl+D):"
     PW_NOTES=$(cat)
   fi
