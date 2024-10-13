@@ -74,7 +74,7 @@ pw::select_keychain() {
   if [[ -v PW_KEYCHAIN ]]; then
     pw::set_keychain "${PW_KEYCHAIN}"
   else
-    local all_keychains keychains
+    local all_keychains hook keychains
 
     # KCOV_EXCL_START
     mapfile -t all_keychains < <(awk -v home="${HOME}" '{
@@ -101,6 +101,7 @@ pw::select_keychain() {
   fi
 
   local -a plugins=() types=()
+  local file_type register
   while read -r hook; do
     while true; do
       read -r file_type
@@ -129,7 +130,7 @@ pw::select_keychain() {
 pw::infer_plugin() {
   pw::set_keychain "$1"
   local -a plugins=() types=() exts=()
-  local extension
+  local extension hook file_type file_extension register
   extension="$(tr '[:upper:]' '[:lower:]' <<< "${PW_KEYCHAIN##*.}")"
   while read -r hook; do
     while true; do
@@ -208,9 +209,9 @@ pw::prompt_password() {
   if [[ -p /dev/stdin ]]; then
     IFS= read -r PW_PASSWORD
   else
-    local retype
     IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' PW_PASSWORD
     if [[ -n "${PW_PASSWORD}" ]]; then
+      local retype
       IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
       if [[ "${retype}" != "${PW_PASSWORD}" ]]; then
         pw::exit "Error: the entered passwords do not match."
@@ -287,8 +288,9 @@ pw::rm() {
   local -i remove=1
   pw::select_item_with_prompt "remove" "$@"
   if (( PW_FZF )); then
-    IFS= read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): "
-    [[ "${REPLY}" == [yY] ]] || remove=0
+    local answer
+    IFS= read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): " answer
+    [[ "${answer}" == [yY] ]] || remove=0
   fi
   (( ! remove )) || pw::plugin rm "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
 }
@@ -358,6 +360,7 @@ main() {
   pw::require_bash_version
   pw::require_fzf
 
+  local options
   while getopts ":hpk:" options; do
     case "${options}" in
       h) pw::help; return ;;
