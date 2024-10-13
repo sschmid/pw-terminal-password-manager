@@ -11,10 +11,10 @@ setup() {
   refute_output --partial "# test pwrc sourced"
 }
 
-@test "creates pwrc" {
+@test "doesn't create pwrc" {
   export PW_RC="${BATS_TEST_TMPDIR}/mypwrc.bash"
   run pw -h
-  assert_file_exists "${PW_RC}"
+  assert_file_not_exists "${PW_RC}"
 }
 
 @test "exits when invalid option" {

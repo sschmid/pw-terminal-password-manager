@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1090,SC1091,SC2119
+# 🔐 pw - Terminal Password Manager
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -11,26 +11,12 @@ while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
-declare -r PW_HOME
 
-: "${PW_RC:="${HOME}/.pwrc"}"
-[[ ! -f "${PW_RC}" ]] && touch "${PW_RC}"
-
-declare -a PW_KEYCHAINS
-declare -i PW_PRINT=0 PW_GEN_LENGTH PW_CLIP_TIME
-
-# KCOV_EXCL_START
-mapfile -t PW_KEYCHAINS < <(awk -v home="${HOME}" '{
-  gsub(/^~/, home)
-  gsub(/^\$HOME/, home)
-  gsub(/^\${HOME}/, home)
-  if (NF) print $1 }' "${PW_RC}")
-# KCOV_EXCL_STOP
-
-: ${PW_GEN_LENGTH:=35}
-: "${PW_GEN_CLASS:="[:graph:]"}"
-: ${PW_CLIP_TIME:=45}
-: "${PW_PLUGINS:="${PW_HOME}/src/plugins"}"
+declare -r PW_RC="${PW_RC:-"${HOME}/.pwrc"}"
+declare -ir PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
+declare -r PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
+declare -ir PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
+declare -r PW_PLUGINS="${PW_PLUGINS:-"${PW_HOME}/src/plugins"}"
 
 pw::help() {
   cat << EOF
@@ -88,19 +74,28 @@ pw::select_keychain() {
   if [[ -v PW_KEYCHAIN ]]; then
     pw::set_keychain "${PW_KEYCHAIN}"
   else
-    local keychains
+    local all_keychains keychains
+
+    # KCOV_EXCL_START
+    mapfile -t all_keychains < <(awk -v home="${HOME}" '{
+      gsub(/^~/, home)
+      gsub(/^\$HOME/, home)
+      gsub(/^\${HOME}/, home)
+      if (NF) print $1 }' "${PW_RC}")
+    # KCOV_EXCL_STOP
+
     while read -r hook; do
       keychains="$("${hook}" "discover_keychains")"
-      [[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
+      [[ -z "${keychains}" ]] || all_keychains+=("${keychains}")
     done < <(pw::plugins)
 
-    mapfile -t PW_KEYCHAINS < <(awk '!line[$0]++' <<< "${PW_KEYCHAINS[*]}")
+    mapfile -t all_keychains < <(awk '!line[$0]++' <<< "${all_keychains[*]}")
 
-    if (( ${#PW_KEYCHAINS[@]} == 1 )); then
-      pw::set_keychain "${PW_KEYCHAINS[0]}"
+    if (( ${#all_keychains[@]} == 1 )); then
+      pw::set_keychain "${all_keychains[0]}"
     else
       local keychain
-      keychain="$(echo "${PW_KEYCHAINS[*]}" | sort -f | fzf --prompt "keychain> " --layout reverse)"
+      keychain="$(echo "${all_keychains[*]}" | sort -f | fzf --prompt "keychain> " --layout reverse)"
       pw::set_keychain "${keychain}"
     fi
   fi
@@ -118,7 +113,7 @@ pw::select_keychain() {
 
   local -i n=${#plugins[@]}
   if (( n == 1 )); then
-    PW_PLUGIN="${plugins[0]}"
+    declare -g PW_PLUGIN="${plugins[0]}"
   elif (( n > 1 )); then
     pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
   else
@@ -150,7 +145,7 @@ pw::infer_plugin() {
 
   local -i n=${#plugins[@]}
   if (( n == 1 )); then
-    PW_PLUGIN="${plugins[0]}"
+    declare -g PW_PLUGIN="${plugins[0]}"
   elif (( n > 1 )); then
     pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
   else
@@ -159,6 +154,8 @@ pw::infer_plugin() {
              "$(for i in "${!exts[@]}"; do printf "%-13s - %s\n" "${exts[$i]}" "${types[$i]}"; done)"
   fi
 }
+
+declare -i PW_PRINT=0
 
 pw::output() {
   if (( PW_PRINT )); then
@@ -200,7 +197,7 @@ PW_ACCOUNT=""
 PW_URL=""
 PW_NOTES=""
 PW_PASSWORD=""
-declare -ig PW_FZF=0
+declare -i PW_FZF=0
 
 pw::plugin() {
   local cmd="$1"; shift
@@ -392,4 +389,7 @@ main() {
   fi
 }
 
-[[ "${BASH_SOURCE[0]}" != "$0" ]] || main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  declare -r PW_HOME
+  main "$@"
+fi
