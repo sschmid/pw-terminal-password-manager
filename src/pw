@@ -11,6 +11,7 @@ while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
+declare -r PW_HOME
 
 : "${PW_RC:="${HOME}/.pwrc"}"
 [[ ! -f "${PW_RC}" ]] && touch "${PW_RC}"
