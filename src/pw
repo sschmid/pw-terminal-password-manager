@@ -11,6 +11,7 @@ while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
+declare -r PW_HOME
 
 declare -r PW_RC="${PW_RC:-"${HOME}/.pwrc"}"
 declare -ir PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
@@ -388,7 +389,4 @@ main() {
   fi
 }
 
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
-  declare -r PW_HOME
-  main "$@"
-fi
+[[ "${BASH_SOURCE[0]}" != "$0" ]] || main "$@"

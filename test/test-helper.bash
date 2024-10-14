@@ -4,12 +4,15 @@ _common_setup() {
   load 'test_helper/bats-assert/load.bash'
   load 'test_helper/bats-file/load.bash'
 
+  export LC_ALL="en_US.UTF-8"
+  export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
+
   SHELL="$(which bash)"
+
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"
   PATH="${PROJECT_ROOT}/src:${PATH}"
 
   KEYCHAIN_TEST_PASSWORD=" test password "
-
   NAME_A=" a test name "
   NAME_B=" b test name "
   ACCOUNT_A=" a test account "
@@ -23,13 +26,9 @@ and spaces "
   PW_1=" 1 test pw "
   PW_2=" 2 test pw "
   PW_3=" 3 test pw "
-
-  export LC_ALL="en_US.UTF-8"
-  export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
 }
 
 _set_pwrc_with_keychains() {
-  export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
   printf "%s\n" "$@" > "${PW_RC}"
 }
 

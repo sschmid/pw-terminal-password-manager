@@ -4,15 +4,15 @@ setup() {
   _setup
 }
 
-@test "does not source pwrc when specified" {
-  _set_pwrc_with_keychains "test-keychain"
+@test "does not source pwrc" {
+  _set_pwrc_with_keychains " test keychain "
   echo 'echo "# test pwrc sourced"' >> "${PW_RC}"
   run pw -h
   refute_output --partial "# test pwrc sourced"
 }
 
 @test "doesn't create pwrc" {
-  export PW_RC="${BATS_TEST_TMPDIR}/mypwrc.bash"
+  PW_RC="${BATS_TEST_TMPDIR}/mypwrc"
   run pw -h
   assert_file_not_exists "${PW_RC}"
 }
