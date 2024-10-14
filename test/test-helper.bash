@@ -25,11 +25,11 @@ and spaces "
   PW_3=" 3 test pw "
 
   export LC_ALL="en_US.UTF-8"
-  export PW_RC="${BATS_TEST_TMPDIR}/pwrc.bash"
+  export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
 }
 
 _set_pwrc_with_keychains() {
-  export PW_RC="${BATS_TEST_TMPDIR}/pwrc.bash"
+  export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
   printf "%s\n" "$@" > "${PW_RC}"
 }
 
