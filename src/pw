@@ -65,6 +65,7 @@ pw::set_keychain() {
     PW_KEYCHAIN_OPTIONS="${1#*:}"
   else
     PW_KEYCHAIN="$1"
+    PW_KEYCHAIN_OPTIONS=""
   fi
 
   [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
@@ -118,7 +119,7 @@ pw::select_keychain() {
 
   local -i n=${#plugins[@]}
   if (( n == 1 )); then
-    declare -g PW_PLUGIN="${plugins[0]}"
+    PW_PLUGIN="${plugins[0]}"
   elif (( n > 1 )); then
     pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
   else
@@ -150,7 +151,7 @@ pw::infer_plugin() {
 
   local -i n=${#plugins[@]}
   if (( n == 1 )); then
-    declare -g PW_PLUGIN="${plugins[0]}"
+    PW_PLUGIN="${plugins[0]}"
   elif (( n > 1 )); then
     pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
   else
@@ -205,7 +206,7 @@ declare -i PW_FZF=0
 
 pw::plugin() {
   local cmd="$1"; shift
-  "${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS:-}" "$@"
+  "${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS}" "$@"
 }
 
 pw::prompt_password() {
