@@ -131,14 +131,13 @@ assert_rm_not_found_output() {
 }
 
 @test "adds item with name and single line notes" {
-  local notes="single line notes"
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${notes}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${SINGLE_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   # shellcheck disable=SC2317
   _get_note() {
     local comments
-    comments="$(security find-generic-password -j "${notes}" -g "${PW_KEYCHAIN}" 2>&1 \
+    comments="$(security find-generic-password -j "${SINGLE_LINE_NOTES}" -g "${PW_KEYCHAIN}" 2>&1 \
       | awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
     echo "${comments:1:-1}"
   }
@@ -146,7 +145,7 @@ assert_rm_not_found_output() {
   run _get_note
   assert_success
   cat << EOF | assert_output -
-${notes}
+${SINGLE_LINE_NOTES}
 EOF
 }
 
@@ -489,8 +488,7 @@ EOF
 }
 
 @test "shows fzf preview for single line notes" {
-  local notes="single line notes"
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${notes}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${SINGLE_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   local cmd
@@ -506,7 +504,7 @@ Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 Where: ${URL_A}
 Comments:
-${notes}
+${SINGLE_LINE_NOTES}
 EOF
 }
 

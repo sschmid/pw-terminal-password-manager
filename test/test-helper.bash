@@ -16,6 +16,7 @@ _common_setup() {
   ACCOUNT_B=" b test account "
   URL_A=" a test url "
   URL_B=" b test url "
+  SINGLE_LINE_NOTES=" a single line note "
   MULTI_LINE_NOTES=" a test note
 with multiple lines
 and spaces "
