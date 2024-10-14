@@ -4,9 +4,36 @@ setup() {
   _setup
 }
 
+assert_pw_home() {
+  assert_output --partial "🔐 pw $(cat "${PROJECT_ROOT}/version.txt") - Terminal Password Manager"
+}
+
 @test "prints help" {
   run pw -h
+  assert_success
   assert_output --partial "usage: pw"
+}
+
+@test "resolves pw home" {
+  run pw -h
+  assert_success
+  assert_pw_home
+}
+
+@test "resolves pw home and follows symlink" {
+  ln -s "${PROJECT_ROOT}/src/pw" "${BATS_TEST_TMPDIR}/pw"
+  run "${BATS_TEST_TMPDIR}/pw" -h
+  assert_success
+  assert_pw_home
+}
+
+@test "resolves pw home and follows multiple symlinks" {
+  mkdir "${BATS_TEST_TMPDIR}"/{src,bin}
+  ln -s "${PROJECT_ROOT}/src/pw" "${BATS_TEST_TMPDIR}/src/pw"
+  ln -s "${BATS_TEST_TMPDIR}/src/pw" "${BATS_TEST_TMPDIR}/bin/pw"
+  run "${BATS_TEST_TMPDIR}/bin/pw" -h
+  assert_success
+  assert_pw_home
 }
 
 @test "doesn't source pwrc" {
