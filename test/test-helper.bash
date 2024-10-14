@@ -7,8 +7,6 @@ _common_setup() {
   export LC_ALL="en_US.UTF-8"
   export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
 
-  SHELL="$(which bash)"
-
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"
   PATH="${PROJECT_ROOT}/src:${PATH}"
 

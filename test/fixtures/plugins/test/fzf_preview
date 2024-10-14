@@ -3,4 +3,5 @@ set -euo pipefail
 
 options="$1" keychain_password="$2" keychain="$3"
 
-echo "test fzf_preview <${options}> <${keychain_password}> <${keychain}>"
+# shellcheck disable=SC2016
+echo '_=""; echo "${_:1:-1}"; echo "test fzf_preview <{4}> <{5}> <{6}> <${SHELL}>"'

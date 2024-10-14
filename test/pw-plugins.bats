@@ -262,3 +262,17 @@ EOF
   assert_success
   assert_output "test open <${KEYCHAIN_OPTIONS}> <${PW_KEYCHAIN}>"
 }
+
+################################################################################
+# fzf preview
+################################################################################
+
+# bats test_tags=tag:manual_test
+@test "runs fzf preview in bash" {
+  _skip_manual_test "activate preview and select 'name 2'. Preview should look fine with no errors."
+  export PW_TEST_PLUGIN_LS=1
+  read -rsp "Press enter to continue ..."
+  run pw -p
+  assert_success
+  assert_output "test get <> <> <${PW_KEYCHAIN}> <name 2> <account 2> <url 2>"
+}
