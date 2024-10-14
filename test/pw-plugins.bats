@@ -74,6 +74,44 @@ setup() {
 }
 
 # bats test_tags=tag:manual_test
+@test "prompts password when no stdin" {
+  _skip_manual_test "' test password ' twice (with leading whitespace)"
+  run pw add "${NAME_A}"
+  assert_success
+  cat << EOF | assert_output -
+Enter password for '${NAME_A}' (leave empty to generate password):
+Retype password for '${NAME_A}':
+test add <> <> <${PW_KEYCHAIN}> < test password > <${NAME_A}> <> <> <>
+EOF
+}
+
+# bats test_tags=tag:manual_test
+@test "add prompts password and fails if retyped password does not match" {
+  _skip_manual_test "'test 1' and 'test 2'"
+  run pw add "${NAME_A}"
+  assert_failure
+  cat << EOF | assert_output -
+Enter password for '${NAME_A}' (leave empty to generate password):
+Retype password for '${NAME_A}':
+Error: the entered passwords do not match.
+EOF
+}
+
+# bats test_tags=tag:manual_test
+@test "generates password when empty" {
+  _skip_manual_test "nothing"
+  export PW_PRINT=1
+  export PW_GEN_LENGTH=5
+  export PW_GEN_CLASS="1"
+  run pw add "${NAME_A}"
+  assert_success
+  cat << EOF | assert_output -
+Enter password for '${NAME_A}' (leave empty to generate password):
+test add <> <> <${PW_KEYCHAIN}> <11111> <${NAME_A}> <> <> <>
+EOF
+}
+
+# bats test_tags=tag:manual_test
 @test "adds item interactively" {
   _skip_manual_test "name, account, url, notes (end with Ctrl+D), then pass, pass"
   run pw add
@@ -147,6 +185,18 @@ EOF
   run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" edit "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" <<< "${PW_2}"
   assert_success
   assert_output "test edit <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${PW_2}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+# bats test_tags=tag:manual_test
+@test "edit prompts password and fails if retyped password does not match" {
+  _skip_manual_test "'test 1' and 'test 2'"
+  run pw edit "${NAME_A}"
+  assert_failure
+  cat << EOF | assert_output -
+Enter password for '${NAME_A}' (leave empty to generate password):
+Retype password for '${NAME_A}':
+Error: the entered passwords do not match.
+EOF
 }
 
 ################################################################################

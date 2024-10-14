@@ -245,7 +245,9 @@ pw::add() {
     PW_NOTES=$(cat)
   fi
 
-  pw::plugin add "${keychain_password}" "${PW_KEYCHAIN}" "$(pw::prompt_password)" \
+  local password
+  password="$(pw::prompt_password)"
+  pw::plugin add "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
                  "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
 }
 
@@ -253,7 +255,9 @@ pw::edit() {
   local keychain_password
   keychain_password="$(pw::plugin keychain_password "edit" "${PW_KEYCHAIN}")"
   pw::select_item_with_prompt "edit" "${keychain_password}" "$@"
-  pw::plugin edit "${keychain_password}" "${PW_KEYCHAIN}" "$(pw::prompt_password)" \
+  local password
+  password="$(pw::prompt_password)"
+  pw::plugin edit "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
                   "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
 }
 
