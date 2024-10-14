@@ -325,12 +325,15 @@ pw::select_item_with_prompt() {
     preview="$(pw::plugin fzf_preview "${keychain_password}" "${PW_KEYCHAIN}")"
     yank="$(declare -p PW_PRINT PW_CLIP_TIME); $(declare -f pw::output); pw::output \"\$(${preview})\""
     (( PW_PRINT )) && yank_action="print" || yank_action="copy"
+
+    # KCOV_EXCL_START
     item="$(fzf --prompt "${fzf_prompt}> " --layout reverse \
                 --delimiter '\t' --with-nth 1..3 --nth 1..3 \
                 --preview "${preview}" --preview-window hidden \
                 --header "?: toggle preview, CTRL-Y: ${yank_action} details" \
                 --bind "ctrl-y:execute(${yank})+abort" \
                 --bind '?:toggle-preview' <<< "${items}")"
+    # KCOV_EXCL_STOP
 
     PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
     PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"
