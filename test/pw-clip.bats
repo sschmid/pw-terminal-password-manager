@@ -17,22 +17,8 @@ _wait() { sleep 2; }
   assert_output "test get <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
-@test "copies item details" {
-  pw show "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
-  run pbpaste
-  assert_success
-  assert_output "test show <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
-}
-
 @test "clears clipboard after copying item password" {
   pw "${NAME_A}"
-  _wait
-  run pbpaste
-  refute_output
-}
-
-@test "clears clipboard after copying item details" {
-  pw show "${NAME_A}"
   _wait
   run pbpaste
   refute_output
@@ -44,6 +30,20 @@ _wait() { sleep 2; }
   _wait
   run pbpaste
   assert_output "after"
+}
+
+@test "copies item details" {
+  pw show "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  run pbpaste
+  assert_success
+  assert_output "test show <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+@test "clears clipboard after copying item details" {
+  pw show "${NAME_A}"
+  _wait
+  run pbpaste
+  refute_output
 }
 
 @test "doesn't clear clipboard after copying item details when changed" {

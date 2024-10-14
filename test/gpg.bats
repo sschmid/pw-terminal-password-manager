@@ -363,9 +363,9 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "unlocks keychain and prompts keychain password" {
-  unset PW_KEYCHAIN_PASSWORD
   _skip_manual_test "pw_test_password - Press enter to continue ..."
   read -rsp "Press enter to continue ..."
+  unset PW_KEYCHAIN_PASSWORD
 
   run _ps
   assert_success

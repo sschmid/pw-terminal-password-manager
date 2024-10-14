@@ -9,7 +9,7 @@ setup() {
   assert_output --partial "usage: pw"
 }
 
-@test "does not source pwrc" {
+@test "doesn't source pwrc" {
   _set_pwrc_with_keychains " test keychain "
   echo 'echo "# test pwrc sourced"' >> "${PW_RC}"
   run pw -h

@@ -122,8 +122,8 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "removes item interactively" {
-  export PW_TEST_PLUGIN_LS=1
   _skip_manual_test "select 'name 2', then enter 'y'"
+  export PW_TEST_PLUGIN_LS=1
   read -rsp "Press enter to continue ..."
   run pw rm
   assert_success

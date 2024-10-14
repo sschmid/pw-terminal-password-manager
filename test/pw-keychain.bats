@@ -4,6 +4,7 @@ setup() {
   _setup
   export PW_PLUGINS="${BATS_TEST_DIRNAME}/fixtures/plugins"
   TEST_KEYCHAIN="test keychain.test"
+  KEYCHAIN_OPTIONS="key1=value1,key2=value2"
 }
 
 @test "picks single keychain" {
@@ -14,10 +15,10 @@ setup() {
 }
 
 @test "picks single keychain and separates options" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}:key1=value1,key2=value2"
+  _set_pwrc_with_keychains "${TEST_KEYCHAIN}:${KEYCHAIN_OPTIONS}"
   run pw ls
   assert_success
-  assert_output "test ls <key1=value1,key2=value2> <> <${TEST_KEYCHAIN}> <default>"
+  assert_output "test ls <${KEYCHAIN_OPTIONS}> <> <${TEST_KEYCHAIN}> <default>"
 }
 
 @test "removes duplicates" {
@@ -39,15 +40,15 @@ setup() {
   export PW_KEYCHAIN="other test keychain.test"
   run pw ls
   assert_success
-  assert_output "test ls <> <> <${PW_KEYCHAIN}> <default>"
+  assert_output "test ls <> <> <other test keychain.test> <default>"
 }
 
 @test "prioritizes PW_KEYCHAIN over PW_KEYCHAINS and separates options" {
   _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
-  export PW_KEYCHAIN="other test keychain.test:key1=value1,key2=value2"
+  export PW_KEYCHAIN="other test keychain.test:${KEYCHAIN_OPTIONS}"
   run pw ls
   assert_success
-  assert_output "test ls <key1=value1,key2=value2> <> <other test keychain.test> <default>"
+  assert_output "test ls <${KEYCHAIN_OPTIONS}> <> <other test keychain.test> <default>"
 }
 
 @test "prioritizes pw -k over PW_KEYCHAINS" {
@@ -59,9 +60,9 @@ setup() {
 
 @test "prioritizes pw -k over PW_KEYCHAINS and separates options" {
   _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
-  run pw -k "other test keychain.test:key1=value1,key2=value2" ls
+  run pw -k "other test keychain.test:${KEYCHAIN_OPTIONS}" ls
   assert_success
-  assert_output "test ls <key1=value1,key2=value2> <> <other test keychain.test> <default>"
+  assert_output "test ls <${KEYCHAIN_OPTIONS}> <> <other test keychain.test> <default>"
 }
 
 @test "replace ~ with real HOME" {
