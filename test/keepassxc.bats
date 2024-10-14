@@ -2,8 +2,7 @@
 setup() {
   load 'keepassxc'
   _setup
-  export PW_KEYCHAIN_PASSWORD="${KEYCHAIN_TEST_PASSWORD}"
-  pw init "${PW_KEYCHAIN}" <<< "${PW_KEYCHAIN_PASSWORD}"
+  pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 # shellcheck disable=SC2034
@@ -11,7 +10,7 @@ _init_with_key_file() {
   local keyfile="${BATS_TEST_TMPDIR}/pw_keepassxc test_keyfile"
   echo "pw_keepassxc test_keyfile" > "${keyfile}"
   PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_keepassxc test_with_keyfile.kdbx:keyfile=${keyfile}"
-  pw init "${PW_KEYCHAIN}" <<< "${PW_KEYCHAIN_PASSWORD}"
+  pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 _set_keychain() {
@@ -44,7 +43,7 @@ assert_rm_not_found_output() {
 }
 
 assert_username() {
-  run keepassxc-cli show -qsa username "${PW_KEYCHAIN}" "$1" <<< "${PW_KEYCHAIN_PASSWORD}"
+  run keepassxc-cli show -qsa username "${PW_KEYCHAIN}" "$1" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   if (( $# == 2 ))
   then assert_output "$2"
@@ -53,7 +52,7 @@ assert_username() {
 }
 
 assert_url() {
-  run keepassxc-cli show -qsa url "${PW_KEYCHAIN}" "$1" <<< "${PW_KEYCHAIN_PASSWORD}"
+  run keepassxc-cli show -qsa url "${PW_KEYCHAIN}" "$1" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   if (( $# == 2 ))
   then assert_output "$2"
@@ -62,7 +61,7 @@ assert_url() {
 }
 
 assert_notes() {
-  run keepassxc-cli show -qsa notes "${PW_KEYCHAIN}" "$1" <<< "${PW_KEYCHAIN_PASSWORD}"
+  run keepassxc-cli show -qsa notes "${PW_KEYCHAIN}" "$1" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   if (( $# == 2 ))
   then assert_output "$2"
@@ -78,11 +77,32 @@ assert_item_recycled() {
 }
 
 ################################################################################
+# keychain password
+################################################################################
+
+@test "reads keychain password from stdin" {
+  run "${PROJECT_ROOT}/src/plugins/keepassxc/keychain_password" "" "" "${PW_KEYCHAIN}" <<< "stdin test"
+  assert_success
+  assert_output "stdin test"
+}
+
+# bats test_tags=tag:manual_test
+@test "prompts keychain password when no stdin" {
+  _skip_manual_test "'test'"
+  run "${PROJECT_ROOT}/src/plugins/keepassxc/keychain_password" "" "" "${PW_KEYCHAIN}"
+  assert_success
+  cat << EOF | assert_output -
+Enter password to unlock ${PW_KEYCHAIN}:
+test
+EOF
+}
+
+################################################################################
 # init
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  assert_init_fails <<< "${PW_KEYCHAIN_PASSWORD}"
+  assert_init_fails <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 # bats test_tags=tag:manual_test
@@ -97,11 +117,6 @@ assert_item_recycled() {
 ################################################################################
 # get
 ################################################################################
-
-@test "reads keychain password from stdin" {
-  unset PW_KEYCHAIN_PASSWORD
-  assert_item_not_exists "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
-}
 
 @test "doesn't have item" {
   assert_item_not_exists "${NAME_A}"
@@ -163,7 +178,7 @@ assert_item_recycled() {
   _skip_manual_test "'${KEYCHAIN_TEST_PASSWORD}'"
   assert_adds_item "${PW_1}" "${NAME_A}"
 
-  unset PW_KEYCHAIN_PASSWORD
+  unset KEYCHAIN_TEST_PASSWORD
   run pw ls
   assert_success
   cat << EOF | assert_output -
@@ -336,7 +351,7 @@ EOF
 @test "lists no items when wrong keychain password" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
   # shellcheck disable=SC2030
-  PW_KEYCHAIN_PASSWORD="wrong"
+  KEYCHAIN_TEST_PASSWORD="wrong"
   run pw ls
   assert_failure
   assert_output "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again."
@@ -384,7 +399,7 @@ EOF
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "" "" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
@@ -405,7 +420,7 @@ EOF
 
   _set_keychain "${PW_KEYCHAIN}"
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "${PW_KEYCHAIN_OPTIONS}" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "${PW_KEYCHAIN_OPTIONS}" "" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
