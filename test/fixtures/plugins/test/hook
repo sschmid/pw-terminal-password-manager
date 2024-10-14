@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+FILE_TYPE="Test"
+FILE_EXTENSION="test"
+
+case "$1" in
+  discover_keychains) ;;
+  register_with_keychain)
+    echo "${FILE_TYPE}"
+    if [[ $2 == *".test" ]]; then
+      echo yes
+    else
+      echo no
+    fi
+  ;;
+  register_with_extension)
+    echo "${FILE_TYPE}"
+    echo "${FILE_EXTENSION}"
+    if [[ "$2" == "${FILE_EXTENSION}" ]]; then
+      echo yes
+    else
+      echo no
+    fi
+  ;;
+esac
