@@ -93,13 +93,13 @@ pw::select_keychain() {
       [[ -z "${keychains}" ]] || all_keychains+=("${keychains}")
     done < <(pw::plugins)
 
-    mapfile -t all_keychains < <(awk '!line[$0]++' <<< "${all_keychains[*]}")
+    mapfile -t all_keychains < <(awk '!line[$0]++' <<< "${all_keychains[*]}" | sort -f)
 
     if (( ${#all_keychains[@]} == 1 )); then
       pw::set_keychain "${all_keychains[0]}"
     else
       local keychain
-      keychain="$(echo "${all_keychains[*]}" | sort -f | fzf --prompt "keychain> " --layout reverse)"
+      keychain="$(fzf --prompt "keychain> " --layout reverse <<< "${all_keychains[*]}")"
       pw::set_keychain "${keychain}"
     fi
   fi
