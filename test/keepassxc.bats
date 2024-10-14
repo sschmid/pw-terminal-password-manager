@@ -152,9 +152,9 @@ EOF
 }
 
 @test "adds item with name and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
-  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
+  assert_notes "${NAME_A}" "${MULTI_LINE_NOTES}"
 }
 
 @test "adds item in subfolder" {
@@ -223,7 +223,7 @@ EOF
 }
 
 @test "shows item details" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   run pw -p show "${NAME_A}"
   assert_success
   cat << EOF | assert_output --partial -
@@ -231,7 +231,7 @@ Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
 URL: ${URL_A}
-Notes: ${MULTILINE_NOTES_A}
+Notes: ${MULTI_LINE_NOTES}
 EOF
 }
 
@@ -284,12 +284,12 @@ EOF
 }
 
 @test "edits item and keeps account, url and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   assert_edits_item "${PW_2}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_A}"
   assert_username "${NAME_A}" "${ACCOUNT_A}"
   assert_url "${NAME_A}" "${URL_A}"
-  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
+  assert_notes "${NAME_A}" "${MULTI_LINE_NOTES}"
 }
 
 @test "edits item with key-file" {
@@ -395,7 +395,7 @@ EOF
 ################################################################################
 
 @test "shows fzf preview" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   local cmd
@@ -409,13 +409,13 @@ Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
 URL: ${URL_A}
-Notes: ${MULTILINE_NOTES_A}
+Notes: ${MULTI_LINE_NOTES}
 EOF
 }
 
 @test "shows fzf preview with key-file" {
   _init_with_key_file
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   _set_keychain "${PW_KEYCHAIN}"
@@ -430,7 +430,7 @@ Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
 URL: ${URL_A}
-Notes: ${MULTILINE_NOTES_A}
+Notes: ${MULTI_LINE_NOTES}
 EOF
 }
 

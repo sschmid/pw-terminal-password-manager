@@ -151,11 +151,11 @@ EOF
 }
 
 @test "adds item with name and multiline notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   _get_note() {
-    security find-generic-password -j "${MULTILINE_NOTES_A}" -g "${PW_KEYCHAIN}" 2>&1 \
+    security find-generic-password -j "${MULTI_LINE_NOTES}" -g "${PW_KEYCHAIN}" 2>&1 \
       | awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }' \
       | xxd -r -p
   }
@@ -163,7 +163,7 @@ EOF
   run _get_note
   assert_success
   cat << EOF | assert_output -
-${MULTILINE_NOTES_A}
+${MULTI_LINE_NOTES}
 EOF
 }
 
@@ -252,7 +252,7 @@ EOF
 }
 
 @test "shows item details" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   run pw -p show "${NAME_A}"
   assert_success
   cat << EOF | assert_output -
@@ -260,7 +260,7 @@ Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 Where: ${URL_A}
 Comments:
-${MULTILINE_NOTES_A}
+${MULTI_LINE_NOTES}
 EOF
 }
 
@@ -479,7 +479,7 @@ EOF
 @test "doesn't show fzf preview when locked" {
   _skip_manual_test "no password and cancel"
 
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   run pw lock
@@ -511,7 +511,7 @@ EOF
 }
 
 @test "shows fzf preview for multiline notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   local cmd
@@ -527,7 +527,7 @@ Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 Where: ${URL_A}
 Comments:
-${MULTILINE_NOTES_A}
+${MULTI_LINE_NOTES}
 EOF
 }
 

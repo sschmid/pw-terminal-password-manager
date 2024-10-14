@@ -119,9 +119,9 @@ assert_notes() {
 }
 
 @test "adds item with name and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
-  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
+  assert_notes "${NAME_A}" "${MULTI_LINE_NOTES}"
 }
 
 @test "adds item in subfolder" {
@@ -194,7 +194,7 @@ assert_notes() {
 }
 
 @test "shows item details" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   run pw -p show "${NAME_A}"
   assert_success
   cat << EOF | assert_output -
@@ -202,12 +202,12 @@ Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
 Notes:
-${MULTILINE_NOTES_A}
+${MULTI_LINE_NOTES}
 EOF
 }
 
 @test "shows item details in group" {
-  assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   run pw -p show "group/${NAME_A}"
   assert_success
   cat << EOF | assert_output -
@@ -215,7 +215,7 @@ Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
 Notes:
-${MULTILINE_NOTES_A}
+${MULTI_LINE_NOTES}
 EOF
 }
 
@@ -250,12 +250,12 @@ EOF
 }
 
 @test "edits item and keeps account, url and notes" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   assert_edits_item "${PW_2}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_A}"
   assert_username "${NAME_A}" "${ACCOUNT_A}"
   assert_url "${NAME_A}" "${URL_A}"
-  assert_notes "${NAME_A}" "${MULTILINE_NOTES_A}"
+  assert_notes "${NAME_A}" "${MULTI_LINE_NOTES}"
 }
 
 # shellcheck disable=SC2034
@@ -393,7 +393,7 @@ EOF
 ################################################################################
 
 @test "shows fzf preview" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   local cmd
@@ -407,12 +407,12 @@ Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
 Notes:
-${MULTILINE_NOTES_A}
+${MULTI_LINE_NOTES}
 EOF
 }
 
 @test "shows fzf preview of item in group" {
-  assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTILINE_NOTES_A}"
+  assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
   assert_item_exists "${PW_1}" "group/${NAME_A}"
 
   local cmd
@@ -426,7 +426,7 @@ Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
 Notes:
-${MULTILINE_NOTES_A}
+${MULTI_LINE_NOTES}
 EOF
 }
 
