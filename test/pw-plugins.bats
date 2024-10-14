@@ -3,332 +3,212 @@ setup() {
   load 'pw'
   _setup
   export PW_PLUGINS="${BATS_TEST_DIRNAME}/fixtures/plugins"
+  export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
+  KEYCHAIN_OPTIONS="key1=value1,key2=value2"
+  KEYCHAIN_PASSWORD=" keychain password "
 }
 
-_create_fake_keychain() {
-  export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_test.keychain";
-  touch "${PW_KEYCHAIN}"
-}
-
-_set_plugin_1()    { export PW_TEST_PLUGIN_1=1; }
-_set_plugin_2()    { export PW_TEST_PLUGIN_2=1; }
-_set_plugin_fail() { export PW_TEST_PLUGIN_FAIL=1; }
-
-@test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
-  _set_pwrc_with_keychains "pw_test.keychain"
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls  pw_test.keychain"
-}
-
-@test "removing duplicates and sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
-  _set_pwrc_with_keychains "pw_test.keychain" "pw_test.keychain"
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls  pw_test.keychain"
-}
-
-@test "irgnores empty lines and sets PW_KEYCHAIN with single item in PW_KEYCHAINS" {
-  _set_pwrc_with_keychains "" "pw_test.keychain" ""
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls  pw_test.keychain"
-}
-
-@test "replace ~ with real HOME" {
-  # shellcheck disable=SC2088
-  _set_pwrc_with_keychains '~/pw_test.keychain'
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls  ${HOME}/pw_test.keychain"
-}
-
-@test "replace HOME with real HOME" {
-  # shellcheck disable=SC2016
-  _set_pwrc_with_keychains '$HOME/pw_test.keychain'
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls  ${HOME}/pw_test.keychain"
-}
-
-@test "replace {HOME} with real HOME" {
-  # shellcheck disable=SC2016
-  _set_pwrc_with_keychains '${HOME}/pw_test.keychain'
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls  ${HOME}/pw_test.keychain"
-}
-
-@test "sets PW_KEYCHAIN with single item in PW_KEYCHAINS and separates args" {
-  _set_pwrc_with_keychains "pw_test.keychain:key1=value1,key2=value2"
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls key1=value1,key2=value2 pw_test.keychain"
-}
-
-@test "PW_KEYCHAIN overwrites PW_KEYCHAINS" {
-  _set_pwrc_with_keychains "pw_test1.keychain"
-  export PW_KEYCHAIN="pw_test2.keychain"
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls  pw_test2.keychain"
-}
-
-@test "PW_KEYCHAIN overwrites PW_KEYCHAINS and separates args" {
-  _set_pwrc_with_keychains "pw_test1.keychain"
-  export PW_KEYCHAIN="pw_test2.keychain:key1=value1,key2=value2"
-  _set_plugin_1
-  run pw ls
-  assert_success
-  assert_output "plugin 1 ls key1=value1,key2=value2 pw_test2.keychain"
-}
-
-@test "pw -k overwrites PW_KEYCHAINS" {
-  _set_pwrc_with_keychains "pw_test1.keychain"
-  _set_plugin_1
-  run pw -k pw_test2.keychain ls
-  assert_success
-  assert_output "plugin 1 ls  pw_test2.keychain"
-}
-
-@test "pw -k overwrites PW_KEYCHAINS and separates args" {
-  _set_pwrc_with_keychains "pw_test1.keychain"
-  _set_plugin_1
-  run pw -k pw_test2.keychain:key1=value1,key2=value2 ls
-  assert_success
-  assert_output "plugin 1 ls key1=value1,key2=value2 pw_test2.keychain"
-}
-
-# bats test_tags=tag:manual_test
-@test "selects keychain with fzf" {
-  _skip_manual_test "please select 'pw_test2.keychain'"
-  read -rsp "Press enter to continue ..."
-
-  _set_pwrc_with_keychains "pw_test1.keychain" "pw_test2.keychain"
-  _set_plugin_1
-  run pw ls
-
-  assert_success
-  assert_output "plugin 1 ls  pw_test2.keychain"
-}
-
-@test "fails when PW_KEYCHAIN is empty" {
-  _set_pwrc_with_keychains ""
-  run pw -p name
-  assert_failure
-  cat << EOF | assert_output -
-pw: no keychain was set!
-Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC}).
-EOF
-}
-
-@test "discovers keychains without duplicates" {
-  _set_pwrc_with_keychains ""
-  _set_plugin_2
-  run pw -p name account url
-  assert_success
-  assert_output "plugin 2 get name account url test 2 keychain"
-}
-
-@test "fails when keychain does not exist" {
-  export PW_KEYCHAIN="doesNotExist.keychain"
-  run pw ls
-  assert_failure
-  assert_output "pw: ${PW_KEYCHAIN}: No such file or directory"
-}
-
-@test "prints supported file types" {
-  _create_fake_keychain
-  run pw ls
-  assert_failure
-  cat << EOF | assert_output -
-Could not detect plugin for ${PW_KEYCHAIN}
-Supported file types are:
-Test File Type 1
-Test File Type 2
-Test File Type Fail
-Test File Type Modify
-EOF
-}
-
-@test "prints supported extensions" {
-  run pw init "test.keychain"
-  assert_failure
-  cat << EOF | assert_output -
-Could not detect plugin for test.keychain
-Supported extensions are:
-ext1          - Test File Type 1
-ext2          - Test File Type 2
-extf          - Test File Type Fail
-extm          - Test File Type Modify
-EOF
-}
-
-@test "fails when multiple plugins match with file type" {
-  _create_fake_keychain
-  _set_plugin_1
-  _set_plugin_2
-  run pw ls
-  assert_failure
-  cat << EOF | assert_output -
-pw: Multiple plugins found for ${PW_KEYCHAIN}
-${BATS_TEST_DIRNAME}/fixtures/plugins/test1
-${BATS_TEST_DIRNAME}/fixtures/plugins/test2
-EOF
-}
-
-@test "fails when multiple plugins match with file extension" {
-  _set_plugin_1
-  _set_plugin_2
-  run pw init "test.keychain"
-  assert_failure
-  cat << EOF | assert_output -
-pw: Multiple plugins found for test.keychain
-${BATS_TEST_DIRNAME}/fixtures/plugins/test1
-${BATS_TEST_DIRNAME}/fixtures/plugins/test2
-EOF
-}
+################################################################################
+# init
+################################################################################
 
 @test "inits keychain" {
-  _set_plugin_1
-  run pw init "test.keychain"
+  run pw init "new keychain.test"
   assert_success
-  assert_output "plugin 1 init  test.keychain"
+  assert_output "test init <> <new keychain.test>"
 }
 
-@test "inits keychain and separates args" {
-  _set_plugin_1
-  run pw init "test.keychain:key1=value1,key2=value2"
+@test "inits keychain and separates options" {
+  run pw init "new keychain.test:${KEYCHAIN_OPTIONS}"
   assert_success
-  assert_output "plugin 1 init key1=value1,key2=value2 test.keychain"
+  assert_output "test init <${KEYCHAIN_OPTIONS}> <new keychain.test>"
 }
 
 @test "init fails when keychain already exists" {
-  _create_fake_keychain
-  _set_plugin_1
-  assert_init_fails
+  local keychain="${BATS_TEST_TMPDIR}/new keychain.test"
+  touch "${keychain}"
+
+  run pw init "${keychain}"
+  assert_failure
+  assert_output "pw: ${keychain} already exists."
 }
 
+################################################################################
+# get
+################################################################################
+
 @test "prints item password" {
-  _create_fake_keychain
-  _set_plugin_1
-  run pw -p name account url
+  run pw -p -k "${PW_KEYCHAIN}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
   assert_success
-  assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
+  assert_output "test get <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
 @test "prints item password with -pk" {
-  _create_fake_keychain
-  _set_plugin_1
-  run pw -pk "${PW_KEYCHAIN}" name account url
+  run pw -pk "${PW_KEYCHAIN}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
   assert_success
-  assert_output "plugin 1 get name account url ${PW_KEYCHAIN}"
+  assert_output "test get <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
-@test "prints item details" {
-  _create_fake_keychain
-  _set_plugin_1
-  run pw -p show name account url
+@test "prints item password with options and keychain password" {
+  export PW_TEST_PLUGIN_KEYCHAIN_PASSWORD=1
+  run pw -pk "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
   assert_success
-  assert_output "plugin 1 show name account url ${PW_KEYCHAIN}"
+  assert_output "test get <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
-@test "fails when item selection fails" {
-  _create_fake_keychain
-  _set_plugin_fail
-  run pw
-  assert_failure
-  refute_output
-}
+################################################################################
+# add
+################################################################################
 
 @test "adds item" {
-  _create_fake_keychain
-  _set_plugin_1
-  run pw add name account url <<< password
+  run pw add "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}" <<< "${PW_1}"
   assert_success
-  assert_output "plugin 1 add name account url password ${PW_KEYCHAIN}"
+  assert_output "test add <> <> <${PW_KEYCHAIN}> <${PW_1}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}> <${MULTI_LINE_NOTES}>"
+}
+
+@test "adds item with options and keychain password" {
+  export PW_TEST_PLUGIN_KEYCHAIN_PASSWORD=1
+  run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" add "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}" <<< "${PW_1}"
+  assert_success
+  assert_output "test add <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${PW_1}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}> <${MULTI_LINE_NOTES}>"
 }
 
 # bats test_tags=tag:manual_test
 @test "adds item interactively" {
-  _skip_manual_test "name account url notes (2x ctrl+D) pass pass"
-  _create_fake_keychain
-  _set_plugin_1
+  _skip_manual_test "name, account, url, notes (end with Ctrl+D), then pass, pass"
   run pw add
   assert_success
   cat << EOF | assert_output -
 Title: Username: URL: Notes: Enter multi-line input (end with Ctrl+D):
 Enter password for 'name' (leave empty to generate password):
 Retype password for 'name':
-plugin 1 add name account url pass ${PW_KEYCHAIN}
+test add <> <> <${PW_KEYCHAIN}> <pass> <name> <account> <url> <notes>
 EOF
 }
 
-@test "removes item" {
-  _create_fake_keychain
-  _set_plugin_1
-  run pw rm name account url
+################################################################################
+# show
+################################################################################
+
+@test "prints item details" {
+  run pw -p show "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
   assert_success
-  assert_output "plugin 1 rm name account url ${PW_KEYCHAIN}"
+  assert_output "test show <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+@test "prints item details with options and keychain password" {
+  export PW_TEST_PLUGIN_KEYCHAIN_PASSWORD=1
+  run pw -pk "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" show "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  assert_success
+  assert_output "test show <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+################################################################################
+# rm
+################################################################################
+
+@test "removes item" {
+  run pw rm "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  assert_success
+  assert_output "test rm <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+@test "removes item with options and keychain password" {
+  export PW_TEST_PLUGIN_KEYCHAIN_PASSWORD=1
+  run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" rm "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  assert_success
+  assert_output "test rm <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
 # bats test_tags=tag:manual_test
 @test "removes item interactively" {
+  export PW_TEST_PLUGIN_LS=1
   _skip_manual_test "select 'name 2', then enter 'y'"
   read -rsp "Press enter to continue ..."
-  _create_fake_keychain
-  _set_plugin_2
   run pw rm
   assert_success
   cat << EOF | assert_output -
-Do you really want to remove 'name 2' 'account 2' from '${PW_KEYCHAIN}'? (y / N): plugin 2 rm name 2 account 2 url 2 ${PW_KEYCHAIN}
+Do you really want to remove 'name 2' 'account 2' from '${PW_KEYCHAIN}'? (y / N): test rm <> <> <${PW_KEYCHAIN}> <name 2> <account 2> <url 2>
 EOF
 }
 
+################################################################################
+# edit
+################################################################################
+
 @test "edits item" {
-  _create_fake_keychain
-  _set_plugin_1
-  run pw edit name account url <<< password2
+  run pw edit "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" <<< "${PW_2}"
   assert_success
-  assert_output "plugin 1 edit name account url password2 ${PW_KEYCHAIN}"
+  assert_output "test edit <> <> <${PW_KEYCHAIN}> <${PW_2}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
+
+@test "edits item with options and keychain password" {
+  export PW_TEST_PLUGIN_KEYCHAIN_PASSWORD=1
+  run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" edit "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" <<< "${PW_2}"
+  assert_success
+  assert_output "test edit <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${PW_2}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+################################################################################
+# list item
+################################################################################
 
 @test "lists items" {
-  _create_fake_keychain
-  _set_plugin_1
   run pw ls
   assert_success
-  assert_output "plugin 1 ls  ${PW_KEYCHAIN}"
+  assert_output "test ls <> <> <${PW_KEYCHAIN}> <default>"
 }
 
-@test "opens keychain" {
-  _create_fake_keychain
-  _set_plugin_1
-  run pw open
+@test "lists items with options, keychain password and format" {
+  export PW_TEST_PLUGIN_KEYCHAIN_PASSWORD=1
+  run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" ls fzf
   assert_success
-  assert_output "plugin 1 open ${PW_KEYCHAIN}"
+  assert_output "test ls <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <fzf>"
 }
+
+@test "fails when ls fails" {
+  export PW_TEST_PLUGIN_FAIL=1
+  run pw
+  assert_failure
+  refute_output
+}
+
+################################################################################
+# lock
+################################################################################
 
 @test "locks keychain" {
-  _create_fake_keychain
-  _set_plugin_1
   run pw lock
   assert_success
-  assert_output "plugin 1 lock ${PW_KEYCHAIN}"
+  assert_output "test lock <> <${PW_KEYCHAIN}>"
+}
+
+@test "locks keychain with options" {
+  run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" lock
+  assert_success
+  assert_output "test lock <${KEYCHAIN_OPTIONS}> <${PW_KEYCHAIN}>"
 }
 
 @test "unlocks keychain" {
-  _create_fake_keychain
-  _set_plugin_1
   run pw unlock
   assert_success
-  assert_output "plugin 1 unlock ${PW_KEYCHAIN}"
+  assert_output "test unlock <> <${PW_KEYCHAIN}>"
+}
+
+@test "unlocks keychain with options" {
+  run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" unlock
+  assert_success
+  assert_output "test unlock <${KEYCHAIN_OPTIONS}> <${PW_KEYCHAIN}>"
+}
+
+@test "opens keychain" {
+  run pw open
+  assert_success
+  assert_output "test open <> <${PW_KEYCHAIN}>"
+}
+
+@test "opens keychain with options" {
+  run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" open
+  assert_success
+  assert_output "test open <${KEYCHAIN_OPTIONS}> <${PW_KEYCHAIN}>"
 }

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-options="$1" keychain="$2"
-
-echo "plugin 2 lock ${keychain}"

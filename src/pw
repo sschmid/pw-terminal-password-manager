@@ -75,15 +75,18 @@ pw::select_keychain() {
   if [[ -v PW_KEYCHAIN ]]; then
     pw::set_keychain "${PW_KEYCHAIN}"
   else
-    local all_keychains hook keychains
+    local -a all_keychains
+    local hook keychains
 
-    # KCOV_EXCL_START
-    mapfile -t all_keychains < <(awk -v home="${HOME}" '{
-      gsub(/^~/, home)
-      gsub(/^\$HOME/, home)
-      gsub(/^\${HOME}/, home)
-      if (NF) print $1 }' "${PW_RC}")
-    # KCOV_EXCL_STOP
+    if [[ -f "${PW_RC}" ]]; then
+      # KCOV_EXCL_START
+      mapfile -t all_keychains < <(awk -v home="${HOME}" '{
+        gsub(/^~/, home)
+        gsub(/^\$HOME/, home)
+        gsub(/^\${HOME}/, home)
+        if (NF) print $0 }' "${PW_RC}")
+      # KCOV_EXCL_STOP
+    fi
 
     while read -r hook; do
       keychains="$("${hook}" "discover_keychains")"
@@ -202,7 +205,7 @@ declare -i PW_FZF=0
 
 pw::plugin() {
   local cmd="$1"; shift
-  "${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS:-}" "$@";
+  "${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS:-}" "$@"
 }
 
 pw::prompt_password() {
@@ -313,17 +316,17 @@ pw::select_item_with_prompt() {
     #   4:name, 5:account, 6:url
     # fzf will use the pretty printed values 1..3
     # variables are set with the actual values 4..6
-    local item preview yank yank_action
+    local items item preview yank yank_action
+    items="$(pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "fzf")"
     preview="$(pw::plugin fzf_preview "${keychain_password}" "${PW_KEYCHAIN}")"
     yank="$(declare -p PW_PRINT PW_CLIP_TIME); $(declare -f pw::output); pw::output \"\$(${preview})\""
     (( PW_PRINT )) && yank_action="print" || yank_action="copy"
-    item="$(pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "fzf" \
-      | fzf --prompt "${fzf_prompt}> " --layout reverse \
-            --delimiter '\t' --with-nth 1..3 --nth 1..3 \
-            --preview "${preview}" --preview-window hidden \
-            --header "?: toggle preview, CTRL-Y: ${yank_action} details" \
-            --bind "ctrl-y:execute(${yank})+abort" \
-            --bind '?:toggle-preview')"
+    item="$(fzf --prompt "${fzf_prompt}> " --layout reverse \
+                --delimiter '\t' --with-nth 1..3 --nth 1..3 \
+                --preview "${preview}" --preview-window hidden \
+                --header "?: toggle preview, CTRL-Y: ${yank_action} details" \
+                --bind "ctrl-y:execute(${yank})+abort" \
+                --bind '?:toggle-preview' <<< "${items}")"
 
     PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
     PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"

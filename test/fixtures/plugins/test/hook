@@ -5,10 +5,16 @@ FILE_TYPE="Test"
 FILE_EXTENSION="test"
 
 case "$1" in
-  discover_keychains) ;;
+  discover_keychains)
+    if [[ -v PW_TEST_PLUGIN_DISCOVER_DUPLICATE ]]; then
+      echo "duplicate discovered keychain.test"
+      echo "duplicate discovered keychain.test"
+      echo "duplicate discovered keychain.test"
+    fi
+  ;;
   register_with_keychain)
     echo "${FILE_TYPE}"
-    if [[ $2 == *".test" ]]; then
+    if [[ $2 == *"keychain.test"* ]]; then
       echo yes
     else
       echo no

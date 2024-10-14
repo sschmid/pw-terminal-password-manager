@@ -3,4 +3,4 @@ set -euo pipefail
 
 options="$1" keychain="$2"
 
-echo "plugin modify lock ${keychain}"
+echo "test unlock <${options}> <${keychain}>"

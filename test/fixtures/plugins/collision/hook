@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FILE_TYPE="Test File Type 1"
-FILE_EXTENSION="ext1"
+FILE_TYPE="Test Collision"
+FILE_EXTENSION="collision"
 
 case "$1" in
   discover_keychains) ;;
   register_with_keychain)
     echo "${FILE_TYPE}"
-    if [[ -v PW_TEST_PLUGIN_1 ]]; then
+    if [[ -v PW_TEST_PLUGIN_COLLISION ]]; then
       echo yes
     else
       echo no
@@ -17,7 +17,7 @@ case "$1" in
   register_with_extension)
     echo "${FILE_TYPE}"
     echo "${FILE_EXTENSION}"
-    if [[ -v PW_TEST_PLUGIN_1 ]]; then
+    if [[ -v PW_TEST_PLUGIN_COLLISION ]]; then
       echo yes
     else
       echo no

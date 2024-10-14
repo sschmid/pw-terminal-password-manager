@@ -2,3 +2,5 @@
 set -euo pipefail
 
 options="$1" keychain_password="$2" keychain="$3"
+
+echo "test fzf_preview <${options}> <${keychain_password}> <${keychain}>"

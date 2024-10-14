@@ -3,4 +3,4 @@ set -euo pipefail
 
 options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" account="$6" url="$7"
 
-echo "plugin 1 edit ${name} ${account} ${url} ${password} ${keychain}"
+echo "test edit <${options}> <${keychain_password}> <${keychain}> <${password}> <${name}> <${account}> <${url}>"

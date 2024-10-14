@@ -3,4 +3,4 @@ set -euo pipefail
 
 options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
 
-echo "plugin modify get ${name} ${account} ${url} ${keychain}"
+echo "test rm <${options}> <${keychain_password}> <${keychain}> <${name}> <${account}> <${url}>"
