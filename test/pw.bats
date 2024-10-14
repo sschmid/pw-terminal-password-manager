@@ -4,6 +4,11 @@ setup() {
   _setup
 }
 
+@test "prints help" {
+  run pw -h
+  assert_output --partial "usage: pw"
+}
+
 @test "does not source pwrc" {
   _set_pwrc_with_keychains " test keychain "
   echo 'echo "# test pwrc sourced"' >> "${PW_RC}"
