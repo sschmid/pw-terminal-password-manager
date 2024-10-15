@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-_keepassxc_cli_with_args="$(dirname "$0")/_keepassxc_cli_with_args"
+_keepassxc_cli_with_options="$(dirname "$0")/_keepassxc_cli_with_options"
 
 options="$1" keychain="$2"
 
-"${_keepassxc_cli_with_args}" "${options}" open "${keychain}"
+"${_keepassxc_cli_with_options}" "${options}" open "${keychain}"
