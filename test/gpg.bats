@@ -83,7 +83,7 @@ assert_notes() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  assert_init_fails
+  assert_init_already_exists
 }
 
 ################################################################################

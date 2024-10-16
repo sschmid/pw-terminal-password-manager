@@ -30,7 +30,7 @@ _set_pwrc_with_keychains() {
   printf "%s\n" "$@" > "${PW_RC}"
 }
 
-assert_init_fails() {
+assert_init_already_exists() {
   run pw init "${PW_KEYCHAIN}"
   assert_failure
   assert_output "pw: ${PW_KEYCHAIN} already exists."

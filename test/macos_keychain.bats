@@ -30,13 +30,13 @@ assert_rm_not_found_output() {
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  assert_init_fails <<< "${KEYCHAIN_TEST_PASSWORD}"
+  assert_init_already_exists <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 # bats test_tags=tag:manual_test
 @test "inits keychain and prompts keychain password" {
   _skip_manual_test "'test' twice"
-  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/manual pw_macos_keychain test.keychain-db"
+  PW_KEYCHAIN="${BATS_TEST_TMPDIR}/manual pw macos_keychain test.keychain-db"
   run pw init "${PW_KEYCHAIN}"
   assert_success
   assert_file_exists "${PW_KEYCHAIN}"
@@ -80,13 +80,10 @@ assert_rm_not_found_output() {
 }
 
 @test "adds item with name and url" {
-  assert_adds_item "${PW_1}" "${NAME_A}"
-  assert_adds_item "${PW_2}" "${NAME_B}" "" "${URL_B}"
-
-  assert_item_exists "${PW_2}" "${NAME_B}"
-  assert_item_exists "${PW_2}" "" "" "${URL_B}"
-
-  assert_item_exists "${PW_2}" "${NAME_B}" "" "${URL_B}"
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "" "" "${URL_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" "" "${URL_A}"
 }
 
 @test "label swizzling: name-only is label and service" {
@@ -117,9 +114,6 @@ assert_rm_not_found_output() {
 
 @test "label swizzling: name and url are label and service" {
   assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
-  assert_item_exists "${PW_1}" "" "" "${URL_A}"
-  assert_item_exists "${PW_1}" "${NAME_A}" "" "${URL_A}"
 
   run security find-generic-password -l "${NAME_A}" -w "${PW_KEYCHAIN}"
   assert_success
@@ -293,20 +287,20 @@ EOF
   assert_item_exists "${PW_3}" "${NAME_A}" "${ACCOUNT_B}"
 }
 
-@test "removes item with name and url" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
-  assert_adds_item "${PW_2}" "${NAME_B}" "" "${URL_B}"
-  assert_removes_item "${NAME_A}" "" "${URL_A}"
-  assert_item_not_exists "${NAME_A}"
-  assert_item_exists "${PW_2}" "${NAME_B}"
-}
-
 @test "removes item with url" {
   assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
   assert_adds_item "${PW_2}" "${NAME_B}" "" "${URL_B}"
   assert_removes_item "" "" "${URL_A}"
   assert_item_not_exists "" "" "${URL_A}"
   assert_item_exists "${PW_2}" "" "" "${URL_B}"
+}
+
+@test "removes item with name and url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_adds_item "${PW_2}" "${NAME_B}" "" "${URL_B}"
+  assert_removes_item "${NAME_A}" "" "${URL_A}"
+  assert_item_not_exists "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_B}"
 }
 
 ################################################################################
@@ -347,16 +341,16 @@ EOF
   assert_item_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
 }
 
-@test "edits item with name and url" {
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
-  assert_edits_item "${PW_2}" "${NAME_A}" "" "${URL_A}"
-  assert_item_exists "${PW_2}" "${NAME_A}" "" "${URL_A}"
-}
-
 @test "edits item with url" {
   assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
   assert_edits_item "${PW_2}" "" "" "${URL_A}"
   assert_item_exists "${PW_2}" "" "" "${URL_A}"
+}
+
+@test "edits item with name and url" {
+  assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
+  assert_edits_item "${PW_2}" "${NAME_A}" "" "${URL_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" "" "${URL_A}"
 }
 
 ################################################################################
@@ -376,6 +370,16 @@ EOF
 @test "adds item when editing non existing item with name and account" {
   assert_edits_item "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
   assert_item_exists "${PW_2}" "${NAME_A}" "${ACCOUNT_A}"
+}
+
+@test "adds item when editing non existing item with url" {
+  assert_edits_item "${PW_2}" "" "" "${URL_A}"
+  assert_item_exists "${PW_2}" "" "" "${URL_A}"
+}
+
+@test "adds item when editing non existing item with name and url" {
+  assert_edits_item "${PW_2}" "${NAME_A}" "" "${URL_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" "" "${URL_A}"
 }
 
 ################################################################################

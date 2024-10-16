@@ -102,7 +102,7 @@ EOF
 ################################################################################
 
 @test "init fails when keychain already exists" {
-  assert_init_fails <<< "${KEYCHAIN_TEST_PASSWORD}"
+  assert_init_already_exists <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 # bats test_tags=tag:manual_test

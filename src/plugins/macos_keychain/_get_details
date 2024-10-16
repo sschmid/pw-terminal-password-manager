@@ -7,17 +7,17 @@ awk_cmd='BEGIN { FS="<blob>=" }
 /0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
 /"acct"/ { account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
 /"icmt"/ {
-comments = ($2 == "<NULL>") ? "" : $2
-if (index(comments, "0x") == 1) {
-  cmd = "echo " substr(comments, 1, index(comments, "  ") - 1) " | xxd -r -p"
-  comments = ""
-  while ( ( cmd | getline result ) > 0 ) {
-    comments = comments result "\n"
+  comments = ($2 == "<NULL>") ? "" : $2
+  if (index(comments, "0x") == 1) {
+    cmd = "echo " substr(comments, 1, index(comments, "  ") - 1) " | xxd -r -p"
+    comments = ""
+    while ( ( cmd | getline result ) > 0 ) {
+      comments = comments result "\n"
+    }
+    close(cmd)
+  } else {
+    comments = substr(comments, 2, length(comments) - 2)
   }
-  close(cmd)
-} else {
-  comments = substr(comments, 2, length(comments) - 2)
-}
 }
 /"svce"/ { service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2);'
 # KCOV_EXCL_STOP
