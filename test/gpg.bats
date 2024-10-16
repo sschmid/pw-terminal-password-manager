@@ -80,14 +80,14 @@ assert_keyid() {
   assert_output --partial "keyid ${key_id}"
 }
 
-assert_edits_item_with_keychain_password() {
-  local keychain_password="$1" password="$2" name="$3"
-  run pw edit "${name}" << EOF
-${keychain_password}
-${password}
-EOF
+################################################################################
+# keychain password
+################################################################################
+
+@test "reads keychain password from stdin" {
+  run "${PROJECT_ROOT}/src/plugins/gpg/keychain_password" "" "get" "${PW_KEYCHAIN}" <<< "stdin test"
   assert_success
-  refute_output
+  assert_output "stdin test"
 }
 
 ################################################################################
@@ -258,13 +258,13 @@ EOF
 
 @test "edits item" {
   assert_adds_item "${PW_1}" "${NAME_A}"
-  assert_edits_item_with_keychain_password "${KEYCHAIN_TEST_PASSWORD}" "${PW_2}" "${NAME_A}"
+  assert_edits_item_with_keychain_password "${PW_2}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 @test "edits item and keeps account, url and notes" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
-  assert_edits_item_with_keychain_password "${KEYCHAIN_TEST_PASSWORD}" "${PW_2}" "${NAME_A}"
+  assert_edits_item_with_keychain_password "${PW_2}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_username "${NAME_A}" "${ACCOUNT_A}"
   assert_url "${NAME_A}" "${URL_A}"
@@ -279,7 +279,7 @@ EOF
 
   local key_id="8593E03F5A33D9AC"
   PW_KEYCHAIN="${keychain}:key=${key_id}"
-  assert_edits_item_with_keychain_password "${KEYCHAIN_TEST_PASSWORD}" "${PW_2}" "${NAME_A}"
+  assert_edits_item_with_keychain_password "${PW_2}" "${NAME_A}"
   assert_keyid "${KEYCHAIN_TEST_PASSWORD}" "${keychain}/${NAME_A}" ${key_id}
 }
 

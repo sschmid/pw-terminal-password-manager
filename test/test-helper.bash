@@ -56,9 +56,29 @@ assert_adds_item() {
   refute_output
 }
 
+assert_adds_item_with_keychain_password() {
+  local password="$1"; shift
+  run pw add "$@" << EOF
+${KEYCHAIN_TEST_PASSWORD}
+${password}
+EOF
+  assert_success
+  refute_output
+}
+
 assert_item_already_exists() {
   local password="$1"; shift
   run pw add "$@" <<< "${password}"
+  assert_failure
+  assert_item_already_exists_output "$@"
+}
+
+assert_item_already_exists_with_keychain_password() {
+  local password="$1"; shift
+  run pw add "$@" << EOF
+${KEYCHAIN_TEST_PASSWORD}
+${password}
+EOF
   assert_failure
   assert_item_already_exists_output "$@"
 }
@@ -78,6 +98,16 @@ assert_rm_not_found() {
 assert_edits_item() {
   local password="$1"; shift
   run pw edit "$@" <<< "${password}"
+  assert_success
+  refute_output
+}
+
+assert_edits_item_with_keychain_password() {
+  local password="$1"; shift
+  run pw edit "$@" << EOF
+${KEYCHAIN_TEST_PASSWORD}
+${password}
+EOF
   assert_success
   refute_output
 }
