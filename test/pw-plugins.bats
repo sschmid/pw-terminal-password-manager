@@ -24,6 +24,12 @@ setup() {
   assert_output "test init <${KEYCHAIN_OPTIONS}> <new keychain.test>"
 }
 
+@test "inits keychain with uppercase extension" {
+  run pw init "new keychain.TEST"
+  assert_success
+  assert_output "test init <> <new keychain.TEST>"
+}
+
 @test "init fails when keychain already exists" {
   local keychain="${BATS_TEST_TMPDIR}/new keychain.test"
   touch "${keychain}"
