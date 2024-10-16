@@ -5,5 +5,10 @@ _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
 options="$1" keychain="$2"
 
-[[ -p /dev/stdin ]] && IFS= read -r PW_KEYCHAIN_PASSWORD && export PW_KEYCHAIN_PASSWORD
-echo | "${_gpg_encrypt}" "${options}" | "${_gpg}" --decrypt >/dev/null
+if [[ -p /dev/stdin ]]; then
+  IFS= read -r keychain_password
+else
+  keychain_password=""
+fi
+
+echo | "${_gpg_encrypt}" "${options}" | "${_gpg}" "${keychain_password}" --decrypt >/dev/null

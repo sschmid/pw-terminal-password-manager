@@ -8,23 +8,22 @@ setup_file() {
       --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_2.key"
 }
 
-teardown_file() {
-  killall gpg-agent 2>/dev/null || true
-}
-
 setup() {
   load 'gpg'
   _setup
-  export PW_KEYCHAIN_PASSWORD="pw_test_password"
+  KEYCHAIN_TEST_PASSWORD="pw_test_password"
   pw init "${PW_KEYCHAIN}"
 }
 
 teardown() {
   _delete_keychain
+  killall gpg-agent 2>/dev/null || true
 }
 
-# shellcheck disable=SC2009
-_ps() { ps -A | grep "gpg-agent" | grep -v grep; }
+_gpg_decrypt() {
+  gpg --quiet --batch --pinentry-mode loopback --passphrase "${KEYCHAIN_TEST_PASSWORD}" \
+      --decrypt "${PW_KEYCHAIN}/$1" | sed -n "$2"
+}
 
 assert_item_not_exists_output() {
   cat << EOF | assert_output -
@@ -43,11 +42,6 @@ assert_removes_item_output() {
 
 assert_rm_not_found_output() {
   assert_output "rm: ${PW_KEYCHAIN}/$1: No such file or directory"
-}
-
-_gpg_decrypt() {
-  gpg --quiet --batch --pinentry-mode loopback --passphrase "${PW_KEYCHAIN_PASSWORD}" \
-      --decrypt "${PW_KEYCHAIN}/$1" | sed -n "$2"
 }
 
 assert_username() {
@@ -78,6 +72,24 @@ assert_notes() {
   fi
 }
 
+assert_keyid() {
+  local keychain_password="$1" path="$2" key_id="$3"
+  run gpg --batch --pinentry-mode loopback --passphrase "${keychain_password}" \
+          --list-packets "${path}"
+  assert_success
+  assert_output --partial "keyid ${key_id}"
+}
+
+assert_edits_item_with_keychain_password() {
+  local keychain_password="$1" password="$2" name="$3"
+  run pw edit "${name}" << EOF
+${keychain_password}
+${password}
+EOF
+  assert_success
+  refute_output
+}
+
 ################################################################################
 # init
 ################################################################################
@@ -100,7 +112,7 @@ assert_notes() {
 
 @test "adds item with name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_username "${NAME_A}"
   assert_url "${NAME_A}"
   assert_notes "${NAME_A}"
@@ -108,55 +120,52 @@ assert_notes() {
 
 @test "adds item with name and account" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_username "${NAME_A}" "${ACCOUNT_A}"
 }
 
 @test "adds item with name and url" {
   assert_adds_item "${PW_1}" "${NAME_A}" "" "${URL_A}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_url "${NAME_A}" "${URL_A}"
 }
 
 @test "adds item with name and notes" {
   assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTI_LINE_NOTES}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_notes "${NAME_A}" "${MULTI_LINE_NOTES}"
 }
 
 @test "adds item in subfolder" {
   assert_adds_item "${PW_1}" "group/${NAME_A}"
-  assert_item_exists "${PW_1}" "group/${NAME_A}"
+  assert_item_exists "${PW_1}" "group/${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 @test "adds item in subfolder multiple levels deep" {
   assert_adds_item "${PW_1}" "group1/group2/group3/${NAME_A}"
-  assert_item_exists "${PW_1}" "group1/group2/group3/${NAME_A}"
+  assert_item_exists "${PW_1}" "group1/group2/group3/${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 @test "adds item with .gpg extension" {
   assert_adds_item "${PW_1}" "${NAME_A}.gpg"
-  assert_item_exists "${PW_1}" "${NAME_A}.gpg"
+  assert_item_exists "${PW_1}" "${NAME_A}.gpg" <<< "${KEYCHAIN_TEST_PASSWORD}"
   run file -b "${PW_KEYCHAIN}/${NAME_A}.gpg"
   assert_output "data"
 }
 
 @test "adds item with .asc extension" {
   assert_adds_item "${PW_1}" "${NAME_A}.asc"
-  assert_item_exists "${PW_1}" "${NAME_A}.asc"
+  assert_item_exists "${PW_1}" "${NAME_A}.asc" <<< "${KEYCHAIN_TEST_PASSWORD}"
   run file -b "${PW_KEYCHAIN}/${NAME_A}.asc"
   assert_output --partial "PGP message Public-Key Encrypted Session Key"
 }
 
 @test "adds item with key id" {
   local keychain="${PW_KEYCHAIN}"
-  local key_id="634419040D678764"
+  local key_id="8593E03F5A33D9AC"
   PW_KEYCHAIN="${keychain}:key=${key_id}"
   assert_adds_item "${PW_1}" "${NAME_A}"
-  run gpg --batch --pinentry-mode loopback --passphrase "${PW_KEYCHAIN_PASSWORD}" \
-          --list-packets "${keychain}/${NAME_A}"
-  assert_success
-  assert_output --partial "keyid ${key_id}"
+  assert_keyid "${KEYCHAIN_TEST_PASSWORD}" "${keychain}/${NAME_A}" ${key_id}
 }
 
 ################################################################################
@@ -166,17 +175,21 @@ assert_notes() {
 @test "adds item with different name" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_adds_item "${PW_2}" "${NAME_B}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
-  assert_item_exists "${PW_2}" "${NAME_B}"
+  assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+  assert_item_exists "${PW_2}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 ################################################################################
 # add duplicate
 ################################################################################
 
-@test "fails when adding item with existing name" {
+# bats test_tags=tag:manual_test
+@test "prompts for new filename when adding item with existing name" {
+  _skip_manual_test "new filename: '${PW_KEYCHAIN}/new_name'"
   assert_adds_item "${PW_1}" "${NAME_A}"
-  assert_item_already_exists "${PW_2}" "${NAME_A}"
+  run pw add "${NAME_A}" <<< "${PW_2}"
+  assert_success
+  assert_file_exists "${PW_KEYCHAIN}/new_name"
 }
 
 ################################################################################
@@ -185,7 +198,7 @@ assert_notes() {
 
 @test "shows no item details" {
   assert_adds_item "${PW_1}" "${NAME_A}"
-  run pw -p show "${NAME_A}"
+  run pw -p show "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   assert_line --index 0 "Name: ${NAME_A}"
   assert_line --index 1 "Account: "
@@ -195,7 +208,7 @@ assert_notes() {
 
 @test "shows item details" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
-  run pw -p show "${NAME_A}"
+  run pw -p show "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   cat << EOF | assert_output -
 Name: ${NAME_A}
@@ -208,7 +221,7 @@ EOF
 
 @test "shows item details in group" {
   assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
-  run pw -p show "group/${NAME_A}"
+  run pw -p show "group/${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   cat << EOF | assert_output -
 Name: ${NAME_A}
@@ -228,7 +241,7 @@ EOF
   assert_adds_item "${PW_2}" "${NAME_B}"
   assert_removes_item "${NAME_A}"
   assert_item_not_exists "${NAME_A}"
-  assert_item_exists "${PW_2}" "${NAME_B}"
+  assert_item_exists "${PW_2}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 ################################################################################
@@ -245,14 +258,14 @@ EOF
 
 @test "edits item" {
   assert_adds_item "${PW_1}" "${NAME_A}"
-  assert_edits_item "${PW_2}" "${NAME_A}"
-  assert_item_exists "${PW_2}" "${NAME_A}"
+  assert_edits_item_with_keychain_password "${KEYCHAIN_TEST_PASSWORD}" "${PW_2}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 @test "edits item and keeps account, url and notes" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
-  assert_edits_item "${PW_2}" "${NAME_A}"
-  assert_item_exists "${PW_2}" "${NAME_A}"
+  assert_edits_item_with_keychain_password "${KEYCHAIN_TEST_PASSWORD}" "${PW_2}" "${NAME_A}"
+  assert_item_exists "${PW_2}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_username "${NAME_A}" "${ACCOUNT_A}"
   assert_url "${NAME_A}" "${URL_A}"
   assert_notes "${NAME_A}" "${MULTI_LINE_NOTES}"
@@ -266,11 +279,8 @@ EOF
 
   local key_id="8593E03F5A33D9AC"
   PW_KEYCHAIN="${keychain}:key=${key_id}"
-  assert_edits_item "${PW_2}" "${NAME_A}"
-  run gpg --batch --pinentry-mode loopback --passphrase "${PW_KEYCHAIN_PASSWORD}" \
-          --list-packets "${keychain}/${NAME_A}"
-  assert_success
-  assert_output --partial "keyid ${key_id}"
+  assert_edits_item_with_keychain_password "${KEYCHAIN_TEST_PASSWORD}" "${PW_2}" "${NAME_A}"
+  assert_keyid "${KEYCHAIN_TEST_PASSWORD}" "${keychain}/${NAME_A}" ${key_id}
 }
 
 ################################################################################
@@ -278,7 +288,10 @@ EOF
 ################################################################################
 
 @test "fails when editing non existing item" {
-  run pw edit "${NAME_A}" <<< "${PW_2}"
+  run pw edit "${NAME_A}" << EOF
+${KEYCHAIN_TEST_PASSWORD}
+${PW_2}
+EOF
   assert_failure
   assert_item_not_exists_output "${NAME_A}"
   assert_item_not_exists "${NAME_A}"
@@ -338,44 +351,33 @@ EOF
 ################################################################################
 
 @test "unlocks keychain" {
-  run _ps
-  assert_success
-  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
-
   run pw lock
   assert_success
   refute_output
 
-  run _ps
+  run pgrep -f "gpg-agent"
   assert_failure
   refute_output
 
-  local p="${PW_KEYCHAIN_PASSWORD}"
-  unset PW_KEYCHAIN_PASSWORD
-  run pw unlock <<< "$p"
+  run pw unlock <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_success
   refute_output
 
-  run _ps
+  run pgrep -f "gpg-agent"
   assert_success
-  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
+  assert_output
 }
 
 # bats test_tags=tag:manual_test
 @test "unlocks keychain and prompts keychain password" {
   _skip_manual_test "pw_test_password - Press enter to continue ..."
   read -rsp "Press enter to continue ..."
-  unset PW_KEYCHAIN_PASSWORD
-
-  run _ps
-  assert_success
-  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
 
   run pw lock
   assert_success
   refute_output
 
-  run _ps
+  run pgrep -f "gpg-agent"
   assert_failure
   refute_output
 
@@ -383,9 +385,9 @@ EOF
   assert_success
   refute_output
 
-  run _ps
+  run pgrep -f "gpg-agent"
   assert_success
-  assert_output --partial "gpg-agent --homedir ${GNUPGHOME}"
+  assert_output
 }
 
 ################################################################################
@@ -394,7 +396,7 @@ EOF
 
 @test "shows fzf preview" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
+  assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
   local cmd
   cmd="$("${PROJECT_ROOT}/src/plugins/gpg/fzf_preview" "" "" "${PW_KEYCHAIN}")"
@@ -413,7 +415,7 @@ EOF
 
 @test "shows fzf preview of item in group" {
   assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
-  assert_item_exists "${PW_1}" "group/${NAME_A}"
+  assert_item_exists "${PW_1}" "group/${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
   local cmd
   cmd="$("${PROJECT_ROOT}/src/plugins/gpg/fzf_preview" "" "" "${PW_KEYCHAIN}")"
@@ -442,7 +444,7 @@ EOF
 
 @test "discovers .gpg" {
   assert_adds_item "${PW_1}" "${NAME_A}.gpg"
-  assert_item_exists "${PW_1}" "${NAME_A}.gpg"
+  assert_item_exists "${PW_1}" "${NAME_A}.gpg" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
   cd "${PW_KEYCHAIN}"
   run "${PROJECT_ROOT}/src/plugins/gpg/hook" "discover_keychains"
@@ -452,7 +454,7 @@ EOF
 
 @test "discovers .asc" {
   assert_adds_item "${PW_1}" "${NAME_A}.asc"
-  assert_item_exists "${PW_1}" "${NAME_A}.asc"
+  assert_item_exists "${PW_1}" "${NAME_A}.asc" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
   cd "${PW_KEYCHAIN}"
   run "${PROJECT_ROOT}/src/plugins/gpg/hook" "discover_keychains"

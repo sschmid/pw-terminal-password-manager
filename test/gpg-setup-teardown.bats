@@ -5,13 +5,13 @@ setup_file() {
       --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_1.key"
 }
 
-teardown_file() {
-  killall gpg-agent 2>/dev/null || true
-}
-
 setup() {
   load 'gpg'
   _setup
+}
+
+teardown() {
+  killall gpg-agent 2>/dev/null || true
 }
 
 @test "creates keychain" {

@@ -4,4 +4,4 @@ _gpg="$(dirname "$0")/_gpg"
 
 options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
 
-"${_gpg}" --decrypt "${keychain}/${name}" | sed -n 1p
+"${_gpg}" "${keychain_password}" --decrypt "${keychain}/${name}" | sed -n 1p

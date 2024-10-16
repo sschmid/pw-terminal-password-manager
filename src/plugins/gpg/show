@@ -5,4 +5,4 @@ _get_details="$(dirname "$0")/_get_details"
 
 options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
 
-"${_gpg}" --decrypt "${keychain}/${name}" | "${_get_details}" "${name}"
+"${_gpg}" "${keychain_password}" --decrypt "${keychain}/${name}" | "${_get_details}" "${name}"

@@ -2,7 +2,9 @@
 set -euo pipefail
 "$(dirname "$0")/_require"
 
-if [[ -v PW_KEYCHAIN_PASSWORD ]]
-then gpg --quiet --batch --pinentry-mode loopback --passphrase "${PW_KEYCHAIN_PASSWORD}" "$@"
+keychain_password="$1"; shift
+
+if [[ -n "${keychain_password}" ]]
+then gpg --quiet --batch --pinentry-mode loopback --passphrase "${keychain_password}" "$@"
 else gpg --quiet "$@"
 fi

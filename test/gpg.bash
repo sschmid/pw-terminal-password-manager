@@ -1,7 +1,7 @@
 _setup() {
   load 'test-helper'
   _common_setup
-  export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw_gpg test/"
+  export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw gpg test/"
 }
 
 _delete_keychain() {

@@ -12,4 +12,4 @@ while IFS=$'\t' read -r key value; do
   esac
 done < <("${parse_options}" "${options}")
 
-"${_gpg}" --encrypt "${cmd_options[@]}" --default-recipient-self "$@"
+"${_gpg}" "" --encrypt "${cmd_options[@]}" --default-recipient-self "$@"
