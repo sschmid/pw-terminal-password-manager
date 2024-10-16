@@ -3,6 +3,7 @@ setup_file() {
   export GNUPGHOME="${BATS_FILE_TMPDIR}/.gnupg"
   gpg --batch --pinentry-mode loopback --passphrase pw_test_password \
       --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_1.key"
+  gpgconf --kill gpg-agent
 }
 
 setup() {

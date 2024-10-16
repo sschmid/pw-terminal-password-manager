@@ -6,6 +6,7 @@ setup_file() {
       --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_1.key"
   gpg --batch --pinentry-mode loopback --passphrase pw_test_password \
       --import "${BATS_TEST_DIRNAME}/fixtures/pw_test_2.key"
+  gpgconf --kill gpg-agent
 }
 
 setup() {
@@ -359,10 +360,6 @@ EOF
 ################################################################################
 
 @test "unlocks keychain" {
-  run pw lock
-  assert_success
-  refute_output
-
   run pgrep -f "gpg-agent"
   assert_failure
   refute_output
@@ -380,10 +377,6 @@ EOF
 @test "unlocks keychain and prompts keychain password" {
   _skip_manual_test "pw_test_password - Press enter to continue ..."
   read -rsp "Press enter to continue ..."
-
-  run pw lock
-  assert_success
-  refute_output
 
   run pgrep -f "gpg-agent"
   assert_failure
