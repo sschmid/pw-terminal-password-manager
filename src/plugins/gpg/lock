@@ -3,4 +3,4 @@ set -euo pipefail
 
 options="$1" keychain="$2"
 
-killall gpg-agent 2>/dev/null || true
+gpgconf --kill gpg-agent

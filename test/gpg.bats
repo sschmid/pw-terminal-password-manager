@@ -17,7 +17,7 @@ setup() {
 
 teardown() {
   _delete_keychain
-  killall gpg-agent 2>/dev/null || true
+  gpgconf --kill gpg-agent
 }
 
 ################################################################################

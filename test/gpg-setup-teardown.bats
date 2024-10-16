@@ -11,7 +11,7 @@ setup() {
 }
 
 teardown() {
-  killall gpg-agent 2>/dev/null || true
+  gpgconf --kill gpg-agent
 }
 
 @test "creates keychain" {
