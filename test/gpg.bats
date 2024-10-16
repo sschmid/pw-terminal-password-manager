@@ -111,7 +111,7 @@ assert_keyid() {
 ################################################################################
 
 @test "doesn't have item" {
-  assert_item_not_exists "${NAME_A}"
+  assert_item_not_exists "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 ################################################################################
@@ -248,7 +248,7 @@ EOF
   assert_adds_item "${PW_1}" "${NAME_A}"
   assert_adds_item "${PW_2}" "${NAME_B}"
   assert_removes_item "${NAME_A}"
-  assert_item_not_exists "${NAME_A}"
+  assert_item_not_exists "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_item_exists "${PW_2}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
@@ -302,7 +302,7 @@ ${PW_2}
 EOF
   assert_failure
   assert_item_not_exists_output "${NAME_A}"
-  assert_item_not_exists "${NAME_A}"
+  assert_item_not_exists "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 ################################################################################
