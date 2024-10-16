@@ -20,10 +20,18 @@ teardown() {
   killall gpg-agent 2>/dev/null || true
 }
 
+################################################################################
+# helpers
+################################################################################
+
 _gpg_decrypt() {
   gpg --quiet --batch --pinentry-mode loopback --passphrase "${KEYCHAIN_TEST_PASSWORD}" \
       --decrypt "${PW_KEYCHAIN}/$1" | sed -n "$2"
 }
+
+################################################################################
+# assertions
+################################################################################
 
 assert_item_not_exists_output() {
   cat << EOF | assert_output -

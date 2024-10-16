@@ -6,7 +6,7 @@ options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" accoun
 security add-generic-password \
   -l "${name:-"${url}"}" \
   -a "${account}" \
-  -s "${url:="${name}"}" \
+  -s "${url:-"${name}"}" \
   ${notes:+-j "${notes}"} \
   -w "${password}" \
   "${keychain}"

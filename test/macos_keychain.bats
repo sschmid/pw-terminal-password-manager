@@ -9,6 +9,10 @@ teardown() {
   _delete_keychain
 }
 
+################################################################################
+# assertions
+################################################################################
+
 assert_item_not_exists_output() {
   assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
 }
@@ -23,6 +27,16 @@ assert_removes_item_output() {
 
 assert_rm_not_found_output() {
   assert_output "security: SecKeychainSearchCopyNext: The specified item could not be found in the keychain."
+}
+
+################################################################################
+# keychain password
+################################################################################
+
+@test "doesn't have a cached keychain password" {
+  run "${PROJECT_ROOT}/src/plugins/macos_keychain/keychain_password" "" "" "${PW_KEYCHAIN}" <<< "stdin test"
+  assert_success
+  refute_output
 }
 
 ################################################################################

@@ -9,6 +9,10 @@ teardown() {
   _delete_keychain
 }
 
+################################################################################
+# helpers
+################################################################################
+
 # shellcheck disable=SC2034
 _init_with_key_file() {
   local keyfile="${BATS_TEST_TMPDIR}/pw keepassxc test_keyfile"
@@ -25,6 +29,10 @@ _set_keychain() {
     PW_KEYCHAIN="$1"
   fi
 }
+
+################################################################################
+# assertions
+################################################################################
 
 assert_item_not_exists_output() {
   assert_output "Could not find entry with path $1."
