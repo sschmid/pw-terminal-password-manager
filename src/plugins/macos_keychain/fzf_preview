@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-_get_details="$(dirname "$0")/_get_details"
+_parse_details="$(dirname "$0")/_parse_details"
 
 options="$1" keychain_password="$2" keychain="$3"
 
@@ -8,13 +8,13 @@ options="$1" keychain_password="$2" keychain="$3"
 # shellcheck disable=SC1083
 _fzf_preview() {
   security find-generic-password -l {4} -a {5} -s {6} -g "${keychain}" 2>/dev/null \
-  | "${_get_details}" 'printf "Name: %s\nAccount: %s\nWhere: %s\nComments:\n%s\n", label, account, service, comments'
+  | "${_parse_details}" 'printf "Name: %s\nAccount: %s\nWhere: %s\nComments:\n%s\n", label, account, service, comments'
 }
 # KCOV_EXCL_STOP
 
 # unlocks the keychain if necessary and only previews if the keychain is unlocked
 if security show-keychain-info "${keychain}" &>/dev/null; then
-  declare -p keychain _get_details
+  declare -p keychain _parse_details
   declare -f _fzf_preview
   echo "_fzf_preview"
 fi
