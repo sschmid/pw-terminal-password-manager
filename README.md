@@ -312,10 +312,11 @@ curl -s -H "Authorization: token $(pw -p GITHUB_TOKEN)" https://api.github.com/u
 To avoid password prompts that can interrupt scripts,
 you can provide passwords via `STDIN`.
 
-> ⚠️ Warning: Avoid providing passwords in plain text, because they can be
-  exposed in process listings, shell history, logs, and through insecure network
-  transmissions, making them vulnerable to theft or misuse. Instead, use secure
-  methods like environment variables to protect sensitive information.
+> [!CAUTION]
+> Avoid providing passwords in plain text, because they can be exposed in process
+  listings, shell history, logs, and through insecure network transmissions, making
+  them vulnerable to theft or misuse. Instead, use secure methods like environment
+  variables to protect sensitive information.
 
 ```bash
 echo "${MY_PASSWORD}" | pw init ~/secrets.kdbx
