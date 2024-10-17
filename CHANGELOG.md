@@ -22,7 +22,7 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 ~/path/to/gpg/secrets
 ```
 
-# Added
+### Added
 - Added `.pwrc` migration
 - Script optimizations
 - Explicit variable declarations and strict scoping
