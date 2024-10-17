@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [9.0.0] - 2024-10-17
-# Upgrading to pw 9.0.0
+### Upgrading to pw 9.0.0
 
 In order to increase security, plugins are no longer sourced. Instead they are
 executed as separate scripts. This change also makes it easier to write and
