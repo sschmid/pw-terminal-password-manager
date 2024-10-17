@@ -31,7 +31,7 @@ pw init ~/secrets.keychain-db
 
 # optionally configure keychains in ~/.pwrc so you can access them from anywhere
 # otherwise, pw will discover keychains in the current directory
-echo 'PW_KEYCHAINS=(~/secrets.keychain-db)' > ~/.pwrc
+echo '~/secrets.keychain-db' >> ~/.pwrc
 
 # add an entry
 pw add GitHub sschmid
@@ -56,7 +56,7 @@ cd ~/secrets
 
 # optionally configure keychains in ~/.pwrc so you can access them from anywhere
 # otherwise, pw will discover gpg encrypted passwords in the current directory
-echo 'PW_KEYCHAINS=(~/secrets/)' > ~/.pwrc
+echo '~/secrets/' >> ~/.pwrc
 
 # add an entry
 # if you haven't configured ~/.pwrc yet, you need to specify the keychain once
@@ -254,9 +254,9 @@ pw gen 32 '[:digit:]'
 
 ## Automatic keychain discovery
 
-`pw` automatically searches for keychains in the current directory and adds them
-to the `PW_KEYCHAINS` array. This way you can keep your keychains in the same
-directory as your project and `pw` will automatically discover and use them.
+`pw` automatically searches for keychains in the current directory. This way
+you can keep your keychains in the same directory as your project and `pw` will
+automatically discover and use them.
 
 ## Specifying a keychain
 
@@ -285,30 +285,18 @@ managers. This feature is particularly useful when you have keychains stored
 in various locations. You can specify different keychains using the `PW_RC`
 configuration file, which defaults to `~/.pwrc`.
 
-By default, `pw` uses the keychain specified in the `PW_KEYCHAIN` variable.
-However, you can define multiple keychains in the `PW_KEYCHAINS` array
-within the `~/.pwrc` configuration file. Here's an example of how the
-default `~/.pwrc` file looks:
+To use multiple keychains, add your desired keychains to `~/.pwrc`, e.g.:
 
 ```bash
-PW_KEYCHAINS=()
-```
-
-To use multiple keychains, modify the `PW_KEYCHAINS` array to include
-the paths to your desired keychains, e.g.:
-
-```bash
-PW_KEYCHAINS=(
-  secrets.keychain-db
-  ~/path/to/myproject.keychain-db
-  ~/path/to/keepassxc.kdbx
-  ~/path/to/gpg/secrets
-)
+secrets.keychain-db
+~/path/to/myproject.keychain-db
+~/path/to/keepassxc.kdbx
+~/path/to/gpg/secrets
 ```
 
 After configuring your keychains, continue using `pw` as usual. If no keychain
 is specified with `-k` or by setting `PW_KEYCHAIN`, `pw` allows you to select
-one from `PW_KEYCHAINS` using the fuzzy finder.
+one from your `~/.pwrc` file using the fuzzy finder.
 
 ![pw-fzf](readme/pw-dbs.png)
 
@@ -349,7 +337,7 @@ Export or provide the following variables to customize and change `pw`'s default
 
 ```bash
 # Default keychain used when not specified with -k
-# otherwise, PW_KEYCHAINS is used to select a keychain with fzf
+# otherwise, ~/.pwrc is used to select a keychain with fzf
 export PW_KEYCHAIN=secrets.keychain-db
 
 # Default length of generated passwords
@@ -368,12 +356,10 @@ export PW_RC=~/.mypwrc
 Configure keychains in `~/.pwrc`
 
 ```bash
-PW_KEYCHAINS=(
-  secrets.keychain-db
-  ~/path/to/myproject.keychain-db
-  ~/path/to/keepassxc.kdbx
-  ~/path/to/gpg/secrets
-)
+secrets.keychain-db
+~/path/to/myproject.keychain-db
+~/path/to/keepassxc.kdbx
+~/path/to/gpg/secrets
 ```
 
 # Plugin specific configuration
@@ -387,12 +373,11 @@ This syntax can be used everywhere a keychain is specified, e.g.:
 pw -k ~/secrets.kdbx:key1=value1,key2=value2
 ```
 
+In your `~/.pwrc`:
 ```bash
-PW_KEYCHAINS=(
-  ...
-  ~/secrets.kdbx:key1=value1,key2=value2
-  ...
-)
+...
+~/secrets.kdbx:key1=value1,key2=value2
+...
 ```
 
 ## KeePassXC
@@ -401,13 +386,13 @@ If you want to use a key file for unlocking the database,
 you can specify the path to the key file:
 
 ```bash
-PW_KEYCHAINS=(~/secrets.kdbx:keyfile=/path/to/keyfile)
+~/secrets.kdbx:keyfile=/path/to/keyfile
 ```
 
 If you're using a YubiKey with KeePassXC, you can specify the slot to use:
 
 ```bash
-PW_KEYCHAINS=(~/secrets.kdbx:yubikey=1:23456789)
+~/secrets.kdbx:yubikey=1:23456789
 ```
 
 ## GnuPG
@@ -415,7 +400,7 @@ PW_KEYCHAINS=(~/secrets.kdbx:yubikey=1:23456789)
 To set a different gpg key as the default for encryption, you can specify the key id:
 
 ```bash
-PW_KEYCHAINS=(~/path/to/gpg/secrets:key=634419040D678764)
+~/path/to/gpg/secrets:key=634419040D678764
 ```
 
 You can control the gpg output format by specifying a file extension:
