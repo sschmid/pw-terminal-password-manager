@@ -80,6 +80,7 @@ pw::select_keychain() {
     local hook keychains
 
     if [[ -f "${PW_RC}" ]]; then
+      "${PW_HOME}/src/migrations/pwrc" "${PW_RC}"
       # KCOV_EXCL_START
       mapfile -t all_keychains < <(awk -v home="${HOME}" '{
         gsub(/^~/, home)
