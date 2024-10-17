@@ -5,7 +5,7 @@ like [macOS Keychain](https://developer.apple.com/documentation/security/keychai
 [KeePassXC](https://keepassxc.org) and [GnuPG](https://www.gnupg.org) in a single interface within the terminal.
 It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
-you to interact with [various keychains](#example-using-multiple-keychains) effortlessly.
+you to interact with [various keychains](#using-multiple-keychains) effortlessly.
 
 [![CI](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yaml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/sschmid/pw-terminal-password-manager/badge.svg)](https://coveralls.io/github/sschmid/pw-terminal-password-manager)
@@ -19,7 +19,7 @@ you to interact with [various keychains](#example-using-multiple-keychains) effo
 - **Simplicity:** `pw` is built using simple bash, making it easy to understand, modify, and extend.
 - **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](src/plugins)).
 - **Clipboard Management:** Automatically clears passwords from the clipboard after a specified duration.
-- **Multiple Keychain Support**: Effortlessly manage and switch between [multiple keychains](#example-using-multiple-keychains) stored in various locations.
+- **Multiple Keychain Support**: Effortlessly manage and switch between [multiple keychains](#using-multiple-keychains) stored in various locations.
 
 ![pw-fzf](readme/pw-fzf.png)
 
