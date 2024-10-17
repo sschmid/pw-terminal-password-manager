@@ -6,6 +6,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [9.0.0] - 2024-10-17
+# Upgrading to pw 9.0.0
+
+In order to increase security, plugins are no longer sourced. Instead they are
+executed as separate scripts. This change also makes it easier to write and
+maintain plugins. Please migrate your custom plugins to the new format.
+
+Additionally, `.pwrc` is also no longer sourced and has been replaced by a
+new format. `pw` can automatically migrate your `.pwrc` to the new format:
+
+```bash
+~/path/to/myproject.keychain-db
+~/path/to/keepassxc.kdbx
+~/path/to/gpg/secrets
+```
+
+# Added
+- Added `.pwrc` migration
+- Script optimizations
+- Explicit variable declarations and strict scoping
+
+### Changed
+- Plugins are no longer sourced
+- Plugins functions have been extracted to separate files
+- `.pwrc` is no longer sourced and has a new format
+- `.pwrc` is no longer created by default and is optional
+
+### Removed
+- Removed redirecting from tty
+- Deleted sample plugin
+
 ## [8.2.1] - 2024-10-08
 ### Fixed
 - Fix generated password being empty
@@ -234,7 +265,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.0.0...HEAD
+[9.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.1...9.0.0
 [8.2.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.0...8.2.1
 [8.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.1.0...8.2.0
 [8.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.0.0...8.1.0
