@@ -298,7 +298,7 @@ After configuring your keychains, continue using `pw` as usual. If no keychain
 is specified with `-k` or by setting `PW_KEYCHAIN`, `pw` allows you to select
 one from your `~/.pwrc` file using the fuzzy finder.
 
-![pw-fzf](readme/pw-dbs.png)
+![pw-fzf](readme/pw-keychains.png)
 
 ## Using `pw` in a command or script
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
