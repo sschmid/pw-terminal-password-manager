@@ -3,7 +3,7 @@ set -euo pipefail
 
 options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" account="$6" url="$7" notes="$8"
 
-[[ "${PW_MACOS_KEYCHAIN_ACCESS_CONTROL:-}" != "always-allow" ]] && access_control="confirm"
+[[ "${PW_MACOS_KEYCHAIN_ACCESS_CONTROL:-}" == "always-allow" ]] || access_control="confirm"
 
 security add-generic-password \
   -l "${name:-"${url}"}" \
