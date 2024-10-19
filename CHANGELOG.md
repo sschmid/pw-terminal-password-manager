@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [9.1.1] - 2024-10-19
+### Added
+- `macos_keychain`: Remove unnecessary password prompt for show command
+- `macos_keychain`: Remove unnecessary password prompt for fzf preview
+
 ## [9.1.0] - 2024-10-19
 ### Upgrading to pw 9.1.0
 
@@ -300,7 +305,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.1...HEAD
+[9.1.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.0...9.1.1
 [9.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.0.0...9.1.0
 [9.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.1...9.0.0
 [8.2.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.0...8.2.1
