@@ -497,9 +497,10 @@ EOF
 # fzf preview
 ################################################################################
 
-@test "shows fzf preview for single line notes" {
+@test "shows fzf preview for single line notes even when locked" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${SINGLE_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
+  pw lock
 
   local cmd
   cmd="$("${PROJECT_ROOT}/src/plugins/macos_keychain/fzf_preview" "" "" "${PW_KEYCHAIN}")"
