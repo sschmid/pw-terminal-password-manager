@@ -3,6 +3,7 @@ setup() {
   load 'macos_keychain'
   _setup
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+  export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
 }
 
 teardown() {
