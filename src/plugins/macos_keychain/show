@@ -8,5 +8,5 @@ security find-generic-password \
   ${name:+-l "${name}"} \
   ${account:+-a "${account}"} \
   ${url:+-s "${url}"} \
-  -g "${keychain}" 2> /dev/null \
+  "${keychain}" \
 | "${_parse_details}" 'printf "Name: %s\nAccount: %s\nWhere: %s\nComments:\n%s\n", label, account, service, comments'

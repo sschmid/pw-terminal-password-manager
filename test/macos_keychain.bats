@@ -249,8 +249,10 @@ EOF
 # show
 ################################################################################
 
-@test "shows no item details" {
+@test "shows no item details even when locked" {
   assert_adds_item "${PW_1}" "${NAME_A}"
+  pw lock
+
   run pw -p show "${NAME_A}"
   assert_success
   assert_line --index 0 "Name: ${NAME_A}"
@@ -259,8 +261,10 @@ EOF
   assert_line --index 3 "Comments:"
 }
 
-@test "shows item details" {
+@test "shows item details even when locked" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
+  pw lock
+
   run pw -p show "${NAME_A}"
   assert_success
   cat << EOF | assert_output -
