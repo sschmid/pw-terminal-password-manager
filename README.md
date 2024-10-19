@@ -118,9 +118,9 @@ Here's an overview of which features are supported by each plugin:
 |--------------------------------------------------------------------------------:|:--------------:|:-----------------------------------:|:--------------:|
 | Create keychain                                                                 | ✅             | ✅                                   | ✅ (directory) |
 | Add entry with name and password                                                | ✅             | ✅                                   | ✅             |
-| Add entry with name, account, url, notes and password                           | ✅             | ✅                                   | 🤩             |
+| Add entry with name, account, url, notes and password                           | ✅             | ✅                                   | 🔐             |
 | Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                   | ❌             |
-| Add entry in groups (e.g. Coding/GitHub)                                        | ❌             | 🤩                                   | ✅             |
+| Add entry in groups (e.g. Coding/GitHub)                                        | ❌             | 🔐                                   | ✅             |
 | Edit entry                                                                      | ✅             | ✅                                   | ✅             |
 | Remove entry                                                                    | ✅             | ✅                                   | ✅             |
 | List entries                                                                    | ✅             | ✅                                   | ✅             |
@@ -133,7 +133,7 @@ Here's an overview of which features are supported by each plugin:
 
 <sup>
 ✅: native support by the password manager<br />
-🤩: workaround implemented by pw<br />
+🔐: workaround implemented by pw<br />
 ❌: not supported by the password manager
 </sup>
 
