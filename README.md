@@ -155,7 +155,7 @@ prompting the user.
 `pw` changes this behaviour to reduce security risks by not automatically adding
 the `security` command to the keychain's access control list. This way you have
 full control over which applications can access your keychain items and decide
-whether to allow or deny access.
+whether to allow or deny access on a item-by-item basis.
 
 See [Plugin specific configuration](#macos-keychain) to change this behaviour.
 
