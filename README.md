@@ -94,9 +94,9 @@ pw update
 
 # How `pw` works
 
-`pw` provides a unified interface to interact with various keychains and
-forwards commands to the respective password manager using plugins.
-Plugins are simple bash scripts that implement the following functions (see [plugins](src/plugins)):
+`pw` provides a unified interface to interact with various keychains and forwards
+commands to the respective password manager using plugins. Plugins are simple
+bash scripts that implement the following functions (see [plugins](src/plugins)):
 
 - `init`
 - `add`
@@ -146,11 +146,11 @@ Legend:
 ## macOS `security` Command
 
 Typically, when accessing keychain items added by other applications, the user
-is prompted to `allow` or `always allow` access. However, when keychain entries are
-added using the `security` command itself, the command is automatically granted
-access to those items without future prompts. This can be a security risk, because
-other applications can use the `security` command to access these items without
-prompting the user.
+is prompted to `allow` or `always allow` access. However, when keychain entries
+are added using the `security` command itself, the command is automatically
+granted access to those items without future prompts. This can be a security risk,
+because other applications can use the `security` command to access these items
+without prompting the user.
 
 `pw` changes this behaviour to reduce security risks by not automatically adding
 the `security` command to the keychain's access control list. This way you have
@@ -159,7 +159,7 @@ whether to allow or deny access on a item-by-item basis.
 
 See [Plugin specific configuration](#macos-keychain) to change this behaviour.
 
-If you decide to change this behaviour, please consider the following recommendations:
+If you decide to change this behaviour, consider the following recommendations:
 
 > [!TIP]
 > - Lock the keychain after each use to secure it.
@@ -186,10 +186,11 @@ without re-entering the passphrase.
 pw lock   # will run 'gpgconf --kill gpg-agent' to kill the GPG agent process
 ```
 
-Additionally, while GPG encrypts files, the file names can still be listed without
-requiring the passphrase, thereby exposing the file names. This cannot be prevented
-by `pw` and is a limitation of GPG. There are workarounds like using a separate
-encrypted container or using a tool like `tar` to encrypt the files into a single archive.
+Additionally, while GPG encrypts files, the file names can still be listed
+without requiring the passphrase, thereby exposing the file names. This cannot
+be prevented by `pw` and is a limitation of GPG. There are workarounds like
+using a separate encrypted container or using a tool like `tar` to encrypt the
+files into a single archive.
 
 ## KeePassXC
 
