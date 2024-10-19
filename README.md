@@ -163,6 +163,8 @@ See [Plugin specific configuration](#macos-keychain) to change this behaviour.
 If you decide to change this behaviour, consider the following recommendations:
 
 > [!TIP]
+> - Change the keychain settings to require a password after a certain time and
+>   activate the option to lock the keychain when the computer sleeps.
 > - Lock the keychain after each use to secure it.
 
 ```bash
@@ -172,7 +174,8 @@ pw lock
 Additionally, keychain entries can be listed without requiring a password, even
 when the keychain is locked. This can expose metadata about the keychain entries
 like the name, account, URL and comments. This cannot be prevented by `pw` and
-is a limitation of the macOS Keychain.
+is a limitation of the macOS Keychain. There are workarounds like encrypting the
+keychain and only temporarily decrypting it when needed.
 
 ## GPG Passphrase Caching
 
@@ -198,6 +201,19 @@ files into a single archive.
 > [!NOTE]
 > KeePassXC, unlike the `security` command and GPG, remains locked when not in
 > use and does not have these risks.
+
+# Security Comparison
+
+| Security Considerations                    | macOS Keychain | KeePassXC | GnuPG |
+|-------------------------------------------:|:--------------:|:---------:|:-----:|
+| Keychain stays unlocked                    | ⚠️              | ✅        | ⚠️     |
+| Metadata exposure while keychain is locked | ⚠️              | ✅        | ⚠️     |
+
+<sup>
+✅: no known security risk<br />
+⚠️: potential security risk, but can be mitigated<br />
+🚨: potential security risk, no mitigation possible
+</sup>
 
 # Usage
 
