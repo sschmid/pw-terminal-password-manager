@@ -168,6 +168,11 @@ If you decide to change this behaviour, please consider the following recommenda
 pw lock
 ```
 
+Additionally, keychain entries can be listed without requiring a password, even
+when the keychain is locked. This can expose metadata about the keychain entries
+like the name, account, URL and comments. This cannot be prevented by `pw` and
+is a limitation of the macOS Keychain.
+
 ## GPG Passphrase Caching
 
 GPG caches passphrases after use, which can allow access to the private key
@@ -180,6 +185,11 @@ without re-entering the passphrase.
 ```bash
 pw lock   # will run 'gpgconf --kill gpg-agent' to kill the GPG agent process
 ```
+
+Additionally, while GPG encrypts files, the file names can still be listed without
+requiring the passphrase, thereby exposing the file names. This cannot be prevented
+by `pw` and is a limitation of GPG. There are workarounds like using a separate
+encrypted container or using a tool like `tar` to encrypt the files into a single archive.
 
 ## KeePassXC
 
