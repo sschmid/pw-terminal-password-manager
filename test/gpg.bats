@@ -25,6 +25,11 @@ teardown() {
 # helpers
 ################################################################################
 
+# shellcheck disable=SC2009
+_ps() {
+  ps -A | grep "gpg-agent --homedir ${GNUPGHOME}" | grep -v grep
+}
+
 _gpg_decrypt() {
   gpg --quiet --batch --pinentry-mode loopback --passphrase "${KEYCHAIN_TEST_PASSWORD}" \
       --decrypt "${PW_KEYCHAIN}/$1" | sed -n "$2"
@@ -360,7 +365,7 @@ EOF
 ################################################################################
 
 @test "unlocks keychain" {
-  run pgrep -f "gpg-agent"
+  run _ps
   assert_failure
   refute_output
 
@@ -368,7 +373,7 @@ EOF
   assert_success
   refute_output
 
-  run pgrep -f "gpg-agent"
+  run _ps
   assert_success
   assert_output
 }
@@ -378,7 +383,7 @@ EOF
   _skip_manual_test "pw_test_password - Press enter to continue ..."
   read -rsp "Press enter to continue ..."
 
-  run pgrep -f "gpg-agent"
+  run _ps
   assert_failure
   refute_output
 
@@ -386,7 +391,7 @@ EOF
   assert_success
   refute_output
 
-  run pgrep -f "gpg-agent"
+  run _ps
   assert_success
   assert_output
 }
