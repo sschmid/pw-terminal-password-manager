@@ -12,9 +12,6 @@ _fzf_preview() {
 }
 # KCOV_EXCL_STOP
 
-# unlocks the keychain if necessary and only previews if the keychain is unlocked
-if security show-keychain-info "${keychain}" &>/dev/null; then
-  declare -p keychain _parse_details
-  declare -f _fzf_preview
-  echo "_fzf_preview"
-fi
+declare -p keychain _parse_details
+declare -f _fzf_preview
+echo "_fzf_preview"

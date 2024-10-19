@@ -493,19 +493,6 @@ EOF
 # fzf preview
 ################################################################################
 
-# bats test_tags=tag:manual_test
-@test "doesn't show fzf preview when locked" {
-  _skip_manual_test "no password and cancel"
-
-  assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${MULTI_LINE_NOTES}"
-  assert_item_exists "${PW_1}" "${NAME_A}"
-
-  run pw lock
-  run "${PROJECT_ROOT}/src/plugins/macos_keychain/fzf_preview" "" "" "${PW_KEYCHAIN}"
-  assert_success
-  refute_output
-}
-
 @test "shows fzf preview for single line notes" {
   assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${SINGLE_LINE_NOTES}"
   assert_item_exists "${PW_1}" "${NAME_A}"
