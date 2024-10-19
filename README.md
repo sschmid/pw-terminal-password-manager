@@ -136,6 +136,46 @@ Legend:
 | YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
 | Automatic keychain discovery                                                    | ✅             | ✅                                   | ✅             |
 
+# Security Considerations
+
+> [!IMPORTANT]
+> `pw` supports the macOS `security` command and `gpg` through its plugins,
+> which may introduce security risks. These risks arise from the behavior of
+> these underlying commands, not from `pw` itself.
+
+## macOS `security` Command
+
+Typically, when accessing keychain items added by other applications, the user
+is prompted to allow or always allow access. However, when keychain entries are
+added using the `security` command itself, the command is automatically granted
+access to those items without prompting the user.
+
+> [!TIP]
+> - Lock the keychain after each use to secure it.
+
+```bash
+pw lock
+```
+
+## GPG Passphrase Caching
+
+GPG caches passphrases after use, which can allow access to the private key
+without re-entering the passphrase.
+
+> [!TIP]
+> - Shorten the GPG passphrase caching time by adjusting the `gpg-agent` settings.
+> - Kill the GPG agent process to clear the passphrase cache.
+
+```bash
+pw lock   # will run 'gpgconf --kill gpg-agent' to kill the GPG agent process
+```
+
+## KeePassXC
+
+> [!NOTE]
+> KeePassXC, unlike the `security` command and GPG, remains locked when not in
+> use and does not have these risks.
+
 # Usage
 
 In all following examples, `[<args>]` refers to the optional
