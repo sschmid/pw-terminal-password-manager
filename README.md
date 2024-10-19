@@ -114,11 +114,6 @@ consistent interface by implementing workarounds where necessary.
 
 Here's an overview of which features are supported by each plugin:
 
-Legend:
-- ✅: native support by the password manager
-- 🤩: workaround implemented by `pw`
-- ❌: not supported by the password manager
-
 | Feature                                                                         | macOS Keychain | KeePassXC                           | GnuPG          |
 |--------------------------------------------------------------------------------:|:--------------:|:-----------------------------------:|:--------------:|
 | Create keychain                                                                 | ✅             | ✅                                   | ✅ (directory) |
@@ -135,6 +130,12 @@ Legend:
 | Key file support                                                                | ❌             | ✅                                   | ❌             |
 | YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
 | Automatic keychain discovery                                                    | ✅             | ✅                                   | ✅             |
+
+<sup>
+✅: native support by the password manager<br />
+🤩: workaround implemented by pw<br />
+❌: not supported by the password manager
+</sup>
 
 # Security Considerations
 
