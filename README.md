@@ -146,9 +146,20 @@ Legend:
 ## macOS `security` Command
 
 Typically, when accessing keychain items added by other applications, the user
-is prompted to allow or always allow access. However, when keychain entries are
+is prompted to `allow` or `always allow` access. However, when keychain entries are
 added using the `security` command itself, the command is automatically granted
-access to those items without prompting the user.
+access to those items without future prompts. This can be a security risk, because
+other applications can use the `security` command to access these items without
+prompting the user.
+
+`pw` changes this behaviour to reduce security risks by not automatically adding
+the `security` command to the keychain's access control list. This way you have
+full control over which applications can access your keychain items and decide
+whether to allow or deny access.
+
+See [Plugin specific configuration](#macos-keychain) to change this behaviour.
+
+If you decide to change this behaviour, please consider the following recommendations:
 
 > [!TIP]
 > - Lock the keychain after each use to secure it.
@@ -419,6 +430,18 @@ In your `~/.pwrc`:
 ...
 ~/secrets.kdbx:key1=value1,key2=value2
 ...
+```
+
+## macOS Keychain
+
+As mentioned in the [Security Considerations](#security-considerations) section,
+`pw` won't automatically add the `security` command to the keychain's access
+control list to reduce security risks. If you want to add the `security` command
+to the keychain's access control list by default, you can set the environment
+variable `PW_MACOS_KEYCHAIN_ACCESS_CONTROL` to `always-allow`:
+
+```bash
+export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
 ```
 
 ## KeePassXC
