@@ -6,6 +6,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [9.1.0] - 2024-10-19
+### Upgrading to pw 9.1.0
+
+In order to increase security, the `macos_keychain` plugin won't automatically
+add the `security` command to the keychain's access control list anymore.
+
+Typically, when accessing keychain items added by other applications, the user
+is prompted to `allow` or `always allow` access. However, when keychain entries are
+added using the `security` command itself, the command is automatically granted
+access to those items without future prompts. This can be a security risk, because
+other applications can use the `security` command to access these items without
+prompting the user.
+
+`pw` changes this behaviour to reduce security risks by not automatically adding
+the `security` command to the keychain's access control list. This way you have
+full control over which applications can access your keychain items and decide
+whether to allow or deny access.
+
+If you want to add the `security` command to the keychain's access control list
+by default, you can set the environment variable
+`PW_MACOS_KEYCHAIN_ACCESS_CONTROL` to `always-allow`:
+
+```bash
+export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
+```
+
+### Added
+- Add `PW_MACOS_KEYCHAIN_ACCESS_CONTROL` to control access control list behavior
+- Add "Security Considerations" section to readme
+
+### Changed
+- `macos_keychain`: Don't add `security` command to access control list by default
+- `macos_keychain`: Don't unlock keychain for fzf preview
+- `gpg`: Don't unlock keychain for fzf preview
+
 ## [9.0.0] - 2024-10-17
 ### Upgrading to pw 9.0.0
 
@@ -265,7 +300,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.0...HEAD
+[9.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.0.0...9.1.0
 [9.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.1...9.0.0
 [8.2.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.0...8.2.1
 [8.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.1.0...8.2.0
