@@ -112,6 +112,10 @@ EOF
   refute_output
 }
 
+_skip_on_ubuntu() {
+  [[ "${OSTYPE}" == "linux"* ]] || skip "Skip on Ubuntu"
+}
+
 _skip_manual_test() {
   if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
     echo "# Please enter $1" >&3

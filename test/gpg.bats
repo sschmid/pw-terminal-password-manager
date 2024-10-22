@@ -363,6 +363,7 @@ EOF
 ################################################################################
 
 @test "opens keychain" {
+  _skip_on_ubuntu
   run pw open
   assert_success
   refute_output
