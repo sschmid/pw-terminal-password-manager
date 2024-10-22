@@ -3,5 +3,5 @@
 shellcheck $(
   echo "src/pw" &&
   find "src" "test/fixtures" -type f -name "*.bash" &&
-  find "test" -type f -maxdepth 1 -name "*.bash" -or -name "*.bats"
+  find "test" -maxdepth 1 -type f -name "*.bash" -or -name "*.bats"
 )

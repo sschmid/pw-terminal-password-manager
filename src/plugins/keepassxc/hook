@@ -8,7 +8,7 @@ case "$1" in
   discover_keychains)
     while read -r path; do
       [[ "$(file -b "${path}")" != "${FILE_TYPE}" ]] || echo "${path}"
-    done < <(find "${PWD}" -type f -maxdepth 1)
+    done < <(find "${PWD}" -maxdepth 1 -type f)
   ;;
   register_with_keychain)
     echo "${FILE_TYPE}"

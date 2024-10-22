@@ -12,7 +12,7 @@ case "$1" in
       [[ "${filetype}" != "${FILE_TYPE}"* ]] || echo "$(dirname "${path}")/"
       # .gpg
       [[ "${filetype}" != "data" ]] || echo "$(dirname "${path}")/"
-    done < <(find "${PWD}" -type f -maxdepth 1)
+    done < <(find "${PWD}" -maxdepth 1 -type f)
   ;;
   register_with_keychain)
     echo "${FILE_TYPE}"
