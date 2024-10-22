@@ -7,7 +7,29 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Install dependencies"
+        run: |
+          sudo apt-get update && sudo apt-get install -y --fix-missing \
+             bash fzf gpg keepassxc shellcheck xclip xvfb
+
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up virtual display (Xvfb)
+        run: Xvfb :99 &
+
+      - name: "Run tests"
+        run: |
+          export DISPLAY=:99
+          test/run
+
+  macos:
+    needs: ubuntu
     runs-on: macos-latest
     steps:
       - name: "Install dependencies"
