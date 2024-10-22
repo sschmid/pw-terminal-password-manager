@@ -1,4 +1,7 @@
 # shellcheck disable=SC2030,SC2031
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+
 setup() {
   load 'macos_keychain'
   _setup
@@ -556,3 +559,5 @@ EOF
   assert_success
   assert_output "${PW_KEYCHAIN}"
 }
+
+fi

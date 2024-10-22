@@ -1,3 +1,5 @@
+if [[ "$OSTYPE" == "darwin"* ]]; then
+
 setup() {
   load 'macos_keychain'
   _setup
@@ -22,3 +24,5 @@ setup() {
   assert_success
   assert_file_not_exists "${PW_KEYCHAIN}"
 }
+
+fi
