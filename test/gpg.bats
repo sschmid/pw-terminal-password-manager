@@ -27,7 +27,11 @@ teardown() {
 
 # shellcheck disable=SC2009
 _ps() {
-  ps -A | grep "gpg-agent --homedir ${GNUPGHOME}" | grep -v grep
+  case "${OSTYPE}" in
+    darwin*) ps -A | grep "gpg-agent --homedir ${GNUPGHOME}" | grep -v grep ;;
+    linux*) ps -A | grep "gpg-agent" | grep -v grep ;;
+    *) echo "Unsupported OS: ${OSTYPE}"; return 1 ;;
+  esac
 }
 
 _gpg_decrypt() {
@@ -55,7 +59,11 @@ assert_removes_item_output() {
 }
 
 assert_rm_not_found_output() {
-  assert_output "rm: ${PW_KEYCHAIN}/$1: No such file or directory"
+  case "${OSTYPE}" in
+    darwin*) assert_output "rm: ${PW_KEYCHAIN}/$1: No such file or directory" ;;
+    linux*) assert_output "rm: cannot remove '${PW_KEYCHAIN}/$1': No such file or directory" ;;
+    *) echo "Unsupported OS: ${OSTYPE}"; return 1 ;;
+  esac
 }
 
 assert_username() {
