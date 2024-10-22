@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-_gpg="$(dirname "$0")/_gpg"
+_gpg_decrypt="$(dirname "$0")/_gpg_decrypt"
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
 options="$1" keychain="$2"
@@ -11,4 +11,4 @@ else
   keychain_password=""
 fi
 
-echo | "${_gpg_encrypt}" "${options}" | "${_gpg}" "${keychain_password}" --decrypt >/dev/null
+echo | "${_gpg_encrypt}" "${options}" | "${_gpg_decrypt}" "${keychain_password}" >/dev/null

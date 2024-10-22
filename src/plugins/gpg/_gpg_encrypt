@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+"$(dirname "$0")/_require"
 parse_options="$(dirname "$0")/../parse_options"
-_gpg="$(dirname "$0")/_gpg"
 
 options="$1"; shift
 
@@ -12,4 +12,4 @@ while IFS=$'\t' read -r key value; do
   esac
 done < <("${parse_options}" "${options}")
 
-"${_gpg}" "" --encrypt "${cmd_options[@]}" --default-recipient-self "$@"
+gpg --quiet --encrypt "${cmd_options[@]}" --default-recipient-self "$@"

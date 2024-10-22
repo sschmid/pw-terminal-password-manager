@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+"$(dirname "$0")/_require"
+
+keychain_password="$1"; shift
+
+gpg --quiet --batch \
+    --pinentry-mode loopback --passphrase "${keychain_password}" \
+    --decrypt "$@"

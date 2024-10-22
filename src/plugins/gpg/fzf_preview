@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-_gpg="$(dirname "$0")/_gpg"
-_gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 _parse_details="$(dirname "$0")/_parse_details"
 
 options="$1" keychain_password="$2" keychain="$3"
