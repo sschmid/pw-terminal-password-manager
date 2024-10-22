@@ -11,4 +11,4 @@ else
   keychain_password=""
 fi
 
-echo | "${_gpg_encrypt}" "${options}" | "${_gpg_decrypt}" "${keychain_password}" >/dev/null
+"${_gpg_encrypt}" "${options}" <<< "" | "${_gpg_decrypt}" "${keychain_password}" >/dev/null

@@ -15,6 +15,6 @@ ${url}
 ${notes}"
 
 if [[ "${name##*.}" == "asc" ]]
-then "${_gpg_encrypt}" "${options}" --output "${keychain}/${name}" --armor <<< "${content}"
+then "${_gpg_encrypt}" "${options}" --armor --output "${keychain}/${name}" <<< "${content}"
 else "${_gpg_encrypt}" "${options}" --output "${keychain}/${name}" <<< "${content}"
 fi
