@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+if command -v pbpaste &>/dev/null; then pbpaste
+elif command -v xclip &>/dev/null; then xclip -selection clipboard -o
+elif command -v xsel &>/dev/null; then xsel --clipboard --output
+elif command -v wl-paste &>/dev/null; then wl-paste
+else
+  echo "No clipboard tool found" >&2
+  exit 1
+fi

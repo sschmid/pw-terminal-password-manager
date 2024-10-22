@@ -171,9 +171,9 @@ pw::output() {
     local p
     p="pw-$(id -u)"
     pkill -f "^$p" 2>/dev/null && sleep 0.5
-    echo -n "$1" | pbcopy
+    echo -n "$1" | "${PW_HOME}/src/copy"
     ( ( exec -a "${p}" sleep "${PW_CLIP_TIME}" )
-      [[ "$(pbpaste)" == "$1" ]] && echo -n | pbcopy
+      [[ "$("${PW_HOME}/src/paste")" == "$1" ]] && echo -n | "${PW_HOME}/src/copy"
     ) &>/dev/null & disown
   fi
 }
