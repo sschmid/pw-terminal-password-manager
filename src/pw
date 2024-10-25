@@ -85,7 +85,7 @@ pw::select_keychain() {
       mapfile -t all_keychains < <(awk -v home="${HOME}" '{
         gsub(/^~/, home)
         gsub(/^\$HOME/, home)
-        gsub(/^\${HOME}/, home)
+        gsub(/^\$\{HOME\}/, home)
         if (NF) print $0 }' "${PW_RC}")
       # KCOV_EXCL_STOP
     fi
