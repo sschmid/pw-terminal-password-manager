@@ -168,12 +168,17 @@ pw::output() {
   if (( PW_PRINT )); then
     echo "$1"
   else
-    local p
-    p="pw-$(id -u)"
-    pkill -f "^$p" 2>/dev/null && sleep 0.5
+    local pname
+    local -i pid
+    pname="pw-$(id -u)"
+    pid=$(pgrep -f "^${pname}" 2>/dev/null || true)
+    if (( pid != 0 )); then
+      kill -9 ${pid} &>/dev/null || true
+      wait ${pid} &>/dev/null || true
+    fi
     echo -n "$1" | "${PW_HOME}/src/copy"
     (
-      ( exec -a "${p}" bash <<<"trap 'kill %1' TERM; sleep '${PW_CLIP_TIME}' & wait" )
+      ( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait " )
       [[ "$("${PW_HOME}/src/paste")" == "$1" ]] && echo -n | "${PW_HOME}/src/copy"
     ) &>/dev/null & disown
   fi
