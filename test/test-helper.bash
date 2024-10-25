@@ -112,8 +112,8 @@ EOF
   refute_output
 }
 
-_skip_on_ubuntu() {
-  [[ "${OSTYPE}" == "linux"* ]] || skip "Skip on Ubuntu"
+_skip_when_not_macos() {
+  [[ "${OSTYPE}" == "darwin"* ]] || skip "Not macOS"
 }
 
 _skip_manual_test() {
