@@ -61,6 +61,7 @@ assert_removes_item_output() {
 assert_rm_not_found_output() {
   case "${OSTYPE}" in
     darwin*) assert_output "rm: ${PW_KEYCHAIN}/$1: No such file or directory" ;;
+    linux-musl*) assert_output "rm: can't remove '${PW_KEYCHAIN}/$1': No such file or directory" ;;
     linux*) assert_output "rm: cannot remove '${PW_KEYCHAIN}/$1': No such file or directory" ;;
     *) echo "Unsupported OS: ${OSTYPE}"; return 1 ;;
   esac
