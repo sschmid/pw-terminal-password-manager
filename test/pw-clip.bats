@@ -1,11 +1,21 @@
 # shellcheck disable=SC2030,SC2031
-export BATS_NO_PARALLELIZE_WITHIN_FILE=true
+setup_file() {
+  if command -v Xvfb >/dev/null 2>&1; then
+    export DISPLAY=:99
+    Xvfb "${DISPLAY}" &
+  fi
+}
+
 setup() {
   load 'pw'
   _setup
   export PW_PLUGINS="${BATS_TEST_DIRNAME}/fixtures/plugins"
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
   export PW_CLIP_TIME=1
+}
+
+teardown_file() {
+  pkill Xvfb || true
 }
 
 _copy() { "${PROJECT_ROOT}/src/copy"; }
