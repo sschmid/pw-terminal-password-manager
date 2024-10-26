@@ -177,8 +177,7 @@ pw::output() {
       wait ${pid} &>/dev/null || true
     fi
     echo -n "$1" | "${PW_HOME}/src/copy"
-    (
-      ( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait " )
+    ( ( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait " )
       [[ "$("${PW_HOME}/src/paste")" == "$1" ]] && echo -n | "${PW_HOME}/src/copy"
     ) &>/dev/null & disown
   fi
@@ -189,12 +188,7 @@ pw::gen() {
   local password="" class="${2:-"${PW_GEN_CLASS}"}"
   while (( "${#password}" != length )); do
     # alpine tr does not support [:graph:], use sed instead
-    password+=$(
-      dd if=/dev/urandom bs=1024 count=1 2>/dev/null \
-      | LC_CTYPE=C LC_ALL=C tr -d '\0[:space:]' \
-      | LC_CTYPE=C LC_ALL=C sed "s/[^${class}]//g" \
-      | head -c $(( length - ${#password} )) || true
-    )
+    password+=$(dd if=/dev/urandom bs=1024 count=1 2>/dev/null | LC_CTYPE=C LC_ALL=C tr -d '\0[:space:]' | LC_CTYPE=C LC_ALL=C sed "s/[^${class}]//g" | head -c $(( length - ${#password} )) || true)
   done
   pw::output "${password}"
 }
