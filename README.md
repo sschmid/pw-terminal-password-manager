@@ -16,11 +16,11 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 
 # Why `pw`?
 
-- **Unified Interface:** `pw` unifies trusted password managers in a single terminal interface.
+- **Built on Proven Tools:** Instead of reinventing password management, `pw` combines reliable, established tools into one convenient interface.
 - **Efficiency:** With the [fzf](https://github.com/junegunn/fzf) fuzzy finder, `pw` allows for rapid and intuitive interaction with your keychains - nice!
 - **Simplicity:** `pw` is built using simple bash, making it easy to understand, modify, and extend.
 - **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](src/plugins)).
-- **Clipboard Management:** Automatically clears passwords from the clipboard after a specified duration.
+- **Clipboard Management:** Automatically clears passwords from the clipboard after a configurable time.
 - **Multiple Keychain Support**: Effortlessly manage and switch between [multiple keychains](#using-multiple-keychains) stored in various locations.
 
 ![pw-fzf](readme/pw-fzf.png)
