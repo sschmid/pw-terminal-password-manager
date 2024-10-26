@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 set -e
 [[ ! -f test/bats/bin/bats ]] && git submodule update --init --recursive
-test/bats/bin/bats "${@:-test}"
+
+declare -rx TEST_BASH_VERSION="${TEST_BASH_VERSION:-"5.2"}"
+
+case "${1:-}" in
+  --alpine)
+    DOCKER_BUILDKIT=1 docker build --build-arg BASH_VERSION="${TEST_BASH_VERSION}" --progress=plain \
+      --target test -t sschmid/pw/test -f docker/alpine/Dockerfile .
+    ;;
+  --ubuntu)
+    DOCKER_BUILDKIT=1 docker build --progress=plain \
+      --target test -t sschmid/pw/test -f docker/ubuntu/Dockerfile .
+    ;;
+  *)
+    test/bats/bin/bats "${@:-test}"
+    ;;
+esac
+
 test/shellcheck
