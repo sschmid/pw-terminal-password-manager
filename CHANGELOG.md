@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [9.2.0] - 2024-10-26
+### Added
+- Make `pw` work on Alpine Linux and Ubuntu
+- Add Dockerfiles for building and testing `pw` on Alpine Linux and Ubuntu
+- Add support for clipboard tools: `xclip`, `xsel`, `wl-clipboard`
+- Faster copy to clipboard
+
 ## [9.1.1] - 2024-10-19
 ### Added
 - `macos_keychain`: Remove unnecessary password prompt for show command
@@ -13,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [9.1.0] - 2024-10-19
 ### Upgrading to pw 9.1.0
-
 In order to increase security, the `macos_keychain` plugin won't automatically
 add the `security` command to the keychain's access control list anymore.
 
@@ -48,7 +54,6 @@ export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
 
 ## [9.0.0] - 2024-10-17
 ### Upgrading to pw 9.0.0
-
 In order to increase security, plugins are no longer sourced. Instead they are
 executed as separate scripts. This change also makes it easier to write and
 maintain plugins. Please migrate your custom plugins to the new format.
@@ -305,7 +310,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.0...HEAD
+[9.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.1...9.2.0
 [9.1.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.0...9.1.1
 [9.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.0.0...9.1.0
 [9.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/8.2.1...9.0.0
