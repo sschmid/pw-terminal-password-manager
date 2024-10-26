@@ -7,7 +7,9 @@ It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
 you to interact with [various keychains](#using-multiple-keychains) effortlessly.
 
-[![CI](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yaml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yaml)
+[![CI on macOS](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml)
+[![CI on Alpine Linux](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml)
+[![CI on Ubuntu](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml)
 [![Coverage Status](https://coveralls.io/repos/github/sschmid/pw-terminal-password-manager/badge.svg)](https://coveralls.io/github/sschmid/pw-terminal-password-manager)
 [![Latest release](https://img.shields.io/github/release/sschmid/pw-terminal-password-manager.svg)](https://github.com/sschmid/pw-terminal-password-manager/releases)
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
