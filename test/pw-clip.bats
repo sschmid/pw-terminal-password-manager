@@ -1,4 +1,7 @@
 # shellcheck disable=SC2030,SC2031
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+
 setup_file() {
   if command -v Xvfb >/dev/null 2>&1; then
     export DISPLAY=:99
@@ -91,3 +94,5 @@ _wait() { sleep 2; }
   run _paste
   assert_output "after"
 }
+
+fi
