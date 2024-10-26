@@ -1,4 +1,4 @@
-name: CI
+name: CI on macOS
 
 on:
   push:
@@ -7,29 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  alpine:
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: "Run tests"
-        run: test/run --alpine
-
-  ubuntu:
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: "Run tests"
-        run: test/run --ubuntu
-
-  macos:
+  test:
     runs-on: macos-latest
     steps:
       - name: "Install dependencies"
