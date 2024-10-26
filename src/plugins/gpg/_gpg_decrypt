@@ -4,6 +4,10 @@ set -euo pipefail
 
 keychain_password="$1"; shift
 
-gpg --quiet --batch \
-    --pinentry-mode loopback --passphrase "${keychain_password}" \
-    --decrypt "$@"
+if [[ -n "${keychain_password}" ]]; then
+  gpg --quiet --batch \
+      --pinentry-mode loopback --passphrase "${keychain_password}" \
+      --decrypt "$@"
+else
+  gpg --quiet --decrypt "$@"
+fi
