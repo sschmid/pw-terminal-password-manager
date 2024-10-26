@@ -15,7 +15,6 @@ case "${1:-}" in
     ;;
   *)
     test/bats/bin/bats "${@:-test}"
+    test/shellcheck
     ;;
 esac
-
-test/shellcheck
