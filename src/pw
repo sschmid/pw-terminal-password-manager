@@ -5,6 +5,7 @@ IFS=$'\n\t'
 
 # make fzf preview use bash
 SHELL="$(which bash)"
+export SHELL
 
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
