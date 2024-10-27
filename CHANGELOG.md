@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [9.2.2] - 2024-10-27
+### Added
+- `keepassxc`: Display error messages prominently to avoid them being missed
+
+### Fixed
+- Fix fzf preview in docker container
+
 ## [9.2.1] - 2024-10-27
 ### Fixed
 - Fix fzf yank to use new copy paste
@@ -315,7 +322,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.2...HEAD
+[9.2.2]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.1...9.2.2
 [9.2.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.0...9.2.1
 [9.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.1...9.2.0
 [9.1.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.1.0...9.1.1
