@@ -189,7 +189,7 @@ pw::gen() {
   local password="" class="${2:-"${PW_GEN_CLASS}"}"
   while (( "${#password}" != length )); do
     # alpine tr does not support [:graph:], use sed instead
-    password+=$(dd if=/dev/urandom bs=1024 count=1 2>/dev/null | LC_CTYPE=C LC_ALL=C tr -d '\0[:space:]' | LC_CTYPE=C LC_ALL=C sed "s/[^${class}]//g" | head -c $(( length - ${#password} )) || true)
+    password+=$(dd if=/dev/urandom bs=$(( length / 64 + 1 )) count=1 2>/dev/null | LC_CTYPE=C LC_ALL=C tr -d '\0[:space:]' | LC_CTYPE=C LC_ALL=C sed "s/[^${class}]//g" | head -c $(( length - ${#password} )))
   done
   pw::output "${password}"
 }
