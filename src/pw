@@ -331,7 +331,7 @@ pw::select_item_with_prompt() {
     local items item preview yank yank_action
     items="$(pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "fzf")"
     preview="$(pw::plugin fzf_preview "${keychain_password}" "${PW_KEYCHAIN}")"
-    yank="$(declare -p PW_PRINT PW_CLIP_TIME); $(declare -f pw::output); pw::output \"\$(${preview})\""
+    yank="$(declare -p PW_HOME PW_PRINT PW_CLIP_TIME); $(declare -f pw::output); pw::output \"\$(${preview})\""
     (( PW_PRINT )) && yank_action="print" || yank_action="copy"
 
     # KCOV_EXCL_START

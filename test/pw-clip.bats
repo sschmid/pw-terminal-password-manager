@@ -21,9 +21,6 @@ teardown_file() {
   pkill Xvfb || true
 }
 
-_copy() { "${PROJECT_ROOT}/src/copy"; }
-_paste() { "${PROJECT_ROOT}/src/paste"; }
-
 _wait() { sleep 2; }
 
 @test "copies item password" {

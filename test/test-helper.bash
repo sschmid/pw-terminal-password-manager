@@ -112,6 +112,14 @@ EOF
   refute_output
 }
 
+_copy() {
+  "${PROJECT_ROOT}/src/copy"
+}
+
+_paste() {
+  "${PROJECT_ROOT}/src/paste"
+}
+
 _skip_when_not_macos() {
   [[ "${OSTYPE}" == "darwin"* ]] || skip "Not macOS"
 }

@@ -455,6 +455,29 @@ Notes: ${MULTI_LINE_NOTES}
 EOF
 }
 
+# bats test_tags=tag:manual_test
+@test "yanks item to clipboard" {
+  _skip_manual_test "yank 'NAME A' to clipboard"
+  read -rsp "Press enter to continue ..."
+  # fzf strips leading and trailing whitespace, so don't use variables here
+  assert_adds_item_with_keychain_password "${PW_1}" "NAME A" "ACCOUNT A" "URL A" "${MULTI_LINE_NOTES}"
+  assert_item_exists "${PW_1}" "NAME A" <<< "${KEYCHAIN_TEST_PASSWORD}"
+
+  export PW_CLIP_TIME=1
+  bats_require_minimum_version 1.5.0
+  run -130 pw <<< "${KEYCHAIN_TEST_PASSWORD}"
+
+  run _paste
+  assert_success
+  cat << EOF | assert_output --partial -
+Title: NAME A
+UserName: ACCOUNT A
+Password: PROTECTED
+URL: URL A
+Notes: ${MULTI_LINE_NOTES}
+EOF
+}
+
 ################################################################################
 # discover
 ################################################################################
