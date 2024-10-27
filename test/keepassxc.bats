@@ -35,11 +35,17 @@ _set_keychain() {
 ################################################################################
 
 assert_item_not_exists_output() {
-  assert_output "Could not find entry with path $1."
+  cat << EOF | assert_output -
+Could not find entry with path $1.
+keepassxc-cli: Error while running the command '${2:-show}'
+EOF
 }
 
 assert_item_already_exists_output() {
-  assert_output "Could not create entry with path $1."
+  cat << EOF | assert_output -
+Could not create entry with path $1.
+keepassxc-cli: Error while running the command 'add'
+EOF
 }
 
 assert_removes_item_output() {
@@ -47,7 +53,10 @@ assert_removes_item_output() {
 }
 
 assert_rm_not_found_output() {
-  assert_output "Entry $1 not found."
+  cat << EOF | assert_output -
+Entry $1 not found.
+keepassxc-cli: Error while running the command 'rm'
+EOF
 }
 
 assert_username() {
@@ -328,7 +337,7 @@ ${KEYCHAIN_TEST_PASSWORD}
 ${PW_2}
 EOF
   assert_failure
-  assert_item_not_exists_output "${NAME_A}"
+  assert_item_not_exists_output "${NAME_A}" "edit"
 }
 
 ################################################################################
@@ -375,7 +384,10 @@ EOF
   assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
   run pw ls <<< "wrong"
   assert_failure
-  assert_output "Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again."
+  cat << EOF | assert_output -
+keepassxc-cli: Error while running the command 'ls'
+Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again.
+EOF
 }
 
 @test "lists sorted items with key-file" {

@@ -17,4 +17,7 @@ done < <("${parse_options}" "${options}")
 [[ "${command}" == "open" ]] && quiet=0
 (( quiet )) && cmd_options+=("--quiet")
 
-keepassxc-cli "${command}" "${cmd_options[@]}" "$@"
+if ! keepassxc-cli "${command}" "${cmd_options[@]}" "$@"; then
+  echo "keepassxc-cli: Error while running the command '${command}'" >&2
+  exit 1
+fi
