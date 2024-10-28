@@ -78,3 +78,19 @@ assert_pw_home() {
   assert_success
   assert_output "22222222"
 }
+
+# @test "BusyBox: replaces [:graph:] with [:alnum:][:punct:]" {
+#   export PW_GEN_LENGTH=64
+#   export PW_GEN_CLASS="[:graph:]"
+#   run pw -p gen
+#   assert_success
+#   assert_output "check manually"
+# }
+
+# @test "alpine: replaces [:print:] with [:alnum:][:punct:][:space:]" {
+#   export PW_GEN_LENGTH=64
+#   export PW_GEN_CLASS="[:print:]"
+#   run pw -p gen
+#   assert_success
+#   assert_output "check manually"
+# }
