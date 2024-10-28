@@ -5,7 +5,7 @@ _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
 options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" account="$6" url="$7"
 
-content="$("${_gpg_decrypt}" "${keychain_password}" "${keychain}/${name}" | sed -n 2,\$p)"
+content="$("${_gpg_decrypt}" "${keychain_password}" "${keychain}/${name}" | sed '1d')"
 "${_gpg_encrypt}" "${options}" --yes --output "${keychain}/${name}" << EOF
 ${password}
 ${content}
