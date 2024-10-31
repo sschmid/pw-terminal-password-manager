@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # make fzf preview use bash
-SHELL="$(which bash)"
+SHELL="$(type bash | awk '{print $3}')"
 export SHELL
 
 PW_HOME="${BASH_SOURCE[0]}"
