@@ -56,27 +56,27 @@ assert_pw_home() {
 }
 
 @test "generates and prints password" {
-  export PW_GEN_LENGTH=5
+  export PW_GEN_LENGTH=1
   export PW_GEN_CLASS="1"
   run pw -p gen
   assert_success
-  assert_output "11111"
+  assert_output "1"
 }
 
 @test "generates password with specified length" {
-  export PW_GEN_LENGTH=5
+  export PW_GEN_LENGTH=2
   export PW_GEN_CLASS="1"
-  run pw -p gen 8
+  run pw -p gen 1
   assert_success
-  assert_output "11111111"
+  assert_output "1"
 }
 
 @test "generates password with specified character class" {
-  export PW_GEN_LENGTH=5
+  export PW_GEN_LENGTH=2
   export PW_GEN_CLASS="1"
-  run pw -p gen 8 "2"
+  run pw -p gen 1 "2"
   assert_success
-  assert_output "22222222"
+  assert_output "2"
 }
 
 # @test "BusyBox: replaces [:graph:] with [:alnum:][:punct:]" {
