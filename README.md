@@ -518,26 +518,24 @@ pw add GitHub.asc
 
 # Requirements
 
+Install the following dependencies to use `pw`:
+
 ## `pw`
 
-```bash
-brew install fzf
+```
+fzf
 ```
 
 ## `pw` plugins (optional):
 
-### macos_keychain
-
-Nothing to install, `security` is already installed on macOS.
-
 ### keepassxc
 
-```bash
-brew install --cask keepassxc
+```
+keepassxc
 ```
 
 ### gpg
 
-```bash
-brew install gnupg
+```
+gnupg
 ```
