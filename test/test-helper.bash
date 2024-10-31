@@ -4,7 +4,6 @@ _common_setup() {
   load 'test_helper/bats-assert/load.bash'
   load 'test_helper/bats-file/load.bash'
 
-  export LC_ALL="en_US.UTF-8"
   export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
 
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"

@@ -4,11 +4,9 @@ RUN apt-get update && apt-get install -y \
     fzf \
     gnupg \
     keepassxc \
-    locales \
     xclip \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
-RUN locale-gen en_US.UTF-8
 
 FROM base AS pw
 WORKDIR /usr/local/opt/pw
