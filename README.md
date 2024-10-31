@@ -27,6 +27,26 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 
 ![pw-fzf](readme/pw-fzf.png)
 
+# Install and update `pw`
+
+Install
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
+```
+
+Update
+
+```bash
+pw update
+```
+
+Uninstall
+
+```bash
+/usr/local/opt/pw/install --uninstall
+```
+
 # Quickstart
 
 ```bash
@@ -81,19 +101,6 @@ pw GitHub
 
 # or use fzf to select an entry (-p prints the password instead of copying it)
 pw -p
-```
-
-# Install and update `pw`
-
-```bash
-# install
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
-
-# update
-pw update
-
-# uninstall
-/usr/local/opt/pw/install --uninstall
 ```
 
 # How `pw` works
