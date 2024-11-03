@@ -1,12 +1,14 @@
-FROM archlinux:latest AS base
-# FROM --platform=linux/amd64 archlinux:latest AS base
+FROM fedora:latest AS base
 WORKDIR /usr/local/opt/pw
 COPY DEPENDENCIES.md .
-RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
+RUN dnf install -y \
     $(cat DEPENDENCIES.md) \
+    file \
+    procps-ng \
     xclip \
-    xorg-server-xvfb \
-    && pacman -Scc --noconfirm
+    xorg-x11-server-Xvfb \
+    && dnf clean all \
+    && rm -rf /var/cache/yum
 
 FROM base AS pw
 WORKDIR /usr/local/opt/pw
