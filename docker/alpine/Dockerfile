@@ -1,9 +1,9 @@
 ARG BASH_VERSION=5.2
 FROM bash:${BASH_VERSION} AS base
+WORKDIR /usr/local/opt/pw
+COPY DEPENDENCIES.md .
 RUN apk add --no-cache \
-    fzf \
-    gnupg \
-    keepassxc \
+    $(cat DEPENDENCIES.md) \
     xclip \
     xvfb
 

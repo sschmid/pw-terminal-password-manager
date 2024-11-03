@@ -1,0 +1,3 @@
+fzf
+gnupg
+keepassxc

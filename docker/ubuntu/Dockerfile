@@ -1,9 +1,9 @@
 FROM ubuntu:latest AS base
+WORKDIR /usr/local/opt/pw
+COPY DEPENDENCIES.md .
 RUN apt-get update && apt-get install -y \
     file \
-    fzf \
-    gnupg \
-    keepassxc \
+    $(cat DEPENDENCIES.md) \
     xclip \
     xvfb \
     && rm -rf /var/lib/apt/lists/*

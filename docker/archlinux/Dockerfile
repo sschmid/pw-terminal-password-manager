@@ -1,9 +1,10 @@
 FROM archlinux:latest AS base
+# FROM --platform=linux/amd64 archlinux:latest AS base
+WORKDIR /usr/local/opt/pw
+COPY DEPENDENCIES.md .
 RUN pacman -Syu --noconfirm && \
     pacman -S --noconfirm --needed \
-    fzf \
-    gnupg \
-    keepassxc \
+    $(cat DEPENDENCIES.md) \
     xclip \
     xorg-server-xvfb && \
     pacman -Scc --noconfirm
