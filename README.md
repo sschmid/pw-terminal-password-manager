@@ -7,11 +7,6 @@ It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
 you to interact with [various keychains](#using-multiple-keychains) effortlessly.
 
-[![CI on Alpine Linux](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml)
-[![CI on Arch Linux](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/archlinux.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/archlinux.yml)
-[![CI on Ubuntu](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml)
-[![CI on macOS](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml)
-
 [![Coverage Status](https://coveralls.io/repos/github/sschmid/pw-terminal-password-manager/badge.svg)](https://coveralls.io/github/sschmid/pw-terminal-password-manager)
 [![Latest release](https://img.shields.io/github/release/sschmid/pw-terminal-password-manager.svg)](https://github.com/sschmid/pw-terminal-password-manager/releases)
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
@@ -29,23 +24,34 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 
 # Install and update `pw`
 
-Install
+### Install
+
+See [requirements](#requirements) for dependencies.
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
 ```
 
-Update
+### Update
 
 ```bash
 pw update
 ```
 
-Uninstall
+### Uninstall
 
 ```bash
 /usr/local/opt/pw/install --uninstall
 ```
+
+| Platform                                                                                    | Status                                                                                                                                                                                                            |
+|---------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="https://flatpak.org/img/distro/alpine-97c47415.svg" height="48">                  | [![CI on Alpine Linux](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml)     |
+| <img src="https://flatpak.org/img/distro/arch-61d364d6.svg" height="48">                    | [![CI on Arch Linux](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/archlinux.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/archlinux.yml) |
+| <img src="https://flatpak.org/img/distro/debian-03035138.svg" height="48">                  | [![CI on Debian](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/debian.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/debian.yml)           |
+| <img src="https://flatpak.org/img/distro/fedora-e2366c83.svg" height="48">                  | [![CI on Fedora](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/fedora.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/fedora.yml)           |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/MacOS_logo2.svg" height="48"> | [![CI on macOS](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml)              |
+| <img src="https://flatpak.org/img/distro/ubuntu-d865890b.svg" height="48">                  | [![CI on Ubuntu](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml)           |
 
 # Quickstart
 
