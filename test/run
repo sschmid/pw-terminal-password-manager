@@ -13,6 +13,10 @@ case "${1:-}" in
     DOCKER_BUILDKIT=1 docker build --progress=plain \
       --target test -t sschmid/pw/test/archlinux -f docker/archlinux/Dockerfile .
     ;;
+  --debian)
+    DOCKER_BUILDKIT=1 docker build --progress=plain \
+      --target test -t sschmid/pw/test/debian -f docker/debian/Dockerfile .
+    ;;
   --ubuntu)
     DOCKER_BUILDKIT=1 docker build --progress=plain \
       --target test -t sschmid/pw/test/ubuntu -f docker/ubuntu/Dockerfile .

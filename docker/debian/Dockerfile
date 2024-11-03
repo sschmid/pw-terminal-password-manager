@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS base
+FROM debian:latest AS base
 WORKDIR /usr/local/opt/pw
 COPY DEPENDENCIES.md .
 RUN apt-get update && apt-get install -y \
