@@ -4,29 +4,30 @@ set -e
 
 declare -rx TEST_BASH_VERSION="${TEST_BASH_VERSION:-"5.2"}"
 
-case "${1:-}" in
-  --alpine)
-    DOCKER_BUILDKIT=1 docker build --build-arg BASH_VERSION="${TEST_BASH_VERSION}" --progress=plain \
-      --target test -t sschmid/pw/test/alpine -f docker/alpine/Dockerfile .
-    ;;
-  --archlinux)
-    DOCKER_BUILDKIT=1 docker build --progress=plain \
-      --target test -t sschmid/pw/test/archlinux -f docker/archlinux/Dockerfile .
-    ;;
-  --debian)
-    DOCKER_BUILDKIT=1 docker build --progress=plain \
-      --target test -t sschmid/pw/test/debian -f docker/debian/Dockerfile .
-    ;;
-  --fedora)
-    DOCKER_BUILDKIT=1 docker build --progress=plain \
-      --target test -t sschmid/pw/test/fedora -f docker/fedora/Dockerfile .
-    ;;
-  --ubuntu)
-    DOCKER_BUILDKIT=1 docker build --progress=plain \
-      --target test -t sschmid/pw/test/ubuntu -f docker/ubuntu/Dockerfile .
-    ;;
-  *)
-    test/bats/bin/bats "${@:-test}"
-    test/shellcheck
-    ;;
-esac
+run_tests() {
+  DOCKER_BUILDKIT=1 docker build --target test -t "sschmid/pw/test/$1" -f "docker/$1/Dockerfile" .
+}
+
+while getopts ":ap:" options; do
+  case "${options}" in
+    a)
+      run_tests alpine
+      run_tests archlinux
+      run_tests debian
+      run_tests fedora
+      run_tests ubuntu
+      ;;
+    p)
+      run_tests "${OPTARG}"
+      exit
+      ;;
+    *)
+      echo "Invalid option: -${OPTARG}" >&2
+      exit 1
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+test/bats/bin/bats "${@:-test}"
+test/shellcheck

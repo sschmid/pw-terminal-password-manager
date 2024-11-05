@@ -16,4 +16,4 @@ jobs:
           submodules: recursive
 
       - name: "Run tests"
-        run: test/run --debian
+        run: test/run -p debian
