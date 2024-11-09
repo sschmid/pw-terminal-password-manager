@@ -18,7 +18,6 @@ declare -r PW_RC="${PW_RC:-"${HOME}/.pwrc"}"
 declare -ir PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
 declare -r PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
 declare -ir PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
-declare -r PW_PLUGINS="${PW_PLUGINS:-"${PW_HOME}/plugins"}"
 
 pw::help() {
   cat << EOF
@@ -56,8 +55,39 @@ customization:
 EOF
 }
 
-pw::plugins() {
-  find "${PW_PLUGINS}" -type f -name "hook" | LC_ALL="C.UTF-8" sort
+parse_config() {
+  declare -ag PW_PLUGINS PW_KEYCHAINS
+  [[ ! -f "${PW_RC}" ]] && return
+
+  "${PW_HOME}/src/migrations/pwrc" "${PW_RC}"
+
+  local line section
+  while IFS= read -r line; do
+    line="$(echo "${line}" | xargs)"
+    [[ -z ${line} ]] && continue
+    [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
+    # shellcheck disable=SC2016
+    case "${line}" in
+      "[plugins]") section="plugins" ;;
+      "[keychains]") section="keychains" ;;
+      \[*\]) section="" ;;
+      *)
+        line="${line/'~'/"${HOME}"}"
+        line="${line/'$HOME'/"${HOME}"}"
+        line="${line/'${HOME}'/"${HOME}"}"
+        case "${section}" in
+          plugins)
+            line="${line//'$PW_HOME'/"${PW_HOME}"}"
+            line="${line//'${PW_HOME}'/"${PW_HOME}"}"
+            PW_PLUGINS+=("${line}")
+            ;;
+          keychains)
+            PW_KEYCHAINS+=("${line}")
+            ;;
+        esac
+        ;;
+    esac
+  done < "${PW_RC}"
 }
 
 pw::set_keychain() {
@@ -74,50 +104,38 @@ pw::set_keychain() {
 }
 
 pw::select_keychain() {
+  parse_config
   if [[ -v PW_KEYCHAIN ]]; then
     pw::set_keychain "${PW_KEYCHAIN}"
   else
-    local -a all_keychains
-    local hook keychains
+    local plugin keychains
+    for plugin in "${PW_PLUGINS[@]}"; do
+      keychains="$("${plugin}/hook" "discover_keychains")"
+      [[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
+    done
 
-    if [[ -f "${PW_RC}" ]]; then
-      "${PW_HOME}/src/migrations/pwrc" "${PW_RC}"
-      # KCOV_EXCL_START
-      mapfile -t all_keychains < <(awk -v home="${HOME}" '{
-        gsub(/^~/, home)
-        gsub(/^\$HOME/, home)
-        gsub(/^\$\{HOME\}/, home)
-        if (NF) print $0 }' "${PW_RC}")
-      # KCOV_EXCL_STOP
-    fi
+    mapfile -t PW_KEYCHAINS < <(awk '!line[$0]++' <<< "${PW_KEYCHAINS[*]}" | sort -f)
 
-    while read -r hook; do
-      keychains="$("${hook}" "discover_keychains")"
-      [[ -z "${keychains}" ]] || all_keychains+=("${keychains}")
-    done < <(pw::plugins)
-
-    mapfile -t all_keychains < <(awk '!line[$0]++' <<< "${all_keychains[*]}" | sort -f)
-
-    if (( ${#all_keychains[@]} == 1 )); then
-      pw::set_keychain "${all_keychains[0]}"
+    if (( ${#PW_KEYCHAINS[@]} == 1 )); then
+      pw::set_keychain "${PW_KEYCHAINS[0]}"
     else
       local keychain
-      keychain="$(fzf --prompt "keychain> " --layout reverse <<< "${all_keychains[*]}")"
+      keychain="$(fzf --prompt "keychain> " --layout reverse <<< "${PW_KEYCHAINS[*]}")"
       pw::set_keychain "${keychain}"
     fi
   fi
 
   local -a plugins=() types=()
-  local file_type register
-  while read -r hook; do
+  local plugin file_type register
+  for plugin in "${PW_PLUGINS[@]}"; do
     while true; do
       read -r file_type
       read -r register
       types+=("${file_type}")
-      [[ "${register}" == no ]] || plugins+=("$(dirname "${hook}")")
+      [[ "${register}" == no ]] || plugins+=("${plugin}")
       break
-    done < <("${hook}" "register_with_keychain" "${PW_KEYCHAIN}")
-  done < <(pw::plugins)
+    done < <("${plugin}/hook" "register_with_keychain" "${PW_KEYCHAIN}")
+  done
 
   local -i n=${#plugins[@]}
   if (( n == 1 )); then
@@ -135,21 +153,22 @@ pw::select_keychain() {
 }
 
 pw::infer_plugin() {
+  parse_config
   pw::set_keychain "$1"
   local -a plugins=() types=() exts=()
-  local hook file_type file_extension register
+  local plugin file_type file_extension register
   local -l extension="${PW_KEYCHAIN##*.}"
-  while read -r hook; do
+  for plugin in "${PW_PLUGINS[@]}"; do
     while true; do
       read -r file_type
       read -r file_extension
       read -r register
       types+=("${file_type}")
       exts+=("${file_extension}")
-      [[ "${register}" == no ]] || plugins+=("$(dirname "${hook}")")
+      [[ "${register}" == no ]] || plugins+=("${plugin}")
       break
-    done < <("${hook}" "register_with_extension" "${extension}")
-  done < <(pw::plugins)
+    done < <("${plugin}/hook" "register_with_extension" "${extension}")
+  done
 
   local -i n=${#plugins[@]}
   if (( n == 1 )); then

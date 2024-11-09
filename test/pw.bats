@@ -37,7 +37,7 @@ assert_pw_home() {
 }
 
 @test "doesn't source pwrc" {
-  _set_pwrc_with_keychains " test keychain "
+  _set_pwrc_append_keychains " test keychain "
   echo 'echo "# test pwrc sourced"' >> "${PW_RC}"
   run pw -h
   refute_output --partial "# test pwrc sourced"

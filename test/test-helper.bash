@@ -25,8 +25,24 @@ and spaces "
   PW_3=" 3 test pw "
 }
 
-_set_pwrc_with_keychains() {
-  printf "%s\n" "$@" > "${PW_RC}"
+_set_pwrc_with_plugin() {
+  cat > "${PW_RC}" << EOF
+[plugins]
+$1
+EOF
+}
+
+_set_pwrc_with_test_plugins() {
+  cat > "${PW_RC}" << EOF
+[plugins]
+${BATS_TEST_DIRNAME}/fixtures/plugins/collision
+${BATS_TEST_DIRNAME}/fixtures/plugins/test
+EOF
+}
+
+_set_pwrc_append_keychains() {
+  echo "[keychains]" >> "${PW_RC}"
+  printf "%s\n" "$@" >> "${PW_RC}"
 }
 
 assert_init_already_exists() {

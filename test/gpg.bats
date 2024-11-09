@@ -12,6 +12,8 @@ setup_file() {
 setup() {
   load 'gpg'
   _setup
+  # shellcheck disable=SC2016
+  _set_pwrc_with_plugin '$PW_HOME/plugins/gpg'
   KEYCHAIN_TEST_PASSWORD="pw_test_password"
   pw init "${PW_KEYCHAIN}"
 }

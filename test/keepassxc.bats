@@ -2,6 +2,8 @@
 setup() {
   load 'keepassxc'
   _setup
+  # shellcheck disable=SC2016
+  _set_pwrc_with_plugin '$PW_HOME/plugins/keepassxc'
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 

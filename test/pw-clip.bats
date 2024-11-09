@@ -5,7 +5,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 setup() {
   load 'pw'
   _setup
-  export PW_PLUGINS="${BATS_TEST_DIRNAME}/fixtures/plugins"
+  _set_pwrc_with_test_plugins
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
   export PW_CLIP_TIME=1
 }

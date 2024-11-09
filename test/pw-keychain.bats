@@ -2,41 +2,41 @@
 setup() {
   load 'pw'
   _setup
-  export PW_PLUGINS="${BATS_TEST_DIRNAME}/fixtures/plugins"
+  _set_pwrc_with_test_plugins
   TEST_KEYCHAIN="test keychain.test"
   KEYCHAIN_OPTIONS="key1=value1,key2=value2"
 }
 
 @test "picks single keychain" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
 }
 
 @test "picks single keychain and separates options" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}:${KEYCHAIN_OPTIONS}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}:${KEYCHAIN_OPTIONS}"
   run pw ls
   assert_success
   assert_output "test ls <${KEYCHAIN_OPTIONS}> <> <${TEST_KEYCHAIN}> <default>"
 }
 
 @test "removes duplicates" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}" "${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}" "${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
 }
 
 @test "ignores empty lines" {
-  _set_pwrc_with_keychains "" "${TEST_KEYCHAIN}" ""
+  _set_pwrc_append_keychains "" "${TEST_KEYCHAIN}" ""
   run pw ls
   assert_success
   assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
 }
 
 @test "prioritizes PW_KEYCHAIN over PW_KEYCHAINS" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
   export PW_KEYCHAIN="other test keychain.test"
   run pw ls
   assert_success
@@ -44,7 +44,7 @@ setup() {
 }
 
 @test "prioritizes PW_KEYCHAIN over PW_KEYCHAINS and separates options" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
   export PW_KEYCHAIN="other test keychain.test:${KEYCHAIN_OPTIONS}"
   run pw ls
   assert_success
@@ -52,14 +52,14 @@ setup() {
 }
 
 @test "prioritizes pw -k over PW_KEYCHAINS" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
   run pw -k "other test keychain.test" ls
   assert_success
   assert_output "test ls <> <> <other test keychain.test> <default>"
 }
 
 @test "prioritizes pw -k over PW_KEYCHAINS and separates options" {
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
   run pw -k "other test keychain.test:${KEYCHAIN_OPTIONS}" ls
   assert_success
   assert_output "test ls <${KEYCHAIN_OPTIONS}> <> <other test keychain.test> <default>"
@@ -67,24 +67,55 @@ setup() {
 
 @test "replace ~ with real HOME" {
   # shellcheck disable=SC2088
-  _set_pwrc_with_keychains "~/${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "~/${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <${HOME}/${TEST_KEYCHAIN}> <default>"
 }
 
 @test "replace \$HOME with real HOME" {
-  _set_pwrc_with_keychains "\$HOME/${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "\$HOME/${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <${HOME}/${TEST_KEYCHAIN}> <default>"
 }
 
 @test "replace \${HOME} with real HOME" {
-  _set_pwrc_with_keychains "\${HOME}/${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "\${HOME}/${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <${HOME}/${TEST_KEYCHAIN}> <default>"
+}
+
+@test "irgnores comments with #" {
+  _set_pwrc_append_keychains "# comment"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
+  run pw ls
+  assert_success
+  assert_output "test ls <> <> <test keychain.test> <default>"
+}
+
+@test "irgnores comments with ;" {
+  _set_pwrc_append_keychains "; comment"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
+  run pw ls
+  assert_success
+  assert_output "test ls <> <> <test keychain.test> <default>"
+}
+
+@test "irgnores comments with indentation" {
+  _set_pwrc_append_keychains "    # comment"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
+  run pw ls
+  assert_success
+  assert_output "test ls <> <> <test keychain.test> <default>"
+}
+
+@test "trims indentation" {
+  _set_pwrc_append_keychains "    ${TEST_KEYCHAIN}"
+  run pw ls
+  assert_success
+  assert_output "test ls <> <> <test keychain.test> <default>"
 }
 
 # bats test_tags=tag:manual_test
@@ -92,7 +123,7 @@ setup() {
   _skip_manual_test "'b keychain.test' using fzf (Press enter to continue ...)"
   read -rsp "Press enter to continue ..."
 
-  _set_pwrc_with_keychains "a keychain.test" "b keychain.test"
+  _set_pwrc_append_keychains "a keychain.test" "b keychain.test"
   run pw ls
   assert_success
   assert_output "test ls <> <> <b keychain.test> <default>"
@@ -157,7 +188,7 @@ EOF
 
 @test "fails when multiple plugins match with file type" {
   export PW_TEST_PLUGIN_COLLISION=1
-  _set_pwrc_with_keychains "${TEST_KEYCHAIN}"
+  _set_pwrc_append_keychains "${TEST_KEYCHAIN}"
   run pw ls
   assert_failure
   cat << EOF | assert_output -
