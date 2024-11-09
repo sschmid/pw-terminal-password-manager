@@ -16,7 +16,7 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 - **Built on Proven Tools:** Instead of reinventing password management, `pw` combines reliable, established tools into one convenient interface.
 - **Efficiency:** With the [fzf](https://github.com/junegunn/fzf) fuzzy finder, `pw` allows for rapid and intuitive interaction with your keychains - nice!
 - **Simplicity:** `pw` is built using simple bash, making it easy to understand, modify, and extend.
-- **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](src/plugins)).
+- **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](plugins)).
 - **Clipboard Management:** Automatically clears passwords from the clipboard after a configurable time.
 - **Multiple Keychain Support**: Effortlessly manage and switch between [multiple keychains](#using-multiple-keychains) stored in various locations.
 
@@ -113,7 +113,7 @@ pw -p
 
 `pw` provides a unified interface to interact with various keychains and forwards
 commands to the respective password manager using plugins. Plugins are simple
-bash scripts that implement the following functions (see [plugins](src/plugins)):
+bash scripts that implement the following functions (see [plugins](plugins)):
 
 - `init`
 - `add`

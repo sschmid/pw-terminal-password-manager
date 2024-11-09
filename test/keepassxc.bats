@@ -98,7 +98,7 @@ assert_item_recycled() {
 ################################################################################
 
 @test "reads keychain password from stdin" {
-  run "${PROJECT_ROOT}/src/plugins/keepassxc/keychain_password" "" "" "${PW_KEYCHAIN}" <<< "stdin test"
+  run "${PROJECT_ROOT}/plugins/keepassxc/keychain_password" "" "" "${PW_KEYCHAIN}" <<< "stdin test"
   assert_success
   assert_output "stdin test"
 }
@@ -106,7 +106,7 @@ assert_item_recycled() {
 # bats test_tags=tag:manual_test
 @test "prompts keychain password when no stdin" {
   _skip_manual_test "'test'"
-  run "${PROJECT_ROOT}/src/plugins/keepassxc/keychain_password" "" "" "${PW_KEYCHAIN}"
+  run "${PROJECT_ROOT}/plugins/keepassxc/keychain_password" "" "" "${PW_KEYCHAIN}"
   assert_success
   cat << EOF | assert_output -
 Enter password to unlock ${PW_KEYCHAIN}:
@@ -432,7 +432,7 @@ EOF
   assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "" "${KEYCHAIN_TEST_PASSWORD}" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/plugins/keepassxc/fzf_preview" "" "${KEYCHAIN_TEST_PASSWORD}" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
@@ -453,7 +453,7 @@ EOF
 
   _set_keychain "${PW_KEYCHAIN}"
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/keepassxc/fzf_preview" "${PW_KEYCHAIN_OPTIONS}" "${KEYCHAIN_TEST_PASSWORD}" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/plugins/keepassxc/fzf_preview" "${PW_KEYCHAIN_OPTIONS}" "${KEYCHAIN_TEST_PASSWORD}" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
   run eval "${cmd}"
@@ -495,14 +495,14 @@ EOF
 ################################################################################
 
 @test "discovers no keychains" {
-  run "${PROJECT_ROOT}/src/plugins/keepassxc/hook" "discover_keychains"
+  run "${PROJECT_ROOT}/plugins/keepassxc/hook" "discover_keychains"
   assert_success
   refute_output
 }
 
 @test "discovers keychains" {
   cd "${BATS_TEST_TMPDIR}"
-  run "${PROJECT_ROOT}/src/plugins/keepassxc/hook" "discover_keychains"
+  run "${PROJECT_ROOT}/plugins/keepassxc/hook" "discover_keychains"
   assert_success
   assert_output "${PW_KEYCHAIN}"
 }

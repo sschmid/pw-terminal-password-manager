@@ -18,7 +18,7 @@ declare -r PW_RC="${PW_RC:-"${HOME}/.pwrc"}"
 declare -ir PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
 declare -r PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
 declare -ir PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
-declare -r PW_PLUGINS="${PW_PLUGINS:-"${PW_HOME}/src/plugins"}"
+declare -r PW_PLUGINS="${PW_PLUGINS:-"${PW_HOME}/plugins"}"
 
 pw::help() {
   cat << EOF

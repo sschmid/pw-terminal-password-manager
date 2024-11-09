@@ -38,7 +38,7 @@ assert_rm_not_found_output() {
 ################################################################################
 
 @test "doesn't have a cached keychain password" {
-  run "${PROJECT_ROOT}/src/plugins/macos_keychain/keychain_password" "" "" "${PW_KEYCHAIN}" <<< "stdin test"
+  run "${PROJECT_ROOT}/plugins/macos_keychain/keychain_password" "" "" "${PW_KEYCHAIN}" <<< "stdin test"
   assert_success
   refute_output
 }
@@ -506,7 +506,7 @@ EOF
   pw lock
 
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/macos_keychain/fzf_preview" "" "" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/plugins/macos_keychain/fzf_preview" "" "" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
   cmd=${cmd//\{5\}/"\"${ACCOUNT_A}\""}
   cmd=${cmd//\{6\}/"\"${URL_A}\""}
@@ -527,7 +527,7 @@ EOF
   assert_item_exists "${PW_1}" "${NAME_A}"
 
   local cmd
-  cmd="$("${PROJECT_ROOT}/src/plugins/macos_keychain/fzf_preview" "" "" "${PW_KEYCHAIN}")"
+  cmd="$("${PROJECT_ROOT}/plugins/macos_keychain/fzf_preview" "" "" "${PW_KEYCHAIN}")"
   cmd=${cmd//\{4\}/"\"${NAME_A}\""}
   cmd=${cmd//\{5\}/"\"${ACCOUNT_A}\""}
   cmd=${cmd//\{6\}/"\"${URL_A}\""}
@@ -571,14 +571,14 @@ EOF
 ################################################################################
 
 @test "discovers no keychains" {
-  run "${PROJECT_ROOT}/src/plugins/macos_keychain/hook" "discover_keychains"
+  run "${PROJECT_ROOT}/plugins/macos_keychain/hook" "discover_keychains"
   assert_success
   refute_output
 }
 
 @test "discovers keychains" {
   cd "${BATS_TEST_TMPDIR}"
-  run "${PROJECT_ROOT}/src/plugins/macos_keychain/hook" "discover_keychains"
+  run "${PROJECT_ROOT}/plugins/macos_keychain/hook" "discover_keychains"
   assert_success
   assert_output "${PW_KEYCHAIN}"
 }
