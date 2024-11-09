@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# added Oct 2024
+set -euo pipefail
+IFS=$'\n\t'
+
+pw_rc="$1"
+
+if ! grep -qE '\[plugins\]|\[keychains\]' "${pw_rc}" >/dev/null ; then
+  IFS= read -rp "pw 10.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): " answer >&2
+  [[ "${answer}" == [yY] ]] || exit 1
+
+  mapfile -t keychains < "${pw_rc}"
+
+  cat << EOF > "${pw_rc}"
+[plugins]
+	\$PW_HOME/plugins/gpg
+	\$PW_HOME/plugins/keepassxc
+	\$PW_HOME/plugins/macos_keychain
+
+[keychains]
+EOF
+
+  printf "\t%s\n" "${keychains[@]}" >> "${pw_rc}"
+fi

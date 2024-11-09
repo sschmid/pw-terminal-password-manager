@@ -59,7 +59,8 @@ parse_config() {
   declare -ag PW_PLUGINS PW_KEYCHAINS
   [[ ! -f "${PW_RC}" ]] && return
 
-  "${PW_HOME}/src/migrations/pwrc" "${PW_RC}"
+  "${PW_HOME}/src/migrations/pwrc-9.0.0" "${PW_RC}"
+  "${PW_HOME}/src/migrations/pwrc-10.0.0" "${PW_RC}"
 
   local line section
   while IFS= read -r line; do
