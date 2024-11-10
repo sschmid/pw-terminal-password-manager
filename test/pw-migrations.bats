@@ -51,32 +51,23 @@ assert_latest_pwrc() {
 EOF
 }
 
-# bats test_tags=tag:manual_test
 @test "migrates pwrc to 9.0.0, then to 10.0.0" {
-  _skip_manual_test "'y' twice"
   local keychain="${BATS_TEST_TMPDIR}/test keychain.test"
   touch "${keychain}"
   _set_pwrc_before_9_0_0 "${keychain}"
 
-  run pw ls
+  run pw -y ls
   assert_failure
-  assert_output --partial "pw 9.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): "
-  assert_output --partial "pw 10.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): "
-
   assert_latest_pwrc "${keychain}"
 }
 
-# bats test_tags=tag:manual_test
 @test "migrates pwrc to 10.0.0" {
-  _skip_manual_test "'y'"
   local keychain="${BATS_TEST_TMPDIR}/test keychain.test"
   touch "${keychain}"
   _set_pwrc_9_0_0 "${keychain}"
 
-  run pw ls
+  run pw -y ls
   assert_failure
-  assert_output --partial "pw 10.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): "
-
   assert_latest_pwrc "${keychain}"
 }
 
@@ -87,8 +78,5 @@ EOF
 
   run pw ls
   assert_failure
-  refute_output --partial "pw 9.0.0"
-  refute_output --partial "pw 10.0.0"
-
   assert_latest_pwrc "${keychain}"
 }

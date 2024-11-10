@@ -3,11 +3,13 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-pw_rc="$1"
+yes=$1 pw_rc="$2"
 
 if ! grep -qE '\[plugins\]|\[keychains\]' "${pw_rc}" >/dev/null ; then
-  IFS= read -rp "pw 10.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): " answer >&2
-  [[ "${answer}" == [yY] ]] || exit 1
+  if (( ! yes )); then
+    IFS= read -rp "pw 10.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): " answer >&2
+    [[ "${answer}" == [yY] ]] || exit 1
+  fi
 
   mapfile -t keychains < "${pw_rc}"
 

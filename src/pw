@@ -73,8 +73,8 @@ parse_config() {
   declare -ag PW_PLUGINS PW_KEYCHAINS
   [[ ! -f "${PW_RC}" ]] && return
 
-  "${PW_HOME}/src/migrations/pwrc-9.0.0" "${PW_RC}"
-  "${PW_HOME}/src/migrations/pwrc-10.0.0" "${PW_RC}"
+  "${PW_HOME}/src/migrations/pwrc-9.0.0" ${PW_YES} "${PW_RC}"
+  "${PW_HOME}/src/migrations/pwrc-10.0.0" ${PW_YES} "${PW_RC}"
 
   local line section
   while IFS= read -r line; do
@@ -427,14 +427,17 @@ pw::require_fzf() {
   command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
 }
 
+declare -i PW_YES=0
+
 main() {
   pw::require_bash_version
   pw::require_fzf
 
   local options
-  while getopts ":hpk:" options; do
+  while getopts ":hypk:" options; do
     case "${options}" in
       h) pw::help; return ;;
+      y) PW_YES=1 ;;
       p) PW_PRINT=1 ;;
       k) PW_KEYCHAIN="${OPTARG}" ;;
       *) pw::exit "Invalid option: -${OPTARG}" ;;
