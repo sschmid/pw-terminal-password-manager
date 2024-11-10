@@ -17,6 +17,11 @@ _set_pwrc_9_0_0() {
 _set_pwrc_10_0_0() {
   # using ini-like format
   cat << EOF > "${PW_RC}"
+[config]
+	password_length = 35
+	password_character_class = [:graph:]
+	clipboard_clear_time = 45
+
 [plugins]
 	\$PW_HOME/plugins/gpg
 	\$PW_HOME/plugins/keepassxc
@@ -31,6 +36,11 @@ assert_latest_pwrc() {
   run cat "${PW_RC}"
   assert_success
   cat << EOF | assert_output -
+[config]
+	password_length = 35
+	password_character_class = [:graph:]
+	clipboard_clear_time = 45
+
 [plugins]
 	\$PW_HOME/plugins/gpg
 	\$PW_HOME/plugins/keepassxc

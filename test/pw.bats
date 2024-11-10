@@ -43,10 +43,10 @@ assert_pw_home() {
   refute_output --partial "# test pwrc sourced"
 }
 
-@test "doesn't create pwrc" {
+@test "creates default pwrc" {
   PW_RC="${BATS_TEST_TMPDIR}/mypwrc"
   run pw -h
-  assert_file_not_exists "${PW_RC}"
+  assert_file_exists "${PW_RC}"
 }
 
 @test "exits when invalid option" {

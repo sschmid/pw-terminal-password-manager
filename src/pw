@@ -15,9 +15,23 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 declare -r PW_HOME
 
 declare -r PW_RC="${PW_RC:-"${HOME}/.pwrc"}"
-declare -ir PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
-declare -r PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
-declare -ir PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
+if [[ ! -f "${PW_RC}" ]]; then
+  cat > "${PW_RC}" << 'EOF'
+[config]
+	password_length = 35
+	password_character_class = [:graph:]
+	clipboard_clear_time = 45
+
+[plugins]
+	$PW_HOME/plugins/gpg
+	$PW_HOME/plugins/keepassxc
+	$PW_HOME/plugins/macos_keychain
+
+[keychains]
+	# Put your keychains here for global access
+	# $HOME/Documents/Passwords.kdbx
+EOF
+fi
 
 pw::help() {
   cat << EOF
@@ -69,26 +83,45 @@ parse_config() {
     [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
     # shellcheck disable=SC2016
     case "${line}" in
+      "[config]") section="config" ;;
       "[plugins]") section="plugins" ;;
       "[keychains]") section="keychains" ;;
       \[*\]) section="" ;;
       *)
-        line="${line/'~'/"${HOME}"}"
-        line="${line/'$HOME'/"${HOME}"}"
-        line="${line/'${HOME}'/"${HOME}"}"
-        case "${section}" in
-          plugins)
+        if [[ "${section}" == "config" ]]; then
+          case "${line}" in
+            password_length*)
+              [[ -v PW_GEN_LENGTH ]] && continue
+              local -i PW_GEN_LENGTH
+              PW_GEN_LENGTH="$(echo "${line#*=}" | xargs)" ;;
+            password_character_class*)
+              [[ -v PW_GEN_CLASS ]] && continue
+              local PW_GEN_CLASS
+              PW_GEN_CLASS="$(echo "${line#*=}" | xargs)" ;;
+            clipboard_clear_time*)
+              [[ -v PW_CLIP_TIME ]] && continue
+              local -i PW_CLIP_TIME
+              PW_CLIP_TIME="$(echo "${line#*=}" | xargs)" ;;
+          esac
+        else
+          line="${line/'~'/"${HOME}"}"
+          line="${line/'$HOME'/"${HOME}"}"
+          line="${line/'${HOME}'/"${HOME}"}"
+          if [[ "${section}" == "plugins" ]]; then
             line="${line//'$PW_HOME'/"${PW_HOME}"}"
             line="${line//'${PW_HOME}'/"${PW_HOME}"}"
             PW_PLUGINS+=("${line}")
-            ;;
-          keychains)
+          elif [[ "${section}" == "keychains" ]]; then
             PW_KEYCHAINS+=("${line}")
-            ;;
-        esac
+          fi
+        fi
         ;;
     esac
   done < "${PW_RC}"
+
+  declare -irg PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
+  declare -rg PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
+  declare -irg PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
 }
 
 pw::set_keychain() {
@@ -105,7 +138,6 @@ pw::set_keychain() {
 }
 
 pw::select_keychain() {
-  parse_config
   if [[ -v PW_KEYCHAIN ]]; then
     pw::set_keychain "${PW_KEYCHAIN}"
   else
@@ -154,7 +186,6 @@ pw::select_keychain() {
 }
 
 pw::infer_plugin() {
-  parse_config
   pw::set_keychain "$1"
   local -a plugins=() types=() exts=()
   local plugin file_type file_extension register
@@ -410,6 +441,8 @@ main() {
     esac
   done
   shift $(( OPTIND - 1 ))
+
+  parse_config
 
   if (( $# )); then
     case "$1" in
