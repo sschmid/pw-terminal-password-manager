@@ -6,6 +6,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [10.0.0] - 2024-11-10
+### Upgrading to pw 10.0.0
+The `.pwrc` format has changed to an INI-like format. `pw` can automatically
+migrate your `.pwrc` to the new format:
+
+```ini
+[config]
+	password_length = 35
+	password_character_class = [:graph:]
+	clipboard_clear_time = 45
+
+[plugins]
+	$PW_HOME/plugins/gpg
+	$PW_HOME/plugins/keepassxc
+	$PW_HOME/plugins/macos_keychain
+
+[keychains]
+	secrets.keychain-db
+	~/path/to/myproject.keychain-db
+	~/path/to/keepassxc.kdbx
+	~/path/to/gpg/secrets
+```
+
+The new format includes `config`, `plugins`, and `keychains` sections. The
+`config` section includes `password_length`, `password_character_class`, and
+`clipboard_clear_time`. You can still override these values with the environment
+variables `PW_GEN_LENGTH`, `PW_GEN_CLASS`, and `PW_CLIP_TIME` respectively.
+
+Additionally, with the new plugin section, you now have fine-grained control
+over the plugins you want to use. You can specify your own plugins in addition
+to the default plugins provided by `pw`.
+
+### Added
+- Set `SHELL` with `type -p bash`
+
+### Changed
+- Change `pwrc` to INI-like format including `config`, `plugins`, and `keychains` sections
+- Move plugins out of `src` folder
+
+### Other
+- Run tests and coverage in parallel
+
 ## [9.2.3] - 2024-10-31
 ### Added
 - Make `pw` work on Arch btw
@@ -330,7 +372,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.3...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.0.0...HEAD
+[10.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.3...10.0.0
 [9.2.3]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.2...9.2.3
 [9.2.2]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.1...9.2.2
 [9.2.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.0...9.2.1
