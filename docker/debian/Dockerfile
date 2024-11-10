@@ -4,6 +4,7 @@ COPY DEPENDENCIES.md .
 RUN apt-get update && apt-get install -y \
     $(cat DEPENDENCIES.md) \
     file \
+    parallel \
     xclip \
     xvfb \
     && rm -rf /var/lib/apt/lists/*
@@ -21,4 +22,4 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 FROM pw AS test
 WORKDIR /usr/local/opt/pw
 COPY test test
-RUN test/bats/bin/bats test
+RUN test/bats/bin/bats --jobs $(nproc) test

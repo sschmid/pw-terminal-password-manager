@@ -4,6 +4,7 @@ COPY DEPENDENCIES.md .
 RUN dnf install -y \
     $(cat DEPENDENCIES.md) \
     file \
+    parallel \
     procps-ng \
     xclip \
     xorg-x11-server-Xvfb \
@@ -23,4 +24,4 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 FROM pw AS test
 WORKDIR /usr/local/opt/pw
 COPY test test
-RUN test/bats/bin/bats test
+RUN test/bats/bin/bats --jobs $(nproc) test

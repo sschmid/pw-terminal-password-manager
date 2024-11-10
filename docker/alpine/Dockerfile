@@ -4,6 +4,7 @@ WORKDIR /usr/local/opt/pw
 COPY DEPENDENCIES.md .
 RUN apk add --no-cache \
     $(cat DEPENDENCIES.md) \
+    parallel \
     xclip \
     xvfb
 
@@ -20,4 +21,4 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 FROM pw AS test
 WORKDIR /usr/local/opt/pw
 COPY test test
-RUN test/bats/bin/bats test
+RUN test/bats/bin/bats --jobs $(nproc) test

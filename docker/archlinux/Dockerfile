@@ -4,6 +4,7 @@ WORKDIR /usr/local/opt/pw
 COPY DEPENDENCIES.md .
 RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
     $(cat DEPENDENCIES.md) \
+    parallel \
     xclip \
     xorg-server-xvfb \
     && pacman -Scc --noconfirm
@@ -21,4 +22,4 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 FROM pw AS test
 WORKDIR /usr/local/opt/pw
 COPY test test
-RUN test/bats/bin/bats test
+RUN test/bats/bin/bats --jobs $(nproc) test

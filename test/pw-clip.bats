@@ -2,6 +2,8 @@
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 
+export BATS_NO_PARALLELIZE_WITHIN_FILE=true
+
 setup() {
   load 'pw'
   _setup

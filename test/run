@@ -8,7 +8,7 @@ run_tests() {
   DOCKER_BUILDKIT=1 docker build --target test -t "sschmid/pw/test/$1" -f "docker/$1/Dockerfile" .
 }
 
-while getopts ":ap:" options; do
+while getopts ":aj:p:" options; do
   case "${options}" in
     a)
       run_tests alpine
@@ -16,6 +16,9 @@ while getopts ":ap:" options; do
       run_tests debian
       run_tests fedora
       run_tests ubuntu
+      ;;
+    j)
+      jobs="${OPTARG}"
       ;;
     p)
       run_tests "${OPTARG}"
@@ -29,5 +32,5 @@ while getopts ":ap:" options; do
 done
 shift $(( OPTIND - 1 ))
 
-test/bats/bin/bats "${@:-test}"
+test/bats/bin/bats --jobs "${jobs:-1}" "${@:-test}"
 test/shellcheck
