@@ -384,10 +384,11 @@ configuration file, which defaults to `~/.pwrc`.
 To use multiple keychains, add your desired keychains to `~/.pwrc`, e.g.:
 
 ```bash
-secrets.keychain-db
-~/path/to/myproject.keychain-db
-~/path/to/keepassxc.kdbx
-~/path/to/gpg/secrets
+[keychains]
+	secrets.keychain-db
+	~/path/to/myproject.keychain-db
+	~/path/to/keepassxc.kdbx
+	~/path/to/gpg/secrets
 ```
 
 After configuring your keychains, continue using `pw` as usual. If no keychain
@@ -430,7 +431,28 @@ pw unlock <<< "${MY_PASSWORD}"
 
 # Customization
 
-Export or provide the following variables to customize and change `pw`'s default behaviour:
+Configure `pw` in `~/.pwrc` with the following options:
+
+```bash
+[config]
+	password_length = 35
+	password_character_class = [:graph:]
+	clipboard_clear_time = 45
+
+[plugins]
+	$PW_HOME/plugins/gpg
+	$PW_HOME/plugins/keepassxc
+	$PW_HOME/plugins/macos_keychain
+
+[keychains]
+	secrets.keychain-db
+	~/path/to/myproject.keychain-db
+	~/path/to/keepassxc.kdbx
+	~/path/to/gpg/secrets
+```
+
+Additionally, you can use environment variables to customize `pw`. They will
+override the settings in `~/.pwrc`.
 
 ```bash
 # Default keychain used when not specified with -k
@@ -448,15 +470,6 @@ export PW_CLIP_TIME=45
 
 # Path to the configuration file
 export PW_RC=~/.mypwrc
-```
-
-Configure keychains in `~/.pwrc`
-
-```bash
-secrets.keychain-db
-~/path/to/myproject.keychain-db
-~/path/to/keepassxc.kdbx
-~/path/to/gpg/secrets
 ```
 
 # Plugin specific configuration
