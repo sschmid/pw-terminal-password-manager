@@ -383,7 +383,7 @@ configuration file, which defaults to `~/.pwrc`.
 
 To use multiple keychains, add your desired keychains to `~/.pwrc`, e.g.:
 
-```bash
+```ini
 [keychains]
 	secrets.keychain-db
 	~/path/to/myproject.keychain-db
@@ -433,7 +433,7 @@ pw unlock <<< "${MY_PASSWORD}"
 
 Configure `pw` in `~/.pwrc` with the following options:
 
-```bash
+```ini
 [config]
 	password_length = 35
 	password_character_class = [:graph:]
