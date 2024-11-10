@@ -10,6 +10,7 @@ RUN apk add --no-cache \
 FROM base AS pw
 WORKDIR /usr/local/opt/pw
 COPY src src
+COPY plugins plugins
 COPY version.txt .
 RUN ln -s /usr/local/opt/pw/src/pw /usr/local/bin/pw
 WORKDIR /root

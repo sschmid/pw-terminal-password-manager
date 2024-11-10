@@ -11,6 +11,7 @@ RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
 FROM base AS pw
 WORKDIR /usr/local/opt/pw
 COPY src src
+COPY plugins plugins
 COPY version.txt .
 RUN ln -s /usr/local/opt/pw/src/pw /usr/local/bin/pw
 WORKDIR /root
