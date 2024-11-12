@@ -16,6 +16,7 @@ while getopts ":aj:mp:" options; do
       run_tests archlinux
       run_tests debian
       run_tests fedora
+      run_tests opensuse-tumbleweed
       run_tests ubuntu
       ;;
     j)
