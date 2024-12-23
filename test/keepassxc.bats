@@ -278,7 +278,7 @@ EOF
   assert_item_exists "${PW_2}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
-@test "removes item item in subfolder multiple levels deep" {
+@test "removes item in subfolder multiple levels deep" {
   assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}"
   assert_adds_item_with_keychain_password "${PW_2}" "group1/${NAME_A}"
   assert_adds_item_with_keychain_password "${PW_3}" "group1/group2/${NAME_A}"
@@ -340,6 +340,7 @@ ${PW_2}
 EOF
   assert_failure
   assert_item_not_exists_output "${NAME_A}" "edit"
+  assert_item_not_exists "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
 ################################################################################
