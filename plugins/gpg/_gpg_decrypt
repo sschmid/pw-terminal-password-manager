@@ -2,12 +2,12 @@
 set -euo pipefail
 "$(dirname "$0")/_require"
 
-keychain_password="$1"; shift
+keychain_password="$1" path="${2:-}"
 
 if [[ -n "${keychain_password}" ]]; then
   gpg --quiet --batch \
       --pinentry-mode loopback --passphrase "${keychain_password}" \
-      --decrypt "$@"
+      --decrypt ${path:+"${path}"}
 else
-  gpg --quiet --decrypt "$@"
+  gpg --quiet --decrypt ${path:+"${path}"}
 fi
