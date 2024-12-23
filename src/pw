@@ -189,7 +189,7 @@ pw::infer_plugin() {
   pw::set_keychain "$1"
   local -a plugins=() types=() exts=()
   local plugin file_type file_extension register
-  local -l extension="${PW_KEYCHAIN##*.}"
+  local -l extension="${PW_KEYCHAIN#*.}"
   for plugin in "${PW_PLUGINS[@]}"; do
     while true; do
       read -r file_type
