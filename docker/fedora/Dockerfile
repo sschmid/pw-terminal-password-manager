@@ -3,6 +3,7 @@ WORKDIR /usr/local/opt/pw
 COPY DEPENDENCIES.md .
 RUN dnf install -y \
     $(cat DEPENDENCIES.md) \
+    awk \
     file \
     parallel \
     procps-ng \
