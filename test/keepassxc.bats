@@ -315,8 +315,8 @@ EOF
 }
 
 @test "edits item and keeps account, url and notes" {
-  assert_adds_item_with_keychain_password  "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
-  assert_edits_item_with_keychain_password  "${PW_2}" "${NAME_A}"
+  assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
+  assert_edits_item_with_keychain_password "${PW_2}" "${NAME_A}"
   assert_item_exists "${PW_2}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   assert_username "${NAME_A}" "${ACCOUNT_A}"
   assert_url "${NAME_A}" "${URL_A}"
@@ -325,8 +325,8 @@ EOF
 
 @test "edits item with key-file" {
   _init_with_key_file
-  assert_adds_item_with_keychain_password  "${PW_1}" "${NAME_A}"
-  assert_edits_item_with_keychain_password  "${PW_2}" "${NAME_A}"
+  assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}"
+  assert_edits_item_with_keychain_password "${PW_2}" "${NAME_A}"
 }
 
 ################################################################################
