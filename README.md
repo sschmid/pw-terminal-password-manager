@@ -132,22 +132,22 @@ consistent interface by implementing workarounds where necessary.
 
 Here's an overview of which features are supported by each plugin:
 
-| Feature                                                                         | macOS Keychain | KeePassXC                           | GnuPG          |
-|--------------------------------------------------------------------------------:|:--------------:|:-----------------------------------:|:--------------:|
-| Create keychain                                                                 | ✅             | ✅                                   | ✅ (directory) |
-| Add entry with name and password                                                | ✅             | ✅                                   | ✅             |
-| Add entry with name, account, url, notes and password                           | ✅             | ✅                                   | 🔐             |
-| Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                   | ❌             |
-| Add entry in groups (e.g. Coding/GitHub)                                        | ❌             | 🔐                                   | ✅             |
-| Edit entry                                                                      | ✅             | ✅                                   | ✅             |
-| Remove entry                                                                    | ✅             | ✅                                   | ✅             |
-| List entries                                                                    | ✅             | ✅                                   | ✅             |
-| Open keychain                                                                   | ✅             | ✅                                   | ✅             |
-| Lock keychain                                                                   | ✅             | ❌ (keychain is never left unlocked) | ✅             |
-| Unlock keychain                                                                 | ✅             | ✅ (starts interactive session)      | ✅             |
-| Key file support                                                                | ❌             | ✅                                   | ❌             |
-| YubiKey support                                                                 | ❌             | ✅                                   | ❌             |
-| Automatic keychain discovery                                                    | ✅             | ✅                                   | ✅             |
+| Feature                                                                         | macOS Keychain | KeePassXC                         | GnuPG          |
+|--------------------------------------------------------------------------------:|:--------------:|:---------------------------------:|:--------------:|
+| Create keychain                                                                 | ✅             | ✅                                 | ✅ (directory) |
+| Add entry with name and password                                                | ✅             | ✅                                 | ✅             |
+| Add entry with name, account, url, notes and password                           | ✅             | ✅                                 | 🔐             |
+| Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                 | ❌             |
+| Add entry in groups (e.g. Coding/GitHub)                                        | ❌             | 🔐                                 | ✅             |
+| Edit entry                                                                      | ✅             | ✅                                 | ✅             |
+| Remove entry                                                                    | ✅             | ✅                                 | ✅             |
+| List entries                                                                    | ✅             | ✅                                 | ✅             |
+| Open keychain                                                                   | ✅             | ✅                                 | ✅             |
+| Lock keychain                                                                   | ✅             | ℹ️ keychain is never left unlocked | ✅             |
+| Unlock keychain                                                                 | ✅             | ✅ starts interactive session      | ✅             |
+| Key file support                                                                | ❌             | ✅                                 | ❌             |
+| YubiKey support                                                                 | ❌             | ✅                                 | ❌             |
+| Automatic keychain discovery                                                    | ✅             | ✅                                 | ✅             |
 
 <sup>
 ✅: native support by the password manager<br />
