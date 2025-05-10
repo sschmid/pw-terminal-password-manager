@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [10.1.0] - 2025-05-10
+### Changed
+- Increase chunk_size for faster password generation
+- Detect extension based on first `.`
+
+### Other
+- Add Dockerfile for openSUSE Tumbleweed
+- Add `-m` option to run manual tests
+
 ## [10.0.0] - 2024-11-10
 ### Upgrading to pw 10.0.0
 The `.pwrc` format has changed to an INI-like format. `pw` can automatically
@@ -372,7 +381,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.1.0...HEAD
+[10.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.0.0...10.1.0
 [10.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.3...10.0.0
 [9.2.3]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.2...9.2.3
 [9.2.2]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.1...9.2.2
