@@ -56,9 +56,11 @@ parse_config() {
   local config="${1:-"${PW_CONFIG_HOME}/config"}"
   declare -ag PW_PLUGINS PW_KEYCHAINS
 
-  if [[ -f "${HOME}/.pwrc" ]]; then
-    "${PW_HOME}/src/migrations/pwrc-9.0.0" ${PW_YES} "${HOME}/.pwrc"
-    "${PW_HOME}/src/migrations/pwrc-10.0.0" ${PW_YES} "${HOME}/.pwrc"
+  local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
+  if [[ -f "${pwrc}" ]]; then
+    "${PW_HOME}/src/migrations/pwrc-9.0.0" ${PW_YES} "${pwrc}"
+    "${PW_HOME}/src/migrations/pwrc-10.0.0" ${PW_YES} "${pwrc}"
+    "${PW_HOME}/src/migrations/pwrc-11.0.0" ${PW_YES} "${pwrc}"
   fi
 
   # Starting with pw-11.0.0 ~/.pwrc is deprecated and moved to ~/.config/pw/config

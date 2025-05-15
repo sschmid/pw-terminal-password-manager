@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# added May 2025
+set -euo pipefail
+IFS=$'\n\t'
+
+yes=$1 pw_rc="$2"
+
+if [[ -f "${pw_rc}" ]] ; then
+  if (( ! yes )); then
+    IFS= read -rp "pw 11.0.0 moved ~/.pwrc to ~/.config/pw/config. Would you like to automatically move that file? (y / N): " answer >&2
+    [[ "${answer}" == [yY] ]] || exit 1
+  fi
+
+  mkdir -p "${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw"
+  mv "${pw_rc}" "${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw/config"
+fi

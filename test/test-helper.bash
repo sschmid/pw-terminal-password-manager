@@ -4,6 +4,11 @@ _common_setup() {
   load 'test_helper/bats-assert/load.bash'
   load 'test_helper/bats-file/load.bash'
 
+  export XDG_CONFIG_HOME="${BATS_TEST_TMPDIR}/.config"
+  export PW_CONFIG="${XDG_CONFIG_HOME}/pw/config"
+  mkdir -p "${XDG_CONFIG_HOME}/pw"
+
+  # PW_RC is depricated. Keep for migration tests.
   export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
 
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"
