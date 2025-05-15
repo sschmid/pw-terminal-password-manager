@@ -8,9 +8,6 @@ _common_setup() {
   export PW_CONFIG="${XDG_CONFIG_HOME}/pw/config"
   mkdir -p "${XDG_CONFIG_HOME}/pw"
 
-  # PW_RC is depricated. Keep for migration tests.
-  export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
-
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"
   PATH="${PROJECT_ROOT}/src:${PATH}"
 
@@ -30,24 +27,24 @@ and spaces "
   PW_3=" 3 test pw "
 }
 
-_set_pwrc_with_plugin() {
-  cat > "${PW_RC}" << EOF
+_set_config_with_plugin() {
+  cat > "${PW_CONFIG}" << EOF
 [plugins]
 $1
 EOF
 }
 
-_set_pwrc_with_test_plugins() {
-  cat > "${PW_RC}" << EOF
+_set_config_with_test_plugins() {
+  cat > "${PW_CONFIG}" << EOF
 [plugins]
 ${BATS_TEST_DIRNAME}/fixtures/plugins/collision
 ${BATS_TEST_DIRNAME}/fixtures/plugins/test
 EOF
 }
 
-_set_pwrc_append_keychains() {
-  echo "[keychains]" >> "${PW_RC}"
-  printf "%s\n" "$@" >> "${PW_RC}"
+_config_append_keychains() {
+  echo "[keychains]" >> "${PW_CONFIG}"
+  printf "%s\n" "$@" >> "${PW_CONFIG}"
 }
 
 assert_init_already_exists() {

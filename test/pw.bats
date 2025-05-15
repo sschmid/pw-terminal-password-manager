@@ -36,17 +36,17 @@ assert_pw_home() {
   assert_pw_home
 }
 
-@test "doesn't source pwrc" {
-  _set_pwrc_append_keychains " test keychain "
-  echo 'echo "# test pwrc sourced"' >> "${PW_RC}"
+@test "doesn't source config" {
+  _config_append_keychains " test keychain "
+  echo 'echo "# test config sourced"' >> "${PW_CONFIG}"
   run pw -h
-  refute_output --partial "# test pwrc sourced"
+  refute_output --partial "# test config sourced"
 }
 
-@test "creates default pwrc" {
-  PW_RC="${BATS_TEST_TMPDIR}/mypwrc"
+@test "creates default config" {
+  PW_CONFIG="${BATS_TEST_TMPDIR}/myconfig"
   run pw -h
-  assert_file_exists "${PW_RC}"
+  assert_file_exists "${PW_CONFIG}"
 }
 
 @test "exits when invalid option" {

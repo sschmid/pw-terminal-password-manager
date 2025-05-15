@@ -7,7 +7,7 @@ export BATS_NO_PARALLELIZE_WITHIN_FILE=true
 setup() {
   load 'pw'
   _setup
-  _set_pwrc_with_test_plugins
+  _set_config_with_test_plugins
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
   export PW_CLIP_TIME=1
 }

@@ -6,7 +6,7 @@ setup() {
   load 'macos_keychain'
   _setup
   # shellcheck disable=SC2016
-  _set_pwrc_with_plugin '$PW_HOME/plugins/macos_keychain'
+  _set_config_with_plugin '$PW_HOME/plugins/macos_keychain'
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
 }

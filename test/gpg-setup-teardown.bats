@@ -10,7 +10,7 @@ setup() {
   load 'gpg'
   _setup
   # shellcheck disable=SC2016
-  _set_pwrc_with_plugin '$PW_HOME/plugins/gpg'
+  _set_config_with_plugin '$PW_HOME/plugins/gpg'
 }
 
 teardown() {

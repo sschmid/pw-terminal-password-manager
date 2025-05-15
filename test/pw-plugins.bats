@@ -2,7 +2,7 @@
 setup() {
   load 'pw'
   _setup
-  _set_pwrc_with_test_plugins
+  _set_config_with_test_plugins
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
   KEYCHAIN_OPTIONS="key1=value1,key2=value2"
   KEYCHAIN_PASSWORD=" keychain password "

@@ -2,6 +2,10 @@
 setup() {
   load 'pw'
   _setup
+
+  # PW_RC is depricated. Keep for migration tests.
+  export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
+
   local keychain="${BATS_TEST_TMPDIR}/test keychain.test"
   touch "${keychain}"
 }
@@ -52,7 +56,7 @@ _set_pw_config_11_0_0() {
 EOF
 }
 
-assert_latest_pwrc() {
+assert_latest_config() {
   run pw -y ls
   assert_failure
 
@@ -74,22 +78,22 @@ assert_latest_pwrc() {
 EOF
 }
 
-@test "migrates pwrc from <9.0.0 to latest" {
+@test "migrates pwrc from <9.0.0 to latest config" {
   _set_pwrc_before_9_0_0 "${keychain}"
-  assert_latest_pwrc "${keychain}"
+  assert_latest_config "${keychain}"
 }
 
-@test "migrates pwrc from <10.0.0 to latest" {
+@test "migrates pwrc from <10.0.0 to latest config" {
   _set_pwrc_9_0_0 "${keychain}"
-  assert_latest_pwrc "${keychain}"
+  assert_latest_config "${keychain}"
 }
 
-@test "migrates pwrc from <11.0.0 to latest" {
+@test "migrates pwrc from <11.0.0 to latest config" {
   _set_pwrc_10_0_0 "${keychain}"
-  assert_latest_pwrc "${keychain}"
+  assert_latest_config "${keychain}"
 }
 
 @test "ignores latest" {
   _set_pw_config_11_0_0 "${keychain}"
-  assert_latest_pwrc "${keychain}"
+  assert_latest_config "${keychain}"
 }

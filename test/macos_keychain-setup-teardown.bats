@@ -4,7 +4,7 @@ setup() {
   load 'macos_keychain'
   _setup
   # shellcheck disable=SC2016
-  _set_pwrc_with_plugin '$PW_HOME/plugins/macos_keychain'
+  _set_config_with_plugin '$PW_HOME/plugins/macos_keychain'
 }
 
 @test "creates keychain" {
