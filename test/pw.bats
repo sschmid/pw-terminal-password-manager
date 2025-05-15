@@ -43,10 +43,27 @@ assert_pw_home() {
   refute_output --partial "# test config sourced"
 }
 
-@test "creates default config" {
-  PW_CONFIG="${BATS_TEST_TMPDIR}/myconfig"
+@test "doesn't create default config when not accessed" {
   run pw -h
+  assert_file_not_exists "${PW_CONFIG}"
+}
+
+@test "creates default config" {
+  run pw ls
   assert_file_exists "${PW_CONFIG}"
+}
+
+@test "doesn't create custom config" {
+  run pw -c "${BATS_TEST_TMPDIR}/myconfig" ls
+  assert_file_not_exists "${PW_CONFIG}"
+}
+
+@test "uses custom config" {
+  export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
+  _set_config_with_test_plugins "${BATS_TEST_TMPDIR}/myconfig"
+  run pw -c "${BATS_TEST_TMPDIR}/myconfig" ls
+  assert_success
+  assert_output "test ls <> <> <${PW_KEYCHAIN}> <default>"
 }
 
 @test "exits when invalid option" {

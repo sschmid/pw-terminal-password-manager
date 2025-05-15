@@ -5,7 +5,7 @@ _common_setup() {
   load 'test_helper/bats-file/load.bash'
 
   export XDG_CONFIG_HOME="${BATS_TEST_TMPDIR}/.config"
-  export PW_CONFIG="${XDG_CONFIG_HOME}/pw/config"
+  PW_CONFIG="${XDG_CONFIG_HOME}/pw/config"
   mkdir -p "${XDG_CONFIG_HOME}/pw"
 
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"
@@ -35,7 +35,7 @@ EOF
 }
 
 _set_config_with_test_plugins() {
-  cat > "${PW_CONFIG}" << EOF
+  cat > "${1:-"${PW_CONFIG}"}" << EOF
 [plugins]
 ${BATS_TEST_DIRNAME}/fixtures/plugins/collision
 ${BATS_TEST_DIRNAME}/fixtures/plugins/test

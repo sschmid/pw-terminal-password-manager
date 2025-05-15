@@ -247,6 +247,17 @@ is off by default.
 
 Press `CTRL-Y` on any entry to copy (or print) the details.
 
+## Config file
+
+The suggested location for the `pw` configuration file is `~/.config/pw/config`.
+`pw` will automatically create this file with default values if it doesn't exist.
+
+You can specify a different configuration file using the `-c` option:
+
+```bash
+pw -c /path/to/config
+```
+
 ## Create keychain
 
 ```
