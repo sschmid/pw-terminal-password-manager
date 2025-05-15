@@ -13,25 +13,7 @@ while [[ -L "${PW_HOME}" ]]; do
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 declare -r PW_HOME
-
-declare -r PW_RC="${PW_RC:-"${HOME}/.pwrc"}"
-if [[ ! -f "${PW_RC}" ]]; then
-  cat > "${PW_RC}" << 'EOF'
-[config]
-	password_length = 35
-	password_character_class = [:graph:]
-	clipboard_clear_time = 45
-
-[plugins]
-	$PW_HOME/plugins/gpg
-	$PW_HOME/plugins/keepassxc
-	$PW_HOME/plugins/macos_keychain
-
-[keychains]
-	# Put your keychains here for global access
-	# $HOME/Documents/Passwords.kdbx
-EOF
-fi
+declare -r PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw"
 
 pw::help() {
   cat << EOF
@@ -65,16 +47,25 @@ customization:
   PW_GEN_LENGTH               default length of generated passwords (default: 35)
   PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
   PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
-  PW_RC                       path to the configuration file (default: ~/.pwrc)
 EOF
 }
 
 parse_config() {
-  declare -ag PW_PLUGINS PW_KEYCHAINS
-  [[ ! -f "${PW_RC}" ]] && return
+  [[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
-  "${PW_HOME}/src/migrations/pwrc-9.0.0" ${PW_YES} "${PW_RC}"
-  "${PW_HOME}/src/migrations/pwrc-10.0.0" ${PW_YES} "${PW_RC}"
+  local config="${1:-"${PW_CONFIG_HOME}/config"}"
+  declare -ag PW_PLUGINS PW_KEYCHAINS
+
+  if [[ -f "${HOME}/.pwrc" ]]; then
+    "${PW_HOME}/src/migrations/pwrc-9.0.0" ${PW_YES} "${HOME}/.pwrc"
+    "${PW_HOME}/src/migrations/pwrc-10.0.0" ${PW_YES} "${HOME}/.pwrc"
+  fi
+
+  # Starting with pw-11.0.0 ~/.pwrc is deprecated and moved to ~/.config/pw/config
+  if [[ ! -f "${config}" ]]; then
+    mkdir -p "${PW_CONFIG_HOME}"
+    cp "${PW_HOME}/config/pw.conf" "${config}"
+  fi
 
   local line section
   while IFS= read -r line; do
@@ -117,7 +108,7 @@ parse_config() {
         fi
         ;;
     esac
-  done < "${PW_RC}"
+  done < "${config}"
 
   declare -irg PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
   declare -rg PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
@@ -134,7 +125,7 @@ pw::set_keychain() {
   fi
 
   [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
-    "Set a keychain with the -k option or provide a list of default keychains in your .pwrc file (${PW_RC})."
+    "Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/config."
 }
 
 pw::select_keychain() {
@@ -436,19 +427,20 @@ main() {
   pw::require_bash_version
   pw::require_fzf
 
-  local options
-  while getopts ":hypk:" options; do
+  local config="" options
+  while getopts ":hypk:c:" options; do
     case "${options}" in
       h) pw::help; return ;;
       y) PW_YES=1 ;;
       p) PW_PRINT=1 ;;
       k) PW_KEYCHAIN="${OPTARG}" ;;
+      c) config="${OPTARG}" ;;
       *) pw::exit "Invalid option: -${OPTARG}" ;;
     esac
   done
   shift $(( OPTIND - 1 ))
 
-  parse_config
+  parse_config "${config}"
 
   if (( $# )); then
     case "$1" in
