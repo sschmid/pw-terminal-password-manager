@@ -87,7 +87,7 @@ setup() {
   assert_output "test ls <> <> <${HOME}/${TEST_KEYCHAIN}> <default>"
 }
 
-@test "irgnores comments with #" {
+@test "ignores comments with #" {
   _config_append_keychains "# comment"
   _config_append_keychains "${TEST_KEYCHAIN}"
   run pw ls
@@ -95,7 +95,7 @@ setup() {
   assert_output "test ls <> <> <test keychain.test> <default>"
 }
 
-@test "irgnores comments with ;" {
+@test "ignores comments with ;" {
   _config_append_keychains "; comment"
   _config_append_keychains "${TEST_KEYCHAIN}"
   run pw ls
@@ -103,7 +103,7 @@ setup() {
   assert_output "test ls <> <> <test keychain.test> <default>"
 }
 
-@test "irgnores comments with indentation" {
+@test "ignores comments with indentation" {
   _config_append_keychains "    # comment"
   _config_append_keychains "${TEST_KEYCHAIN}"
   run pw ls
