@@ -60,9 +60,9 @@ pw update
 # create a keychain (.keychain-db for macOS Keychain, .kdbx for KeePassXC)
 pw init ~/secrets.keychain-db
 
-# optionally configure keychains in ~/.pwrc so you can access them from anywhere
-# otherwise, pw will discover keychains in the current directory
-echo '~/secrets.keychain-db' >> ~/.pwrc
+# optionally configure keychains in ~/.config/pw/config so you can access them
+# from anywhere otherwise, pw will discover keychains in the current directory
+echo '~/secrets.keychain-db' >> ~/.config/pw/config
 
 # add an entry
 pw add GitHub sschmid
@@ -85,13 +85,15 @@ GnuPG to store encrypted passwords in a directory:
 pw init ~/secrets/   # end with `/` for GnuPG
 cd ~/secrets
 
-# optionally configure keychains in ~/.pwrc so you can access them from anywhere
-# otherwise, pw will discover gpg encrypted passwords in the current directory
-echo '~/secrets/' >> ~/.pwrc
+# optionally configure keychains in ~/.config/pw/config so you can access them
+# from anywhere otherwise, pw will discover gpg encrypted passwords in the
+# current directory
+echo '~/secrets/' >> ~/.config/pw/config
 
 # add an entry
-# if you haven't configured ~/.pwrc yet, you need to specify the keychain once
-# because the directory is empty and pw can't determine the keychain type yet
+# if you haven't configured ~/.config/pw/config yet, you need to specify the
+# keychain once because the directory is empty and pw can't determine the
+# keychain type yet
 pw -k ~/secrets add GitHub sschmid
 
 # add another entry interactively
@@ -379,10 +381,10 @@ pw
 
 `pw` allows you to interact with multiple keychains from different password
 managers. This feature is particularly useful when you have keychains stored
-in various locations. You can specify different keychains using the `PW_RC`
-configuration file, which defaults to `~/.pwrc`.
+in various locations. You can specify different keychains using the
+configuration file, which defaults to `~/.config/pw/config`.
 
-To use multiple keychains, add your desired keychains to `~/.pwrc`, e.g.:
+To use multiple keychains, add your desired keychains to `~/.config/pw/config`, e.g.:
 
 ```ini
 [keychains]
@@ -394,7 +396,7 @@ To use multiple keychains, add your desired keychains to `~/.pwrc`, e.g.:
 
 After configuring your keychains, continue using `pw` as usual. If no keychain
 is specified with `-k` or by setting `PW_KEYCHAIN`, `pw` allows you to select
-one from your `~/.pwrc` file using the fuzzy finder.
+one from your `~/.config/pw/config` file using the fuzzy finder.
 
 ![pw-fzf](readme/pw-keychains.png)
 
@@ -432,7 +434,7 @@ pw unlock <<< "${MY_PASSWORD}"
 
 # Customization
 
-Configure `pw` in `~/.pwrc` with the following options:
+Configure `pw` in `~/.config/pw/config` with the following options:
 
 ```ini
 [config]
@@ -453,11 +455,11 @@ Configure `pw` in `~/.pwrc` with the following options:
 ```
 
 Additionally, you can use environment variables to customize `pw`. They will
-override the settings in `~/.pwrc`.
+override the settings in `~/.config/pw/config`.
 
 ```bash
 # Default keychain used when not specified with -k
-# otherwise, ~/.pwrc is used to select a keychain with fzf
+# otherwise, ~/.config/pw/config is used to select a keychain with fzf
 export PW_KEYCHAIN=secrets.keychain-db
 
 # Default length of generated passwords
@@ -468,9 +470,6 @@ export PW_GEN_CLASS='[:graph:]'
 
 # Time after which the password is cleared from the clipboard
 export PW_CLIP_TIME=45
-
-# Path to the configuration file
-export PW_RC=~/.mypwrc
 ```
 
 # Plugin specific configuration
@@ -484,7 +483,7 @@ This syntax can be used everywhere a keychain is specified, e.g.:
 pw -k ~/secrets.kdbx:key1=value1,key2=value2
 ```
 
-In your `~/.pwrc`:
+In your `~/.config/pw/config`:
 ```bash
 ...
 ~/secrets.kdbx:key1=value1,key2=value2
