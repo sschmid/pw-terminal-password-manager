@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [11.0.0] - 2025-05-16
+### Upgrading to pw 11.0.0
+`pw` now respects the `$XDG_CONFIG_HOME` environment variable. Your existing `~/.pwrc`
+file will be moved to the new location at `~/.config/pw/config`. If you have
+`$XDG_CONFIG_HOME` set, the config file will be moved to `$XDG_CONFIG_HOME/pw/config`.
+You can specify a custom config file with `pw -c <path>`.
+
+### Added
+- Add `.pwrc` migration
+- Print supported clipboard tools when no clipboard tool is found
+
+### Changed
+- Use `$XDG_CONFIG_HOME` and fallback to `~/.config` for config path
+- Move `~/.pwrc` to `~/.config/pw/config`
+
 ## [10.1.0] - 2025-05-10
 ### Changed
 - Increase chunk_size for faster password generation
@@ -139,7 +154,7 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 ```
 
 ### Added
-- Added `.pwrc` migration
+- Add `.pwrc` migration
 - Script optimizations
 - Explicit variable declarations and strict scoping
 
@@ -150,8 +165,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - `.pwrc` is no longer created by default and is optional
 
 ### Removed
-- Removed redirecting from tty
-- Deleted sample plugin
+- Remove redirecting from tty
+- Delete sample plugin
 
 ## [8.2.1] - 2024-10-08
 ### Fixed
@@ -381,7 +396,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.1.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/11.0.0...HEAD
+[11.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.1.0...11.0.0
 [10.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.0.0...10.1.0
 [10.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.3...10.0.0
 [9.2.3]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.2...9.2.3
