@@ -15,6 +15,7 @@ RUN dnf install -y \
 FROM base AS pw
 WORKDIR /usr/local/opt/pw
 COPY src src
+COPY config config
 COPY plugins plugins
 COPY version.txt .
 RUN ln -s /usr/local/opt/pw/src/pw /usr/local/bin/pw
