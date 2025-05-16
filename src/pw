@@ -13,7 +13,7 @@ while [[ -L "${PW_HOME}" ]]; do
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 declare -r PW_HOME
-declare -r PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw"
+declare -r PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
 pw::help() {
   cat << EOF
@@ -53,7 +53,7 @@ EOF
 parse_config() {
   [[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
-  local config="${1:-"${PW_CONFIG_HOME}/config"}"
+  local config="${1:-"${PW_CONFIG_HOME}/pw/config"}"
   declare -ag PW_PLUGINS PW_KEYCHAINS
 
   local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
@@ -64,8 +64,10 @@ parse_config() {
   fi
 
   # Starting with pw-11.0.0 ~/.pwrc is deprecated and moved to ~/.config/pw/config
+  # shellcheck disable=SC2174
   if [[ ! -f "${config}" ]]; then
-    mkdir -p "${PW_CONFIG_HOME}"
+    mkdir -m 700 -p "${PW_CONFIG_HOME}"
+    mkdir -m 700 -p "${PW_CONFIG_HOME}/pw"
     cp "${PW_HOME}/config/pw.conf" "${config}"
   fi
 
@@ -127,7 +129,7 @@ pw::set_keychain() {
   fi
 
   [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
-    "Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/config."
+    "Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/pw/config."
 }
 
 pw::select_keychain() {

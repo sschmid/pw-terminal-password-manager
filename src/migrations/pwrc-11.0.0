@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # added May 2025
+# shellcheck disable=SC2174
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -11,6 +12,8 @@ if [[ -f "${pw_rc}" ]] ; then
     [[ "${answer}" == [yY] ]] || exit 1
   fi
 
-  mkdir -p "${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw"
-  mv "${pw_rc}" "${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw/config"
+  config_home="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
+  mkdir -m 700 -p "${config_home}"
+  mkdir -m 700 -p "${config_home}/pw"
+  mv "${pw_rc}" "${config_home}/pw/config"
 fi
