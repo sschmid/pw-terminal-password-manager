@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test-linux:
+  linux:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -28,7 +28,23 @@ jobs:
       - name: "Run tests"
         run: test/run -p ${{ matrix.platform }}
 
-  test-macos:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - name: "Install dependencies"
+        run: |
+          brew install bash fzf parallel shellcheck
+          brew install --cask keepassxc
+
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: "Run tests"
+        run: test/run -j $(sysctl -n hw.logicalcpu)
+
+  coverage:
     runs-on: macos-latest
     steps:
       - name: "Install dependencies"
@@ -41,14 +57,26 @@ jobs:
         with:
           submodules: recursive
 
-      - name: "Run tests"
-        run: test/run -j $(sysctl -n hw.logicalcpu)
-
       - name: "Test coverage"
         run: test/coverage --jobs $(sysctl -n hw.logicalcpu) test
 
       - name: "Upload coverage report"
         uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }} coverage report
+          path: coverage
+
+  coveralls:
+    needs: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: "Download coverage report"
+        uses: actions/download-artifact@v4
         with:
           name: ${{ github.event.repository.name }} coverage report
           path: coverage
