@@ -1,4 +1,4 @@
-name: CI on macOS
+name: CI
 
 on:
   push:
@@ -7,7 +7,28 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - alpine
+          - archlinux
+          - debian
+          - fedora
+          - opensuse-tumbleweed
+          - ubuntu
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: "Run tests"
+        run: test/run -p ${{ matrix.platform }}
+
+  test-macos:
     runs-on: macos-latest
     steps:
       - name: "Install dependencies"
