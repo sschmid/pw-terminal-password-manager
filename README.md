@@ -7,6 +7,7 @@ It combines the security of your favourite password managers with the speed and
 simplicity of the [fzf](https://github.com/junegunn/fzf) fuzzy finder and allows
 you to interact with [various keychains](#using-multiple-keychains) effortlessly.
 
+[![CI](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/sschmid/pw-terminal-password-manager/badge.svg)](https://coveralls.io/github/sschmid/pw-terminal-password-manager)
 [![Latest release](https://img.shields.io/github/release/sschmid/pw-terminal-password-manager.svg)](https://github.com/sschmid/pw-terminal-password-manager/releases)
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
@@ -44,15 +45,15 @@ pw update
 /usr/local/opt/pw/install --uninstall
 ```
 
-| Platform                                                                                    | Status                                                                                                                                                                                                                                         | Dockerfile                                          |
-|---------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ----------------------------------------------------|
-| <img src="https://flatpak.org/img/distro/alpine-97c47415.svg" height="48">                  | [![CI on Alpine Linux](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/alpine.yml)                                  | [Dockerfile](docker/alpine/Dockerfile)              |
-| <img src="https://flatpak.org/img/distro/arch-61d364d6.svg" height="48">                    | [![CI on Arch Linux](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/archlinux.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/archlinux.yml)                              | [Dockerfile](docker/archlinux/Dockerfile)           |
-| <img src="https://flatpak.org/img/distro/debian-03035138.svg" height="48">                  | [![CI on Debian](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/debian.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/debian.yml)                                        | [Dockerfile](docker/debian/Dockerfile)              |
-| <img src="https://flatpak.org/img/distro/fedora-e2366c83.svg" height="48">                  | [![CI on Fedora](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/fedora.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/fedora.yml)                                        | [Dockerfile](docker/fedora/Dockerfile)              |
-| <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/MacOS_logo2.svg" height="48"> | [![CI on macOS](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/macos.yml)                                           |                                                     |
-| <img src="https://flatpak.org/img/distro/opensuse-6686fd27.svg" height="48">                | [![CI on openSUSE Tumbleweed](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/opensuse-tumbleweed.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/opensuse-tumbleweed.yml) | [Dockerfile](docker/opensuse-tumbleweed/Dockerfile) |
-| <img src="https://flatpak.org/img/distro/ubuntu-d865890b.svg" height="48">                  | [![CI on Ubuntu](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ubuntu.yml)                                        | [Dockerfile](docker/ubuntu/Dockerfile)              |
+|                                                                                             | Tested on the following platforms: |                                                     |
+|---------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------|
+| <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/MacOS_logo2.svg" height="48"> | macOS                              |                                                     |
+| <img src="https://flatpak.org/img/distro/alpine-97c47415.svg" height="48">                  | Alpine Linux                       | [Dockerfile](docker/alpine/Dockerfile)              |
+| <img src="https://flatpak.org/img/distro/arch-61d364d6.svg" height="48">                    | Arch Linux                         | [Dockerfile](docker/archlinux/Dockerfile)           |
+| <img src="https://flatpak.org/img/distro/debian-03035138.svg" height="48">                  | Debian                             | [Dockerfile](docker/debian/Dockerfile)              |
+| <img src="https://flatpak.org/img/distro/fedora-e2366c83.svg" height="48">                  | Fedora                             | [Dockerfile](docker/fedora/Dockerfile)              |
+| <img src="https://flatpak.org/img/distro/opensuse-6686fd27.svg" height="48">                | openSUSE Tumbleweed                | [Dockerfile](docker/opensuse-tumbleweed/Dockerfile) |
+| <img src="https://flatpak.org/img/distro/ubuntu-d865890b.svg" height="48">                  | Ubuntu                             | [Dockerfile](docker/ubuntu/Dockerfile)              |
 
 # Quickstart
 
