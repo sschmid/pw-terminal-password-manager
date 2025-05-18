@@ -30,6 +30,7 @@ and spaces "
 _set_config_with_plugin() {
   cat > "${PW_CONFIG}" << EOF
 [plugins]
+pluginX = invalid
 plugin = $1
 EOF
 }
@@ -37,6 +38,7 @@ EOF
 _set_config_with_test_plugins() {
   cat > "${1:-"${PW_CONFIG}"}" << EOF
 [plugins]
+pluginX = invalid
 plugin = ${BATS_TEST_DIRNAME}/fixtures/plugins/collision
 plugin = ${BATS_TEST_DIRNAME}/fixtures/plugins/test
 EOF

@@ -73,7 +73,7 @@ parse_config() {
     cp "${PW_HOME}/config/pw.conf" "${config}"
   fi
 
-  local line section
+  local line section key value
   while IFS= read -r line; do
     line="$(echo "${line}" | xargs)"
     [[ -z ${line} ]] && continue
@@ -85,40 +85,40 @@ parse_config() {
       "[keychains]") section="keychains" ;;
       \[*\])         section=""          ;;
       *)
+        key="$(echo "${line%%=*}" | xargs)"
+        value="$(echo "${line#*=}" | xargs)"
+        [[ -z ${value} ]] && continue
         if [[ "${section}" == "config" ]]; then
-          case "${line}" in
-            password_length*)
+          case "${key}" in
+            password_length)
               [[ -v PW_GEN_LENGTH ]] && continue
               local -i PW_GEN_LENGTH
-              PW_GEN_LENGTH="$(echo "${line#*=}" | xargs)" ;;
-            password_character_class*)
+              PW_GEN_LENGTH="${value}" ;;
+            password_character_class)
               [[ -v PW_GEN_CLASS ]] && continue
               local PW_GEN_CLASS
-              PW_GEN_CLASS="$(echo "${line#*=}" | xargs)" ;;
-            clipboard_clear_time*)
+              PW_GEN_CLASS="${value}" ;;
+            clipboard_clear_time)
               [[ -v PW_CLIP_TIME ]] && continue
               local -i PW_CLIP_TIME
-              PW_CLIP_TIME="$(echo "${line#*=}" | xargs)" ;;
+              PW_CLIP_TIME="${value}" ;;
           esac
         else
-          line="${line/'~'/"${HOME}"}"
-          line="${line/'$HOME'/"${HOME}"}"
-          line="${line/'${HOME}'/"${HOME}"}"
+          value="${value/'~'/"${HOME}"}"
+          value="${value/'$HOME'/"${HOME}"}"
+          value="${value/'${HOME}'/"${HOME}"}"
           if [[ "${section}" == "plugins" ]]; then
-            case "${line}" in
-              plugin*)
-                line="$(echo "${line#*=}" | xargs)"
-                [[ -z ${line} ]] && continue
-                line="${line//'$PW_HOME'/"${PW_HOME}"}"
-                line="${line//'${PW_HOME}'/"${PW_HOME}"}"
-                PW_PLUGINS+=("${line}") ;;
+            case "${key}" in
+              plugin)
+                value="${value//'$PW_HOME'/"${PW_HOME}"}"
+                value="${value//'${PW_HOME}'/"${PW_HOME}"}"
+                PW_PLUGINS+=("${value}") ;;
             esac
           elif [[ "${section}" == "keychains" ]]; then
-            case "${line}" in
-              keychain*)
-                line="$(echo "${line#*=}" | xargs)"
-                [[ -z ${line} ]] && continue
-                PW_KEYCHAINS+=("${line}") ;;
+            case "${key}" in
+              keychain)
+                [[ -z ${value} ]] && continue
+                PW_KEYCHAINS+=("${value}") ;;
             esac
           fi
         fi

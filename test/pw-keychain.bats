@@ -49,6 +49,13 @@ setup() {
   assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
 }
 
+@test "ignores keychain*" {
+  _config_append_keychains_with_key "keychainX = invalid" "keychain = ${TEST_KEYCHAIN}"
+  run pw ls
+  assert_success
+  assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
+}
+
 @test "prioritizes PW_KEYCHAIN over PW_KEYCHAINS" {
   _config_append_keychains "${TEST_KEYCHAIN}"
   export PW_KEYCHAIN="other test keychain.test"
