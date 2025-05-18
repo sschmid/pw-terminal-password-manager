@@ -106,11 +106,21 @@ parse_config() {
           line="${line/'$HOME'/"${HOME}"}"
           line="${line/'${HOME}'/"${HOME}"}"
           if [[ "${section}" == "plugins" ]]; then
-            line="${line//'$PW_HOME'/"${PW_HOME}"}"
-            line="${line//'${PW_HOME}'/"${PW_HOME}"}"
-            PW_PLUGINS+=("${line}")
+            case "${line}" in
+              plugin*)
+                line="$(echo "${line#*=}" | xargs)"
+                [[ -z ${line} ]] && continue
+                line="${line//'$PW_HOME'/"${PW_HOME}"}"
+                line="${line//'${PW_HOME}'/"${PW_HOME}"}"
+                PW_PLUGINS+=("${line}") ;;
+            esac
           elif [[ "${section}" == "keychains" ]]; then
-            PW_KEYCHAINS+=("${line}")
+            case "${line}" in
+              keychain*)
+                line="$(echo "${line#*=}" | xargs)"
+                [[ -z ${line} ]] && continue
+                PW_KEYCHAINS+=("${line}") ;;
+            esac
           fi
         fi
         ;;

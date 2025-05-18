@@ -30,19 +30,24 @@ and spaces "
 _set_config_with_plugin() {
   cat > "${PW_CONFIG}" << EOF
 [plugins]
-$1
+plugin = $1
 EOF
 }
 
 _set_config_with_test_plugins() {
   cat > "${1:-"${PW_CONFIG}"}" << EOF
 [plugins]
-${BATS_TEST_DIRNAME}/fixtures/plugins/collision
-${BATS_TEST_DIRNAME}/fixtures/plugins/test
+plugin = ${BATS_TEST_DIRNAME}/fixtures/plugins/collision
+plugin = ${BATS_TEST_DIRNAME}/fixtures/plugins/test
 EOF
 }
 
 _config_append_keychains() {
+  echo "[keychains]" >> "${PW_CONFIG}"
+  printf "keychain = %s\n" "$@" >> "${PW_CONFIG}"
+}
+
+_config_append_keychains_with_key() {
   echo "[keychains]" >> "${PW_CONFIG}"
   printf "%s\n" "$@" >> "${PW_CONFIG}"
 }

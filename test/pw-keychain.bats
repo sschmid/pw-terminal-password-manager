@@ -29,7 +29,21 @@ setup() {
 }
 
 @test "ignores empty lines" {
+  _config_append_keychains_with_key "" "keychain = ${TEST_KEYCHAIN}" ""
+  run pw ls
+  assert_success
+  assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
+}
+
+@test "ignores empty keychain" {
   _config_append_keychains "" "${TEST_KEYCHAIN}" ""
+  run pw ls
+  assert_success
+  assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
+}
+
+@test "ignores wrong keychain key" {
+  _config_append_keychains_with_key "unknown = ${TEST_KEYCHAIN}" "keychain = ${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <${TEST_KEYCHAIN}> <default>"
@@ -88,24 +102,21 @@ setup() {
 }
 
 @test "ignores comments with #" {
-  _config_append_keychains "# comment"
-  _config_append_keychains "${TEST_KEYCHAIN}"
+  _config_append_keychains_with_key "# comment" "keychain = ${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <test keychain.test> <default>"
 }
 
 @test "ignores comments with ;" {
-  _config_append_keychains "; comment"
-  _config_append_keychains "${TEST_KEYCHAIN}"
+  _config_append_keychains_with_key "; comment" "keychain = ${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <test keychain.test> <default>"
 }
 
 @test "ignores comments with indentation" {
-  _config_append_keychains "    # comment"
-  _config_append_keychains "${TEST_KEYCHAIN}"
+  _config_append_keychains_with_key "    # comment" "keychain = ${TEST_KEYCHAIN}"
   run pw ls
   assert_success
   assert_output "test ls <> <> <test keychain.test> <default>"
