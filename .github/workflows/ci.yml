@@ -7,6 +7,20 @@ on:
     branches: [main]
 
 jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Install dependencies"
+        run: sudo apt-get update && sudo apt-get install -y --fix-missing shellcheck
+
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: "shellcheck"
+        run: test/shellcheck
+
   linux:
     runs-on: ubuntu-latest
     strategy:
@@ -33,7 +47,7 @@ jobs:
     steps:
       - name: "Install dependencies"
         run: |
-          brew install bash fzf parallel shellcheck
+          brew install bash fzf parallel
           brew install --cask keepassxc
 
       - name: "Checkout"
@@ -42,14 +56,14 @@ jobs:
           submodules: recursive
 
       - name: "Run tests"
-        run: test/run -j $(sysctl -n hw.logicalcpu)
+        run: test/run -c no-shellcheck -j $(sysctl -n hw.logicalcpu)
 
   coverage:
     runs-on: macos-latest
     steps:
       - name: "Install dependencies"
         run: |
-          brew install bash fzf kcov parallel shellcheck
+          brew install bash fzf kcov parallel
           brew install --cask keepassxc
 
       - name: "Checkout"

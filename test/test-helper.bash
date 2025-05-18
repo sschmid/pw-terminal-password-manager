@@ -152,6 +152,6 @@ _skip_manual_test() {
   if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
     echo "# Please enter $1" >&3
   else
-    skip "Requires user input. Use PW_TEST_RUN_MANUAL_TESTS=1 test/run to also run manual tests."
+    skip "Requires user input. Use test/run -m to also run manual tests."
   fi
 }

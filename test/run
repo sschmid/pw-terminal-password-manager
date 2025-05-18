@@ -9,7 +9,8 @@ run_tests() {
 }
 
 cmd_options=()
-while getopts ":aj:mp:" options; do
+no_shellcheck=0
+while getopts ":ac:j:mp:" options; do
   case "${options}" in
     a)
       run_tests alpine
@@ -18,6 +19,11 @@ while getopts ":aj:mp:" options; do
       run_tests fedora
       run_tests opensuse-tumbleweed
       run_tests ubuntu
+      ;;
+    c)
+      case "${OPTARG}" in
+        no-shellcheck) no_shellcheck=1 ;;
+      esac
       ;;
     j)
       cmd_options+=("--jobs" "${OPTARG}")
@@ -39,4 +45,4 @@ done
 shift $(( OPTIND - 1 ))
 
 test/bats/bin/bats "${cmd_options[@]}" "${@:-test}"
-test/shellcheck
+(( no_shellcheck )) || test/shellcheck
