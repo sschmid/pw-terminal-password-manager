@@ -13,7 +13,7 @@ mig_pw_config="${new_pw_config}.mig"
 
 if [[ -f "${old_pw_config}" ]] ; then
   if (( ! yes )); then
-    IFS= read -rp "pw 12.0.0 moved ${old_pw_config} to ${new_pw_config}. Would you like to automatically move that file? (y / N): " answer >&2
+    IFS= read -rp "pw 12.0.0 introduced a new config format and moved ${old_pw_config} to ${new_pw_config}. Would you like to automatically upgrade and move that file? (y / N): " answer >&2
     [[ "${answer}" == [yY] ]] || exit 1
   fi
 
