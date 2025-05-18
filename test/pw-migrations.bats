@@ -6,6 +6,9 @@ setup() {
   # PW_RC is depricated. Keep for migration tests.
   export PW_RC="${BATS_TEST_TMPDIR}/pwrc"
 
+  # .config/pw/config is depricated. Keep for migration tests.
+  PW_CONFIG_11="${XDG_CONFIG_HOME}/pw/config"
+
   local keychain="${BATS_TEST_TMPDIR}/test keychain.test"
   touch "${keychain}"
 }
@@ -40,6 +43,24 @@ EOF
 
 _set_pw_config_11_0_0() {
   # moved to ~/.config/pw/config
+  cat << EOF > "${PW_CONFIG_11}"
+[config]
+	password_length = 35
+	password_character_class = [:graph:]
+	clipboard_clear_time = 45
+
+[plugins]
+	\$PW_HOME/plugins/gpg
+	\$PW_HOME/plugins/keepassxc
+	\$PW_HOME/plugins/macos_keychain
+
+[keychains]
+	$1
+EOF
+}
+
+_set_pw_config_12_0_0() {
+  # moved to ~/.config/pw/pw.conf
   cat << EOF > "${PW_CONFIG}"
 [config]
 	password_length = 35
@@ -93,7 +114,12 @@ EOF
   assert_latest_config "${keychain}"
 }
 
-@test "ignores latest" {
+@test "migrates pwrc from <12.0.0 to latest config" {
   _set_pw_config_11_0_0 "${keychain}"
+  assert_latest_config "${keychain}"
+}
+
+@test "ignores latest" {
+  _set_pw_config_12_0_0 "${keychain}"
   assert_latest_config "${keychain}"
 }

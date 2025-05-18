@@ -63,7 +63,10 @@ parse_config() {
     "${PW_HOME}/src/migrations/pwrc-11.0.0" ${PW_YES} "${pwrc}"
   fi
 
+  "${PW_HOME}/src/migrations/pwconf-12.0.0" ${PW_YES}
+
   # Starting with pw-11.0.0 ~/.pwrc is deprecated and moved to ~/.config/pw/config
+  # Starting with pw-12.0.0 ~/.config/pw/config is deprecated and moved to ~/.config/pw/pw.conf
   # shellcheck disable=SC2174
   if [[ ! -f "${config}" ]]; then
     mkdir -m 700 -p "${PW_CONFIG_HOME}"
