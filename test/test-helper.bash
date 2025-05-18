@@ -5,7 +5,7 @@ _common_setup() {
   load 'test_helper/bats-file/load.bash'
 
   export XDG_CONFIG_HOME="${BATS_TEST_TMPDIR}/.config"
-  PW_CONFIG="${XDG_CONFIG_HOME}/pw/config"
+  PW_CONFIG="${XDG_CONFIG_HOME}/pw/pw.conf"
   mkdir -p "${XDG_CONFIG_HOME}/pw"
 
   PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"

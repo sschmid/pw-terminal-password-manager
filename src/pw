@@ -53,7 +53,7 @@ EOF
 parse_config() {
   [[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
-  local config="${1:-"${PW_CONFIG_HOME}/pw/config"}"
+  local config="${1:-"${PW_CONFIG_HOME}/pw/pw.conf"}"
   declare -ag PW_PLUGINS PW_KEYCHAINS
 
   local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
@@ -129,7 +129,7 @@ pw::set_keychain() {
   fi
 
   [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
-    "Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/pw/config."
+    "Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/pw/pw.conf."
 }
 
 pw::select_keychain() {
