@@ -56,6 +56,7 @@ parse_config() {
   local config="${1:-"${PW_CONFIG_HOME}/pw/pw.conf"}"
   declare -ag PW_PLUGINS PW_KEYCHAINS
 
+  # Migrate configs
   local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
   if [[ -f "${pwrc}" ]]; then
     "${PW_HOME}/src/migrations/pwrc-9.0.0" ${PW_YES} "${pwrc}"
@@ -65,8 +66,6 @@ parse_config() {
 
   "${PW_HOME}/src/migrations/pwconf-12.0.0" ${PW_YES}
 
-  # Starting with pw-11.0.0 ~/.pwrc is deprecated and moved to ~/.config/pw/config
-  # Starting with pw-12.0.0 ~/.config/pw/config is deprecated and moved to ~/.config/pw/pw.conf
   # shellcheck disable=SC2174
   if [[ ! -f "${config}" ]]; then
     mkdir -m 700 -p "${PW_CONFIG_HOME}"
@@ -81,10 +80,10 @@ parse_config() {
     [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
     # shellcheck disable=SC2016
     case "${line}" in
-      "[config]") section="config" ;;
-      "[plugins]") section="plugins" ;;
+      "[config]")    section="config"    ;;
+      "[plugins]")   section="plugins"   ;;
       "[keychains]") section="keychains" ;;
-      \[*\]) section="" ;;
+      \[*\])         section=""          ;;
       *)
         if [[ "${section}" == "config" ]]; then
           case "${line}" in

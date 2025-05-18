@@ -9,6 +9,7 @@ yes=$1
 config_home="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 old_pw_config="${config_home}/pw/config"
 new_pw_config="${config_home}/pw/pw.conf"
+mig_pw_config="${new_pw_config}.mig"
 
 if [[ -f "${old_pw_config}" ]] ; then
   if (( ! yes )); then
@@ -16,5 +17,34 @@ if [[ -f "${old_pw_config}" ]] ; then
     [[ "${answer}" == [yY] ]] || exit 1
   fi
 
-  mv "${old_pw_config}" "${new_pw_config}"
+  mv "${old_pw_config}" "${new_pw_config}.bak"
+
+  rm -f "${mig_pw_config}"
+  touch "${mig_pw_config}"
+
+  migrate() {
+    local line section=""
+    while IFS= read -r line; do
+      line="$(echo "${line}" | xargs)"
+      [[ -z "${line}" ]] && echo >> "${mig_pw_config}" && continue
+      [[ "${line}" == "#"* || "${line}" == ";"* ]] && echo "${line}" >> "${mig_pw_config}" && continue
+
+      case "${line}" in
+        "[config]")    section="config"    ; echo "${line}" >> "${mig_pw_config}" ;;
+        "[plugins]")   section="plugins"   ; echo "${line}" >> "${mig_pw_config}" ;;
+        "[keychains]") section="keychains" ; echo "${line}" >> "${mig_pw_config}" ;;
+        \[*\])         section=""          ; echo "${line}" >> "${mig_pw_config}" ;;
+        *)
+          if [[ "${section}" == "plugins" ]]
+          then echo "plugin = ${line}"   >> "${mig_pw_config}"
+          elif [[ "${section}" == "keychains" ]]
+          then echo "keychain = ${line}" >> "${mig_pw_config}"
+          else echo "${line}"            >> "${mig_pw_config}"
+          fi ;;
+      esac
+    done < "${new_pw_config}.bak"
+  }
+
+  migrate
+  mv "${mig_pw_config}" "${new_pw_config}"
 fi
