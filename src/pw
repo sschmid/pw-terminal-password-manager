@@ -70,7 +70,7 @@ parse_config() {
   if [[ ! -f "${config}" ]]; then
     mkdir -m 700 -p "${PW_CONFIG_HOME}"
     mkdir -m 700 -p "${PW_CONFIG_HOME}/pw"
-    cp "${PW_HOME}/config/pw.conf" "${config}"
+    cp "${PW_HOME}/examples/pw.conf" "${config}"
   fi
 
   local line section key value
