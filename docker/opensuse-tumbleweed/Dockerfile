@@ -14,7 +14,7 @@ RUN zypper --non-interactive install --no-recommends \
 FROM base AS pw
 WORKDIR /opt/pw
 COPY src src
-COPY config config
+COPY examples examples
 COPY plugins plugins
 COPY version.txt .
 RUN ln -s /opt/pw/src/pw /usr/local/bin/pw

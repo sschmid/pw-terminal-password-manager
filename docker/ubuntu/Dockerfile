@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 FROM base AS pw
 WORKDIR /opt/pw
 COPY src src
-COPY config config
+COPY examples examples
 COPY plugins plugins
 COPY version.txt .
 RUN ln -s /opt/pw/src/pw /usr/local/bin/pw
