@@ -1,7 +1,7 @@
 BEE_PROJECT=pw
 BEE_VERSION=1.4.0
 BEE_PLUGINS_PATHS=("${BEE_RESOURCES}/plugins")
-BEE_PLUGINS=(release)
+BEE_PLUGINS=(gh release)
 
 bee::secrets() { [[ ! -f ~/.bee/secrets.bash ]] || source ~/.bee/secrets.bash; }
 
