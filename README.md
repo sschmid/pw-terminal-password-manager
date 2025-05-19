@@ -69,8 +69,8 @@ sudo /opt/pw/install --uninstall
 pw init ~/secrets.keychain-db
 
 # optionally configure keychains in ~/.config/pw/pw.conf so you can access them
-# from anywhere otherwise, pw will discover keychains in the current directory
-echo '~/secrets.keychain-db' >> ~/.config/pw/pw.conf
+# from anywhere, otherwise, pw will discover keychains in the current directory
+echo 'keychain = ~/secrets.keychain-db' >> ~/.config/pw/pw.conf
 
 # add an entry
 pw add GitHub sschmid
@@ -94,9 +94,9 @@ pw init ~/secrets/   # end with `/` for GnuPG
 cd ~/secrets
 
 # optionally configure keychains in ~/.config/pw/pw.conf so you can access them
-# from anywhere otherwise, pw will discover gpg encrypted passwords in the
+# from anywhere, otherwise, pw will discover gpg encrypted passwords in the
 # current directory
-echo '~/secrets/' >> ~/.config/pw/pw.conf
+echo 'keychain = ~/secrets/' >> ~/.config/pw/pw.conf
 
 # add an entry
 # if you haven't configured ~/.config/pw/pw.conf yet, you need to specify the
@@ -148,7 +148,7 @@ Here's an overview of which features are supported by each plugin:
 | Add entry with name and password                                                | ✅             | ✅                                 | ✅             |
 | Add entry with name, account, url, notes and password                           | ✅             | ✅                                 | 🔐             |
 | Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                 | ❌             |
-| Add entry in groups (e.g. Coding/GitHub)                                        | ❌             | 🔐                                 | ✅             |
+| Add entry in groups (e.g. Coding/Work)                                          | ❌             | 🔐                                 | ✅             |
 | Edit entry                                                                      | ✅             | ✅                                 | ✅             |
 | Remove entry                                                                    | ✅             | ✅                                 | ✅             |
 | List entries                                                                    | ✅             | ✅                                 | ✅             |
@@ -257,8 +257,9 @@ Press `CTRL-Y` on any entry to copy (or print) the details.
 
 ## Config file
 
-The suggested location for the `pw` configuration file is `~/.config/pw/pw.conf`.
-`pw` will automatically create this file with default values if it doesn't exist.
+The suggested location for the `pw` configuration file is `$XDG_CONFIG_HOME/pw/pw.conf`,
+which usually resolves to `~/.config/pw/pw.conf`. `pw` will automatically create
+this file with default values if it doesn't exist.
 
 You can specify a different configuration file using the `-c` option:
 
@@ -271,6 +272,8 @@ pw -c /path/to/config
 ```
 pw init <keychain>                 create keychain
 ```
+
+Examples:
 
 ```bash
 pw init ~/secrets.keychain-db   # macOS Keychain
@@ -287,6 +290,8 @@ pw init "${PWD}/secrets.keychain-db"   # will create a keychain in the current d
 ```
 pw add [<args>]                    add entry. If no args, interactive mode
 ```
+
+Examples:
 
 ```bash
 pw add                                      # add interactively
@@ -307,6 +312,8 @@ pw add "Google (Personal)" personal@example.com
 
 ## Add entry in group
 
+Examples:
+
 ```bash
 pw add Coding/GitHub
 pw add Coding/JetBrains
@@ -317,6 +324,8 @@ pw add Coding/JetBrains
 ```
 pw edit [<args>]                   edit entry. If no args, fzf mode
 ```
+
+Examples:
 
 ```bash
 pw edit          # starts fzf to select an entry
@@ -329,6 +338,8 @@ pw edit GitHub
 pw [-p] [<args>]                   copy (or print) password. If no args, fzf mode
 ```
 
+Examples:
+
 ```bash
 pw          # starts fzf to select an entry
 pw GitHub
@@ -339,6 +350,8 @@ pw GitHub
 ```
 pw show [-p] [<args>]              copy (or print) details. If no args, fzf mode
 ```
+
+Examples:
 
 ```bash
 pw show          # starts fzf to select an entry
@@ -351,6 +364,8 @@ pw show GitHub
 pw rm [<args>]                remove entry. If no args, fzf mode
 ```
 
+Examples:
+
 ```bash
 pw rm          # starts fzf to select an entry
 pw rm GitHub
@@ -362,6 +377,8 @@ pw rm GitHub
 pw gen [-p] [<length>] [<class>]   generate password with given length and
                                    character class (default: 35 [:graph:])
 ```
+
+Examples:
 
 ```bash
 pw gen                  # equivalent to pw gen 35 '[:graph:]'
@@ -407,10 +424,10 @@ To use multiple keychains, add your desired keychains to `~/.config/pw/pw.conf`,
 
 ```ini
 [keychains]
-	secrets.keychain-db
-	~/path/to/myproject.keychain-db
-	~/path/to/keepassxc.kdbx
-	~/path/to/gpg/secrets
+keychain = secrets.keychain-db
+keychain = ~/path/to/myproject.keychain-db
+keychain = ~/path/to/keepassxc.kdbx
+keychain = ~/path/to/gpg/secrets
 ```
 
 After configuring your keychains, continue using `pw` as usual. If no keychain
@@ -457,20 +474,20 @@ Configure `pw` in `~/.config/pw/pw.conf` with the following options:
 
 ```ini
 [config]
-	password_length = 35
-	password_character_class = [:graph:]
-	clipboard_clear_time = 45
+password_length = 35
+password_character_class = [:graph:]
+clipboard_clear_time = 45
 
 [plugins]
-	$PW_HOME/plugins/gpg
-	$PW_HOME/plugins/keepassxc
-	$PW_HOME/plugins/macos_keychain
+plugin = $PW_HOME/plugins/gpg
+plugin = $PW_HOME/plugins/keepassxc
+plugin = $PW_HOME/plugins/macos_keychain
 
 [keychains]
-	secrets.keychain-db
-	~/path/to/myproject.keychain-db
-	~/path/to/keepassxc.kdbx
-	~/path/to/gpg/secrets
+keychain = secrets.keychain-db
+keychain = ~/path/to/your/gpg/vault
+keychain = ~/path/to/your/keychain.kdbx
+keychain = ~/path/to/your/keychain.keychain-db
 ```
 
 Additionally, you can use environment variables to customize `pw`. They will
@@ -505,7 +522,7 @@ pw -k ~/secrets.kdbx:key1=value1,key2=value2
 In your `~/.config/pw/pw.conf`:
 ```bash
 ...
-~/secrets.kdbx:key1=value1,key2=value2
+keychain = ~/secrets.kdbx:key1=value1,key2=value2
 ...
 ```
 
@@ -569,6 +586,8 @@ Currently supported clipboard managers are:
 - `xclip` (Linux)
 - `xsel` (Linux)
 - `wl-clipboard` (Wayland)
+
+Add support for others by adding them to `/opt/pw/src/copy` and `/opt/pw/src/paste`.
 
 ### macOS
 
