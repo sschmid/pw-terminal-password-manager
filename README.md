@@ -25,24 +25,31 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 
 # Install and update `pw`
 
-### Install
-
 See [requirements](#requirements) for dependencies.
 
+### Install script
+
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
+```
+
+### Manual install
+
+```bash
+git clone https://github.com/sschmid/pw-terminal-password-manager /opt/pw
+ln -s /opt/pw/src/pw /usr/local/bin/pw
 ```
 
 ### Update
 
 ```bash
-pw update
+sudo pw update
 ```
 
 ### Uninstall
 
 ```bash
-/usr/local/opt/pw/install --uninstall
+sudo /opt/pw/install --uninstall
 ```
 
 |                                                                                             | Tested on the following platforms: |                                                     |
@@ -549,24 +556,52 @@ pw add GitHub.asc
 
 # Requirements
 
-Install the following dependencies to use `pw`:
+Install the following [DEPENDENCIES.md](DEPENDENCIES.md) to use `pw`:
 
-## `pw`
+- `bash`
+- `fzf`
+- `gnupg` (optional, for GnuPG plugin)
+- `keepassxc` (optional, for KeePassXC plugin)
 
+Make sure to have a clipboard manager installed to copy passwords to the clipboard.
+Currently supported clipboard managers are:
+- `pbcopy`, `pbpaste` (macOS, built-in)
+- `xclip` (Linux)
+- `xsel` (Linux)
+- `wl-clipboard` (Wayland)
+
+### macOS
+
+```bash
+brew install $(cat /opt/pw/DEPENDENCIES.md)
 ```
-fzf
+
+### Alpine Linux
+
+```bash
+apk add --no-cache $(cat /opt/pw/DEPENDENCIES.md)
 ```
 
-## `pw` plugins (optional):
+### Arch Linux
 
-### keepassxc
-
-```
-keepassxc
+```bash
+pacman -Syu --noconfirm && pacman -S --noconfirm --needed $(cat /opt/pw/DEPENDENCIES.md)
 ```
 
-### gpg
+### Debian/Ubuntu
 
+```bash
+apt-get update && apt-get install -y $(cat /opt/pw/DEPENDENCIES.md)
 ```
-gnupg
+
+### Fedora
+
+```bash
+dnf install -y $(cat /opt/pw/DEPENDENCIES.md)
+```
+
+### openSUSE Tumbleweed
+
+```bash
+zypper --non-interactive install --no-recommends $(cat /opt/pw/DEPENDENCIES.md)
 ```

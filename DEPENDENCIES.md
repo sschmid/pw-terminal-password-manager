@@ -1,3 +1,4 @@
+bash
 fzf
 gnupg
 keepassxc
