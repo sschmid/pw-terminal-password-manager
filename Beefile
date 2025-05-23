@@ -3,7 +3,10 @@ BEE_VERSION=1.4.0
 BEE_PLUGINS_PATHS=("${BEE_RESOURCES}/plugins")
 BEE_PLUGINS=(gh release)
 
-bee::secrets() { [[ ! -f ~/.bee/secrets.bash ]] || source ~/.bee/secrets.bash; }
+bee::secrets() {
+  [[ "$1" == "gh" ]] && return
+  [[ ! -f ~/.bee/secrets.bash ]] || source ~/.bee/secrets.bash
+}
 
 GITHUB_REPO="sschmid/pw-terminal-password-manager"
 CHANGELOG_URL="https://github.com/${GITHUB_REPO}"
