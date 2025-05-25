@@ -12,8 +12,8 @@ while [[ -L "${PW_HOME}" ]]; do
   PW_HOME="$(readlink "${PW_HOME}")"
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
-declare -r PW_HOME
-declare -r PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
+declare -rx PW_HOME
+declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
 pw::help() {
   cat << EOF
@@ -59,12 +59,12 @@ pw::parse_config() {
   # Migrate configs
   local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
   if [[ -f "${pwrc}" ]]; then
-    "${PW_HOME}/src/migrations/pwrc-9.0.0" ${PW_YES} "${pwrc}"
-    "${PW_HOME}/src/migrations/pwrc-10.0.0" ${PW_YES} "${pwrc}"
-    "${PW_HOME}/src/migrations/pwrc-11.0.0" ${PW_YES} "${pwrc}"
+    "${PW_HOME}/src/migrations/pwrc-9.0.0" "${pwrc}"
+    "${PW_HOME}/src/migrations/pwrc-10.0.0" "${pwrc}"
+    "${PW_HOME}/src/migrations/pwrc-11.0.0" "${pwrc}"
   fi
 
-  "${PW_HOME}/src/migrations/pwconf-12.0.0" ${PW_YES}
+  "${PW_HOME}/src/migrations/pwconf-12.0.0"
 
   # shellcheck disable=SC2174
   if [[ ! -f "${config}" ]]; then
@@ -92,16 +92,13 @@ pw::parse_config() {
           case "${key}" in
             password_length)
               [[ -v PW_GEN_LENGTH ]] && continue
-              local -i PW_GEN_LENGTH
-              PW_GEN_LENGTH="${value}" ;;
+              local -i PW_GEN_LENGTH="${value}" ;;
             password_character_class)
               [[ -v PW_GEN_CLASS ]] && continue
-              local PW_GEN_CLASS
-              PW_GEN_CLASS="${value}" ;;
+              local PW_GEN_CLASS="${value}" ;;
             clipboard_clear_time)
               [[ -v PW_CLIP_TIME ]] && continue
-              local -i PW_CLIP_TIME
-              PW_CLIP_TIME="${value}" ;;
+              local -i PW_CLIP_TIME="${value}" ;;
             copy)
               [[ -v PW_COPY ]] && continue
               declare -rgx PW_COPY="${value}" ;;
@@ -132,9 +129,9 @@ pw::parse_config() {
     esac
   done < "${config}"
 
-  declare -irg PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
-  declare -rg PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
-  declare -irg PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
+  declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
+  declare -rgx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
+  declare -irgx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
 }
 
 pw::set_keychain() {
@@ -227,7 +224,7 @@ pw::infer_plugin() {
   fi
 }
 
-declare -i PW_PRINT=0
+declare -ix PW_PRINT=0
 
 pw::output() {
   if (( PW_PRINT )); then
@@ -247,6 +244,8 @@ pw::output() {
     ) &>/dev/null & disown
   fi
 }
+
+export -f pw::output
 
 pw::gen() {
   local -i length=${1:-${PW_GEN_LENGTH}}
@@ -403,7 +402,7 @@ pw::select_item_with_prompt() {
     local items item preview yank yank_action
     items="$(pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "fzf")"
     preview="$(pw::plugin fzf_preview "${keychain_password}" "${PW_KEYCHAIN}")"
-    yank="$(declare -p PW_HOME PW_PRINT PW_CLIP_TIME); $(declare -f pw::output); pw::output \"\$(${preview})\""
+    yank="pw::output \"\$(${preview})\""
     (( PW_PRINT )) && yank_action="print" || yank_action="copy"
 
     # KCOV_EXCL_START
@@ -443,7 +442,7 @@ pw::require_fzf() {
   command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
 }
 
-declare -i PW_YES=0
+declare -ix PW_YES=0
 
 main() {
   pw::require_bash_version

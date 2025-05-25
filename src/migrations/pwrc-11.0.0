@@ -4,12 +4,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-yes=$1 pw_rc="$2"
+pw_rc="$1"
 
 config_home="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 new_pw_config="${config_home}/pw/config"
 
-if (( ! yes )); then
+if (( ! PW_YES )); then
   IFS= read -rp "pw 11.0.0 moved ${pw_rc} to ${new_pw_config}. Would you like to automatically move that file? (y / N): " answer >&2
   [[ "${answer}" == [yY] ]] || exit 1
 fi

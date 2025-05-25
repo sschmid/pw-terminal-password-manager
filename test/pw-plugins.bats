@@ -106,10 +106,9 @@ EOF
 # bats test_tags=tag:manual_test
 @test "generates password when empty" {
   _skip_manual_test "nothing"
-  export PW_PRINT=1
   export PW_GEN_LENGTH=5
   export PW_GEN_CLASS="1"
-  run pw add "${NAME_A}"
+  run pw -p add "${NAME_A}"
   assert_success
   cat << EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
