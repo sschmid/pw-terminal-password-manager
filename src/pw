@@ -50,6 +50,16 @@ customization:
 EOF
 }
 
+pw::trim() {
+  local line
+  IFS= read -r line || line=""
+  line="${line#"${line%%[![:space:]]*}"}"
+  line="${line%"${line##*[![:space:]]}"}"
+  printf '%s' "${line}"
+}
+
+export -f pw::trim
+
 pw::parse_config() {
   [[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
@@ -75,7 +85,7 @@ pw::parse_config() {
 
   local line section key value
   while IFS= read -r line; do
-    line="$(echo "${line}" | xargs)"
+    line="$(pw::trim <<< "${line}")"
     [[ -z ${line} ]] && continue
     [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
     # shellcheck disable=SC2016
@@ -85,8 +95,8 @@ pw::parse_config() {
       "[keychains]") section="keychains" ;;
       \[*\])         section=""          ;;
       *)
-        key="$(echo "${line%%=*}" | xargs)"
-        value="$(echo "${line#*=}" | xargs)"
+        key="$(pw::trim <<< "${line%%=*}")"
+        value="$(pw::trim <<< "${line#*=}")"
         [[ -z ${value} ]] && continue
         if [[ "${section}" == "general" ]]; then
           case "${key}" in
