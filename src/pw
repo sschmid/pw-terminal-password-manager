@@ -80,7 +80,7 @@ pw::parse_config() {
     [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
     # shellcheck disable=SC2016
     case "${line}" in
-      "[config]")    section="config"    ;;
+      "[general]")   section="general"   ;;
       "[plugins]")   section="plugins"   ;;
       "[keychains]") section="keychains" ;;
       \[*\])         section=""          ;;
@@ -88,7 +88,7 @@ pw::parse_config() {
         key="$(echo "${line%%=*}" | xargs)"
         value="$(echo "${line#*=}" | xargs)"
         [[ -z ${value} ]] && continue
-        if [[ "${section}" == "config" ]]; then
+        if [[ "${section}" == "general" ]]; then
           case "${key}" in
             password_length)
               [[ -v PW_GEN_LENGTH ]] && continue

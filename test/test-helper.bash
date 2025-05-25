@@ -29,7 +29,7 @@ and spaces "
 
 _set_config_with_copy_paste() {
   cat > "${PW_CONFIG}" << 'EOF'
-[config]
+[general]
 copy = cat > "${BATS_TEST_TMPDIR}/test_clipboard"
 paste = cat "${BATS_TEST_TMPDIR}/test_clipboard"
 EOF

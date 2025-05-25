@@ -62,7 +62,7 @@ EOF
 _set_pw_config_12_0_0() {
   # moved to ~/.config/pw/pw.conf
   cat << EOF > "${PW_CONFIG}"
-[config]
+[general]
 password_length = 35
 password_character_class = [:graph:]
 clipboard_clear_time = 45
@@ -84,7 +84,7 @@ assert_latest_config() {
   run cat "${PW_CONFIG}"
   assert_success
   cat << EOF | assert_output -
-[config]
+[general]
 password_length = 35
 password_character_class = [:graph:]
 clipboard_clear_time = 45

@@ -28,10 +28,10 @@ if [[ -f "${old_pw_config}" ]] ; then
       [[ "${line}" == "#"* || "${line}" == ";"* ]] && echo "${line}" >> "${mig_pw_config}" && continue
 
       case "${line}" in
-        "[config]")    section="config"    ; echo "${line}" >> "${mig_pw_config}" ;;
-        "[plugins]")   section="plugins"   ; echo "${line}" >> "${mig_pw_config}" ;;
-        "[keychains]") section="keychains" ; echo "${line}" >> "${mig_pw_config}" ;;
-        \[*\])         section=""          ; echo "${line}" >> "${mig_pw_config}" ;;
+        "[config]")    section="general"   ; echo "[general]" >> "${mig_pw_config}" ;;
+        "[plugins]")   section="plugins"   ; echo "${line}"   >> "${mig_pw_config}" ;;
+        "[keychains]") section="keychains" ; echo "${line}"   >> "${mig_pw_config}" ;;
+        \[*\])         section=""          ; echo "${line}"   >> "${mig_pw_config}" ;;
         *)
           if [[ "${section}" == "plugins" ]]
           then echo "plugin = ${line}"   >> "${mig_pw_config}"

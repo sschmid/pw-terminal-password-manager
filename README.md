@@ -473,7 +473,7 @@ pw unlock <<< "${MY_PASSWORD}"
 Configure `pw` in `~/.config/pw/pw.conf` with the following options:
 
 ```ini
-[config]
+[general]
 password_length = 35
 password_character_class = [:graph:]
 clipboard_clear_time = 45
