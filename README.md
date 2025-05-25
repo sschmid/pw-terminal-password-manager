@@ -478,6 +478,11 @@ password_length = 35
 password_character_class = [:graph:]
 clipboard_clear_time = 45
 
+# pbcopy/pbpaste, xclip, xsel, and wl-copy/wl-paste are supported by default.
+# If you're using a different clipboard manager, you can specify it here:
+# copy = my-copy-command
+# paste = my-paste-command
+
 [plugins]
 plugin = $PW_HOME/plugins/gpg
 plugin = $PW_HOME/plugins/keepassxc
@@ -587,7 +592,14 @@ Currently supported clipboard managers are:
 - `xsel` (Linux)
 - `wl-clipboard` (Wayland)
 
-Add support for others by adding them to `/opt/pw/src/copy` and `/opt/pw/src/paste`.
+If you're using a different clipboard manager,
+you can specify it in your `~/.config/pw/pw.conf` file.
+
+```ini
+[general]
+copy = my-copy-command
+paste = my-paste-command
+```
 
 ### macOS
 
