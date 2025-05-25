@@ -6,6 +6,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [12.0.0] - 2025-05-25
+### Upgrading to pw 12.0.0
+The `pw` config file moved to `$XDG_CONFIG_HOME/pw/pw.conf` and the format has
+changed to an INI-like format. `pw` can automatically move and migrate your
+config to the new format:
+
+```ini
+[general]
+password_length = 35
+password_character_class = [:graph:]
+clipboard_clear_time = 45
+
+# pbcopy/pbpaste, xclip, xsel, and wl-copy/wl-paste are supported by default.
+# If you're using a different clipboard manager, you can specify it here:
+# copy = my-copy-command
+# paste = my-paste-command
+
+[plugins]
+plugin = $PW_HOME/plugins/gpg
+plugin = $PW_HOME/plugins/keepassxc
+plugin = $PW_HOME/plugins/macos_keychain
+
+[keychains]
+# Put your keychains here for easy access
+# keychain = $HOME/path/to/your/gpg/vault
+# keychain = $HOME/path/to/your/keychain.kdbx
+# keychain = $HOME/path/to/your/keychain.keychain-db
+```
+
+`pw` now installs to `/opt/pw` instead of `/usr/local/opt/pw`. No action is
+required for this change. If you want to migrate to that new location uninstall
+the old version and install the new one.
+
+### Added
+- Add `pw` config migration
+- Add stricter config parsing
+- Add support for custom copy/paste
+
+### Fixed
+- Fix config parsing failed when containing quotes
+
+### Changed
+- Move config to `$XDG_CONFIG_HOME/pw/pw.conf`
+- Change `pw.conf` format to follow INI-style conventions
+- Install `pw` to `/opt/pw` instead of `/usr/local/opt/pw`
+
 ## [11.0.0] - 2025-05-16
 ### Upgrading to pw 11.0.0
 `pw` now respects the `$XDG_CONFIG_HOME` environment variable. Your existing `~/.pwrc`
@@ -396,7 +442,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/11.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.0...HEAD
+[12.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/11.0.0...12.0.0
 [11.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.1.0...11.0.0
 [10.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.0.0...10.1.0
 [10.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/9.2.3...10.0.0
