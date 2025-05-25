@@ -60,7 +60,7 @@ assert_pw_home() {
 
 @test "uses custom config" {
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
-  _set_config_with_test_plugins "${BATS_TEST_TMPDIR}/myconfig"
+  _config_append_with_test_plugins "${BATS_TEST_TMPDIR}/myconfig"
   run pw -c "${BATS_TEST_TMPDIR}/myconfig" ls
   assert_success
   assert_output "test ls <> <> <${PW_KEYCHAIN}> <default>"

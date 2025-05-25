@@ -2,6 +2,11 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+if [[ -v PW_COPY ]]; then
+  eval "${PW_COPY}"
+  exit
+fi
+
 if   command -v pbcopy  &>/dev/null; then pbcopy
 elif command -v xclip   &>/dev/null; then xclip -selection clipboard
 elif command -v xsel    &>/dev/null; then xsel --clipboard --input

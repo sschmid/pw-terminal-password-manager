@@ -2,8 +2,9 @@
 setup() {
   load 'keepassxc'
   _setup
+  _set_config_with_copy_paste
   # shellcheck disable=SC2016
-  _set_config_with_plugin '$PW_HOME/plugins/keepassxc'
+  _config_append_with_plugin '$PW_HOME/plugins/keepassxc'
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 

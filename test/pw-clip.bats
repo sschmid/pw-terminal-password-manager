@@ -1,13 +1,10 @@
-# shellcheck disable=SC2030,SC2031
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-
 export BATS_NO_PARALLELIZE_WITHIN_FILE=true
 
 setup() {
   load 'pw'
   _setup
-  _set_config_with_test_plugins
+  _set_config_with_copy_paste
+  _config_append_with_test_plugins
   export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/test keychain.test"
   export PW_CLIP_TIME=1
 }
@@ -15,21 +12,24 @@ setup() {
 _wait() { sleep 2; }
 
 @test "copies item password" {
-  pw "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  run pw "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  assert_success
   run _paste
   assert_success
   assert_output "test get <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
 @test "clears clipboard after copying item password" {
-  pw "${NAME_A}"
+  run pw "${NAME_A}"
+  assert_success
   _wait
   run _paste
   refute_output
 }
 
 @test "doesn't clear clipboard after copying item password when changed" {
-  pw "${NAME_A}"
+  run pw "${NAME_A}"
+  assert_success
   echo -n "after" | _copy
   _wait
   run _paste
@@ -37,21 +37,24 @@ _wait() { sleep 2; }
 }
 
 @test "copies item details" {
-  pw show "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  run pw show "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  assert_success
   run _paste
   assert_success
   assert_output "test show <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
 @test "clears clipboard after copying item details" {
-  pw show "${NAME_A}"
+  run pw show "${NAME_A}"
+  assert_success
   _wait
   run _paste
   refute_output
 }
 
 @test "doesn't clear clipboard after copying item details when changed" {
-  pw show "${NAME_A}"
+  run pw show "${NAME_A}"
+  assert_success
   echo -n "after" | _copy
   _wait
   run _paste
@@ -83,4 +86,13 @@ _wait() { sleep 2; }
   assert_output "after"
 }
 
-fi
+@test "env vars override config" {
+  export PW_COPY="cat > ${BATS_TEST_TMPDIR}/my_clipboard"
+  export PW_PASTE="cat ${BATS_TEST_TMPDIR}/my_clipboard"
+  run pw "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
+  assert_success
+
+  run cat "${BATS_TEST_TMPDIR}/my_clipboard"
+  assert_success
+  assert_output "test get <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}

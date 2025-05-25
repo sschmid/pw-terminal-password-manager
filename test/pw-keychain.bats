@@ -2,7 +2,7 @@
 setup() {
   load 'pw'
   _setup
-  _set_config_with_test_plugins
+  _config_append_with_test_plugins
   TEST_KEYCHAIN="test keychain.test"
   KEYCHAIN_OPTIONS="key1=value1,key2=value2"
 }

@@ -27,17 +27,35 @@ and spaces "
   PW_3=" 3 test pw "
 }
 
-_set_config_with_plugin() {
-  cat > "${PW_CONFIG}" << EOF
+_set_config_with_copy_paste() {
+  cat > "${PW_CONFIG}" << 'EOF'
+[config]
+copy = cat > "${BATS_TEST_TMPDIR}/test_clipboard"
+paste = cat "${BATS_TEST_TMPDIR}/test_clipboard"
+EOF
+}
+
+_copy() {
+  cat > "${BATS_TEST_TMPDIR}/test_clipboard"
+}
+
+_paste() {
+  cat "${BATS_TEST_TMPDIR}/test_clipboard"
+}
+
+_config_append_with_plugin() {
+  cat >> "${PW_CONFIG}" << EOF
 [plugins]
+# unknown key
 pluginX = invalid
 plugin = $1
 EOF
 }
 
-_set_config_with_test_plugins() {
-  cat > "${1:-"${PW_CONFIG}"}" << EOF
+_config_append_with_test_plugins() {
+  cat >> "${1:-"${PW_CONFIG}"}" << EOF
 [plugins]
+# unknown key
 pluginX = invalid
 plugin = ${BATS_TEST_DIRNAME}/fixtures/plugins/collision
 plugin = ${BATS_TEST_DIRNAME}/fixtures/plugins/test
@@ -134,14 +152,6 @@ ${password}
 EOF
   assert_success
   refute_output
-}
-
-_copy() {
-  "${PROJECT_ROOT}/src/copy"
-}
-
-_paste() {
-  "${PROJECT_ROOT}/src/paste"
 }
 
 _skip_when_not_macos() {

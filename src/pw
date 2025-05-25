@@ -50,7 +50,7 @@ customization:
 EOF
 }
 
-parse_config() {
+pw::parse_config() {
   [[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
   local config="${1:-"${PW_CONFIG_HOME}/pw/pw.conf"}"
@@ -102,6 +102,12 @@ parse_config() {
               [[ -v PW_CLIP_TIME ]] && continue
               local -i PW_CLIP_TIME
               PW_CLIP_TIME="${value}" ;;
+            copy)
+              [[ -v PW_COPY ]] && continue
+              declare -rgx PW_COPY="${value}" ;;
+            paste)
+              [[ -v PW_PASTE ]] && continue
+              declare -rgx PW_PASTE="${value}" ;;
           esac
         else
           value="${value/'~'/"${HOME}"}"
@@ -456,7 +462,7 @@ main() {
   done
   shift $(( OPTIND - 1 ))
 
-  parse_config "${config}"
+  pw::parse_config "${config}"
 
   if (( $# )); then
     case "$1" in
