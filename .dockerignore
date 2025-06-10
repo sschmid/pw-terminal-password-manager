@@ -1,0 +1,10 @@
+**/.DS_Store
+
+/test/bats
+!/test/bats/bin
+!/test/bats/lib
+!/test/bats/libexec
+
+/test/test_helper
+!/test/test_helper/bats-*/src
+!/test/test_helper/bats-*/load.bash
