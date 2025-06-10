@@ -6,5 +6,9 @@
 !/test/bats/libexec
 
 /test/test_helper
-!/test/test_helper/bats-*/src
-!/test/test_helper/bats-*/load.bash
+!/test/test_helper/bats-assert/src
+!/test/test_helper/bats-assert/load.bash
+!/test/test_helper/bats-file/src
+!/test/test_helper/bats-file/load.bash
+!/test/test_helper/bats-support/src
+!/test/test_helper/bats-support/load.bash
