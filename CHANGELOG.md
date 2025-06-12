@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [12.0.1] - 2025-06-12
+### Fixed
+- Fix regression: Copy password without trailing newline
+
+### Other
+- Add support for running tests with Podman
+- Only copy essential test sources in Dockerfile
+
 ## [12.0.0] - 2025-05-25
 ### Upgrading to pw 12.0.0
 The `pw` config file moved to `$XDG_CONFIG_HOME/pw/pw.conf` and the format has
@@ -442,7 +450,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.1...HEAD
+[12.0.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.0...12.0.1
 [12.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/11.0.0...12.0.0
 [11.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.1.0...11.0.0
 [10.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.0.0...10.1.0
