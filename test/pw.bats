@@ -45,16 +45,19 @@ assert_pw_home() {
 
 @test "doesn't create default config when not accessed" {
   run pw -h
+  assert_success
   assert_file_not_exists "${PW_CONFIG}"
 }
 
 @test "creates default config" {
   run pw ls
+  assert_failure
   assert_file_exists "${PW_CONFIG}"
 }
 
 @test "doesn't create custom config" {
   run pw -c "${BATS_TEST_TMPDIR}/myconfig" ls
+  assert_failure
   assert_file_not_exists "${PW_CONFIG}"
 }
 
