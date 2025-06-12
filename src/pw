@@ -238,7 +238,7 @@ declare -ix PW_PRINT=0
 
 pw::output() {
   if (( PW_PRINT )); then
-    echo "$1"
+    printf "%s\n" "$1"
   else
     local pname
     local -i pid
@@ -313,7 +313,7 @@ pw::prompt_password() {
       PW_PRINT=1 password="$(pw::gen)"
     fi
   fi
-  echo "${password}"
+  printf "%s" "${password}"
 }
 
 pw::init() {
@@ -330,7 +330,7 @@ pw::add() {
     IFS= read -rp "Title: " PW_NAME
     IFS= read -rp "Username: " PW_ACCOUNT
     IFS= read -rp "URL: " PW_URL
-    echo "Notes: Enter multi-line input (end with Ctrl+D):"
+    printf "Notes: Enter multi-line input (end with Ctrl+D):\n"
     PW_NOTES=$(cat)
   fi
 
