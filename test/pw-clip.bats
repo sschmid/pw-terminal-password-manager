@@ -19,6 +19,28 @@ _wait() { sleep 2; }
   assert_output "test get <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
+@test "copies item password without adding newline" {
+  export PW_TEST_PLUGIN_SHORT=1
+  run pw test
+  assert_success
+  local clip
+  local n
+  clip="$(_paste)"
+  n="$(_paste | wc -c | xargs)"
+
+  [[ "${clip}" == "test" ]] || {
+    echo "expected : test"
+    echo "actual   : ${clip}"
+    false
+  }
+
+  [[ "$n" == 4 ]] || {
+    echo "expected : 4"
+    echo "actual   : ${n}"
+    false
+  }
+}
+
 @test "clears clipboard after copying item password" {
   run pw "${NAME_A}"
   assert_success
