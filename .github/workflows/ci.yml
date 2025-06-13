@@ -110,13 +110,15 @@ jobs:
     needs: [linux, macos]
     runs-on: ubuntu-latest
     steps:
-      - name: "Install dependencies"
-        run: sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/bee/main/install)"
-
       - name: "Checkout"
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: "Install bee"
+        run: |
+          sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/bee/main/install)"
+          bee install
 
       - name: "Archive"
         run: bee release archive
