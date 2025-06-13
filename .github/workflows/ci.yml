@@ -56,7 +56,7 @@ jobs:
           submodules: recursive
 
       - name: "Run tests"
-        run: test/run -c no-shellcheck -j $(sysctl -n hw.logicalcpu)
+        run: sudo test/run -c no-shellcheck -j $(sysctl -n hw.logicalcpu)
 
   coverage:
     runs-on: macos-latest
