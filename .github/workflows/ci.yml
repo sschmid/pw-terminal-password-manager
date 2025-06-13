@@ -105,3 +105,21 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: "coverage/lcov.info"
+
+  archive:
+    needs: [linux, macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: "Archive"
+        run: bee release archive
+
+      - name: "Upload archive"
+        uses: actions/upload-artifact@v4
+        with:
+          name: pw.tar.gz
+          path: pw.tar.gz
