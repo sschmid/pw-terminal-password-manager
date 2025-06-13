@@ -8,8 +8,8 @@ setup() {
   _set_config_with_copy_paste
   # shellcheck disable=SC2016
   _config_append_with_plugin '$PW_HOME/plugins/macos_keychain'
+  _config_append_macos_keychain
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
-  export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
 }
 
 teardown() {

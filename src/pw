@@ -90,15 +90,26 @@ pw::parse_config() {
     [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
     # shellcheck disable=SC2016
     case "${line}" in
-      "[general]")   section="general"   ;;
-      "[plugins]")   section="plugins"   ;;
-      "[keychains]") section="keychains" ;;
-      \[*\])         section=""          ;;
+      "[general]")   section="general"                 ;;
+      "[plugins]")   section="plugins"                 ;;
+      "[keychains]") section="keychains"               ;;
+      \[*\])         section="plugin-${line//[\[\]]/}" ;;
       *)
         key="$(pw::trim <<< "${line%%=*}")"
         value="$(pw::trim <<< "${line#*=}")"
         [[ -z ${value} ]] && continue
-        if [[ "${section}" == "general" ]]; then
+        if [[ "${section}" == plugin-* ]]; then
+          section="${section#plugin-}"
+          for plugin in "${PW_PLUGINS[@]}"; do
+            if [[ "${plugin}" == *"/${section}" && -f "${plugin}/config_hook" ]]; then
+              # shellcheck disable=SC1091
+              source "${plugin}/config_hook"
+              pw::config_hook "${key}" "${value}"
+              unset -f pw::config_hook
+              break
+            fi
+          done
+        elif [[ "${section}" == "general" ]]; then
           case "${key}" in
             password_length)
               [[ -v PW_GEN_LENGTH ]] && continue

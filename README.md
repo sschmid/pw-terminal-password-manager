@@ -536,8 +536,20 @@ keychain = ~/secrets.kdbx:key1=value1,key2=value2
 As mentioned in the [Security Considerations](#security-considerations) section,
 `pw` won't automatically add the `security` command to the keychain's access
 control list to reduce security risks. If you want to add the `security` command
-to the keychain's access control list by default, you can set the environment
-variable `PW_MACOS_KEYCHAIN_ACCESS_CONTROL` to `always-allow`:
+to the keychain's access control list by default, you can add this to your
+`~/.config/pw/pw.conf` file below the `[plugin]` section:
+
+```ini
+[plugins]
+plugin = $PW_HOME/plugins/gpg
+plugin = $PW_HOME/plugins/keepassxc
+plugin = $PW_HOME/plugins/macos_keychain
+
+[macos_keychain]
+keychain_access_control = always-allow
+```
+
+or set the environment variable `PW_MACOS_KEYCHAIN_ACCESS_CONTROL` to `always-allow`:
 
 ```bash
 export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
