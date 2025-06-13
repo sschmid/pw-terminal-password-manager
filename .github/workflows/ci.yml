@@ -107,7 +107,6 @@ jobs:
           path-to-lcov: "coverage/lcov.info"
 
   archive:
-    needs: [linux, macos]
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -115,16 +114,16 @@ jobs:
         with:
           submodules: recursive
 
-      - name: "Install bee"
-        run: |
-          sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/bee/main/install)"
-          bee install
-
-      - name: "Archive"
-        run: bee release archive
-
-      - name: "Upload archive"
+      - name: Upload archive
         uses: actions/upload-artifact@v4
         with:
-          name: pw.tar.gz
-          path: pw.tar.gz
+          name: pw.zip
+          path: |
+            examples/**
+            plugins/**
+            src/**
+            CHANGELOG.md
+            LICENSE.txt
+            README.md
+            version.txt
+            !**/.DS_Store
