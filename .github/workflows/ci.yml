@@ -110,6 +110,9 @@ jobs:
     needs: [linux, macos]
     runs-on: ubuntu-latest
     steps:
+      - name: "Install dependencies"
+        run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/bee/main/install)"
+
       - name: "Checkout"
         uses: actions/checkout@v4
         with:
