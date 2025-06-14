@@ -8,7 +8,7 @@ setup() {
   _set_config_with_copy_paste
   # shellcheck disable=SC2016
   _config_append_with_plugin '$PW_HOME/plugins/macos_keychain'
-  _config_append_macos_keychain
+  _config_append_macos_keychain_keychain_access_control_always_allow
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 }
 
@@ -179,6 +179,21 @@ EOF
   cat << EOF | assert_output -
 ${MULTI_LINE_NOTES}
 EOF
+}
+
+@test "adds item with access control always-allow" {
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  run security dump-keychain -a "${PW_KEYCHAIN}"
+  assert_success
+  assert_output --partial "com.apple.security"
+}
+
+@test "adds item with access control confirm" {
+  _config_append_macos_keychain_keychain_access_control_confirm
+  assert_adds_item "${PW_1}" "${NAME_A}"
+  run security dump-keychain -a "${PW_KEYCHAIN}"
+  assert_success
+  refute_output --partial "com.apple.security"
 }
 
 ################################################################################
