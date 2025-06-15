@@ -9,4 +9,5 @@ bee::secrets() {
 }
 
 GITHUB_REPO="sschmid/pw-terminal-password-manager"
+GITHUB_ASSETS_ZIP=("dist/pw.zip")
 CHANGELOG_URL="https://github.com/${GITHUB_REPO}"
