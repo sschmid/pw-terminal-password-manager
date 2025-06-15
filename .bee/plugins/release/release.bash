@@ -51,7 +51,7 @@ _wait_for_run() {
 _set_release_run_id() {
   [[ -n "${RELEASE_RUN_ID}" ]] && return
   local tag="$1" run run_id run_name
-  while true; do
+  while :; do
     echo -n "Fetching latest run: "
     run="$(github::runs "?per_page=1" | jq -r '.workflow_runs[0] | "\(.id) \(.display_title)"')"
     run_id="${run%% *}"

@@ -192,7 +192,7 @@ pw::select_keychain() {
   local -a plugins=() types=()
   local plugin file_type register
   for plugin in "${PW_PLUGINS[@]}"; do
-    while true; do
+    while :; do
       read -r file_type
       read -r register
       types+=("${file_type}")
@@ -222,7 +222,7 @@ pw::infer_plugin() {
   local plugin file_type file_extension register
   local -l extension="${PW_KEYCHAIN#*.}"
   for plugin in "${PW_PLUGINS[@]}"; do
-    while true; do
+    while :; do
       read -r file_type
       read -r file_extension
       read -r register
