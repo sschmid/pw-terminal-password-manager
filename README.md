@@ -622,29 +622,29 @@ brew install $(cat /opt/pw/DEPENDENCIES.md)
 ### Alpine Linux
 
 ```bash
-apk add --no-cache $(cat /opt/pw/DEPENDENCIES.md)
+apk add $(cat /opt/pw/DEPENDENCIES.md)
 ```
 
 ### Arch Linux
 
 ```bash
-pacman -Syu --noconfirm && pacman -S --noconfirm --needed $(cat /opt/pw/DEPENDENCIES.md)
+pacman -Syu && pacman -S --needed $(cat /opt/pw/DEPENDENCIES.md)
 ```
 
 ### Debian/Ubuntu
 
 ```bash
-apt-get update && apt-get install -y $(cat /opt/pw/DEPENDENCIES.md)
+apt-get update && apt-get install $(cat /opt/pw/DEPENDENCIES.md)
 ```
 
 ### Fedora
 
 ```bash
-dnf install -y $(cat /opt/pw/DEPENDENCIES.md)
+dnf install $(cat /opt/pw/DEPENDENCIES.md)
 ```
 
 ### openSUSE Tumbleweed
 
 ```bash
-zypper --non-interactive install --no-recommends $(cat /opt/pw/DEPENDENCIES.md)
+zypper install --no-recommends $(cat /opt/pw/DEPENDENCIES.md)
 ```
