@@ -20,6 +20,14 @@ src/pw -h
 
 ## Run Tests
 
+Make sure you have all required dependencies installed, see [requirements](README.md#requirements)
+
+Example for Debian/Ubuntu:
+
+```bash
+sudo apt-get update && apt-get install $(cat DEPENDENCIES.md)
+```
+
 Run tests:
 
 ```bash
