@@ -11,18 +11,18 @@ release::publish() {
   git push --tags
   github::create_release
 
-  release::set_release_run_id "${version}"
+  _set_release_run_id "${version}"
 
   if ! gh run watch --exit-status "${RELEASE_RUN_ID}"; then
     echo "Run ${RELEASE_RUN_ID} failed."
     return 1
   fi
 
-  release::download_artifact "pw"
-  release::upload "${version}"
+  _download_artifact "pw"
+  _upload_assets "${version}"
 }
 
-release::set_release_run_id() {
+_set_release_run_id() {
   [[ -n "${RELEASE_RUN_ID}" ]] && return
   local tag="$1" run run_id run_name
   while true; do
@@ -43,7 +43,7 @@ release::set_release_run_id() {
   done
 }
 
-release::download_artifact() {
+_download_artifact() {
   local artifact_name="$1" artifact_id
   artifact_id="$(github::artifacts "${RELEASE_RUN_ID}" \
     | jq -r --arg name "${artifact_name}" '.artifacts[] | select(.name == $name) | .id')"
@@ -53,7 +53,7 @@ release::download_artifact() {
   github::download "${artifact_id}" "dist/${artifact_name}"
 }
 
-release::upload() {
+_upload() {
   local tag="$1" release_id
   release_id="$(github::releases "/tags/${tag}" | jq -r '.id')"
   github::upload_assets "${release_id}"
