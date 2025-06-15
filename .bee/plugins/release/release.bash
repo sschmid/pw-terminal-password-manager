@@ -12,14 +12,40 @@ release::publish() {
   github::create_release
 
   _set_release_run_id "${version}"
+  _wait_for_run
+  _download_artifact "pw"
+  _upload_assets "${version}"
+}
 
+_wait_for_run() {
+  # gh cli
   if ! gh run watch --exit-status "${RELEASE_RUN_ID}"; then
     echo "Run ${RELEASE_RUN_ID} failed."
     return 1
   fi
 
-  _download_artifact "pw"
-  _upload_assets "${version}"
+  # github api
+  # local conclusion
+  # while :; do
+  #   echo -n "Waiting for run ${RELEASE_RUN_ID}: "
+  #   conclusion=$(github::runs "/${RELEASE_RUN_ID}" | jq -r '.conclusion')
+  #   echo "${conclusion}"
+  #   case "${conclusion}" in
+  #     cancelled | failure | timed_out)
+  #       echo "Run did not complete successfully." >&2
+  #       return 1
+  #       ;;
+  #     success)
+  #       echo "Run completed successfully."
+  #       break
+  #       ;;
+  #     *)
+  #       echo "Retrying in 30 seconds..."
+  #       sleep 30
+  #       continue
+  #       ;;
+  #   esac
+  # done
 }
 
 _set_release_run_id() {
