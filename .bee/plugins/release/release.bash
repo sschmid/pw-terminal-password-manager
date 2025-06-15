@@ -19,7 +19,7 @@ release::publish() {
 
 _wait_for_run() {
   # gh cli
-  if ! gh run watch --exit-status "${RELEASE_RUN_ID}"; then
+  if ! gh run watch --compact --exit-status "${RELEASE_RUN_ID}"; then
     echo "Run ${RELEASE_RUN_ID} failed."
     return 1
   fi
