@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [12.1.0] - 2025-06-15
+### Added
+- Add plugin specific config parsing
+- `macos_keychain`: Add `keychain_access_control` option to `pw.conf`
+
+```ini
+[macos_keychain]
+keychain_access_control = always-allow
+```
+
+### Other
+- Update to Bats v1.12.0
+
 ## [12.0.1] - 2025-06-12
 ### Fixed
 - Fix regression: Copy password without trailing newline
@@ -450,7 +463,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.0...HEAD
+[12.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.1...12.1.0
 [12.0.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.0...12.0.1
 [12.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/11.0.0...12.0.0
 [11.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/10.1.0...11.0.0

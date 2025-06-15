@@ -8,7 +8,6 @@ release::publish() {
   git tag "${version}"
   git push --tags
   github::create_release
-  release::upload "${version}"
 }
 
 release::upload() {
