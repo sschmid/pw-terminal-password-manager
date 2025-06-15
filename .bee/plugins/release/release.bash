@@ -1,3 +1,5 @@
+RELEASE_RUN_ID=""
+
 release::publish() {
   changelog::merge
   git add .
@@ -8,31 +10,51 @@ release::publish() {
   git tag "${version}"
   git push --tags
   github::create_release
+
+  release::set_release_run_id "${version}"
+
+  if ! gh run watch --exit-status "${RELEASE_RUN_ID}"; then
+    echo "Run ${RELEASE_RUN_ID} failed."
+    return 1
+  fi
+
+  release::download_artifact "pw"
+  release::upload "${version}"
+}
+
+release::set_release_run_id() {
+  [[ -n "${RELEASE_RUN_ID}" ]] && return
+  local tag="$1" run run_id run_name
+  while true; do
+    echo -n "Fetching latest run: "
+    run="$(github::runs "?per_page=1" | jq -r '.workflow_runs[0] | "\(.id) \(.display_title)"')"
+    run_id="${run%% *}"
+    run_name="${run#* }"
+    echo "[${run_id}] ${run_name}"
+
+    if [[ "${run_name}" != "Release ${tag}" ]]; then
+      echo "Latest run is not 'Release ${tag}'! Retrying in 5 seconds..."
+      sleep 5
+      continue
+    fi
+
+    RELEASE_RUN_ID="${run_id}"
+    break
+  done
+}
+
+release::download_artifact() {
+  local artifact_name="$1" artifact_id
+  artifact_id="$(github::artifacts "${RELEASE_RUN_ID}" \
+    | jq -r --arg name "${artifact_name}" '.artifacts[] | select(.name == $name) | .id')"
+
+  mkdir -p dist
+  echo "Downloading artifact: ${artifact_name} [${artifact_id}]"
+  github::download "${artifact_id}" "dist/${artifact_name}"
 }
 
 release::upload() {
-  local tag="$1"
-
-  # Choose run to download artifacts from
-  local -i run_id
-  run_id="$(github::runs \
-    | jq -r '.workflow_runs[] | "\(.id) [\(.conclusion)]: \(.display_title)"' \
-    | fzf --header="Select a run to download artifacts from" \
-    | awk '{print $1}')"
-
-  # Choose artifact to download
-  local artifact
-  artifact="$(github::artifacts ${run_id} \
-    | jq -r '.artifacts[] | "\(.id) \(.name)"' \
-    | fzf --header="Select an artifact to download")"
-
-  echo "Downloading artifact"
-  mkdir -p dist
-  github::download "$(awk '{print $1}' <<< "${artifact}")" "dist/$(awk '{print $2}' <<< "${artifact}")"
-
-  local release_id
+  local tag="$1" release_id
   release_id="$(github::releases "/tags/${tag}" | jq -r '.id')"
-
-  echo "Uploading assets to release ${tag} (${release_id})"
   github::upload_assets "${release_id}"
 }
