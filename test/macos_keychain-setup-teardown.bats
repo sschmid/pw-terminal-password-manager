@@ -17,7 +17,7 @@ setup() {
 @test "doesn't create keychain in ~/Library/Keychains" {
   pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
   run ls ~/Library/Keychains
-  refute_output --partial "$(basename "${PW_KEYCHAIN}")"
+  refute_output --partial "$(basename -- "${PW_KEYCHAIN}")"
 }
 
 @test "deletes keychain" {

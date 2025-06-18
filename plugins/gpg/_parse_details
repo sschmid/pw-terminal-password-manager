@@ -10,4 +10,4 @@ NR>=4 { notes = (notes ? notes "\n" : "") $0 }
 END { printf "Name: %s\nAccount: %s\nURL: %s\nNotes:\n%s", name, account, url, notes }'
 # KCOV_EXCL_STOP
 
-awk -v name="$(basename "$1")" "${awk_cmd}"
+awk -v name="$(basename -- "$1")" "${awk_cmd}"
