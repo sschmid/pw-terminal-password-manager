@@ -9,6 +9,9 @@ _container_cmd() {
     docker "$@"
   elif command -v podman &>/dev/null; then
     podman "$@"
+  elif command -v container &>/dev/null; then
+    container system start
+    container "$@"
   else
     echo "Error: No container runtime found. Please install either Docker or Podman and ensure it's available in your PATH." >&2
     exit 1
