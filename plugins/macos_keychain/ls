@@ -5,8 +5,8 @@ _parse_details="$(dirname "$0")/_parse_details"
 options="$1" keychain_password="$2" keychain="$3" format="${4:-default}"
 
 case "${format}" in
-  fzf) printf_format='printf "%-24s\t%-24s\t%s\t%s\t%s\t%s\n", label, account, service, label, account, service' ;;
-  *) printf_format='printf "%-24s\t%-24s\t%s\n", label, account, service' ;;
+  fzf) printf_format='printf "%-24s\t%-16s\t%s\t%s\t%s\t%s\n", label, account, service, label, account, service' ;;
+  *) printf_format='printf "%-24s\t%-16s\t%s\n", label, account, service' ;;
 esac
 
 security dump-keychain "${keychain}" | "${_parse_details}" "${printf_format}" | sort -f
