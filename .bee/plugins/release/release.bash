@@ -79,7 +79,7 @@ _download_artifact() {
   github::download "${artifact_id}" "dist/${artifact_name}"
 }
 
-_upload() {
+_upload_assets() {
   local tag="$1" release_id
   release_id="$(github::releases "/tags/${tag}" | jq -r '.id')"
   github::upload_assets "${release_id}"
