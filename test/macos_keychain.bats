@@ -438,8 +438,8 @@ EOF
   run pw ls
   assert_success
   cat << EOF | assert_output -
-${NAME_A}           	${ACCOUNT_A}        	${URL_A}
-${NAME_B}           	${ACCOUNT_B}        	${URL_B}
+${NAME_A}           	${ACCOUNT_A}	${URL_A}
+${NAME_B}           	${ACCOUNT_B}	${URL_B}
 EOF
 }
 
@@ -447,21 +447,21 @@ EOF
   assert_adds_item "${PW_1}" "" "${ACCOUNT_A}"
   run pw ls
   assert_success
-  assert_output "                        	${ACCOUNT_A}        	"
+  assert_output "                        	${ACCOUNT_A}	"
 }
 
 @test "ls handles <NULL> account" {
   assert_adds_item "${PW_1}" "${NAME_A}"
   run pw ls
   assert_success
-  assert_output "${NAME_A}           	                        	${NAME_A}"
+  assert_output "${NAME_A}           	                	${NAME_A}"
 }
 
 @test "ls handles = in name" {
   assert_adds_item "${PW_1}" "te=st"
   run pw ls
   assert_success
-  assert_output "te=st                   	                        	te=st"
+  assert_output "te=st                   	                	te=st"
 }
 
 @test "lists sorted items with fzf format" {
@@ -470,8 +470,8 @@ EOF
   run pw ls fzf
   assert_success
   cat << EOF | assert_output -
-${NAME_A}           	${ACCOUNT_A}        	${URL_A}	${NAME_A}	${ACCOUNT_A}	${URL_A}
-${NAME_B}           	${ACCOUNT_B}        	${URL_B}	${NAME_B}	${ACCOUNT_B}	${URL_B}
+${NAME_A}           	${ACCOUNT_A}	${URL_A}	${NAME_A}	${ACCOUNT_A}	${URL_A}
+${NAME_B}           	${ACCOUNT_B}	${URL_B}	${NAME_B}	${ACCOUNT_B}	${URL_B}
 EOF
 }
 
