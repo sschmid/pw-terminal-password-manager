@@ -2,8 +2,6 @@
 set -e
 [[ ! -f test/bats/bin/bats ]] && git submodule update --init --recursive
 
-declare -rx TEST_BASH_VERSION="${TEST_BASH_VERSION:-"5.2"}"
-
 _container_cmd() {
   if command -v docker &>/dev/null; then
     docker "$@"

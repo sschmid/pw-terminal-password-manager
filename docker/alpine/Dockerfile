@@ -1,5 +1,4 @@
-ARG BASH_VERSION=5.2
-FROM bash:${BASH_VERSION} AS base
+FROM alpine:latest AS base
 WORKDIR /opt/pw
 COPY DEPENDENCIES.md .
 RUN apk add --no-cache \
