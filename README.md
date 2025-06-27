@@ -52,6 +52,20 @@ sudo pw update
 sudo /opt/pw/install --uninstall
 ```
 
+### Download latest release
+
+You can download the latest release from the
+[releases page](https://github.com/sschmid/pw-terminal-password-manager/releases/latest)
+or use the following link to download the latest release directly:
+[pw.zip](https://github.com/sschmid/pw-terminal-password-manager/releases/latest/download/pw.zip)
+
+Download the latest release, extract it, and add the `src` folder to your `$PATH`.
+Alternatively, you can use `pw` directly from the `src` directory.
+
+```bash
+~/Downloads/pw/src/pw
+```
+
 |                                                                                             | Tested on the following platforms: |                                                     |
 |---------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------|
 | <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/MacOS_logo2.svg" height="48"> | macOS                              |                                                     |
