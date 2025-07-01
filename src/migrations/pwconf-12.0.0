@@ -23,7 +23,7 @@ if [[ -f "${old_pw_config}" ]] ; then
   migrate() {
     local line section=""
     while IFS= read -r line; do
-      line="$(pw::trim <<< "${line}")"
+      line="$(pw::trim "${line}")"
       [[ -z "${line}" ]] && echo >> "${mig_pw_config}" && continue
       [[ "${line}" == "#"* || "${line}" == ";"* ]] && echo "${line}" >> "${mig_pw_config}" && continue
 

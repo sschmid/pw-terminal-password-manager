@@ -51,8 +51,7 @@ EOF
 }
 
 pw::trim() {
-  local line
-  IFS= read -r line || line=""
+  local line="$1"
   line="${line#"${line%%[![:space:]]*}"}"
   line="${line%"${line##*[![:space:]]}"}"
   printf '%s' "${line}"
@@ -85,7 +84,7 @@ pw::parse_config() {
 
   local line section key value
   while IFS= read -r line; do
-    line="$(pw::trim <<< "${line}")"
+    line="$(pw::trim "${line}")"
     [[ -z ${line} ]] && continue
     [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
     # shellcheck disable=SC2016
@@ -95,8 +94,8 @@ pw::parse_config() {
       "[keychains]") section="keychains"               ;;
       \[*\])         section="plugin-${line//[\[\]]/}" ;;
       *)
-        key="$(pw::trim <<< "${line%%=*}")"
-        value="$(pw::trim <<< "${line#*=}")"
+        key="$(pw::trim "${line%%=*}")"
+        value="$(pw::trim "${line#*=}")"
         [[ -z ${value} ]] && continue
         if [[ "${section}" == plugin-* ]]; then
           section="${section#plugin-}"
