@@ -15,6 +15,10 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 declare -rx PW_HOME
 declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
+# shellcheck disable=SC1091
+source "${PW_HOME}/lib/string.bash"
+export -f lib_string_trim
+
 pw::help() {
 	cat << EOF
 🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager
@@ -50,15 +54,6 @@ customization:
 EOF
 }
 
-pw::trim() {
-	local line="$1"
-	line="${line#"${line%%[![:space:]]*}"}"
-	line="${line%"${line##*[![:space:]]}"}"
-	printf '%s' "${line}"
-}
-
-export -f pw::trim
-
 pw::parse_config() {
 	[[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
@@ -84,7 +79,7 @@ pw::parse_config() {
 
 	local line section key value
 	while IFS= read -r line; do
-		line="$(pw::trim "${line}")"
+		line="$(lib_string_trim "${line}")"
 		[[ -z ${line} ]] && continue
 		[[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
 		# shellcheck disable=SC2016
@@ -94,8 +89,8 @@ pw::parse_config() {
 			"[keychains]") section="keychains"               ;;
 			\[*\])         section="plugin-${line//[\[\]]/}" ;;
 			*)
-				key="$(pw::trim "${line%%=*}")"
-				value="$(pw::trim "${line#*=}")"
+				key="$(lib_string_trim "${line%%=*}")"
+				value="$(lib_string_trim "${line#*=}")"
 				[[ -z ${value} ]] && continue
 				if [[ "${section}" == plugin-* ]]; then
 					section="${section#plugin-}"
