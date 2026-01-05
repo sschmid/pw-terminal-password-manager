@@ -15,8 +15,11 @@ PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 declare -rx PW_HOME
 declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
+# shellcheck disable=SC2034
+declare -r PROGRAM="pw"
+
 # shellcheck disable=SC1091
-source "${PW_HOME}/lib/string.bash"
+source "${PW_HOME}/lib/all.bash"
 export -f lib_string_trim
 
 pw::help() {
@@ -37,10 +40,10 @@ commands:
 	init <keychain>                 create keychain
 	add [<args>]                    add entry. If no args, interactive mode
 	edit [<args>]                   edit entry. If no args, fzf mode
-	show [-p] [<args>]              copy (or print) details. If no args, fzf mode
+	[-p] show [<args>]              copy (or print) details. If no args, fzf mode
 	rm [<args>]                     remove entry. If no args, fzf mode
 	ls                              list all entries
-	gen [-p] [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
+	[-p] gen [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
 	open                            open keychain in native gui
 	lock                            lock keychain
 	unlock                          unlock keychain
@@ -77,72 +80,50 @@ pw::parse_config() {
 		cp "${PW_HOME}/examples/pw.conf" "${config}"
 	fi
 
-	local line section key value
-	while IFS= read -r line; do
-		line="$(lib_string_trim "${line}")"
-		[[ -z ${line} ]] && continue
-		[[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
-		# shellcheck disable=SC2016
-		case "${line}" in
-			"[general]")   section="general"                 ;;
-			"[plugins]")   section="plugins"                 ;;
-			"[keychains]") section="keychains"               ;;
-			\[*\])         section="plugin-${line//[\[\]]/}" ;;
+	# shellcheck disable=SC2016,SC2329
+	config_callback() {
+		local section="$1" key="$2" value="$3"
+		value="${value/'~'/"${HOME}"}"
+		value="${value/'$HOME'/"${HOME}"}"
+		value="${value/'${HOME}'/"${HOME}"}"
+		value="${value//'$PW_HOME'/"${PW_HOME}"}"
+		value="${value//'${PW_HOME}'/"${PW_HOME}"}"
+
+		case "${section}" in
+			"general")
+				case "${key}" in
+					password_length)          [[ -v PW_GEN_LENGTH ]] || PW_GEN_LENGTH="${value}" ;;
+					password_character_class) [[ -v PW_GEN_CLASS ]]  || PW_GEN_CLASS="${value}"  ;;
+					clipboard_clear_time)     [[ -v PW_CLIP_TIME ]]  || PW_CLIP_TIME="${value}"  ;;
+					copy)  [[ -v PW_COPY ]]  || declare -rgx PW_COPY="${value}"  ;;
+					paste) [[ -v PW_PASTE ]] || declare -rgx PW_PASTE="${value}" ;;
+				esac
+				;;
+			"plugins")
+				case "${key}" in
+					plugin) PW_PLUGINS+=("${value}") ;;
+				esac
+				;;
+			"keychains")
+				case "${key}" in
+					keychain) [[ -z ${value} ]] || PW_KEYCHAINS+=("${value}") ;;
+				esac
+				;;
 			*)
-				key="$(lib_string_trim "${line%%=*}")"
-				value="$(lib_string_trim "${line#*=}")"
-				[[ -z ${value} ]] && continue
-				if [[ "${section}" == plugin-* ]]; then
-					section="${section#plugin-}"
-					for plugin in "${PW_PLUGINS[@]}"; do
-						if [[ "${plugin}" == *"/${section}" && -f "${plugin}/config_hook" ]]; then
-							# shellcheck disable=SC1091
-							source "${plugin}/config_hook"
-							pw::config_hook "${key}" "${value}"
-							unset -f pw::config_hook
-							break
-						fi
-					done
-				elif [[ "${section}" == "general" ]]; then
-					case "${key}" in
-						password_length)
-							[[ -v PW_GEN_LENGTH ]] && continue
-							local -i PW_GEN_LENGTH="${value}" ;;
-						password_character_class)
-							[[ -v PW_GEN_CLASS ]] && continue
-							local PW_GEN_CLASS="${value}" ;;
-						clipboard_clear_time)
-							[[ -v PW_CLIP_TIME ]] && continue
-							local -i PW_CLIP_TIME="${value}" ;;
-						copy)
-							[[ -v PW_COPY ]] && continue
-							declare -rgx PW_COPY="${value}" ;;
-						paste)
-							[[ -v PW_PASTE ]] && continue
-							declare -rgx PW_PASTE="${value}" ;;
-					esac
-				else
-					value="${value/'~'/"${HOME}"}"
-					value="${value/'$HOME'/"${HOME}"}"
-					value="${value/'${HOME}'/"${HOME}"}"
-					if [[ "${section}" == "plugins" ]]; then
-						case "${key}" in
-							plugin)
-								value="${value//'$PW_HOME'/"${PW_HOME}"}"
-								value="${value//'${PW_HOME}'/"${PW_HOME}"}"
-								PW_PLUGINS+=("${value}") ;;
-						esac
-					elif [[ "${section}" == "keychains" ]]; then
-						case "${key}" in
-							keychain)
-								[[ -z ${value} ]] && continue
-								PW_KEYCHAINS+=("${value}") ;;
-						esac
+				for plugin in "${PW_PLUGINS[@]}"; do
+					if [[ "${plugin}" == *"/${section}" && -f "${plugin}/config_hook" ]]; then
+						# shellcheck disable=SC1091
+						source "${plugin}/config_hook"
+						pw::config_hook "${key}" "${value}"
+						unset -f pw::config_hook
+						break
 					fi
-				fi
+				done
 				;;
 		esac
-	done < "${config}"
+	}
+
+	lib_config_parse_section "${config}" "" config_callback
 
 	declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
 	declare -rgx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
