@@ -367,7 +367,7 @@ EOF
 ################################################################################
 
 @test "opens keychain" {
-	_skip_when_not_macos
+	_skip_if_github_action
 	run pw open
 	assert_success
 	refute_output

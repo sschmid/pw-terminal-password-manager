@@ -165,3 +165,7 @@ _skip_manual_test() {
 		skip "Requires user input. Use test/run -m to also run manual tests."
 	fi
 }
+
+_skip_if_github_action() {
+  [[ "${GITHUB_ACTIONS}" != "true" ]] || skip "$@"
+}
