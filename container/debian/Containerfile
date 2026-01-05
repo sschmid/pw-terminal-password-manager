@@ -1,13 +1,13 @@
-FROM archlinux:latest AS base
-# FROM --platform=linux/amd64 archlinux:latest AS base
+FROM debian:latest AS base
 WORKDIR /opt/pw
 COPY DEPENDENCIES.md .
-RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
+RUN apt-get update && apt-get install -y \
     $(cat DEPENDENCIES.md) \
+    file \
     parallel \
     xclip \
-    xorg-server-xvfb \
-    && pacman -Scc --noconfirm
+    xvfb \
+    && rm -rf /var/lib/apt/lists/*
 
 FROM base AS pw
 WORKDIR /opt/pw
@@ -17,8 +17,8 @@ COPY plugins plugins
 COPY version.txt .
 RUN ln -s /opt/pw/src/pw /usr/local/bin/pw
 WORKDIR /root
-COPY docker/docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["docker-entrypoint.sh"]
+COPY container/entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["entrypoint.sh"]
 
 FROM pw AS test
 WORKDIR /opt/pw

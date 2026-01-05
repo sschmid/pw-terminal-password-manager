@@ -1,13 +1,15 @@
-FROM debian:latest AS base
+FROM opensuse/tumbleweed:latest AS base
 WORKDIR /opt/pw
 COPY DEPENDENCIES.md .
-RUN apt-get update && apt-get install -y \
+RUN zypper --non-interactive install --no-recommends \
     $(cat DEPENDENCIES.md) \
     file \
-    parallel \
+    gawk \
+    gnu_parallel \
     xclip \
-    xvfb \
-    && rm -rf /var/lib/apt/lists/*
+    xorg-x11-server-Xvfb \
+    && zypper clean -a \
+    && rm -rf /var/cache/zypp/*
 
 FROM base AS pw
 WORKDIR /opt/pw
@@ -17,8 +19,8 @@ COPY plugins plugins
 COPY version.txt .
 RUN ln -s /opt/pw/src/pw /usr/local/bin/pw
 WORKDIR /root
-COPY docker/docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["docker-entrypoint.sh"]
+COPY container/entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["entrypoint.sh"]
 
 FROM pw AS test
 WORKDIR /opt/pw

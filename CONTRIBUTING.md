@@ -54,15 +54,15 @@ Run tests in parallel:
 test/run -j 4
 ```
 
-Run tests in a container (Docker, Podman):
-- see [Dockerfiles](docker)
+Run tests in a container (Podman, Docker, Apple container):
+- see [Containerfiles](container)
 
 ```bash
 test/run -p alpine
 ```
 
 Run tests in all containers:
-- see [Dockerfiles](docker)
+- see [Containerfiles](container)
 
 ```bash
 test/run -a

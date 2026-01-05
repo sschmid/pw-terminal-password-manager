@@ -17,8 +17,8 @@ COPY plugins plugins
 COPY version.txt .
 RUN ln -s /opt/pw/src/pw /usr/local/bin/pw
 WORKDIR /root
-COPY docker/docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["docker-entrypoint.sh"]
+COPY container/entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["entrypoint.sh"]
 
 FROM pw AS test
 WORKDIR /opt/pw

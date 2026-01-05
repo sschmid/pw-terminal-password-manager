@@ -66,15 +66,15 @@ Alternatively, you can use `pw` directly from the `src` directory.
 ~/Downloads/pw/src/pw
 ```
 
-|                                                                                             | Tested on the following platforms: |                                                     |
-|---------------------------------------------------------------------------------------------|------------------------------------|-----------------------------------------------------|
-| <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/MacOS_logo2.svg" height="48"> | macOS                              |                                                     |
-| <img src="https://flatpak.org/img/distro/alpine-97c47415.svg" height="48">                  | Alpine Linux                       | [Dockerfile](docker/alpine/Dockerfile)              |
-| <img src="https://flatpak.org/img/distro/arch-61d364d6.svg" height="48">                    | Arch Linux                         | [Dockerfile](docker/archlinux/Dockerfile)           |
-| <img src="https://flatpak.org/img/distro/debian-03035138.svg" height="48">                  | Debian                             | [Dockerfile](docker/debian/Dockerfile)              |
-| <img src="https://flatpak.org/img/distro/fedora-e2366c83.svg" height="48">                  | Fedora                             | [Dockerfile](docker/fedora/Dockerfile)              |
-| <img src="https://flatpak.org/img/distro/opensuse-6686fd27.svg" height="48">                | openSUSE Tumbleweed                | [Dockerfile](docker/opensuse-tumbleweed/Dockerfile) |
-| <img src="https://flatpak.org/img/distro/ubuntu-d865890b.svg" height="48">                  | Ubuntu                             | [Dockerfile](docker/ubuntu/Dockerfile)              |
+|                                                                                             | Tested on the following platforms: |                                                              |
+|---------------------------------------------------------------------------------------------|------------------------------------|--------------------------------------------------------------|
+| <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/MacOS_logo2.svg" height="48"> | macOS                              |                                                              |
+| <img src="https://flatpak.org/img/distro/alpine-97c47415.svg" height="48">                  | Alpine Linux                       | [Containerfile](container/alpine/Containerfile)              |
+| <img src="https://flatpak.org/img/distro/arch-61d364d6.svg" height="48">                    | Arch Linux                         | [Containerfile](container/archlinux/Containerfile)           |
+| <img src="https://flatpak.org/img/distro/debian-03035138.svg" height="48">                  | Debian                             | [Containerfile](container/debian/Containerfile)              |
+| <img src="https://flatpak.org/img/distro/fedora-e2366c83.svg" height="48">                  | Fedora                             | [Containerfile](container/fedora/Containerfile)              |
+| <img src="https://flatpak.org/img/distro/opensuse-6686fd27.svg" height="48">                | openSUSE Tumbleweed                | [Containerfile](container/opensuse-tumbleweed/Containerfile) |
+| <img src="https://flatpak.org/img/distro/ubuntu-d865890b.svg" height="48">                  | Ubuntu                             | [Containerfile](container/ubuntu/Containerfile)              |
 
 # Quickstart
 
