@@ -461,21 +461,21 @@ main() {
 
 	if (( $# )); then
 		case "$1" in
-				init) shift; pw::infer_plugin "$@"; pw::init                           ;;
-				 add) shift; pw::select_keychain  ; pw::add    "$@"                    ;;
-				edit) shift; pw::select_keychain  ; pw::edit   "$@"                    ;;
-				show) shift; pw::select_keychain  ; pw::show   "$@"                    ;;
-					rm) shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
-					ls) shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
-				 gen) shift;                        pw::gen    "$@"                    ;;
-				open) shift; pw::select_keychain  ; pw::plugin open "${PW_KEYCHAIN}"   ;;
-				lock) shift; pw::select_keychain  ; pw::plugin lock "${PW_KEYCHAIN}"   ;;
+			init)   shift; pw::infer_plugin "$@"; pw::init                           ;;
+			add)    shift; pw::select_keychain  ; pw::add    "$@"                    ;;
+			edit)   shift; pw::select_keychain  ; pw::edit   "$@"                    ;;
+			show)   shift; pw::select_keychain  ; pw::show   "$@"                    ;;
+			rm)     shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
+			ls)     shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
+			gen)    shift;                        pw::gen    "$@"                    ;;
+			open)   shift; pw::select_keychain  ; pw::plugin open "${PW_KEYCHAIN}"   ;;
+			lock)   shift; pw::select_keychain  ; pw::plugin lock "${PW_KEYCHAIN}"   ;;
 			unlock) shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
 			update) shift;                        pw::update "$@"                    ;;
-					 *)        pw::select_keychain  ; pw::get    "$@"                    ;;
+			*)             pw::select_keychain  ; pw::get    "$@"                    ;;
 		esac
 	else
-										 pw::select_keychain  ; pw::get
+		pw::select_keychain ; pw::get
 	fi
 }
 
