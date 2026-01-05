@@ -13,6 +13,7 @@ FROM base AS pw
 WORKDIR /opt/pw
 COPY src src
 COPY examples examples
+COPY lib lib
 COPY plugins plugins
 COPY version.txt .
 RUN ln -s /opt/pw/src/pw /usr/local/bin/pw
