@@ -154,24 +154,10 @@ EOF
 	refute_output
 }
 
-_skip_when_not_macos() {
-	[[ "${OSTYPE}" == "darwin"* ]] || skip "Not macOS"
-}
-
 _skip_manual_test() {
 	if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
 		echo "# Please enter $1" >&3
 	else
 		skip "Requires user input. Use test/run -m to also run manual tests."
-	fi
-}
-
-_skip_if_github_action() {
-	echo "Debug PWD: ${PWD}"
-	if [[ "${PWD}" != *"/runner/work/"* ]]; then
-		echo "NOT SKIPPING"
-	else
-		echo "SKIPPING"
-		skip "$@"
 	fi
 }

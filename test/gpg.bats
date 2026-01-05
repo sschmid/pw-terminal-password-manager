@@ -366,8 +366,9 @@ EOF
 # open
 ################################################################################
 
+# bats test_tags=tag:manual_test
 @test "opens keychain" {
-	_skip_if_github_action
+	_skip_manual_test "Opens folder in finder"
 	run pw open
 	assert_success
 	refute_output
