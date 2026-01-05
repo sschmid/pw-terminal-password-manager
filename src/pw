@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1091
 # 🔐 pw - Terminal Password Manager
 set -euo pipefail
 IFS=$'\n\t'
@@ -18,8 +19,8 @@ declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 # shellcheck disable=SC2034
 declare -r PROGRAM="pw"
 
-# shellcheck disable=SC1091
-source "${PW_HOME}/lib/all.bash"
+source "${PW_HOME}/lib/string.bash"
+source "${PW_HOME}/lib/config.bash"
 export -f lib_string_trim
 
 pw::help() {
@@ -112,7 +113,6 @@ pw::parse_config() {
 			*)
 				for plugin in "${PW_PLUGINS[@]}"; do
 					if [[ "${plugin}" == *"/${section}" && -f "${plugin}/config_hook" ]]; then
-						# shellcheck disable=SC1091
 						source "${plugin}/config_hook"
 						pw::config_hook "${key}" "${value}"
 						unset -f pw::config_hook
