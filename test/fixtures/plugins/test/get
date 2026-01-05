@@ -4,7 +4,7 @@ set -euo pipefail
 options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
 
 if [[ -v PW_TEST_PLUGIN_SHORT ]]; then
-  echo "${name}"
+	echo "${name}"
 else
-  echo "test get <${options}> <${keychain_password}> <${keychain}> <${name}> <${account}> <${url}>"
+	echo "test get <${options}> <${keychain_password}> <${keychain}> <${name}> <${account}> <${url}>"
 fi

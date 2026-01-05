@@ -7,7 +7,7 @@ options="$1" keychain_password="$2" keychain="$3"
 # KCOV_EXCL_START
 # shellcheck disable=SC1083
 _fzf_preview() {
-  gpg --quiet --decrypt "${keychain}/"{4} | "${_parse_details}" {4}
+	gpg --quiet --decrypt "${keychain}/"{4} | "${_parse_details}" {4}
 }
 # KCOV_EXCL_STOP
 

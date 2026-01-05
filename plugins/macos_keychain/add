@@ -6,10 +6,10 @@ options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" accoun
 [[ "${PW_MACOS_KEYCHAIN_ACCESS_CONTROL:-}" == "always-allow" ]] || access_control="confirm"
 
 security add-generic-password \
-  -l "${name:-"${url}"}" \
-  -a "${account}" \
-  -s "${url:-"${name}"}" \
-  ${notes:+-j "${notes}"} \
-  ${access_control:+-T ""} \
-  -w "${password}" \
-  "${keychain}"
+	-l "${name:-"${url}"}" \
+	-a "${account}" \
+	-s "${url:-"${name}"}" \
+	${notes:+-j "${notes}"} \
+	${access_control:+-T ""} \
+	-w "${password}" \
+	"${keychain}"

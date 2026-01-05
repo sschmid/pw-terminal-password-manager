@@ -7,17 +7,17 @@ options="$1" keychain="$2"
 
 declare -a cmd_options=()
 while IFS=$'\t' read -r key value; do
-  case "${key}" in
-    keyfile) cmd_options+=("--set-key-file" "${value}") ;;
-  esac
+	case "${key}" in
+		keyfile) cmd_options+=("--set-key-file" "${value}") ;;
+	esac
 done < <("${parse_options}" "${options}")
 
 if [[ -p /dev/stdin ]]; then
-  IFS= read -r password
-  keepassxc-cli db-create --quiet "${cmd_options[@]}" --set-password "${keychain}" << EOF
+	IFS= read -r password
+	keepassxc-cli db-create --quiet "${cmd_options[@]}" --set-password "${keychain}" << EOF
 ${password}
 ${password}
 EOF
 else
-  keepassxc-cli db-create "${cmd_options[@]}" --set-password "${keychain}"
+	keepassxc-cli db-create "${cmd_options[@]}" --set-password "${keychain}"
 fi

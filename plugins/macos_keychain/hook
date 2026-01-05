@@ -5,28 +5,28 @@ FILE_TYPE="Mac OS X Keychain File"
 FILE_EXTENSION="keychain-db"
 
 case "$1" in
-  discover_keychains)
-    while IFS= read -r -d '' path; do
-      [[ "$(file -b -- "${path}")" != "${FILE_TYPE}" ]] || echo "${path}"
-    done < <(find "${PWD}" -maxdepth 1 -type f -print0)
-  ;;
-  register_with_keychain)
-    echo "${FILE_TYPE}"
-    if [[ -f "$2" && "$(file -b -- "$2")" == "${FILE_TYPE}" ]]; then
-      echo yes
-    elif [[ -f "${HOME}/Library/Keychains/$2" ]]; then
-      echo yes
-    else
-      echo no
-    fi
-  ;;
-  register_with_extension)
-    echo "${FILE_TYPE}"
-    echo "${FILE_EXTENSION}"
-    if [[ "$2" == "${FILE_EXTENSION}" ]]; then
-      echo yes
-    else
-      echo no
-    fi
-  ;;
+	discover_keychains)
+		while IFS= read -r -d '' path; do
+			[[ "$(file -b -- "${path}")" != "${FILE_TYPE}" ]] || echo "${path}"
+		done < <(find "${PWD}" -maxdepth 1 -type f -print0)
+	;;
+	register_with_keychain)
+		echo "${FILE_TYPE}"
+		if [[ -f "$2" && "$(file -b -- "$2")" == "${FILE_TYPE}" ]]; then
+			echo yes
+		elif [[ -f "${HOME}/Library/Keychains/$2" ]]; then
+			echo yes
+		else
+			echo no
+		fi
+	;;
+	register_with_extension)
+		echo "${FILE_TYPE}"
+		echo "${FILE_EXTENSION}"
+		if [[ "$2" == "${FILE_EXTENSION}" ]]; then
+			echo yes
+		else
+			echo no
+		fi
+	;;
 esac

@@ -4,8 +4,8 @@ set -euo pipefail
 options="$1" keychain="$2"
 
 if [[ -p /dev/stdin ]]; then
-  IFS= read -r password
-  security create-keychain -p "${password}" "${keychain}"
+	IFS= read -r password
+	security create-keychain -p "${password}" "${keychain}"
 else
-  security create-keychain "${keychain}"
+	security create-keychain "${keychain}"
 fi

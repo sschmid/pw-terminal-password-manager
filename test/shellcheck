@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2046
 shellcheck $(
-  echo "src/pw" &&
-  find "src" "test/fixtures" -type f -name "*.bash" &&
-  find "test" -maxdepth 1 -type f -name "*.bash" -or -name "*.bats"
+	echo "src/pw" &&
+	find "src" "test/fixtures" -type f -name "*.bash" &&
+	find "test" -maxdepth 1 -type f -name "*.bash" -or -name "*.bats"
 )

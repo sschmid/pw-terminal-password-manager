@@ -6,14 +6,14 @@ IFS=$'\n\t'
 pw_rc="$1"
 
 if ! grep -qE '\[plugins\]|\[keychains\]' "${pw_rc}" >/dev/null ; then
-  if (( ! PW_YES )); then
-    IFS= read -rp "pw 10.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): " answer >&2
-    [[ "${answer}" == [yY] ]] || exit 1
-  fi
+	if (( ! PW_YES )); then
+		IFS= read -rp "pw 10.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): " answer >&2
+		[[ "${answer}" == [yY] ]] || exit 1
+	fi
 
-  mapfile -t keychains < "${pw_rc}"
+	mapfile -t keychains < "${pw_rc}"
 
-  cat << EOF > "${pw_rc}"
+	cat << EOF > "${pw_rc}"
 [config]
 	password_length = 35
 	password_character_class = [:graph:]
@@ -27,5 +27,5 @@ if ! grep -qE '\[plugins\]|\[keychains\]' "${pw_rc}" >/dev/null ; then
 [keychains]
 EOF
 
-  printf "\t%s\n" "${keychains[@]}" >> "${pw_rc}"
+	printf "\t%s\n" "${keychains[@]}" >> "${pw_rc}"
 fi

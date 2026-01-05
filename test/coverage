@@ -2,11 +2,11 @@
 set -e
 [[ ! -f test/bats/bin/bats ]] && git submodule update --init --recursive
 kcov \
-  --dump-summary \
-  --bash-parser="$(which bash)" \
-  --include-path=src,test \
-  --exclude-path=test/bats,test/test_helper \
-  --exclude-line='done <,: #' \
-  --exclude-region='# KCOV_EXCL_START:# KCOV_EXCL_STOP' \
-  coverage \
-  test/bats/bin/bats "${@:-test}"
+	--dump-summary \
+	--bash-parser="$(which bash)" \
+	--include-path=src,test \
+	--exclude-path=test/bats,test/test_helper \
+	--exclude-line='done <,: #' \
+	--exclude-region='# KCOV_EXCL_START:# KCOV_EXCL_STOP' \
+	coverage \
+	test/bats/bin/bats "${@:-test}"

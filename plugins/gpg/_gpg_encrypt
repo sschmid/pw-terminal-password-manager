@@ -7,9 +7,9 @@ options="$1"; shift
 
 declare -a cmd_options=()
 while IFS=$'\t' read -r key value; do
-  case "${key}" in
-    key) cmd_options+=("--default-key" "${value}") ;;
-  esac
+	case "${key}" in
+		key) cmd_options+=("--default-key" "${value}") ;;
+	esac
 done < <("${parse_options}" "${options}")
 
 gpg --quiet --encrypt "${cmd_options[@]}" --default-recipient-self "$@"

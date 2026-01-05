@@ -4,8 +4,8 @@ set -euo pipefail
 options="$1" keychain_password="$2" keychain="$3" password="$4" name="$5" account="$6" url="$7"
 
 security add-generic-password -U \
-  -l "${name:-"${url}"}" \
-  -a "${account}" \
-  -s "${url:-"${name}"}" \
-  -w "${password}" \
-  "${keychain}"
+	-l "${name:-"${url}"}" \
+	-a "${account}" \
+	-s "${url:-"${name}"}" \
+	-w "${password}" \
+	"${keychain}"

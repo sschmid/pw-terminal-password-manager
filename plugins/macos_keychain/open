@@ -4,7 +4,7 @@ set -euo pipefail
 options="$1" keychain="$2"
 
 if [[ -f "${keychain}" ]]; then
-  open -a "Keychain Access" "${keychain}"
+	open -a "Keychain Access" "${keychain}"
 elif [[ -f "${HOME}/Library/Keychains/${keychain}" ]]; then
-  open -a "Keychain Access" "${HOME}/Library/Keychains/${keychain}"
+	open -a "Keychain Access" "${HOME}/Library/Keychains/${keychain}"
 fi

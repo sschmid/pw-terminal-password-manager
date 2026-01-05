@@ -10,39 +10,39 @@ new_pw_config="${config_home}/pw/pw.conf"
 mig_pw_config="${new_pw_config}.mig"
 
 if [[ -f "${old_pw_config}" ]] ; then
-  if (( ! PW_YES )); then
-    IFS= read -rp "pw 12.0.0 introduced a new config format and moved ${old_pw_config} to ${new_pw_config}. Would you like to automatically upgrade and move that file? (y / N): " answer >&2
-    [[ "${answer}" == [yY] ]] || exit 1
-  fi
+	if (( ! PW_YES )); then
+		IFS= read -rp "pw 12.0.0 introduced a new config format and moved ${old_pw_config} to ${new_pw_config}. Would you like to automatically upgrade and move that file? (y / N): " answer >&2
+		[[ "${answer}" == [yY] ]] || exit 1
+	fi
 
-  mv "${old_pw_config}" "${new_pw_config}.bak"
+	mv "${old_pw_config}" "${new_pw_config}.bak"
 
-  rm -f "${mig_pw_config}"
-  touch "${mig_pw_config}"
+	rm -f "${mig_pw_config}"
+	touch "${mig_pw_config}"
 
-  migrate() {
-    local line section=""
-    while IFS= read -r line; do
-      line="$(pw::trim "${line}")"
-      [[ -z "${line}" ]] && echo >> "${mig_pw_config}" && continue
-      [[ "${line}" == "#"* || "${line}" == ";"* ]] && echo "${line}" >> "${mig_pw_config}" && continue
+	migrate() {
+		local line section=""
+		while IFS= read -r line; do
+			line="$(pw::trim "${line}")"
+			[[ -z "${line}" ]] && echo >> "${mig_pw_config}" && continue
+			[[ "${line}" == "#"* || "${line}" == ";"* ]] && echo "${line}" >> "${mig_pw_config}" && continue
 
-      case "${line}" in
-        "[config]")    section="general"   ; echo "[general]" >> "${mig_pw_config}" ;;
-        "[plugins]")   section="plugins"   ; echo "${line}"   >> "${mig_pw_config}" ;;
-        "[keychains]") section="keychains" ; echo "${line}"   >> "${mig_pw_config}" ;;
-        \[*\])         section=""          ; echo "${line}"   >> "${mig_pw_config}" ;;
-        *)
-          if [[ "${section}" == "plugins" ]]
-          then echo "plugin = ${line}"   >> "${mig_pw_config}"
-          elif [[ "${section}" == "keychains" ]]
-          then echo "keychain = ${line}" >> "${mig_pw_config}"
-          else echo "${line}"            >> "${mig_pw_config}"
-          fi ;;
-      esac
-    done < "${new_pw_config}.bak"
-  }
+			case "${line}" in
+				"[config]")    section="general"   ; echo "[general]" >> "${mig_pw_config}" ;;
+				"[plugins]")   section="plugins"   ; echo "${line}"   >> "${mig_pw_config}" ;;
+				"[keychains]") section="keychains" ; echo "${line}"   >> "${mig_pw_config}" ;;
+				\[*\])         section=""          ; echo "${line}"   >> "${mig_pw_config}" ;;
+				*)
+					if [[ "${section}" == "plugins" ]]
+					then echo "plugin = ${line}"   >> "${mig_pw_config}"
+					elif [[ "${section}" == "keychains" ]]
+					then echo "keychain = ${line}" >> "${mig_pw_config}"
+					else echo "${line}"            >> "${mig_pw_config}"
+					fi ;;
+			esac
+		done < "${new_pw_config}.bak"
+	}
 
-  migrate
-  mv "${mig_pw_config}" "${new_pw_config}"
+	migrate
+	mv "${mig_pw_config}" "${new_pw_config}"
 fi

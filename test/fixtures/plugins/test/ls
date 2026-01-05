@@ -6,9 +6,9 @@ options="$1" keychain_password="$2" keychain="$3" format="${4:-default}"
 [[ -v PW_TEST_PLUGIN_FAIL ]] && exit 1
 
 if [[ -v PW_TEST_PLUGIN_LS ]]; then
-  echo -e "name 1\taccount 1\turl 1\tname 1\taccount 1\turl 1"
-  echo -e "name 2\taccount 2\turl 2\tname 2\taccount 2\turl 2"
-  echo -e "name 3\taccount 3\turl 3\tname 3\taccount 3\turl 3"
+	echo -e "name 1\taccount 1\turl 1\tname 1\taccount 1\turl 1"
+	echo -e "name 2\taccount 2\turl 2\tname 2\taccount 2\turl 2"
+	echo -e "name 3\taccount 3\turl 3\tname 3\taccount 3\turl 3"
 else
-  echo "test ls <${options}> <${keychain_password}> <${keychain}> <${format}>"
+	echo "test ls <${options}> <${keychain_password}> <${keychain}> <${format}>"
 fi

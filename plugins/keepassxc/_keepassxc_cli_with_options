@@ -8,16 +8,16 @@ options="$1" command="$2"; shift 2
 declare -a cmd_options=()
 declare -i quiet=1
 while IFS=$'\t' read -r key value; do
-  case "${key}" in
-    yubikey) cmd_options+=("--yubikey" "${value}"); quiet=0 ;;
-    keyfile) cmd_options+=("--key-file" "${value}") ;;
-  esac
+	case "${key}" in
+		yubikey) cmd_options+=("--yubikey" "${value}"); quiet=0 ;;
+		keyfile) cmd_options+=("--key-file" "${value}") ;;
+	esac
 done < <("${parse_options}" "${options}")
 
 [[ "${command}" == "open" ]] && quiet=0
 (( quiet )) && cmd_options+=("--quiet")
 
 if ! keepassxc-cli "${command}" "${cmd_options[@]}" "$@"; then
-  echo "keepassxc-cli: Error while running the command '${command}'" >&2
-  exit 1
+	echo "keepassxc-cli: Error while running the command '${command}'" >&2
+	exit 1
 fi

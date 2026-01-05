@@ -9,287 +9,287 @@ export SHELL
 
 PW_HOME="${BASH_SOURCE[0]}"
 while [[ -L "${PW_HOME}" ]]; do
-  PW_HOME="$(readlink "${PW_HOME}")"
+	PW_HOME="$(readlink "${PW_HOME}")"
 done
 PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
 declare -rx PW_HOME
 declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
 pw::help() {
-  cat << EOF
+	cat << EOF
 🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager
 
 usage: pw [-p] [-k <keychain>] [<command>] [<args>]
 
 options:
-  -h              show usage
-  -p              print instead of copy to clipboard
-  -k <keychain>   use given keychain
+	-h              show usage
+	-p              print instead of copy to clipboard
+	-k <keychain>   use given keychain
 
 args: [<name>] [<account>] [<url>] [<notes>]
 
 commands:
-  [-p] [<args>]                   copy (or print) password. If no args, fzf mode
-  init <keychain>                 create keychain
-  add [<args>]                    add entry. If no args, interactive mode
-  edit [<args>]                   edit entry. If no args, fzf mode
-  show [-p] [<args>]              copy (or print) details. If no args, fzf mode
-  rm [<args>]                     remove entry. If no args, fzf mode
-  ls                              list all entries
-  gen [-p] [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
-  open                            open keychain in native gui
-  lock                            lock keychain
-  unlock                          unlock keychain
-  update                          update pw
+	[-p] [<args>]                   copy (or print) password. If no args, fzf mode
+	init <keychain>                 create keychain
+	add [<args>]                    add entry. If no args, interactive mode
+	edit [<args>]                   edit entry. If no args, fzf mode
+	show [-p] [<args>]              copy (or print) details. If no args, fzf mode
+	rm [<args>]                     remove entry. If no args, fzf mode
+	ls                              list all entries
+	gen [-p] [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
+	open                            open keychain in native gui
+	lock                            lock keychain
+	unlock                          unlock keychain
+	update                          update pw
 
 customization:
-  PW_KEYCHAIN                 keychain to use when not specified with -k
-  PW_GEN_LENGTH               default length of generated passwords (default: 35)
-  PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
-  PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
+	PW_KEYCHAIN                 keychain to use when not specified with -k
+	PW_GEN_LENGTH               default length of generated passwords (default: 35)
+	PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
+	PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
 EOF
 }
 
 pw::trim() {
-  local line="$1"
-  line="${line#"${line%%[![:space:]]*}"}"
-  line="${line%"${line##*[![:space:]]}"}"
-  printf '%s' "${line}"
+	local line="$1"
+	line="${line#"${line%%[![:space:]]*}"}"
+	line="${line%"${line##*[![:space:]]}"}"
+	printf '%s' "${line}"
 }
 
 export -f pw::trim
 
 pw::parse_config() {
-  [[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
+	[[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
-  local config="${1:-"${PW_CONFIG_HOME}/pw/pw.conf"}"
-  declare -ag PW_PLUGINS PW_KEYCHAINS
+	local config="${1:-"${PW_CONFIG_HOME}/pw/pw.conf"}"
+	declare -ag PW_PLUGINS PW_KEYCHAINS
 
-  # Migrate configs
-  local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
-  if [[ -f "${pwrc}" ]]; then
-    "${PW_HOME}/src/migrations/pwrc-9.0.0" "${pwrc}"
-    "${PW_HOME}/src/migrations/pwrc-10.0.0" "${pwrc}"
-    "${PW_HOME}/src/migrations/pwrc-11.0.0" "${pwrc}"
-  fi
+	# Migrate configs
+	local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
+	if [[ -f "${pwrc}" ]]; then
+		"${PW_HOME}/src/migrations/pwrc-9.0.0" "${pwrc}"
+		"${PW_HOME}/src/migrations/pwrc-10.0.0" "${pwrc}"
+		"${PW_HOME}/src/migrations/pwrc-11.0.0" "${pwrc}"
+	fi
 
-  "${PW_HOME}/src/migrations/pwconf-12.0.0"
+	"${PW_HOME}/src/migrations/pwconf-12.0.0"
 
-  # shellcheck disable=SC2174
-  if [[ ! -f "${config}" ]]; then
-    mkdir -m 700 -p "${PW_CONFIG_HOME}"
-    mkdir -m 700 -p "${PW_CONFIG_HOME}/pw"
-    cp "${PW_HOME}/examples/pw.conf" "${config}"
-  fi
+	# shellcheck disable=SC2174
+	if [[ ! -f "${config}" ]]; then
+		mkdir -m 700 -p "${PW_CONFIG_HOME}"
+		mkdir -m 700 -p "${PW_CONFIG_HOME}/pw"
+		cp "${PW_HOME}/examples/pw.conf" "${config}"
+	fi
 
-  local line section key value
-  while IFS= read -r line; do
-    line="$(pw::trim "${line}")"
-    [[ -z ${line} ]] && continue
-    [[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
-    # shellcheck disable=SC2016
-    case "${line}" in
-      "[general]")   section="general"                 ;;
-      "[plugins]")   section="plugins"                 ;;
-      "[keychains]") section="keychains"               ;;
-      \[*\])         section="plugin-${line//[\[\]]/}" ;;
-      *)
-        key="$(pw::trim "${line%%=*}")"
-        value="$(pw::trim "${line#*=}")"
-        [[ -z ${value} ]] && continue
-        if [[ "${section}" == plugin-* ]]; then
-          section="${section#plugin-}"
-          for plugin in "${PW_PLUGINS[@]}"; do
-            if [[ "${plugin}" == *"/${section}" && -f "${plugin}/config_hook" ]]; then
-              # shellcheck disable=SC1091
-              source "${plugin}/config_hook"
-              pw::config_hook "${key}" "${value}"
-              unset -f pw::config_hook
-              break
-            fi
-          done
-        elif [[ "${section}" == "general" ]]; then
-          case "${key}" in
-            password_length)
-              [[ -v PW_GEN_LENGTH ]] && continue
-              local -i PW_GEN_LENGTH="${value}" ;;
-            password_character_class)
-              [[ -v PW_GEN_CLASS ]] && continue
-              local PW_GEN_CLASS="${value}" ;;
-            clipboard_clear_time)
-              [[ -v PW_CLIP_TIME ]] && continue
-              local -i PW_CLIP_TIME="${value}" ;;
-            copy)
-              [[ -v PW_COPY ]] && continue
-              declare -rgx PW_COPY="${value}" ;;
-            paste)
-              [[ -v PW_PASTE ]] && continue
-              declare -rgx PW_PASTE="${value}" ;;
-          esac
-        else
-          value="${value/'~'/"${HOME}"}"
-          value="${value/'$HOME'/"${HOME}"}"
-          value="${value/'${HOME}'/"${HOME}"}"
-          if [[ "${section}" == "plugins" ]]; then
-            case "${key}" in
-              plugin)
-                value="${value//'$PW_HOME'/"${PW_HOME}"}"
-                value="${value//'${PW_HOME}'/"${PW_HOME}"}"
-                PW_PLUGINS+=("${value}") ;;
-            esac
-          elif [[ "${section}" == "keychains" ]]; then
-            case "${key}" in
-              keychain)
-                [[ -z ${value} ]] && continue
-                PW_KEYCHAINS+=("${value}") ;;
-            esac
-          fi
-        fi
-        ;;
-    esac
-  done < "${config}"
+	local line section key value
+	while IFS= read -r line; do
+		line="$(pw::trim "${line}")"
+		[[ -z ${line} ]] && continue
+		[[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
+		# shellcheck disable=SC2016
+		case "${line}" in
+			"[general]")   section="general"                 ;;
+			"[plugins]")   section="plugins"                 ;;
+			"[keychains]") section="keychains"               ;;
+			\[*\])         section="plugin-${line//[\[\]]/}" ;;
+			*)
+				key="$(pw::trim "${line%%=*}")"
+				value="$(pw::trim "${line#*=}")"
+				[[ -z ${value} ]] && continue
+				if [[ "${section}" == plugin-* ]]; then
+					section="${section#plugin-}"
+					for plugin in "${PW_PLUGINS[@]}"; do
+						if [[ "${plugin}" == *"/${section}" && -f "${plugin}/config_hook" ]]; then
+							# shellcheck disable=SC1091
+							source "${plugin}/config_hook"
+							pw::config_hook "${key}" "${value}"
+							unset -f pw::config_hook
+							break
+						fi
+					done
+				elif [[ "${section}" == "general" ]]; then
+					case "${key}" in
+						password_length)
+							[[ -v PW_GEN_LENGTH ]] && continue
+							local -i PW_GEN_LENGTH="${value}" ;;
+						password_character_class)
+							[[ -v PW_GEN_CLASS ]] && continue
+							local PW_GEN_CLASS="${value}" ;;
+						clipboard_clear_time)
+							[[ -v PW_CLIP_TIME ]] && continue
+							local -i PW_CLIP_TIME="${value}" ;;
+						copy)
+							[[ -v PW_COPY ]] && continue
+							declare -rgx PW_COPY="${value}" ;;
+						paste)
+							[[ -v PW_PASTE ]] && continue
+							declare -rgx PW_PASTE="${value}" ;;
+					esac
+				else
+					value="${value/'~'/"${HOME}"}"
+					value="${value/'$HOME'/"${HOME}"}"
+					value="${value/'${HOME}'/"${HOME}"}"
+					if [[ "${section}" == "plugins" ]]; then
+						case "${key}" in
+							plugin)
+								value="${value//'$PW_HOME'/"${PW_HOME}"}"
+								value="${value//'${PW_HOME}'/"${PW_HOME}"}"
+								PW_PLUGINS+=("${value}") ;;
+						esac
+					elif [[ "${section}" == "keychains" ]]; then
+						case "${key}" in
+							keychain)
+								[[ -z ${value} ]] && continue
+								PW_KEYCHAINS+=("${value}") ;;
+						esac
+					fi
+				fi
+				;;
+		esac
+	done < "${config}"
 
-  declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
-  declare -rgx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
-  declare -irgx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
+	declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
+	declare -rgx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
+	declare -irgx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
 }
 
 pw::set_keychain() {
-  if [[ "$1" == *:* ]]; then
-    PW_KEYCHAIN="${1%%:*}"
-    PW_KEYCHAIN_OPTIONS="${1#*:}"
-  else
-    PW_KEYCHAIN="$1"
-    PW_KEYCHAIN_OPTIONS=""
-  fi
+	if [[ "$1" == *:* ]]; then
+		PW_KEYCHAIN="${1%%:*}"
+		PW_KEYCHAIN_OPTIONS="${1#*:}"
+	else
+		PW_KEYCHAIN="$1"
+		PW_KEYCHAIN_OPTIONS=""
+	fi
 
-  [[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
-    "Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/pw/pw.conf."
+	[[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
+		"Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/pw/pw.conf."
 }
 
 pw::select_keychain() {
-  if [[ -v PW_KEYCHAIN ]]; then
-    pw::set_keychain "${PW_KEYCHAIN}"
-  else
-    local plugin keychains
-    for plugin in "${PW_PLUGINS[@]}"; do
-      keychains="$("${plugin}/hook" "discover_keychains")"
-      [[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
-    done
+	if [[ -v PW_KEYCHAIN ]]; then
+		pw::set_keychain "${PW_KEYCHAIN}"
+	else
+		local plugin keychains
+		for plugin in "${PW_PLUGINS[@]}"; do
+			keychains="$("${plugin}/hook" "discover_keychains")"
+			[[ -z "${keychains}" ]] || PW_KEYCHAINS+=("${keychains}")
+		done
 
-    mapfile -t PW_KEYCHAINS < <(awk '!line[$0]++' <<< "${PW_KEYCHAINS[*]}" | sort -f)
+		mapfile -t PW_KEYCHAINS < <(awk '!line[$0]++' <<< "${PW_KEYCHAINS[*]}" | sort -f)
 
-    if (( ${#PW_KEYCHAINS[@]} == 1 )); then
-      pw::set_keychain "${PW_KEYCHAINS[0]}"
-    else
-      local keychain
-      keychain="$(fzf --prompt "keychain> " --layout reverse <<< "${PW_KEYCHAINS[*]}")"
-      pw::set_keychain "${keychain}"
-    fi
-  fi
+		if (( ${#PW_KEYCHAINS[@]} == 1 )); then
+			pw::set_keychain "${PW_KEYCHAINS[0]}"
+		else
+			local keychain
+			keychain="$(fzf --prompt "keychain> " --layout reverse <<< "${PW_KEYCHAINS[*]}")"
+			pw::set_keychain "${keychain}"
+		fi
+	fi
 
-  local -a plugins=() types=()
-  local plugin file_type register
-  for plugin in "${PW_PLUGINS[@]}"; do
-    while :; do
-      read -r file_type
-      read -r register
-      types+=("${file_type}")
-      [[ "${register}" == no ]] || plugins+=("${plugin}")
-      break
-    done < <("${plugin}/hook" "register_with_keychain" "${PW_KEYCHAIN}")
-  done
+	local -a plugins=() types=()
+	local plugin file_type register
+	for plugin in "${PW_PLUGINS[@]}"; do
+		while :; do
+			read -r file_type
+			read -r register
+			types+=("${file_type}")
+			[[ "${register}" == no ]] || plugins+=("${plugin}")
+			break
+		done < <("${plugin}/hook" "register_with_keychain" "${PW_KEYCHAIN}")
+	done
 
-  local -i n=${#plugins[@]}
-  if (( n == 1 )); then
-    PW_PLUGIN="${plugins[0]}"
-  elif (( n > 1 )); then
-    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
-  else
-    if [[ -f "${PW_KEYCHAIN}" ]]; then
-      pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
-               "Supported file types are:" "${types[*]}"
-    else
-      pw::exit "pw: ${PW_KEYCHAIN}: No such file or directory"
-    fi
-  fi
+	local -i n=${#plugins[@]}
+	if (( n == 1 )); then
+		PW_PLUGIN="${plugins[0]}"
+	elif (( n > 1 )); then
+		pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
+	else
+		if [[ -f "${PW_KEYCHAIN}" ]]; then
+			pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
+							 "Supported file types are:" "${types[*]}"
+		else
+			pw::exit "pw: ${PW_KEYCHAIN}: No such file or directory"
+		fi
+	fi
 }
 
 pw::infer_plugin() {
-  pw::set_keychain "$1"
-  local -a plugins=() types=() exts=()
-  local plugin file_type file_extension register
-  local -l extension="${PW_KEYCHAIN#*.}"
-  for plugin in "${PW_PLUGINS[@]}"; do
-    while :; do
-      read -r file_type
-      read -r file_extension
-      read -r register
-      types+=("${file_type}")
-      exts+=("${file_extension}")
-      [[ "${register}" == no ]] || plugins+=("${plugin}")
-      break
-    done < <("${plugin}/hook" "register_with_extension" "${extension}")
-  done
+	pw::set_keychain "$1"
+	local -a plugins=() types=() exts=()
+	local plugin file_type file_extension register
+	local -l extension="${PW_KEYCHAIN#*.}"
+	for plugin in "${PW_PLUGINS[@]}"; do
+		while :; do
+			read -r file_type
+			read -r file_extension
+			read -r register
+			types+=("${file_type}")
+			exts+=("${file_extension}")
+			[[ "${register}" == no ]] || plugins+=("${plugin}")
+			break
+		done < <("${plugin}/hook" "register_with_extension" "${extension}")
+	done
 
-  local -i n=${#plugins[@]}
-  if (( n == 1 )); then
-    PW_PLUGIN="${plugins[0]}"
-  elif (( n > 1 )); then
-    pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
-  else
-    pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
-             "Supported extensions are:" \
-             "$(for i in "${!exts[@]}"; do printf "%-13s - %s\n" "${exts[$i]}" "${types[$i]}"; done)"
-  fi
+	local -i n=${#plugins[@]}
+	if (( n == 1 )); then
+		PW_PLUGIN="${plugins[0]}"
+	elif (( n > 1 )); then
+		pw::exit "pw: Multiple plugins found for ${PW_KEYCHAIN}" "${plugins[*]}"
+	else
+		pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
+						 "Supported extensions are:" \
+						 "$(for i in "${!exts[@]}"; do printf "%-13s - %s\n" "${exts[$i]}" "${types[$i]}"; done)"
+	fi
 }
 
 declare -ix PW_PRINT=0
 
 pw::output() {
-  if (( PW_PRINT )); then
-    printf "%s\n" "$1"
-  else
-    local pname
-    local -i pid
-    pname="pw-$(id -u)"
-    pid=$(pgrep -f "^${pname}" 2>/dev/null || true)
-    if (( pid != 0 )); then
-      kill -9 ${pid} &>/dev/null || true
-      wait ${pid} &>/dev/null || true
-    fi
-    printf "%s" "$1" | "${PW_HOME}/src/copy"
-    ( ( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait " )
-      [[ "$("${PW_HOME}/src/paste")" == "$1" ]] && printf "" | "${PW_HOME}/src/copy"
-    ) &>/dev/null & disown
-  fi
+	if (( PW_PRINT )); then
+		printf "%s\n" "$1"
+	else
+		local pname
+		local -i pid
+		pname="pw-$(id -u)"
+		pid=$(pgrep -f "^${pname}" 2>/dev/null || true)
+		if (( pid != 0 )); then
+			kill -9 ${pid} &>/dev/null || true
+			wait ${pid} &>/dev/null || true
+		fi
+		printf "%s" "$1" | "${PW_HOME}/src/copy"
+		( ( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait " )
+			[[ "$("${PW_HOME}/src/paste")" == "$1" ]] && printf "" | "${PW_HOME}/src/copy"
+		) &>/dev/null & disown
+	fi
 }
 
 export -f pw::output
 
 pw::gen() {
-  local -i length=${1:-${PW_GEN_LENGTH}}
-  local password="" class="${2:-"${PW_GEN_CLASS}"}"
+	local -i length=${1:-${PW_GEN_LENGTH}}
+	local password="" class="${2:-"${PW_GEN_CLASS}"}"
 
-  local -i block_size=$(( length / 32 ))
-  (( block_size == 0 )) && block_size=1
+	local -i block_size=$(( length / 32 ))
+	(( block_size == 0 )) && block_size=1
 
-  # Fix character classes for BusyBox tr
-  [[ "${class}" == "[:graph:]" ]] && class="[:alnum:][:punct:]"
-  [[ "${class}" == "[:print:]" ]] && class="[:alnum:][:punct:][:space:]"
+	# Fix character classes for BusyBox tr
+	[[ "${class}" == "[:graph:]" ]] && class="[:alnum:][:punct:]"
+	[[ "${class}" == "[:print:]" ]] && class="[:alnum:][:punct:][:space:]"
 
-  while (( "${#password}" != length )); do
-    password+=$(dd if=/dev/urandom bs=${block_size} count=1 2>/dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $(( length - ${#password} )))
-  done
-  pw::output "${password}"
+	while (( "${#password}" != length )); do
+		password+=$(dd if=/dev/urandom bs=${block_size} count=1 2>/dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $(( length - ${#password} )))
+	done
+	pw::output "${password}"
 }
 
 pw::update() {
-  local branch="${1:-main}"
-  pushd "${PW_HOME}" >/dev/null || exit 1
-    git switch "${branch}"
-    git pull
-  popd >/dev/null || exit 1
+	local branch="${1:-main}"
+	pushd "${PW_HOME}" >/dev/null || exit 1
+		git switch "${branch}"
+		git pull
+	popd >/dev/null || exit 1
 }
 
 #
@@ -303,143 +303,143 @@ PW_NOTES=""
 declare -i PW_FZF=0
 
 pw::plugin() {
-  local cmd="$1"; shift
-  "${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS}" "$@"
+	local cmd="$1"; shift
+	"${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS}" "$@"
 }
 
 pw::prompt_password() {
-  local password
-  if [[ -p /dev/stdin ]]; then
-    IFS= read -r password
-  else
-    IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' password
-    if [[ -n "${password}" ]]; then
-      local retype
-      IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
-      if [[ "${retype}" != "${password}" ]]; then
-        pw::exit "Error: the entered passwords do not match."
-      fi
-    else
-      PW_PRINT=1 password="$(pw::gen)"
-    fi
-  fi
-  printf "%s" "${password}"
+	local password
+	if [[ -p /dev/stdin ]]; then
+		IFS= read -r password
+	else
+		IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' password
+		if [[ -n "${password}" ]]; then
+			local retype
+			IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
+			if [[ "${retype}" != "${password}" ]]; then
+				pw::exit "Error: the entered passwords do not match."
+			fi
+		else
+			PW_PRINT=1 password="$(pw::gen)"
+		fi
+	fi
+	printf "%s" "${password}"
 }
 
 pw::init() {
-  [[ -e "${PW_KEYCHAIN}" ]] && pw::exit "pw: ${PW_KEYCHAIN} already exists."
-  pw::plugin init "${PW_KEYCHAIN}"
+	[[ -e "${PW_KEYCHAIN}" ]] && pw::exit "pw: ${PW_KEYCHAIN} already exists."
+	pw::plugin init "${PW_KEYCHAIN}"
 }
 
 pw::add() {
-  local keychain_password
-  keychain_password="$(pw::plugin keychain_password "add" "${PW_KEYCHAIN}")"
-  if (( $# )); then
-    pw::select_item_with_prompt "add" "${keychain_password}" "$@"
-  else
-    IFS= read -rp "Title: " PW_NAME
-    IFS= read -rp "Username: " PW_ACCOUNT
-    IFS= read -rp "URL: " PW_URL
-    printf "Notes: Enter multi-line input (end with Ctrl+D):\n"
-    PW_NOTES=$(cat)
-  fi
+	local keychain_password
+	keychain_password="$(pw::plugin keychain_password "add" "${PW_KEYCHAIN}")"
+	if (( $# )); then
+		pw::select_item_with_prompt "add" "${keychain_password}" "$@"
+	else
+		IFS= read -rp "Title: " PW_NAME
+		IFS= read -rp "Username: " PW_ACCOUNT
+		IFS= read -rp "URL: " PW_URL
+		printf "Notes: Enter multi-line input (end with Ctrl+D):\n"
+		PW_NOTES=$(cat)
+	fi
 
-  local password
-  password="$(pw::prompt_password)"
-  pw::plugin add "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
-                 "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
+	local password
+	password="$(pw::prompt_password)"
+	pw::plugin add "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
+								 "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
 }
 
 pw::edit() {
-  local keychain_password
-  keychain_password="$(pw::plugin keychain_password "edit" "${PW_KEYCHAIN}")"
-  pw::select_item_with_prompt "edit" "${keychain_password}" "$@"
-  local password
-  password="$(pw::prompt_password)"
-  pw::plugin edit "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
-                  "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+	local keychain_password
+	keychain_password="$(pw::plugin keychain_password "edit" "${PW_KEYCHAIN}")"
+	pw::select_item_with_prompt "edit" "${keychain_password}" "$@"
+	local password
+	password="$(pw::prompt_password)"
+	pw::plugin edit "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
+									"${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
 }
 
 pw::get() {
-  local keychain_password
-  keychain_password="$(pw::plugin keychain_password "get" "${PW_KEYCHAIN}")"
-  if (( PW_PRINT ))
-  then pw::select_item_with_prompt "print" "${keychain_password}" "$@"
-  else pw::select_item_with_prompt "copy" "${keychain_password}" "$@"
-  fi
-  local password
-  password="$(pw::plugin get "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
-  pw::output "${password}"
+	local keychain_password
+	keychain_password="$(pw::plugin keychain_password "get" "${PW_KEYCHAIN}")"
+	if (( PW_PRINT ))
+	then pw::select_item_with_prompt "print" "${keychain_password}" "$@"
+	else pw::select_item_with_prompt "copy" "${keychain_password}" "$@"
+	fi
+	local password
+	password="$(pw::plugin get "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
+	pw::output "${password}"
 }
 
 pw::show() {
-  local keychain_password
-  keychain_password="$(pw::plugin keychain_password "show" "${PW_KEYCHAIN}")"
-  if (( PW_PRINT ))
-  then pw::select_item_with_prompt "print details" "${keychain_password}" "$@"
-  else pw::select_item_with_prompt "copy details" "${keychain_password}" "$@"
-  fi
-  local details
-  details="$(pw::plugin show "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
-  pw::output "${details}"
+	local keychain_password
+	keychain_password="$(pw::plugin keychain_password "show" "${PW_KEYCHAIN}")"
+	if (( PW_PRINT ))
+	then pw::select_item_with_prompt "print details" "${keychain_password}" "$@"
+	else pw::select_item_with_prompt "copy details" "${keychain_password}" "$@"
+	fi
+	local details
+	details="$(pw::plugin show "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
+	pw::output "${details}"
 }
 
 pw::rm() {
-  local keychain_password
-  keychain_password="$(pw::plugin keychain_password "rm" "${PW_KEYCHAIN}")"
-  local -i remove=1
-  pw::select_item_with_prompt "remove" "${keychain_password}" "$@"
-  if (( PW_FZF )); then
-    local answer
-    IFS= read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): " answer
-    [[ "${answer}" == [yY] ]] || remove=0
-  fi
-  (( ! remove )) || pw::plugin rm "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+	local keychain_password
+	keychain_password="$(pw::plugin keychain_password "rm" "${PW_KEYCHAIN}")"
+	local -i remove=1
+	pw::select_item_with_prompt "remove" "${keychain_password}" "$@"
+	if (( PW_FZF )); then
+		local answer
+		IFS= read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): " answer
+		[[ "${answer}" == [yY] ]] || remove=0
+	fi
+	(( ! remove )) || pw::plugin rm "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
 }
 
 pw::ls() {
-  local keychain_password
-  keychain_password="$(pw::plugin keychain_password "ls" "${PW_KEYCHAIN}")"
-  pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "$@"
+	local keychain_password
+	keychain_password="$(pw::plugin keychain_password "ls" "${PW_KEYCHAIN}")"
+	pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "$@"
 }
 
 pw::select_item_with_prompt() {
-  local fzf_prompt="$1" keychain_password="$2"; shift 2
-  if (( $# )); then
-    PW_NAME="$1"
-    PW_ACCOUNT="${2:-}"
-    PW_URL="${3:-}"
-    # shellcheck disable=SC2034
-    PW_NOTES="${4:-}"
-    PW_FZF=0
-  else
-    # pretty printed values including whitespace for column formatting:
-    #   1:name, 2:account, 3:url
-    # actual values are stored in:
-    #   4:name, 5:account, 6:url
-    # fzf will use the pretty printed values 1..3
-    # variables are set with the actual values 4..6
-    local items item preview yank yank_action
-    items="$(pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "fzf")"
-    preview="$(pw::plugin fzf_preview "${keychain_password}" "${PW_KEYCHAIN}")"
-    yank="pw::output \"\$(${preview})\""
-    (( PW_PRINT )) && yank_action="print" || yank_action="copy"
+	local fzf_prompt="$1" keychain_password="$2"; shift 2
+	if (( $# )); then
+		PW_NAME="$1"
+		PW_ACCOUNT="${2:-}"
+		PW_URL="${3:-}"
+		# shellcheck disable=SC2034
+		PW_NOTES="${4:-}"
+		PW_FZF=0
+	else
+		# pretty printed values including whitespace for column formatting:
+		#   1:name, 2:account, 3:url
+		# actual values are stored in:
+		#   4:name, 5:account, 6:url
+		# fzf will use the pretty printed values 1..3
+		# variables are set with the actual values 4..6
+		local items item preview yank yank_action
+		items="$(pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "fzf")"
+		preview="$(pw::plugin fzf_preview "${keychain_password}" "${PW_KEYCHAIN}")"
+		yank="pw::output \"\$(${preview})\""
+		(( PW_PRINT )) && yank_action="print" || yank_action="copy"
 
-    # KCOV_EXCL_START
-    item="$(fzf --prompt "${fzf_prompt}> " --layout reverse \
-                --delimiter '\t' --with-nth 1..3 --nth 1..3 \
-                --preview "${preview}" --preview-window hidden \
-                --header "?: toggle preview, CTRL-Y: ${yank_action} details" \
-                --bind "ctrl-y:execute(${yank})+abort" \
-                --bind '?:toggle-preview' <<< "${items}")"
-    # KCOV_EXCL_STOP
+		# KCOV_EXCL_START
+		item="$(fzf --prompt "${fzf_prompt}> " --layout reverse \
+								--delimiter '\t' --with-nth 1..3 --nth 1..3 \
+								--preview "${preview}" --preview-window hidden \
+								--header "?: toggle preview, CTRL-Y: ${yank_action} details" \
+								--bind "ctrl-y:execute(${yank})+abort" \
+								--bind '?:toggle-preview' <<< "${items}")"
+		# KCOV_EXCL_STOP
 
-    PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
-    PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"
-    PW_URL="$(awk -F '\t' '{print $6}' <<< "${item}")"
-    [[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" || -n "${PW_URL}" ]] || exit 1
-    PW_FZF=1
-  fi
+		PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
+		PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"
+		PW_URL="$(awk -F '\t' '{print $6}' <<< "${item}")"
+		[[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" || -n "${PW_URL}" ]] || exit 1
+		PW_FZF=1
+	fi
 }
 
 #
@@ -447,60 +447,60 @@ pw::select_item_with_prompt() {
 #
 
 pw::exit() {
-  printf "%s\n" "$@" >&2
-  exit 1
+	printf "%s\n" "$@" >&2
+	exit 1
 }
 
 pw::require_bash_version() {
-  if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
-    pw::exit "pw requires bash-4.2 or later. Installed: ${BASH_VERSION}" \
-             "Please install a newer version of bash."
-  fi
+	if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
+		pw::exit "pw requires bash-4.2 or later. Installed: ${BASH_VERSION}" \
+						 "Please install a newer version of bash."
+	fi
 }
 
 pw::require_fzf() {
-  command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
+	command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
 }
 
 declare -ix PW_YES=0
 
 main() {
-  pw::require_bash_version
-  pw::require_fzf
+	pw::require_bash_version
+	pw::require_fzf
 
-  local config="" options
-  while getopts ":hypk:c:" options; do
-    case "${options}" in
-      h) pw::help; return ;;
-      y) PW_YES=1 ;;
-      p) PW_PRINT=1 ;;
-      k) PW_KEYCHAIN="${OPTARG}" ;;
-      c) config="${OPTARG}" ;;
-      *) pw::exit "Invalid option: -${OPTARG}" ;;
-    esac
-  done
-  shift $(( OPTIND - 1 ))
+	local config="" options
+	while getopts ":hypk:c:" options; do
+		case "${options}" in
+			h) pw::help; return ;;
+			y) PW_YES=1 ;;
+			p) PW_PRINT=1 ;;
+			k) PW_KEYCHAIN="${OPTARG}" ;;
+			c) config="${OPTARG}" ;;
+			*) pw::exit "Invalid option: -${OPTARG}" ;;
+		esac
+	done
+	shift $(( OPTIND - 1 ))
 
-  pw::parse_config "${config}"
+	pw::parse_config "${config}"
 
-  if (( $# )); then
-    case "$1" in
-        init) shift; pw::infer_plugin "$@"; pw::init                           ;;
-         add) shift; pw::select_keychain  ; pw::add    "$@"                    ;;
-        edit) shift; pw::select_keychain  ; pw::edit   "$@"                    ;;
-        show) shift; pw::select_keychain  ; pw::show   "$@"                    ;;
-          rm) shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
-          ls) shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
-         gen) shift;                        pw::gen    "$@"                    ;;
-        open) shift; pw::select_keychain  ; pw::plugin open "${PW_KEYCHAIN}"   ;;
-        lock) shift; pw::select_keychain  ; pw::plugin lock "${PW_KEYCHAIN}"   ;;
-      unlock) shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
-      update) shift;                        pw::update "$@"                    ;;
-           *)        pw::select_keychain  ; pw::get    "$@"                    ;;
-    esac
-  else
-                     pw::select_keychain  ; pw::get
-  fi
+	if (( $# )); then
+		case "$1" in
+				init) shift; pw::infer_plugin "$@"; pw::init                           ;;
+				 add) shift; pw::select_keychain  ; pw::add    "$@"                    ;;
+				edit) shift; pw::select_keychain  ; pw::edit   "$@"                    ;;
+				show) shift; pw::select_keychain  ; pw::show   "$@"                    ;;
+					rm) shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
+					ls) shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
+				 gen) shift;                        pw::gen    "$@"                    ;;
+				open) shift; pw::select_keychain  ; pw::plugin open "${PW_KEYCHAIN}"   ;;
+				lock) shift; pw::select_keychain  ; pw::plugin lock "${PW_KEYCHAIN}"   ;;
+			unlock) shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
+			update) shift;                        pw::update "$@"                    ;;
+					 *)        pw::select_keychain  ; pw::get    "$@"                    ;;
+		esac
+	else
+										 pw::select_keychain  ; pw::get
+	fi
 }
 
 [[ "${BASH_SOURCE[0]}" != "$0" ]] || main "$@"

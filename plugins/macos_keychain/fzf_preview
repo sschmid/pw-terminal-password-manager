@@ -7,8 +7,8 @@ options="$1" keychain_password="$2" keychain="$3"
 # KCOV_EXCL_START
 # shellcheck disable=SC1083
 _fzf_preview() {
-  security find-generic-password -l {4} -a {5} -s {6} "${keychain}" \
-  | "${_parse_details}" 'printf "Name: %s\nAccount: %s\nWhere: %s\nComments:\n%s\n", label, account, service, comments'
+	security find-generic-password -l {4} -a {5} -s {6} "${keychain}" \
+	| "${_parse_details}" 'printf "Name: %s\nAccount: %s\nWhere: %s\nComments:\n%s\n", label, account, service, comments'
 }
 # KCOV_EXCL_STOP
 

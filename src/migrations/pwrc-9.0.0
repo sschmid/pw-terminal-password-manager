@@ -6,12 +6,12 @@ IFS=$'\n\t'
 pw_rc="$1"
 
 if grep "PW_KEYCHAINS" "${pw_rc}" >/dev/null ; then
-  if (( ! PW_YES )); then
-    IFS= read -rp "pw 9.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): " answer >&2
-    [[ "${answer}" == [yY] ]] || exit 1
-  fi
+	if (( ! PW_YES )); then
+		IFS= read -rp "pw 9.0.0 introduced a new .pwrc format. Would you like to automatically upgrade your .pwrc file? (y / N): " answer >&2
+		[[ "${answer}" == [yY] ]] || exit 1
+	fi
 
-  # shellcheck disable=SC1090
-  source "${pw_rc}"
-  echo "${PW_KEYCHAINS[*]}" > "${pw_rc}"
+	# shellcheck disable=SC1090
+	source "${pw_rc}"
+	echo "${PW_KEYCHAINS[*]}" > "${pw_rc}"
 fi

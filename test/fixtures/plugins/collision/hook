@@ -5,22 +5,22 @@ FILE_TYPE="Test Collision"
 FILE_EXTENSION="collision"
 
 case "$1" in
-  discover_keychains) ;;
-  register_with_keychain)
-    echo "${FILE_TYPE}"
-    if [[ -v PW_TEST_PLUGIN_COLLISION ]]; then
-      echo yes
-    else
-      echo no
-    fi
-  ;;
-  register_with_extension)
-    echo "${FILE_TYPE}"
-    echo "${FILE_EXTENSION}"
-    if [[ -v PW_TEST_PLUGIN_COLLISION ]]; then
-      echo yes
-    else
-      echo no
-    fi
-  ;;
+	discover_keychains) ;;
+	register_with_keychain)
+		echo "${FILE_TYPE}"
+		if [[ -v PW_TEST_PLUGIN_COLLISION ]]; then
+			echo yes
+		else
+			echo no
+		fi
+	;;
+	register_with_extension)
+		echo "${FILE_TYPE}"
+		echo "${FILE_EXTENSION}"
+		if [[ -v PW_TEST_PLUGIN_COLLISION ]]; then
+			echo yes
+		else
+			echo no
+		fi
+	;;
 esac

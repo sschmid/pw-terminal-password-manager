@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 command -v gpg >/dev/null || {
-  cat << EOF >&2
+	cat << EOF >&2
 command not found: gpg
 Please make sure that GnuPG is installed and gpg is in your PATH.
 EOF
-  exit 1
+	exit 1
 }

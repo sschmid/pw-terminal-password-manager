@@ -3,8 +3,8 @@ set -euo pipefail
 IFS=$'\n\t'
 
 if [[ -v PW_PASTE ]]; then
-  eval "${PW_PASTE}"
-  exit
+	eval "${PW_PASTE}"
+	exit
 fi
 
 if   command -v pbpaste  &>/dev/null; then pbpaste
@@ -12,7 +12,7 @@ elif command -v xclip    &>/dev/null; then xclip -selection clipboard -o
 elif command -v xsel     &>/dev/null; then xsel --clipboard --output
 elif command -v wl-paste &>/dev/null; then wl-paste
 else
-  echo "No clipboard tool found!" >&2
-  echo "Supported tools: pbpaste, xclip, xsel, wl-paste" >&2
-  exit 1
+	echo "No clipboard tool found!" >&2
+	echo "Supported tools: pbpaste, xclip, xsel, wl-paste" >&2
+	exit 1
 fi

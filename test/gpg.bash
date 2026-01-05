@@ -1,11 +1,11 @@
 _setup() {
-  load 'test-helper'
-  _common_setup
-  export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw gpg test/"
+	load 'test-helper'
+	_common_setup
+	export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw gpg test/"
 }
 
 _delete_keychain() {
-  rm -rf "${PW_KEYCHAIN}"
+	rm -rf "${PW_KEYCHAIN}"
 }
 
 # sec   ed25519/691ED007F1E410B0 2024-09-12 [C]

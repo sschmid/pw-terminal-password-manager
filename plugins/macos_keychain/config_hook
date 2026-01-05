@@ -2,8 +2,8 @@
 set -euo pipefail
 
 pw::config_hook() {
-  case "$1" in
-    keychain_access_control)
-      export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="$2" ;;
-  esac
+	case "$1" in
+		keychain_access_control)
+			export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="$2" ;;
+	esac
 }

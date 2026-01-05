@@ -4,7 +4,7 @@ set -euo pipefail
 options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
 
 security find-generic-password \
-  ${name:+-l "${name}"} \
-  ${account:+-a "${account}"} \
-  ${url:+-s "${url}"} \
-  -w "${keychain}"
+	${name:+-l "${name}"} \
+	${account:+-a "${account}"} \
+	${url:+-s "${url}"} \
+	-w "${keychain}"

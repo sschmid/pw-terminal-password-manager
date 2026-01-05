@@ -9,15 +9,15 @@ INST_DIR="/opt/pw"
 BIN_PATH="/usr/local/bin/pw"
 
 if [[ $1 == "--uninstall" ]]; then
-  rm -rf "${INST_DIR}" "${BIN_PATH}"
-  echo "pw has been uninstalled successfully"
-  exit
+	rm -rf "${INST_DIR}" "${BIN_PATH}"
+	echo "pw has been uninstalled successfully"
+	exit
 fi
 
 if [[ -d "${INST_DIR}" ]]; then
-  echo "It seems like pw is already installed at ${INST_DIR}"
-  echo "Run 'pw update' to update pw to the latest version"
-  exit
+	echo "It seems like pw is already installed at ${INST_DIR}"
+	echo "Run 'pw update' to update pw to the latest version"
+	exit
 fi
 
 git clone https://github.com/sschmid/pw-terminal-password-manager "${INST_DIR}"
