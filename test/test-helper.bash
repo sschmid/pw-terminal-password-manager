@@ -167,5 +167,11 @@ _skip_manual_test() {
 }
 
 _skip_if_github_action() {
-  [[ "${GITHUB_ACTIONS}" != "true" ]] || skip "$@"
+  echo "Debug GITHUB_ACTIONS: ${GITHUB_ACTIONS}"
+	if [[ "${GITHUB_ACTIONS}" != "true" ]]; then
+		echo "NOT SKIPPING"
+	else
+		echo "SKIPPING"
+		skip "$@"
+	fi
 }
