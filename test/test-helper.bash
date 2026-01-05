@@ -167,5 +167,11 @@ _skip_manual_test() {
 }
 
 _skip_if_github_action() {
-  [[ "${PWD}" != *"/runner/work/"* ]] || skip "$@"
+	echo "Debug PWD: ${PWD}"
+	if [[ "${PWD}" != *"/runner/work/"* ]]; then
+		echo "NOT SKIPPING"
+	else
+		echo "SKIPPING"
+		skip "$@"
+	fi
 }
