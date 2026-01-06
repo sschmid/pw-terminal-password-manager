@@ -8,7 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [12.2.0] - 2026-01-06
 ### Added
-- `gpg`: Add `ignore_path` and `PW_GPG_IGNORE_PATHS` to ignore false positives when discovering keychains
+- `gpg`: Add `PW_GPG_IGNORE_PATHS` environment variable and `ignore_path` option to `pw.conf` to ignore false positives when discovering keychains
+
+```bash
+export PW_GPG_IGNORE_PATHS="${HOME};${HOME}/ignored_folder;"
+```
+
+```ini
+[gpg]
+ignore_path = ~
+ignore_path = ~/ignored_folder
+```
+
 - Add `lib/string`
 - Add `lib/config`
 
