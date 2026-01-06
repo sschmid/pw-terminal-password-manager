@@ -4,7 +4,7 @@ set -euo pipefail
 options="$1" keychain_password="$2" keychain="$3" format="${4:-default}"
 
 pushd "${keychain}" >/dev/null || exit 1
-	list="$(find . -type f ! -name .DS_Store | sort -f)"
+	list="$(find . -type f ! -name '.DS_Store' | sort -f)"
 popd >/dev/null || exit 1
 
 case "${format}" in
