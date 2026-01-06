@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+_keepassxc_cli_with_options="$(dirname "$0")/_keepassxc_cli_with_options"
+
+options="$1" keychain_password="$2" keychain="$3" rename="$4" name="$5" account="$6" url="$7"
+
+title="${rename##*/}"
+
+if [[ "$(dirname -- "${rename}")" == "$(dirname -- "${name}")" ]]; then
+	# same group, rename only
+	"${_keepassxc_cli_with_options}" "${options}" edit --title "${title}" "${keychain}" "${name}" <<< "${keychain_password}"
+else
+	# different group, move and rename
+	path=""
+	while IFS= read -r -d '/' group; do
+		path+="${group}/"
+		"${_keepassxc_cli_with_options}" "${options}" mkdir "${keychain}" "${path::-1}" <<< "${keychain_password}" &>/dev/null || true
+	done <<< "${rename}"
+
+	"${_keepassxc_cli_with_options}" "${options}" mv "${keychain}" "${name}" "${path}" <<< "${keychain_password}"
+	"${_keepassxc_cli_with_options}" "${options}" edit --title "${title}" "${keychain}" "${path}${name##*/}" <<< "${keychain_password}"
+fi

@@ -161,6 +161,15 @@ assert_renames_item() {
 	refute_output
 }
 
+assert_renames_item_with_keychain_password() {
+	local rename="$1"; shift
+	run pw mv "$@" << EOF
+${KEYCHAIN_TEST_PASSWORD}
+${rename}
+EOF
+	assert_success
+}
+
 _skip_manual_test() {
 	if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
 		echo "# Please enter $1" >&3

@@ -345,6 +345,70 @@ EOF
 }
 
 ################################################################################
+# rename
+################################################################################
+
+@test "renames item" {
+	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}"
+	assert_renames_item_with_keychain_password "${NAME_B}" "${NAME_A}"
+	refute_output
+	assert_item_not_exists "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+	assert_item_exists "${PW_1}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "renames item and keeps account, url and notes" {
+	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
+	assert_renames_item_with_keychain_password "${NAME_B}" "${NAME_A}"
+	refute_output
+	assert_item_exists "${PW_1}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+	assert_username "${NAME_B}" "${ACCOUNT_A}"
+	assert_url "${NAME_B}" "${URL_A}"
+	assert_notes "${NAME_B}" "${MULTI_LINE_NOTES}"
+}
+
+@test "moves item into subfolder" {
+	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}"
+	assert_renames_item_with_keychain_password "group/${NAME_B}" "${NAME_A}"
+	assert_output "Successfully moved entry ${NAME_A} to group group/."
+	assert_item_exists "${PW_1}" "group/${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "moves item into subfolder multiple levels deep" {
+	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}"
+	assert_renames_item_with_keychain_password "group1/group2/group3/${NAME_B}" "${NAME_A}"
+	assert_output "Successfully moved entry ${NAME_A} to group group1/group2/group3/."
+	assert_item_exists "${PW_1}" "group1/group2/group3/${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "renames item in subfolder" {
+	assert_adds_item_with_keychain_password "${PW_1}" "group/${NAME_A}"
+	assert_renames_item_with_keychain_password "group/${NAME_B}" "group/${NAME_A}"
+	refute_output
+	assert_item_exists "${PW_1}" "group/${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "renames item in subfolder multiple levels deep" {
+	assert_adds_item_with_keychain_password "${PW_1}" "group1/group2/group3/${NAME_A}"
+	assert_renames_item_with_keychain_password "group1/group2/group3/${NAME_B}" "group1/group2/group3/${NAME_A}"
+	refute_output
+	assert_item_exists "${PW_1}" "group1/group2/group3/${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "moves item to different subfolder" {
+	assert_adds_item_with_keychain_password "${PW_1}" "group1/groupA/${NAME_A}"
+	assert_renames_item_with_keychain_password "group1/groupB/${NAME_B}" "group1/groupA/${NAME_A}"
+	assert_output "Successfully moved entry ${NAME_A} to group group1/groupB/."
+	assert_item_exists "${PW_1}" "group1/groupB/${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "moves item to root" {
+	assert_adds_item_with_keychain_password "${PW_1}" "group1/groupA/${NAME_A}"
+	assert_renames_item_with_keychain_password "${NAME_B}" "group1/groupA/${NAME_A}"
+	assert_output "Successfully moved entry ${NAME_A} to group ."
+	assert_item_exists "${PW_1}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+################################################################################
 # list item
 ################################################################################
 
