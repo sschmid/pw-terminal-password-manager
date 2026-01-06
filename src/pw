@@ -41,6 +41,7 @@ commands:
   init <keychain>                 create keychain
   add [<args>]                    add entry. If no args, interactive mode
   edit [<args>]                   edit entry. If no args, fzf mode
+  mv [<args>]                     move (rename) entry. If no args, fzf mode
   [-p] show [<args>]              copy (or print) details. If no args, fzf mode
   rm [<args>]                     remove entry. If no args, fzf mode
   ls                              list all entries

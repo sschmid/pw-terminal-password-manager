@@ -143,6 +143,7 @@ bash scripts that implement the following functions (see [plugins](plugins)):
 - `init`
 - `add`
 - `edit`
+- `mv`
 - `get`
 - `show`
 - `rm`
@@ -164,6 +165,7 @@ Here's an overview of which features are supported by each plugin:
 | Allow multiple entries with the same <br /> name given the account is different | ✅             | ❌                                 | ❌             |
 | Add entry in groups (e.g. Coding/Work)                                          | ❌             | 🔐                                 | ✅             |
 | Edit entry                                                                      | ✅             | ✅                                 | ✅             |
+| Move (rename) entry                                                             | ❌             | 🔐                                 | ✅             |
 | Remove entry                                                                    | ✅             | ✅                                 | ✅             |
 | List entries                                                                    | ✅             | ✅                                 | ✅             |
 | Open keychain                                                                   | ✅             | ✅                                 | ✅             |
@@ -284,7 +286,7 @@ pw -c /path/to/config
 ## Create keychain
 
 ```
-pw init <keychain>                 create keychain
+pw init <keychain>     create keychain
 ```
 
 Examples:
@@ -302,7 +304,7 @@ pw init "${PWD}/secrets.keychain-db"   # will create a keychain in the current d
 ## Add entry with name and optional account
 
 ```
-pw add [<args>]                    add entry. If no args, interactive mode
+pw add [<args>]     add entry. If no args, interactive mode
 ```
 
 Examples:
@@ -336,7 +338,7 @@ pw add Coding/JetBrains
 ## Edit entry
 
 ```
-pw edit [<args>]                   edit entry. If no args, fzf mode
+pw edit [<args>]     edit entry. If no args, fzf mode
 ```
 
 Examples:
@@ -346,10 +348,23 @@ pw edit          # starts fzf to select an entry
 pw edit GitHub
 ```
 
+## Move (rename) entry
+
+```
+mv [<args>]     move (rename) entry. If no args, fzf mode
+```
+
+Examples:
+
+```bash
+pw mv          # starts fzf to select an entry
+pw mv GitHub
+```
+
 ## Get entry
 
 ```
-pw [-p] [<args>]                   copy (or print) password. If no args, fzf mode
+pw [-p] [<args>]     copy (or print) password. If no args, fzf mode
 ```
 
 Examples:
@@ -362,7 +377,7 @@ pw GitHub
 ## Show entry
 
 ```
-pw [-p] show [<args>]              copy (or print) details. If no args, fzf mode
+pw [-p] show [<args>]     copy (or print) details. If no args, fzf mode
 ```
 
 Examples:
@@ -375,7 +390,7 @@ pw show GitHub
 ## Remove entry
 
 ```
-pw rm [<args>]                remove entry. If no args, fzf mode
+pw rm [<args>]     remove entry. If no args, fzf mode
 ```
 
 Examples:
