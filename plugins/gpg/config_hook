@@ -1,0 +1,7 @@
+set -euo pipefail
+
+pw::config_hook() {
+	case "$1" in
+		ignore_path) export PW_GPG_IGNORE_PATHS+="$2;" ;;
+	esac
+}

@@ -602,6 +602,26 @@ pw add GitHub.gpg
 pw add GitHub.asc
 ```
 
+There may be false positives when discovering keychains. To ignore specific folders,
+add the following to your `~/.config/pw/pw.conf` file below the `[plugin]` section:
+
+```ini
+[plugins]
+plugin = $PW_HOME/plugins/gpg
+plugin = $PW_HOME/plugins/keepassxc
+plugin = $PW_HOME/plugins/macos_keychain
+
+[gpg]
+ignore_path = ~
+ignore_path = ~/ignored_folder
+```
+
+or set the environment variable `PW_GPG_IGNORE_PATHS`:
+
+```bash
+export PW_GPG_IGNORE_PATHS="${HOME};${HOME}/ignored_folder;"
+```
+
 # Requirements
 
 Install the following [DEPENDENCIES.md](DEPENDENCIES.md) to use `pw`:

@@ -507,3 +507,14 @@ EOF
 	assert_success
 	assert_output "${PW_KEYCHAIN}"
 }
+
+@test "does not discover ignored paths (false positives)" {
+	export PW_GPG_IGNORE_PATHS="*/pw gpg test;"
+	assert_adds_item "${PW_1}" "ignore1"
+	assert_item_exists "${PW_1}" "ignore1" <<< "${KEYCHAIN_TEST_PASSWORD}"
+
+	cd "${PW_KEYCHAIN}"
+	run "${PROJECT_ROOT}/plugins/gpg/hook" "discover_keychains"
+	assert_success
+	assert_output ""
+}
