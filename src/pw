@@ -45,17 +45,11 @@ commands:
   [-p] show [<args>]              copy (or print) details. If no args, fzf mode
   rm [<args>]                     remove entry. If no args, fzf mode
   ls                              list all entries
-  [-p] gen [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
+  [-p] gen [<length>] [<class>]   generate password (default: 35 [:graph:])
   open                            open keychain in native gui
   lock                            lock keychain
   unlock                          unlock keychain
   update                          update pw
-
-customization:
-  PW_KEYCHAIN                 keychain to use when not specified with -k
-  PW_GEN_LENGTH               default length of generated passwords (default: 35)
-  PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
-  PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
 EOF
 }
 
