@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+options="$1" keychain_password="$2" keychain="$3" rename="$4" name="$5" account="$6" url="$7"
+
+mkdir -p "${keychain}/$(dirname -- "${rename}")"
+mv "${keychain}/${name}" "${keychain}/${rename}"

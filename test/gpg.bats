@@ -324,6 +324,38 @@ EOF
 }
 
 ################################################################################
+# rename
+################################################################################
+
+@test "renames item" {
+	assert_adds_item "${PW_1}" "${NAME_A}"
+	assert_renames_item "${NAME_B}" "${NAME_A}"
+	assert_item_not_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+	assert_item_exists "${PW_1}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "renames item and keeps account, url and notes" {
+	assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
+	assert_renames_item "${NAME_B}" "${NAME_A}"
+	assert_item_exists "${PW_1}" "${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+	assert_username "${NAME_B}" "${ACCOUNT_A}"
+	assert_url "${NAME_B}" "${URL_A}"
+	assert_notes "${NAME_B}" "${MULTI_LINE_NOTES}"
+}
+
+@test "moves item into subfolder" {
+	assert_adds_item "${PW_1}" "${NAME_A}"
+	assert_renames_item "group/${NAME_B}" "${NAME_A}"
+	assert_item_exists "${PW_1}" "group/${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+@test "moves item into subfolder multiple levels deep" {
+	assert_adds_item "${PW_1}" "${NAME_A}"
+	assert_renames_item "group1/group2/group3/${NAME_B}" "${NAME_A}"
+	assert_item_exists "${PW_1}" "group1/group2/group3/${NAME_B}" <<< "${KEYCHAIN_TEST_PASSWORD}"
+}
+
+################################################################################
 # list item
 ################################################################################
 
