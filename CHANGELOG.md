@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [12.3.0] - 2026-01-06
+### Added
+- Add pw mv command
+- `gpg`: Add mv command
+- `keepassxc`: Add mv command
+- `macos_keychain`: mv command not available
+
+### Changed
+- Prompt password until retyped password matches
+
 ## [12.2.0] - 2026-01-06
 ### Added
 - `gpg`: Add `PW_GPG_IGNORE_PATHS` environment variable and `ignore_path` option to `pw.conf` to ignore false positives when discovering keychains
@@ -492,7 +502,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.2.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.0...HEAD
+[12.3.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.2.0...12.3.0
 [12.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.1...12.2.0
 [12.1.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.0...12.1.1
 [12.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.1...12.1.0
