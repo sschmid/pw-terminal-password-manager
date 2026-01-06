@@ -362,7 +362,7 @@ pw GitHub
 ## Show entry
 
 ```
-pw show [-p] [<args>]              copy (or print) details. If no args, fzf mode
+pw [-p] show [<args>]              copy (or print) details. If no args, fzf mode
 ```
 
 Examples:
@@ -388,7 +388,7 @@ pw rm GitHub
 ## Generate a password
 
 ```
-pw gen [-p] [<length>] [<class>]   generate password with given length and
+pw [-p] gen [<length>] [<class>]   generate password with given length and
                                    character class (default: 35 [:graph:])
 ```
 
