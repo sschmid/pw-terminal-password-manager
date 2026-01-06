@@ -285,20 +285,20 @@ pw::plugin() {
 }
 
 pw::prompt_password() {
-	local password
+	local password=""
 	if [[ -p /dev/stdin ]]; then
 		IFS= read -r password
 	else
-		IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' password
-		if [[ -n "${password}" ]]; then
-			local retype
-			IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
-			if [[ "${retype}" != "${password}" ]]; then
-				pw::exit "Error: the entered passwords do not match."
+		while [[ -z "${password}" ]]; do
+			IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' password
+			if [[ -n "${password}" ]]; then
+				local retype
+				IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
+				[[ "${retype}" == "${password}" ]] || password=""
+			else
+				PW_PRINT=1 password="$(pw::gen)"
 			fi
-		else
-			PW_PRINT=1 password="$(pw::gen)"
-		fi
+		done
 	fi
 	printf "%s" "${password}"
 }

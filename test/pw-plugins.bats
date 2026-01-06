@@ -92,14 +92,16 @@ EOF
 }
 
 # bats test_tags=tag:manual_test
-@test "add prompts password and fails if retyped password does not match" {
-	_skip_manual_test "'test 1' and 'test 2'"
+@test "add prompts password until retyped password matches" {
+	_skip_manual_test "'test 1' and 'test 2', then 'test 3' twice"
 	run pw add "${NAME_A}"
-	assert_failure
+	assert_success
 	cat << EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
-Error: the entered passwords do not match.
+Enter password for '${NAME_A}' (leave empty to generate password):
+Retype password for '${NAME_A}':
+test add <> <> <${PW_KEYCHAIN}> <test 3> <${NAME_A}> <> <> <>
 EOF
 }
 
@@ -193,14 +195,16 @@ EOF
 }
 
 # bats test_tags=tag:manual_test
-@test "edit prompts password and fails if retyped password does not match" {
-	_skip_manual_test "'test 1' and 'test 2'"
+@test "edit prompts password until retyped password matches" {
+	_skip_manual_test "'test 1' and 'test 2', then 'test 3' twice"
 	run pw edit "${NAME_A}"
-	assert_failure
+	assert_success
 	cat << EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
-Error: the entered passwords do not match.
+Enter password for '${NAME_A}' (leave empty to generate password):
+Retype password for '${NAME_A}':
+test edit <> <> <${PW_KEYCHAIN}> <test 3> <${NAME_A}> <> <>
 EOF
 }
 
