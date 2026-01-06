@@ -30,31 +30,31 @@ pw::help() {
 usage: pw [-p] [-k <keychain>] [<command>] [<args>]
 
 options:
-	-h              show usage
-	-p              print instead of copy to clipboard
-	-k <keychain>   use given keychain
+  -h              show usage
+  -p              print instead of copy to clipboard
+  -k <keychain>   use given keychain
 
 args: [<name>] [<account>] [<url>] [<notes>]
 
 commands:
-	[-p] [<args>]                   copy (or print) password. If no args, fzf mode
-	init <keychain>                 create keychain
-	add [<args>]                    add entry. If no args, interactive mode
-	edit [<args>]                   edit entry. If no args, fzf mode
-	[-p] show [<args>]              copy (or print) details. If no args, fzf mode
-	rm [<args>]                     remove entry. If no args, fzf mode
-	ls                              list all entries
-	[-p] gen [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
-	open                            open keychain in native gui
-	lock                            lock keychain
-	unlock                          unlock keychain
-	update                          update pw
+  [-p] [<args>]                   copy (or print) password. If no args, fzf mode
+  init <keychain>                 create keychain
+  add [<args>]                    add entry. If no args, interactive mode
+  edit [<args>]                   edit entry. If no args, fzf mode
+  [-p] show [<args>]              copy (or print) details. If no args, fzf mode
+  rm [<args>]                     remove entry. If no args, fzf mode
+  ls                              list all entries
+  [-p] gen [<length>] [<class>]   generate password with given length and character class (default: 35 [:graph:])
+  open                            open keychain in native gui
+  lock                            lock keychain
+  unlock                          unlock keychain
+  update                          update pw
 
 customization:
-	PW_KEYCHAIN                 keychain to use when not specified with -k
-	PW_GEN_LENGTH               default length of generated passwords (default: 35)
-	PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
-	PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
+  PW_KEYCHAIN                 keychain to use when not specified with -k
+  PW_GEN_LENGTH               default length of generated passwords (default: 35)
+  PW_GEN_CLASS                default character class for generated passwords (default: [:graph:])
+  PW_CLIP_TIME                time in seconds after which the password is cleared from the clipboard (default: 45)
 EOF
 }
 
