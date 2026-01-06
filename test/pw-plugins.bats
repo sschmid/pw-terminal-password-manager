@@ -205,6 +205,23 @@ EOF
 }
 
 ################################################################################
+# rename
+################################################################################
+
+@test "renames item" {
+	run pw mv "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" <<< "${NAME_B}"
+	assert_success
+	assert_output "test mv <> <> <${PW_KEYCHAIN}> <${NAME_B}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+@test "renames item with options and keychain password" {
+	export PW_TEST_PLUGIN_KEYCHAIN_PASSWORD=1
+	run pw -k "${PW_KEYCHAIN}:${KEYCHAIN_OPTIONS}" mv "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" <<< "${NAME_B}"
+	assert_success
+	assert_output "test mv <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${NAME_B}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
+}
+
+################################################################################
 # list item
 ################################################################################
 

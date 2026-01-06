@@ -154,6 +154,13 @@ EOF
 	refute_output
 }
 
+assert_renames_item() {
+	local rename="$1"; shift
+	run pw mv "$@" <<< "${rename}"
+	assert_success
+	refute_output
+}
+
 _skip_manual_test() {
 	if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
 		echo "# Please enter $1" >&3
