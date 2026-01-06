@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [12.2.0] - 2026-01-06
+### Added
+- `gpg`: Add `ignore_path` and `PW_GPG_IGNORE_PATHS` to ignore false positives when discovering keychains
+- Add `lib/string`
+- Add `lib/config`
+
+### Other
+- Rename Docker* to Container*
+- Update bats
+- Convert spaces to tabs
+
 ## [12.1.1] - 2025-06-27
 ### Changed
 - `macos_keychain`: Decrease service column width to better fit within 80 char width
@@ -470,7 +481,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.2.0...HEAD
+[12.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.1...12.2.0
 [12.1.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.0...12.1.1
 [12.1.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.1...12.1.0
 [12.0.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.0.0...12.0.1
