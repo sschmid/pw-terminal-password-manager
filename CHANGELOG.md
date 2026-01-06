@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [12.3.0] - 2026-01-06
 ### Added
-- Add pw mv command
+- Add pw mv to move (rename) entries
 - `gpg`: Add mv command
 - `keepassxc`: Add mv command
 - `macos_keychain`: mv command not available
