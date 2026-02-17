@@ -5,7 +5,7 @@ setup() {
 	source 'lib/string.bash'
 }
 
-@test "trim handles emty string" {
+@test "trim handles empty string" {
 	run lib_string_trim ""
 	assert_success
 	refute_output
@@ -42,7 +42,7 @@ setup() {
 }
 
 @test "trims multiple leading and trailing spaces" {
-	run lib_string_trim " 	 abc 	 "
+	run lib_string_trim " 	 a b c 	 "
 	assert_success
-	assert_output "abc"
+	assert_output "a b c"
 }

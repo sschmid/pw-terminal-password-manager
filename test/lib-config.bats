@@ -6,8 +6,8 @@ setup() {
 
 	PROGRAM="test-program"
 	TEST_CONFIG="${BATS_TEST_TMPDIR}/test.conf"
-	source 'lib/config.bash'
 	source 'lib/string.bash'
+	source 'lib/config.bash'
 }
 
 write_config() {
@@ -28,11 +28,11 @@ print_kv() {
 	assert_output "test"
 }
 
-@test "fails when no config file argument is passed" {
+@test "fails when config file argument is not specified" {
 	run --separate-stderr lib_config_parse_section
 	assert_failure
 	refute_output
-	assert_stderr "${PROGRAM} error: no config file argument was passed"
+	assert_stderr "${PROGRAM} error: config file not specified"
 }
 
 @test "fails when config file does not exist" {
@@ -44,8 +44,8 @@ print_kv() {
 
 @test "does not print if no section exists" {
 	write_config <<EOF
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
@@ -55,8 +55,8 @@ EOF
 @test "does not print if no matching section exists" {
 	write_config <<EOF
 [section x]
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
@@ -66,14 +66,14 @@ EOF
 @test "prints matching config section" {
 	write_config <<EOF
 [section 1]
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1"
-"section 1_key2" : "value2"
+"section 1_key1" : "value 1"
+"section 1_key2" : "value 2"
 EOF
 }
 
@@ -81,39 +81,39 @@ EOF
 	write_config <<EOF
 key0 = value0
 [section x]
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 [section 1]
-key3 = value3
-key4 = value4
+key3 = value 3
+key4 = value 4
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key3" : "value3"
-"section 1_key4" : "value4"
+"section 1_key3" : "value 3"
+"section 1_key4" : "value 4"
 EOF
 }
 
 @test "prints multiple matching config sections" {
 	write_config <<EOF
 [section 1]
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 [section x]
-key3 = value3
-key4 = value4
+key3 = value 3
+key4 = value 4
 [section 1]
-key5 = value5
-key6 = value6
+key5 = value 5
+key6 = value 6
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1"
-"section 1_key2" : "value2"
-"section 1_key5" : "value5"
-"section 1_key6" : "value6"
+"section 1_key1" : "value 1"
+"section 1_key2" : "value 2"
+"section 1_key5" : "value 5"
+"section 1_key6" : "value 6"
 EOF
 }
 
@@ -122,16 +122,16 @@ EOF
 
 [section 1]
 
-key1 = value1
+key1 = value 1
 
-key2 = value2
+key2 = value 2
 
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1"
-"section 1_key2" : "value2"
+"section 1_key1" : "value 1"
+"section 1_key2" : "value 2"
 EOF
 }
 
@@ -140,16 +140,16 @@ EOF
 # this is a comment
 ; this is a comment
 [section 1]
-key1 = value1
+key1 = value 1
 # this is a comment
 ; this is a comment
-key2 = value2
+key2 = value 2
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1"
-"section 1_key2" : "value2"
+"section 1_key1" : "value 1"
+"section 1_key2" : "value 2"
 EOF
 }
 
@@ -170,73 +170,73 @@ EOF
 @test "skips empty values" {
 	write_config <<EOF
 [section 1]
-key1 = value1
+key1 = value 1
 key2 =
-key3 = value3
+key3 = value 3
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1"
-"section 1_key3" : "value3"
+"section 1_key1" : "value 1"
+"section 1_key3" : "value 3"
 EOF
 }
 
 @test "prints multiline kv pair" {
 	write_config <<'EOF'
 [section 1]
-key1 = value1 line 1 \
-       value1 line 2 \
-       value1 line 3
-key2 = value2 line 1 \
-       value2 line 2 \
-       value2 line 3
+key1 = value 1 line 1 \
+       value 1 line 2 \
+       value 1 line 3
+key2 = value 2 line 1 \
+       value 2 line 2 \
+       value 2 line 3
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1 line 1 value1 line 2 value1 line 3"
-"section 1_key2" : "value2 line 1 value2 line 2 value2 line 3"
+"section 1_key1" : "value 1 line 1 value 1 line 2 value 1 line 3"
+"section 1_key2" : "value 2 line 1 value 2 line 2 value 2 line 3"
 EOF
 }
 
 @test "skips empty lines in multiline kv pair" {
 	write_config <<'EOF'
 [section 1]
-key1 = value1 line 1 \
+key1 = value 1 line 1 \
 
-       value1 line 2 \
+       value 1 line 2 \
 
-       value1 line 3
-key2 = value2 line 1 \
+       value 1 line 3
+key2 = value 2 line 1 \
 
-       value2 line 2 \
+       value 2 line 2 \
 
-       value2 line 3
+       value 2 line 3
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1 line 1 value1 line 2 value1 line 3"
-"section 1_key2" : "value2 line 1 value2 line 2 value2 line 3"
+"section 1_key1" : "value 1 line 1 value 1 line 2 value 1 line 3"
+"section 1_key2" : "value 2 line 1 value 2 line 2 value 2 line 3"
 EOF
 }
 
 @test "skips comment lines in multiline kv pair" {
 	write_config <<'EOF'
 [section 1]
-key1 = value1 line 1 \
-#      value1 line 2 \
-       value1 line 3
-key2 = value2 line 1 \
-      #  value2 line 2 \
-       value2 line 3
+key1 = value 1 line 1 \
+#      value 1 line 2 \
+       value 1 line 3
+key2 = value 2 line 1 \
+      ;  value 2 line 2 \
+       value 2 line 3
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value1 line 1 value1 line 3"
-"section 1_key2" : "value2 line 1 value2 line 3"
+"section 1_key1" : "value 1 line 1 value 1 line 3"
+"section 1_key2" : "value 2 line 1 value 2 line 3"
 EOF
 }
 
@@ -248,31 +248,31 @@ EOF
 
 @test "prints entire config section" {
 	write_config <<EOF
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 
 [section 1]
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 
 [section 2]
-key1 = value1
-key2 = value2
+key1 = value 1
+key2 = value 2
 
 [section 1]
-key3 = value3
-key4 = value4
+key3 = value 3
+key4 = value 4
 EOF
 	run lib_config_parse_section "${TEST_CONFIG}" "" print_kv
 	assert_success
 	cat <<EOF | assert_output -
-"key1" : "value1"
-"key2" : "value2"
-"section 1_key1" : "value1"
-"section 1_key2" : "value2"
-"section 2_key1" : "value1"
-"section 2_key2" : "value2"
-"section 1_key3" : "value3"
-"section 1_key4" : "value4"
+"key1" : "value 1"
+"key2" : "value 2"
+"section 1_key1" : "value 1"
+"section 1_key2" : "value 2"
+"section 2_key1" : "value 1"
+"section 2_key2" : "value 2"
+"section 1_key3" : "value 3"
+"section 1_key4" : "value 4"
 EOF
 }

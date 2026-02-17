@@ -1,6 +1,6 @@
 lib_config_parse_section() {
 	if (( ! $# )); then
-		printf "%s error: no config file argument was passed\n" "${PROGRAM}" >&2
+		printf "%s error: config file not specified\n" "${PROGRAM}" >&2
 		exit 1
 	fi
 
