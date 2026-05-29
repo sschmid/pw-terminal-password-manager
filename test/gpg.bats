@@ -176,6 +176,7 @@ assert_keyid() {
 	assert_adds_item "${PW_1}" "${NAME_A}.gpg"
 	assert_item_exists "${PW_1}" "${NAME_A}.gpg" <<< "${KEYCHAIN_TEST_PASSWORD}"
 	run file -b "${PW_KEYCHAIN}/${NAME_A}.gpg"
+	assert_output --partial "PGP ECDH Public-Key Encrypted Session Key" ||
 	assert_output "data"
 }
 
