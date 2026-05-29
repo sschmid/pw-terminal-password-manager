@@ -12,7 +12,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y --fix-missing shellcheck
 
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -33,7 +33,7 @@ jobs:
           - ubuntu
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -49,7 +49,7 @@ jobs:
           brew install --cask keepassxc
 
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -65,7 +65,7 @@ jobs:
           brew install --cask keepassxc
 
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -73,7 +73,7 @@ jobs:
         run: sudo test/coverage --jobs $(sysctl -n hw.logicalcpu) test
 
       - name: "Upload coverage report"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pw coverage report
           path: coverage
@@ -83,12 +83,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: "Download coverage report"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: pw coverage report
           path: coverage
@@ -108,12 +108,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Upload archive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pw
           path: |
