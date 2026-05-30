@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# This script creates a temp keychain used to make the screenshot for the readme (readme/pw-fzf.png)
+
+export PW_KEYCHAIN="readme.kdbx"
+
+password="pw"
+
+pw init "${PW_KEYCHAIN}" <<< "${password}" 2>/dev/null
+
+pw_add() {
+	pw add "$@" << EOF
+${password}
+${password}
+EOF
+}
+
+pw_add "AI/Hugging Face"     "pw"
+pw_add "AI/OPENAI_API_KEY"   "pw"
+pw_add "AI/XAI_API_KEY"      "pw"
+pw_add "CI/GITHUB_TOKEN"     "pw-bot" "https://github.com" "gist, repo, workflow, write:packages"
+pw_add "CI/Jenkins"          "pw"
+pw_add "CI/NUGET_API_KEY"    "pw"
+pw_add "CI/Slack Webhook CI" "pw"
+pw_add "Coding/GitHub"       "pw"
+pw_add "Coding/Jetbrains"    "pw"
+pw_add "Gaming/Minecraft"    "pw"
+pw_add "Gaming/Steam"        "pw"
+pw_add "Social/LinkedIn"     "pw"
+pw_add "Social/X"            "pw"
+pw_add "Social/YouTube"      "pw"

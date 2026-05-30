@@ -1,4 +1,6 @@
-# 🔐 `pw` - Terminal Password Manager powered by `fzf`
+# pw 🔐 - Terminal Password Manager • powered by **fzf**
+
+![pw-fzf](readme/pw-fzf.png)
 
 `pw` is a command-line password manager unifying trusted password managers
 like [macOS Keychain](https://developer.apple.com/documentation/security/keychain_services),
@@ -20,8 +22,6 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 - **Extensibility:** Adding plugins for your preferred password managers takes only minutes (see [plugins](plugins)).
 - **Clipboard Management:** Automatically clears passwords from the clipboard after a configurable time.
 - **Multiple Keychain Support**: Effortlessly manage and switch between [multiple keychains](#using-multiple-keychains) stored in various locations.
-
-![pw-fzf](readme/pw-fzf.png)
 
 # Install and update `pw`
 
