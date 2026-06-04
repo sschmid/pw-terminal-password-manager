@@ -9,7 +9,7 @@ while IFS= read -r -d '/' group; do
 	"${_keepassxc_cli_with_options}" "${options}" mkdir "${keychain}" "${path::-1}" <<< "${keychain_password}" &>/dev/null || true
 done <<< "${name}"
 
-"${_keepassxc_cli_with_options}" "${options}" add --password-prompt "${keychain}" ${account:+--username "${account}"} ${url:+--url "${url}"} ${notes:+--notes "${notes}"} "${name}" << EOF
+"${_keepassxc_cli_with_options}" "${options}" add --password-prompt "${keychain}" ${account:+--username "${account}"} ${url:+--url "${url}"} ${notes:+--notes "${notes}"} "${name}" <<EOF
 ${keychain_password}
 ${password}
 EOF

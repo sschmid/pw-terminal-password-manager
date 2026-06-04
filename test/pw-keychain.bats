@@ -151,7 +151,7 @@ setup() {
 	export PW_KEYCHAIN=""
 	run pw ls
 	assert_failure
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 pw: no keychain was set!
 Set a keychain with the -k option or provide a list of default keychains in ${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw/pw.conf.
 EOF
@@ -160,7 +160,7 @@ EOF
 @test "fails when no keychains are discovered" {
 	run pw ls
 	assert_failure
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 pw: no keychain was set!
 Set a keychain with the -k option or provide a list of default keychains in ${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw/pw.conf.
 EOF
@@ -185,7 +185,7 @@ EOF
 	touch "${PW_KEYCHAIN}"
 	run pw ls
 	assert_failure
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Could not detect plugin for ${PW_KEYCHAIN}
 Supported file types are:
 Test Collision
@@ -196,7 +196,7 @@ EOF
 @test "prints supported extensions" {
 	run pw init "test keychain.fake"
 	assert_failure
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Could not detect plugin for test keychain.fake
 Supported extensions are:
 collision     - Test Collision
@@ -209,7 +209,7 @@ EOF
 	_config_append_keychains "${TEST_KEYCHAIN}"
 	run pw ls
 	assert_failure
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 pw: Multiple plugins found for ${TEST_KEYCHAIN}
 ${BATS_TEST_DIRNAME}/fixtures/plugins/collision
 ${BATS_TEST_DIRNAME}/fixtures/plugins/test
@@ -220,7 +220,7 @@ EOF
 	export PW_TEST_PLUGIN_COLLISION=1
 	run pw init "${TEST_KEYCHAIN}"
 	assert_failure
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 pw: Multiple plugins found for ${TEST_KEYCHAIN}
 ${BATS_TEST_DIRNAME}/fixtures/plugins/collision
 ${BATS_TEST_DIRNAME}/fixtures/plugins/test

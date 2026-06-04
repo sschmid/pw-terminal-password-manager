@@ -9,14 +9,14 @@ _delete_keychain() {
 }
 
 _config_append_macos_keychain_keychain_access_control_always_allow() {
-	cat >> "${PW_CONFIG}" << EOF
+	cat >> "${PW_CONFIG}" <<EOF
 [macos_keychain]
 keychain_access_control = always-allow
 EOF
 }
 
 _config_append_macos_keychain_keychain_access_control_confirm() {
-	cat >> "${PW_CONFIG}" << EOF
+	cat >> "${PW_CONFIG}" <<EOF
 [macos_keychain]
 keychain_access_control = confirm
 EOF

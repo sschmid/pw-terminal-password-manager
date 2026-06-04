@@ -14,7 +14,7 @@ done < <("${parse_options}" "${options}")
 
 if [[ -p /dev/stdin ]]; then
 	IFS= read -r password
-	keepassxc-cli db-create --quiet "${cmd_options[@]}" --set-password "${keychain}" << EOF
+	keepassxc-cli db-create --quiet "${cmd_options[@]}" --set-password "${keychain}" <<EOF
 ${password}
 ${password}
 EOF

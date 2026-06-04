@@ -25,7 +25,7 @@ _set_pwrc_9_0_0() {
 
 _set_pwrc_10_0_0() {
 	# using ini-like format
-	cat << EOF > "${PW_RC}"
+	cat <<EOF > "${PW_RC}"
 [config]
 	password_length = 35
 	password_character_class = [:graph:]
@@ -43,7 +43,7 @@ EOF
 
 _set_pw_config_11_0_0() {
 	# moved to ~/.config/pw/config
-	cat << EOF > "${PW_CONFIG_11}"
+	cat <<EOF > "${PW_CONFIG_11}"
 [config]
 	password_length = 35
 	password_character_class = [:graph:]
@@ -61,7 +61,7 @@ EOF
 
 _set_pw_config_12_0_0() {
 	# moved to ~/.config/pw/pw.conf
-	cat << EOF > "${PW_CONFIG}"
+	cat <<EOF > "${PW_CONFIG}"
 [general]
 password_length = 35
 password_character_class = [:graph:]
@@ -83,7 +83,7 @@ assert_latest_config() {
 
 	run cat "${PW_CONFIG}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 [general]
 password_length = 35
 password_character_class = [:graph:]

@@ -24,7 +24,7 @@ source "${PW_HOME}/lib/config.bash"
 export -f lib_string_trim
 
 pw::help() {
-	cat << EOF
+	cat <<EOF
 🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager
 
 usage: pw [-p] [-k <keychain>] [<command>] [<args>]

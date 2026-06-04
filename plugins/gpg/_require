@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 command -v gpg >/dev/null || {
-	cat << EOF >&2
+	cat <<EOF >&2
 command not found: gpg
 Please make sure that GnuPG is installed and gpg is in your PATH.
 EOF
@@ -9,7 +9,7 @@ EOF
 }
 
 if ! gpg --list-secret-keys --with-colons 2>/dev/null | grep -q '^sec'; then
-	cat << EOF >&2
+	cat <<EOF >&2
 No GPG key found.
 Please create a GPG key first:
   gpg --full-generate-key

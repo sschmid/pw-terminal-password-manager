@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 command -v keepassxc-cli >/dev/null || {
-	cat << EOF >&2
+	cat <<EOF >&2
 command not found: keepassxc-cli
 Please make sure that KeePassXC is installed and keepassxc-cli is in your PATH.
 EOF

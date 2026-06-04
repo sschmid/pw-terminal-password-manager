@@ -38,14 +38,14 @@ _set_keychain() {
 ################################################################################
 
 assert_item_not_exists_output() {
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Could not find entry with path $1.
 keepassxc-cli: Error while running the command '${2:-show}'
 EOF
 }
 
 assert_item_already_exists_output() {
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Could not create entry with path $1.
 keepassxc-cli: Error while running the command 'add'
 EOF
@@ -56,7 +56,7 @@ assert_removes_item_output() {
 }
 
 assert_rm_not_found_output() {
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Entry $1 not found.
 keepassxc-cli: Error while running the command 'rm'
 EOF
@@ -111,7 +111,7 @@ assert_item_recycled() {
 	_skip_manual_test "'test'"
 	run "${PROJECT_ROOT}/plugins/keepassxc/keychain_password" "" "" "${PW_KEYCHAIN}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Enter password to unlock ${PW_KEYCHAIN}:
 test
 EOF
@@ -200,7 +200,7 @@ EOF
 
 	run pw ls
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Enter password to unlock ${PW_KEYCHAIN}:
 ${NAME_A}
 EOF
@@ -245,7 +245,7 @@ EOF
 	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
 	run pw -p show "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output --partial -
+	cat <<EOF | assert_output --partial -
 Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
@@ -258,7 +258,7 @@ EOF
 	assert_adds_item_with_keychain_password "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
 	run pw -p show "group/${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output --partial -
+	cat <<EOF | assert_output --partial -
 Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
@@ -335,7 +335,7 @@ EOF
 ################################################################################
 
 @test "fails when editing non existing item" {
-	run pw edit "${NAME_A}" << EOF
+	run pw edit "${NAME_A}" <<EOF
 ${KEYCHAIN_TEST_PASSWORD}
 ${PW_2}
 EOF
@@ -423,7 +423,7 @@ EOF
 	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
 	run pw ls <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${NAME_A}
 ${NAME_B}
 EOF
@@ -435,7 +435,7 @@ EOF
 	run pw rm "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 	run pw ls <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${NAME_B}
 EOF
 }
@@ -452,7 +452,7 @@ EOF
 	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
 	run pw ls <<< "wrong"
 	assert_failure
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 keepassxc-cli: Error while running the command 'ls'
 Error while reading the database ${PW_KEYCHAIN}: Invalid credentials were provided, please try again.
 EOF
@@ -464,7 +464,7 @@ EOF
 	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
 	run pw ls <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${NAME_A}
 ${NAME_B}
 EOF
@@ -475,7 +475,7 @@ EOF
 	assert_adds_item_with_keychain_password "${PW_1}" "${NAME_A}" "${ACCOUNT_A}"
 	run pw ls fzf <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${NAME_A}			${NAME_A}
 ${NAME_B}			${NAME_B}
 EOF
@@ -505,7 +505,7 @@ EOF
 
 	run eval "${cmd}"
 	assert_success
-	cat << EOF | assert_output --partial -
+	cat <<EOF | assert_output --partial -
 Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
@@ -526,7 +526,7 @@ EOF
 
 	run eval "${cmd}"
 	assert_success
-	cat << EOF | assert_output --partial -
+	cat <<EOF | assert_output --partial -
 Title: ${NAME_A}
 UserName: ${ACCOUNT_A}
 Password: PROTECTED
@@ -549,7 +549,7 @@ EOF
 
 	run _paste
 	assert_success
-	cat << EOF | assert_output --partial -
+	cat <<EOF | assert_output --partial -
 Title: NAME A
 UserName: ACCOUNT A
 Password: PROTECTED

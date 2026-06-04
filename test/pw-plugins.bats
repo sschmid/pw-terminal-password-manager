@@ -84,7 +84,7 @@ setup() {
 	_skip_manual_test "' test password ' twice (with leading whitespace)"
 	run pw add "${NAME_A}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
 test add <> <> <${PW_KEYCHAIN}> < test password > <${NAME_A}> <> <> <>
@@ -96,7 +96,7 @@ EOF
 	_skip_manual_test "'test 1' and 'test 2', then 'test 3' twice"
 	run pw add "${NAME_A}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
 Enter password for '${NAME_A}' (leave empty to generate password):
@@ -112,7 +112,7 @@ EOF
 	export PW_GEN_CLASS="1"
 	run pw -p add "${NAME_A}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 test add <> <> <${PW_KEYCHAIN}> <11111> <${NAME_A}> <> <> <>
 EOF
@@ -123,7 +123,7 @@ EOF
 	_skip_manual_test "name, account, url, notes (end with Ctrl+D), then pass, pass"
 	run pw add
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Title: Username: URL: Notes: Enter multi-line input (end with Ctrl+D):
 Enter password for 'name' (leave empty to generate password):
 Retype password for 'name':
@@ -172,7 +172,7 @@ EOF
 	read -rsp "Press enter to continue ..."
 	run pw rm
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Do you really want to remove 'name 2' 'account 2' from '${PW_KEYCHAIN}'? (y / N): test rm <> <> <${PW_KEYCHAIN}> <name 2> <account 2> <url 2>
 EOF
 }
@@ -199,7 +199,7 @@ EOF
 	_skip_manual_test "'test 1' and 'test 2', then 'test 3' twice"
 	run pw edit "${NAME_A}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
 Enter password for '${NAME_A}' (leave empty to generate password):

@@ -159,7 +159,7 @@ assert_rm_not_found_output() {
 
 	run _get_note
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${SINGLE_LINE_NOTES}
 EOF
 }
@@ -176,7 +176,7 @@ EOF
 
 	run _get_note
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${MULTI_LINE_NOTES}
 EOF
 }
@@ -288,7 +288,7 @@ EOF
 
 	run pw -p show "${NAME_A}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 Where: ${URL_A}
@@ -447,7 +447,7 @@ EOF
 	assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
 	run pw ls
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${NAME_A}           	${ACCOUNT_A}	${URL_A}
 ${NAME_B}           	${ACCOUNT_B}	${URL_B}
 EOF
@@ -479,7 +479,7 @@ EOF
 	assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
 	run pw ls fzf
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ${NAME_A}           	${ACCOUNT_A}	${URL_A}	${NAME_A}	${ACCOUNT_A}	${URL_A}
 ${NAME_B}           	${ACCOUNT_B}	${URL_B}	${NAME_B}	${ACCOUNT_B}	${URL_B}
 EOF
@@ -541,7 +541,7 @@ EOF
 
 	run eval "${cmd}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 Where: ${URL_A}
@@ -562,7 +562,7 @@ EOF
 
 	run eval "${cmd}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 Where: ${URL_A}
@@ -585,7 +585,7 @@ EOF
 
 	run _paste
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: NAME A
 Account: ACCOUNT A
 Where: URL A

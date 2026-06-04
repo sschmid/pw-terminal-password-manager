@@ -13,7 +13,7 @@ if ! grep -qE '\[plugins\]|\[keychains\]' "${pw_rc}" >/dev/null ; then
 
 	mapfile -t keychains < "${pw_rc}"
 
-	cat << EOF > "${pw_rc}"
+	cat <<EOF > "${pw_rc}"
 [config]
 	password_length = 35
 	password_character_class = [:graph:]

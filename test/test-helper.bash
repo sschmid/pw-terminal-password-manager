@@ -44,7 +44,7 @@ _paste() {
 }
 
 _config_append_with_plugin() {
-	cat >> "${PW_CONFIG}" << EOF
+	cat >> "${PW_CONFIG}" <<EOF
 [plugins]
 # unknown key
 pluginX = invalid
@@ -53,7 +53,7 @@ EOF
 }
 
 _config_append_with_test_plugins() {
-	cat >> "${1:-"${PW_CONFIG}"}" << EOF
+	cat >> "${1:-"${PW_CONFIG}"}" <<EOF
 [plugins]
 # unknown key
 pluginX = invalid
@@ -100,7 +100,7 @@ assert_adds_item() {
 
 assert_adds_item_with_keychain_password() {
 	local password="$1"; shift
-	run pw add "$@" << EOF
+	run pw add "$@" <<EOF
 ${KEYCHAIN_TEST_PASSWORD}
 ${password}
 EOF
@@ -117,7 +117,7 @@ assert_item_already_exists() {
 
 assert_item_already_exists_with_keychain_password() {
 	local password="$1"; shift
-	run pw add "$@" << EOF
+	run pw add "$@" <<EOF
 ${KEYCHAIN_TEST_PASSWORD}
 ${password}
 EOF
@@ -146,7 +146,7 @@ assert_edits_item() {
 
 assert_edits_item_with_keychain_password() {
 	local password="$1"; shift
-	run pw edit "$@" << EOF
+	run pw edit "$@" <<EOF
 ${KEYCHAIN_TEST_PASSWORD}
 ${password}
 EOF
@@ -163,7 +163,7 @@ assert_renames_item() {
 
 assert_renames_item_with_keychain_password() {
 	local rename="$1"; shift
-	run pw mv "$@" << EOF
+	run pw mv "$@" <<EOF
 ${KEYCHAIN_TEST_PASSWORD}
 ${rename}
 EOF

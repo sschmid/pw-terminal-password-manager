@@ -47,7 +47,7 @@ _gpg_decrypt() {
 ################################################################################
 
 assert_item_not_exists_output() {
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 gpg: can't open '${PW_KEYCHAIN}/$1': No such file or directory
 gpg: decrypt_message failed: No such file or directory
 EOF
@@ -237,7 +237,7 @@ assert_keyid() {
 	assert_adds_item "${PW_1}" "${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
 	run pw -p show "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
@@ -250,7 +250,7 @@ EOF
 	assert_adds_item "${PW_1}" "group/${NAME_A}" "${ACCOUNT_A}" "${URL_A}" "${MULTI_LINE_NOTES}"
 	run pw -p show "group/${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
@@ -315,7 +315,7 @@ EOF
 ################################################################################
 
 @test "fails when editing non existing item" {
-	run pw edit "${NAME_A}" << EOF
+	run pw edit "${NAME_A}" <<EOF
 ${KEYCHAIN_TEST_PASSWORD}
 ${PW_2}
 EOF
@@ -371,7 +371,7 @@ EOF
 	assert_adds_item "${PW_1}" "${NAME_A}"
 	run pw ls
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ./${NAME_A}
 ./${NAME_B}
 EOF
@@ -389,7 +389,7 @@ EOF
 	assert_adds_item "${PW_1}" "${NAME_A}"
 	run pw ls fzf
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 ./${NAME_A}			./${NAME_A}
 ./${NAME_B}			./${NAME_B}
 EOF
@@ -457,7 +457,7 @@ EOF
 
 	run eval "${cmd}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
@@ -476,7 +476,7 @@ EOF
 
 	run eval "${cmd}"
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: ${NAME_A}
 Account: ${ACCOUNT_A}
 URL: ${URL_A}
@@ -502,7 +502,7 @@ EOF
 
 	run _paste
 	assert_success
-	cat << EOF | assert_output -
+	cat <<EOF | assert_output -
 Name: NAME A
 Account: ACCOUNT A
 URL: URL A
