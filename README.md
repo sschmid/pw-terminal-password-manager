@@ -103,6 +103,9 @@ If you would like to manage your passwords yourself, you can use `pw` with
 GnuPG to store encrypted passwords in a directory:
 
 ```bash
+# make sure you have a GPG key
+# if not, create one with: gpg --full-generate-key
+
 # create a keychain
 pw init ~/secrets/   # end with `/` for GnuPG
 cd ~/secrets

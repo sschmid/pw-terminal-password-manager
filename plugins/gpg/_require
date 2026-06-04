@@ -7,3 +7,13 @@ Please make sure that GnuPG is installed and gpg is in your PATH.
 EOF
 	exit 1
 }
+
+if ! gpg --list-secret-keys --with-colons 2>/dev/null | grep -q '^sec'; then
+	cat << EOF >&2
+No GPG key found.
+Please create a GPG key first:
+  gpg --full-generate-key
+Then try again.
+EOF
+	exit 1
+fi
