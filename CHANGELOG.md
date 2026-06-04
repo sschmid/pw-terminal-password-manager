@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [12.3.1] - 2026-06-04
+### Added
+- Fit usage within 80 chars
+- Update lib
+- `gpg`: Check if user has a gpg key and update readme with gpg key requirements (fixes #8)
+
+### Fixed
+- Fix test for archlinux and opensuse-tumbleweed
+
+### CI
+- Add logo
+- Removed `pull_request` trigger
+- Upgrade actions to latest tag
+- Add step "Setup dotnet"
+- Include lib folder in pw.zip (fixes #7)
+
 ## [12.3.0] - 2026-01-06
 ### Added
 - Add pw mv to move (rename) entries
@@ -502,7 +518,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.1...HEAD
+[12.3.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.0...12.3.1
 [12.3.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.2.0...12.3.0
 [12.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.1...12.2.0
 [12.1.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.0...12.1.1
