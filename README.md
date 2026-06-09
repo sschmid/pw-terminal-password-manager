@@ -2,7 +2,7 @@
 
 ![pw-fzf](readme/pw-fzf.png)
 
-`pw` is a command-line password manager unifying trusted password managers
+`pw` (pronounced /ˈpeːveː/) is a command-line password manager unifying trusted password managers
 like [macOS Keychain](https://developer.apple.com/documentation/security/keychain_services),
 [KeePassXC](https://keepassxc.org) and [GnuPG](https://www.gnupg.org) in a single interface within the terminal.
 It combines the security of your favourite password managers with the speed and
