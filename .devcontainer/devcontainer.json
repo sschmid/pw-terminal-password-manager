@@ -1,0 +1,7 @@
+{
+	"name": "pw",
+	"build": {
+		"dockerfile": "Containerfile",
+		"context": ".."
+	}
+}

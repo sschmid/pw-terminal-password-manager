@@ -1,40 +1,69 @@
-# Welcome to `pw`
+# Contributing to `pw`
 
-`pw` is a bash program and tests are written using `bats`, see https://github.com/bats-core/bats-core
+`pw` is a bash-based password manager. Tests are written using [bats-core](https://github.com/bats-core/bats-core).
+
+---
 
 ## Setup
 
-Get the source code:
+Clone the repository:
 
 ```bash
 git clone https://github.com/sschmid/pw-terminal-password-manager.git pw
+cd pw
 ```
 
-Verify `pw` works:
-- you should see the `pw` help
+Verify that `pw` runs:
 
 ```bash
-cd pw
 src/pw -h
 ```
 
-## Run Tests
+You should see the help output.
 
-Make sure you have all required dependencies installed, see [requirements](README.md#requirements)
+---
+
+## Development Environment
+
+### Option 1: Local setup
+
+Ensure required dependencies are installed. See [requirements](README.md#requirements).
 
 Example for Debian/Ubuntu:
 
 ```bash
-sudo apt-get update && apt-get install $(cat DEPENDENCIES)
+sudo apt-get update && sudo apt-get install $(cat DEPENDENCIES)
 ```
 
-Run tests:
+---
+
+### Option 2: Dev Container (recommended)
+
+This repository includes a Dev Container configuration for a reproducible development environment.
+
+Requirements:
+- A container runtime (e.g. Podman, Docker, or Apple Containers)
+- An editor or IDE with Dev Container support (e.g. VS Code, Zed, JetBrains IDEs)
+
+Once inside the container, everything works as usual:
+
+```bash
+src/pw -h
+```
+
+This approach avoids installing dependencies locally and ensures consistent environments across contributors and CI.
+
+---
+
+## Running Tests
+
+Run the full test suite:
 
 ```bash
 test/run
 ```
 
-Run a specific test:
+Run a specific test file:
 
 ```bash
 test/run test/pw.bats
@@ -46,27 +75,27 @@ Run tests including manual tests:
 test/run -m
 ```
 
-Run tests in parallel:
-- requires GNU parallel
-- test output is delayed to keep test output ordered
+Run tests in parallel (requires GNU parallel):
 
 ```bash
 test/run -j 4
 ```
 
-Run tests in a container (Podman, Docker, Apple container):
-- see [Containerfiles](container)
+Run tests in containers (Podman, Docker, or Apple container runtime):
 
 ```bash
 test/run -p alpine
 ```
 
-Run tests in all containers:
-- see [Containerfiles](container)
+Run tests across all container configurations:
 
 ```bash
 test/run -a
 ```
+
+---
+
+## Linting
 
 Run shellcheck:
 
@@ -74,31 +103,52 @@ Run shellcheck:
 test/shellcheck
 ```
 
+---
+
 ## CI
 
-`pw` uses GitHub Actions to run tests and shellcheck on every commit and pull request,
-see [ci.yml](.github/workflows/ci.yml)
+`pw` uses GitHub Actions to run tests and shellcheck on every push to `main`.
 
-Test coverage reports are generated and uploaded to [Coveralls](https://coveralls.io/github/sschmid/pw-terminal-password-manager)
+See: [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
-## Create a release
+Test coverage reports are generated and uploaded to Coveralls:
+https://coveralls.io/github/sschmid/pw-terminal-password-manager
 
-`pw` uses [bee](https://github.com/sschmid/bee) to automatically prepare and create releases,
-see [bee release plugin](.bee/plugins/release/release.bash)
+---
 
-### Example:
+## Releases
 
-- make sure you're on the `main` branch
-- make sure you have `bee` installed and run `bee install` in the repository
-- create `CHANGES.md` and specify the changes as to be seen in a GitHub release
-- bump the version with `bee semver major`, `bee semver minor` or `bee semver patch`
-- run `bee release publish`
+Releases are automated using [bee](https://github.com/sschmid/bee).
 
-This will:
-- merge `CHANGES.md` into `CHANGELOG.md`, while generating a new version section
-  with date and update the links at the bottom of the file
-- commit, tag, and push
-- create a GitHub release with the content of `CHANGES.md`
-- wait for the CI run to finish and succeed
-- download the artifacts from the CI run
-- upload the artifacts to the GitHub release
+Release logic is defined in [.bee/plugins/release/release.bash](.bee/plugins/release/release.bash)
+
+### Typical release flow
+
+- Ensure you are on the `main` branch
+- Ensure `bee` is installedda
+- Run `bee install`
+- Prepare release notes in `CHANGES.md`
+- Bump version:
+
+```bash
+bee semver major
+bee semver minor
+bee semver patch
+```
+
+- Publish release:
+
+```bash
+bee release publish
+```
+
+---
+
+### What happens during release
+
+- `CHANGES.md` is merged into `CHANGELOG.md` with version and date
+- A Git release commit is created, followed by a tag and push
+- GitHub release is created from `CHANGES.md`
+- CI is triggered and must pass
+- Build artifacts are downloaded from CI
+- Artifacts are attached to the GitHub release

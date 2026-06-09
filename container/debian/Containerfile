@@ -1,4 +1,4 @@
-FROM debian:latest AS base
+FROM debian:trixie-slim AS base
 WORKDIR /opt/pw
 COPY DEPENDENCIES .
 RUN apt-get update && apt-get install -y \

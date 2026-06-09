@@ -1,0 +1,20 @@
+FROM debian:trixie-slim
+COPY DEPENDENCIES /tmp/DEPENDENCIES
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    $(cat /tmp/DEPENDENCIES) \
+    curl \
+    file \
+    git \
+    jq \
+    parallel \
+    shellcheck \
+    xclip \
+    xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/bee/main/install)"
+RUN echo "complete -C bee bee" >> ~/.bashrc
+
+COPY container/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

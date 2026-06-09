@@ -4,8 +4,9 @@ BEE_PLUGINS_PATHS=("${BEE_RESOURCES}/plugins")
 BEE_PLUGINS=(gh release)
 
 bee::secrets() {
-	[[ "$1" != "release" ]] && return
-	[[ ! -f ~/.bee/secrets.bash ]] || source ~/.bee/secrets.bash
+	if [[ "$1" == "release" ]] && [[ "$2" == "publish" ]]; then
+		[[ ! -f ~/.bee/secrets.bash ]] || source ~/.bee/secrets.bash
+	fi
 }
 
 GITHUB_REPO="sschmid/pw-terminal-password-manager"

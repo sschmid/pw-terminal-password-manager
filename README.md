@@ -664,39 +664,3 @@ you can specify it in your `~/.config/pw/pw.conf` file.
 copy = my-copy-command
 paste = my-paste-command
 ```
-
-### macOS
-
-```bash
-brew install $(cat /opt/pw/DEPENDENCIES)
-```
-
-### Alpine Linux
-
-```bash
-apk add $(cat /opt/pw/DEPENDENCIES)
-```
-
-### Arch Linux
-
-```bash
-pacman -Syu && pacman -S --needed $(cat /opt/pw/DEPENDENCIES)
-```
-
-### Debian/Ubuntu
-
-```bash
-apt-get update && apt-get install $(cat /opt/pw/DEPENDENCIES)
-```
-
-### Fedora
-
-```bash
-dnf install $(cat /opt/pw/DEPENDENCIES)
-```
-
-### openSUSE Tumbleweed
-
-```bash
-zypper install --no-recommends $(cat /opt/pw/DEPENDENCIES)
-```
