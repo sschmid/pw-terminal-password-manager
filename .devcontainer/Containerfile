@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/bee/main/install)"
-RUN echo "complete -C bee bee" >> ~/.bashrc
+
+COPY .devcontainer/.bashrc /root/.bashrc
 
 COPY container/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
