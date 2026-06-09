@@ -25,7 +25,7 @@ Make sure you have all required dependencies installed, see [requirements](READM
 Example for Debian/Ubuntu:
 
 ```bash
-sudo apt-get update && apt-get install $(cat DEPENDENCIES.md)
+sudo apt-get update && apt-get install $(cat DEPENDENCIES)
 ```
 
 Run tests:

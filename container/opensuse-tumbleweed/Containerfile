@@ -1,8 +1,8 @@
 FROM opensuse/tumbleweed:latest AS base
 WORKDIR /opt/pw
-COPY DEPENDENCIES.md .
+COPY DEPENDENCIES .
 RUN zypper --non-interactive install --no-recommends \
-    $(cat DEPENDENCIES.md) \
+    $(cat DEPENDENCIES) \
     file \
     gawk \
     gnu_parallel \

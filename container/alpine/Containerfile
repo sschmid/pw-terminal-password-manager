@@ -1,8 +1,8 @@
 FROM alpine:latest AS base
 WORKDIR /opt/pw
-COPY DEPENDENCIES.md .
+COPY DEPENDENCIES .
 RUN apk add --no-cache \
-    $(cat DEPENDENCIES.md) \
+    $(cat DEPENDENCIES) \
     parallel \
     xclip \
     xvfb

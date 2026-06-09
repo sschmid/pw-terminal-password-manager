@@ -642,7 +642,7 @@ export PW_GPG_IGNORE_PATHS="${HOME};${HOME}/ignored_folder;"
 
 # Requirements
 
-Install the following [DEPENDENCIES.md](DEPENDENCIES.md) to use `pw`:
+Install the following [DEPENDENCIES](DEPENDENCIES) to use `pw`:
 
 - `bash`
 - `fzf`
@@ -668,35 +668,35 @@ paste = my-paste-command
 ### macOS
 
 ```bash
-brew install $(cat /opt/pw/DEPENDENCIES.md)
+brew install $(cat /opt/pw/DEPENDENCIES)
 ```
 
 ### Alpine Linux
 
 ```bash
-apk add $(cat /opt/pw/DEPENDENCIES.md)
+apk add $(cat /opt/pw/DEPENDENCIES)
 ```
 
 ### Arch Linux
 
 ```bash
-pacman -Syu && pacman -S --needed $(cat /opt/pw/DEPENDENCIES.md)
+pacman -Syu && pacman -S --needed $(cat /opt/pw/DEPENDENCIES)
 ```
 
 ### Debian/Ubuntu
 
 ```bash
-apt-get update && apt-get install $(cat /opt/pw/DEPENDENCIES.md)
+apt-get update && apt-get install $(cat /opt/pw/DEPENDENCIES)
 ```
 
 ### Fedora
 
 ```bash
-dnf install $(cat /opt/pw/DEPENDENCIES.md)
+dnf install $(cat /opt/pw/DEPENDENCIES)
 ```
 
 ### openSUSE Tumbleweed
 
 ```bash
-zypper install --no-recommends $(cat /opt/pw/DEPENDENCIES.md)
+zypper install --no-recommends $(cat /opt/pw/DEPENDENCIES)
 ```

@@ -1,8 +1,8 @@
 FROM ubuntu:latest AS base
 WORKDIR /opt/pw
-COPY DEPENDENCIES.md .
+COPY DEPENDENCIES .
 RUN apt-get update && apt-get install -y \
-    $(cat DEPENDENCIES.md) \
+    $(cat DEPENDENCIES) \
     file \
     parallel \
     xclip \

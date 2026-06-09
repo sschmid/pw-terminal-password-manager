@@ -1,9 +1,9 @@
 FROM archlinux:latest AS base
 # FROM --platform=linux/amd64 archlinux:latest AS base
 WORKDIR /opt/pw
-COPY DEPENDENCIES.md .
+COPY DEPENDENCIES .
 RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
-    $(cat DEPENDENCIES.md) \
+    $(cat DEPENDENCIES) \
     parallel \
     xclip \
     xorg-server-xvfb \
