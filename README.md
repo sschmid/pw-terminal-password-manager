@@ -14,7 +14,9 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 [![Latest release](https://img.shields.io/github/release/sschmid/pw-terminal-password-manager.svg)](https://github.com/sschmid/pw-terminal-password-manager/releases)
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
 
-# Why `pw`?
+---
+
+## Why `pw`?
 
 - **Built on Proven Tools:** Instead of reinventing password management, `pw` combines reliable, established tools into one convenient interface.
 - **Efficiency:** With the [fzf](https://github.com/junegunn/fzf) fuzzy finder, `pw` allows for rapid and intuitive interaction with your keychains - nice!
@@ -23,11 +25,13 @@ you to interact with [various keychains](#using-multiple-keychains) effortlessly
 - **Clipboard Management:** Automatically clears passwords from the clipboard after a configurable time.
 - **Multiple Keychain Support**: Effortlessly manage and switch between [multiple keychains](#using-multiple-keychains) stored in various locations.
 
-# Install and update `pw`
+---
+
+## Install and update `pw`
 
 See [requirements](#requirements) for dependencies.
 
-### Install script
+### Install script (recommended)
 
 ```bash
 sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
@@ -40,19 +44,7 @@ git clone https://github.com/sschmid/pw-terminal-password-manager /opt/pw
 ln -s /opt/pw/src/pw /usr/local/bin/pw
 ```
 
-### Update
-
-```bash
-sudo pw update
-```
-
-### Uninstall
-
-```bash
-sudo /opt/pw/install --uninstall
-```
-
-### Download latest release
+### Download
 
 You can download the latest release from the
 [releases page](https://github.com/sschmid/pw-terminal-password-manager/releases/latest)
@@ -66,6 +58,22 @@ Alternatively, you can use `pw` directly from the `src` directory.
 ~/Downloads/pw/src/pw
 ```
 
+---
+
+## Update
+
+```bash
+sudo pw update
+```
+
+## Uninstall
+
+```bash
+sudo /opt/pw/install --uninstall
+```
+
+---
+
 |                                                                                             | Tested on the following platforms: |                                                              |
 |---------------------------------------------------------------------------------------------|------------------------------------|--------------------------------------------------------------|
 | <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/MacOS_logo2.svg" height="48"> | macOS                              |                                                              |
@@ -76,7 +84,9 @@ Alternatively, you can use `pw` directly from the `src` directory.
 | <img src="https://flatpak.org/img/distro/opensuse-6686fd27.svg" height="48">                | openSUSE Tumbleweed                | [Containerfile](container/opensuse-tumbleweed/Containerfile) |
 | <img src="https://flatpak.org/img/distro/ubuntu-d865890b.svg" height="48">                  | Ubuntu                             | [Containerfile](container/ubuntu/Containerfile)              |
 
-# Quickstart
+---
+
+## Quickstart
 
 ```bash
 # create a keychain (.keychain-db for macOS Keychain, .kdbx for KeePassXC)
@@ -137,7 +147,9 @@ pw GitHub
 pw -p
 ```
 
-# How `pw` works
+---
+
+## How `pw` works
 
 `pw` provides a unified interface to interact with various keychains and forwards
 commands to the respective password manager using plugins. Plugins are simple
@@ -184,14 +196,16 @@ Here's an overview of which features are supported by each plugin:
 ❌: not supported by the password manager
 </sup>
 
-# Security Considerations
+---
+
+## Security Considerations
 
 > [!IMPORTANT]
 > `pw` supports the macOS `security` command and `gpg` through its plugins,
 > which may introduce security risks. These risks arise from the behavior of
 > these underlying commands, not from `pw` itself.
 
-## macOS `security` Command
+### macOS `security` Command
 
 Typically, when accessing keychain items added by other applications, the user
 is prompted to `allow` or `always allow` access. However, when keychain entries
@@ -224,7 +238,9 @@ like the name, account, URL and comments. This cannot be prevented by `pw` and
 is a limitation of the macOS Keychain. There are workarounds like encrypting the
 keychain and only temporarily decrypting it when needed.
 
-## GPG Passphrase Caching
+---
+
+### GPG Passphrase Caching
 
 GPG caches passphrases after use, which can allow access to the private key
 without re-entering the passphrase.
@@ -243,13 +259,17 @@ be prevented by `pw` and is a limitation of GPG. There are workarounds like
 using a separate encrypted container or using a tool like `tar` to encrypt the
 files into a single archive.
 
-## KeePassXC
+---
+
+### KeePassXC
 
 > [!NOTE]
 > KeePassXC, unlike the `security` command and GPG, remains locked when not in
 > use and does not have these risks.
 
-# Security Comparison
+---
+
+## Security Comparison
 
 | Security Considerations                    | macOS Keychain | KeePassXC | GnuPG |
 |-------------------------------------------:|:--------------:|:---------:|:-----:|
@@ -262,7 +282,9 @@ files into a single archive.
 🚨: potential security risk, no mitigation possible
 </sup>
 
-# Usage
+---
+
+## Usage
 
 In all following examples, `[<args>]` refers to the optional
 arguments `name`, `account`, `url`, `notes` in that order.
@@ -274,7 +296,9 @@ is off by default.
 
 Press `CTRL-Y` on any entry to copy (or print) the details.
 
-## Config file
+---
+
+### Config file
 
 The suggested location for the `pw` configuration file is `$XDG_CONFIG_HOME/pw/pw.conf`,
 which usually resolves to `~/.config/pw/pw.conf`. `pw` will automatically create
@@ -286,7 +310,9 @@ You can specify a different configuration file using the `-c` option:
 pw -c /path/to/config
 ```
 
-## Create keychain
+---
+
+### Create keychain
 
 ```
 pw init <keychain>     create keychain
@@ -304,7 +330,9 @@ pw init secrets.keychain-db            # will create a keychain in ~/Library/Key
 pw init "${PWD}/secrets.keychain-db"   # will create a keychain in the current directory
 ```
 
-## Add entry with name and optional account
+---
+
+### Add entry with name and optional account
 
 ```
 pw add [<args>]     add entry. If no args, interactive mode
@@ -329,7 +357,7 @@ pw add "Google (Work)" work@example.com
 pw add "Google (Personal)" personal@example.com
 ```
 
-## Add entry in group
+### Add entry in group
 
 Examples:
 
@@ -338,7 +366,7 @@ pw add Coding/GitHub
 pw add Coding/JetBrains
 ```
 
-## Edit entry
+### Edit entry
 
 ```
 pw edit [<args>]     edit entry. If no args, fzf mode
@@ -351,7 +379,7 @@ pw edit          # starts fzf to select an entry
 pw edit GitHub
 ```
 
-## Move (rename) entry
+### Move (rename) entry
 
 ```
 mv [<args>]     move (rename) entry. If no args, fzf mode
@@ -364,7 +392,7 @@ pw mv          # starts fzf to select an entry
 pw mv GitHub
 ```
 
-## Get entry
+### Get entry
 
 ```
 pw [-p] [<args>]     copy (or print) password. If no args, fzf mode
@@ -377,7 +405,7 @@ pw          # starts fzf to select an entry
 pw GitHub
 ```
 
-## Show entry
+### Show entry
 
 ```
 pw [-p] show [<args>]     copy (or print) details. If no args, fzf mode
@@ -390,7 +418,7 @@ pw show          # starts fzf to select an entry
 pw show GitHub
 ```
 
-## Remove entry
+### Remove entry
 
 ```
 pw rm [<args>]     remove entry. If no args, fzf mode
@@ -403,7 +431,7 @@ pw rm          # starts fzf to select an entry
 pw rm GitHub
 ```
 
-## Generate a password
+### Generate a password
 
 ```
 pw [-p] gen [<length>] [<class>]   generate password with given length and
@@ -419,13 +447,17 @@ pw gen 24 '[:alnum:]'
 pw gen 32 '[:digit:]'
 ```
 
-## Automatic keychain discovery
+---
+
+### Automatic keychain discovery
 
 `pw` automatically searches for keychains in the current directory. This way
 you can keep your keychains in the same directory as your project and `pw` will
 automatically discover and use them.
 
-## Specifying a keychain
+---
+
+### Specifying a keychain
 
 There are multiple ways to specify a keychain:
 
@@ -445,7 +477,9 @@ export PW_KEYCHAIN=secrets.keychain-db
 pw
 ```
 
-## Using multiple keychains
+---
+
+### Using multiple keychains
 
 `pw` allows you to interact with multiple keychains from different password
 managers. This feature is particularly useful when you have keychains stored
@@ -468,14 +502,18 @@ one from your `~/.config/pw/pw.conf` file using the fuzzy finder.
 
 ![pw-fzf](readme/pw-keychains.png)
 
-## Using `pw` in a command or script
+---
+
+### Using `pw` in a command or script
 Use `pw` to avoid leaking secrets in scripts that you share or commit.
 
 ```bash
 curl -s -H "Authorization: token $(pw -p GITHUB_TOKEN)" https://api.github.com/user
 ```
 
-## Provide passwords via `STDIN`
+---
+
+### Provide passwords via `STDIN`
 
 To avoid password prompts that can interrupt scripts,
 you can provide passwords via `STDIN`.
@@ -500,7 +538,9 @@ pw add Google personal@example.com <<< "${MY_PASSWORD}"
 pw unlock <<< "${MY_PASSWORD}"
 ```
 
-# Customization
+---
+
+## Customization
 
 Configure `pw` in `~/.config/pw/pw.conf` with the following options:
 
@@ -545,7 +585,9 @@ export PW_GEN_CLASS='[:graph:]'
 export PW_CLIP_TIME=45
 ```
 
-# Plugin specific configuration
+---
+
+## Plugin specific configuration
 
 Some plugins support additional configuration options by appending them to the
 keychain path after a colon `:`, e.g. `/path/to/keychain:key=value`.
@@ -563,7 +605,9 @@ keychain = ~/secrets.kdbx:key1=value1,key2=value2
 ...
 ```
 
-## macOS Keychain
+---
+
+### macOS Keychain
 
 As mentioned in the [Security Considerations](#security-considerations) section,
 `pw` won't automatically add the `security` command to the keychain's access
@@ -587,7 +631,9 @@ or set the environment variable `PW_MACOS_KEYCHAIN_ACCESS_CONTROL` to `always-al
 export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"
 ```
 
-## KeePassXC
+---
+
+### KeePassXC
 
 If you want to use a key file for unlocking the database,
 you can specify the path to the key file:
@@ -602,7 +648,9 @@ If you're using a YubiKey with KeePassXC, you can specify the slot to use:
 ~/secrets.kdbx:yubikey=1:23456789
 ```
 
-## GnuPG
+---
+
+### GnuPG
 
 To set a different gpg key as the default for encryption, you can specify the key id:
 
@@ -640,7 +688,9 @@ or set the environment variable `PW_GPG_IGNORE_PATHS`:
 export PW_GPG_IGNORE_PATHS="${HOME};${HOME}/ignored_folder;"
 ```
 
-# Requirements
+---
+
+## Requirements
 
 Install the following [DEPENDENCIES](DEPENDENCIES) to use `pw`:
 
