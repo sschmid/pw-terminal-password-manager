@@ -3,6 +3,7 @@ set -euo pipefail
 _gpg_decrypt="$(dirname "$0")/_gpg_decrypt"
 _parse_details="$(dirname "$0")/_parse_details"
 
-options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
+# options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
+keychain_password="$2" keychain="$3" name="$4"
 
 "${_gpg_decrypt}" "${keychain_password}" "${keychain}/${name}" | "${_parse_details}" "${name}"

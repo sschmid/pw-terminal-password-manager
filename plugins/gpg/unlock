@@ -3,7 +3,8 @@ set -euo pipefail
 _gpg_decrypt="$(dirname "$0")/_gpg_decrypt"
 _gpg_encrypt="$(dirname "$0")/_gpg_encrypt"
 
-options="$1" keychain="$2"
+# options="$1" keychain="$2"
+options="$1"
 
 if [[ -p /dev/stdin ]]
 then IFS= read -r keychain_password

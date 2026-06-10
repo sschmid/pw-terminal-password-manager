@@ -2,7 +2,8 @@
 set -euo pipefail
 _parse_details="$(dirname "$0")/_parse_details"
 
-options="$1" keychain_password="$2" keychain="$3" format="${4:-default}"
+# options="$1" keychain_password="$2" keychain="$3" format="${4:-default}"
+keychain="$3" format="${4:-default}"
 
 case "${format}" in
 	fzf) printf_format='printf "%-24s\t%-16s\t%s\t%s\t%s\t%s\n", label, account, service, label, account, service' ;;

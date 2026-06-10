@@ -2,6 +2,7 @@
 set -euo pipefail
 _keepassxc_cli_with_options="$(dirname "$0")/_keepassxc_cli_with_options"
 
-options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
+# options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
+options="$1" keychain_password="$2" keychain="$3" name="$4"
 
 "${_keepassxc_cli_with_options}" "${options}" show "${keychain}" "${name}" <<< "${keychain_password}"
