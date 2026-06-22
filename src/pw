@@ -291,7 +291,7 @@ pw::prompt_password() {
 				IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
 				[[ "${retype}" == "${password}" ]] || password=""
 			else
-				PW_PRINT=1 password="$(pw::gen)"
+				password="$(PW_PRINT=1 pw::gen)"
 			fi
 		done
 	fi
