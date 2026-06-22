@@ -42,7 +42,7 @@ sudo apt-get update && sudo apt-get install $(cat DEPENDENCIES)
 This repository includes a Dev Container configuration for a reproducible development environment.
 
 Requirements:
-- A container runtime (e.g. Podman, Docker, or Apple Containers)
+- A container runtime (e.g. Docker, Podman, or Apple Containers)
 - An editor or IDE with Dev Container support (e.g. VS Code, Zed, JetBrains IDEs)
 
 Once inside the container, everything works as usual:
@@ -81,16 +81,18 @@ Run tests in parallel (requires GNU parallel):
 test/run -j 4
 ```
 
-Run tests in containers (Podman, Docker, or Apple container runtime):
+Run tests in containers (e.g. Docker, Podman, or Apple Containers):
 
 ```bash
-test/run -p alpine
+# Set CONTAINER_RUNTIME to e.g. docker, podman, container
+CONTAINER_RUNTIME=podman test/run -p alpine
 ```
 
 Run tests across all container configurations:
 
 ```bash
-test/run -a
+# Set CONTAINER_RUNTIME to e.g. docker, podman, container
+CONTAINER_RUNTIME=podman test/run -a
 ```
 
 ---

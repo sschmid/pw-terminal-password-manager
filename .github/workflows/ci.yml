@@ -38,7 +38,7 @@ jobs:
           submodules: recursive
 
       - name: "Run tests"
-        run: test/run -p ${{ matrix.platform }}
+        run: CONTAINER_RUNTIME=docker test/run -p ${{ matrix.platform }}
 
   macos:
     runs-on: macos-latest
