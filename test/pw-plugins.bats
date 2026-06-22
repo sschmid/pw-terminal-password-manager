@@ -62,6 +62,26 @@ setup() {
 	assert_output "test get <${KEYCHAIN_OPTIONS}> <${KEYCHAIN_PASSWORD}> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
+# bats test_tags=tag:manual_test
+@test "prints item password interactively" {
+	_skip_manual_test "Select 'name 1' using fzf and confirm with enter"
+	export PW_TEST_PLUGIN_LS=1
+	read -rsp "Press enter to continue ..."
+	run pw -p -k "${PW_KEYCHAIN}"
+	assert_success
+	assert_output "test get <> <> <${PW_KEYCHAIN}> <name 1> <account 1> <url 1>"
+}
+
+# bats test_tags=tag:manual_test
+@test "prints item password interactively when no pretty printed values exist" {
+	_skip_manual_test "Select 'name 1' using fzf and confirm with enter"
+	export PW_TEST_PLUGIN_LS=2
+	read -rsp "Press enter to continue ..."
+	run pw -p -k "${PW_KEYCHAIN}"
+	assert_success
+	assert_output "test get <> <> <${PW_KEYCHAIN}> <name 1> <> <>"
+}
+
 ################################################################################
 # add
 ################################################################################

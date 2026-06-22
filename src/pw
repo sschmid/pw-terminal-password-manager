@@ -127,6 +127,7 @@ pw::config_callback() {
 
 
 pw::set_keychain() {
+	# Extract keychain and options (keychain:key=value)
 	if [[ "$1" == *:* ]]; then
 		PW_KEYCHAIN="${1%%:*}"
 		PW_KEYCHAIN_OPTIONS="${1#*:}"
@@ -180,7 +181,7 @@ pw::select_keychain() {
 	else
 		if [[ -f "${PW_KEYCHAIN}" ]]; then
 			pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
-							 "Supported file types are:" "${types[*]}"
+				"Supported file types are:" "${types[*]}"
 		else
 			pw::exit "pw: ${PW_KEYCHAIN}: No such file or directory"
 		fi
@@ -351,12 +352,10 @@ pw::mv() {
 }
 
 pw::get() {
-	local keychain_password
+	local keychain_password fzf_prompt
 	keychain_password="$(pw::plugin keychain_password "get" "${PW_KEYCHAIN}")"
-	if (( PW_PRINT ))
-	then pw::select_item_with_prompt "print" "${keychain_password}" "$@"
-	else pw::select_item_with_prompt "copy" "${keychain_password}" "$@"
-	fi
+	(( PW_PRINT )) && fzf_prompt="print" || fzf_prompt="copy"
+	pw::select_item_with_prompt "${fzf_prompt}" "${keychain_password}" "$@"
 	local password
 	password="$(pw::plugin get "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
 	pw::output "${password}"
@@ -365,10 +364,8 @@ pw::get() {
 pw::show() {
 	local keychain_password
 	keychain_password="$(pw::plugin keychain_password "show" "${PW_KEYCHAIN}")"
-	if (( PW_PRINT ))
-	then pw::select_item_with_prompt "print details" "${keychain_password}" "$@"
-	else pw::select_item_with_prompt "copy details" "${keychain_password}" "$@"
-	fi
+	(( PW_PRINT )) && fzf_prompt="print details" || fzf_prompt="copy details"
+	pw::select_item_with_prompt "${fzf_prompt}" "${keychain_password}" "$@"
 	local details
 	details="$(pw::plugin show "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
 	pw::output "${details}"
@@ -399,7 +396,6 @@ pw::select_item_with_prompt() {
 		PW_NAME="$1"
 		PW_ACCOUNT="${2:-}"
 		PW_URL="${3:-}"
-		# shellcheck disable=SC2034
 		PW_NOTES="${4:-}"
 		PW_FZF=0
 	else
@@ -442,10 +438,10 @@ pw::exit() {
 }
 
 pw::require_bash_version() {
-	if [[ "$(printf '%s\n' "${BASH_VERSION}" "4.2" | sort -V | head -n 1)" != "4.2" ]]; then
+	(( BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) )) || {
 		pw::exit "pw requires bash-4.2 or later. Installed: ${BASH_VERSION}" \
 			"Please install a newer version of bash."
-	fi
+	}
 }
 
 pw::require_fzf() {
@@ -483,8 +479,8 @@ main() {
 			rm)     shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
 			ls)     shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
 			gen)    shift;                        pw::gen    "$@"                    ;;
-			open)   shift; pw::select_keychain  ; pw::plugin open "${PW_KEYCHAIN}"   ;;
-			lock)   shift; pw::select_keychain  ; pw::plugin lock "${PW_KEYCHAIN}"   ;;
+			open)   shift; pw::select_keychain  ; pw::plugin open   "${PW_KEYCHAIN}" ;;
+			lock)   shift; pw::select_keychain  ; pw::plugin lock   "${PW_KEYCHAIN}" ;;
 			unlock) shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
 			update) shift;                        pw::update "$@"                    ;;
 			*)             pw::select_keychain  ; pw::get    "$@"                    ;;
