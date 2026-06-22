@@ -20,7 +20,7 @@ COPY lib lib
 COPY plugins plugins
 COPY version.txt .
 RUN ln -s /opt/pw/src/pw /usr/local/bin/pw
-WORKDIR /root
+WORKDIR /workspaces
 COPY container/entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
 
