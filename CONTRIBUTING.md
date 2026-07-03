@@ -127,7 +127,7 @@ Release logic is defined in [.bee/plugins/release/release.bash](.bee/plugins/rel
 ### Typical release flow
 
 - Ensure you are on the `main` branch
-- Ensure `bee` is installedda
+- Ensure `bee` is installed
 - Run `bee install`
 - Prepare release notes in `CHANGES.md`
 - Bump version:
