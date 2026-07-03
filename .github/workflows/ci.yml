@@ -104,6 +104,9 @@ jobs:
           dotnet tool install -g dotnet-reportgenerator-globaltool
           reportgenerator -reports:"coverage/**/cobertura.xml" -targetdir:"coverage" -reporttypes:"lcov"
 
+      - name: Trust coveralls formula
+        run: brew trust --formula coverallsapp/coveralls/coveralls
+
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:
