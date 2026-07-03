@@ -34,7 +34,7 @@ See [requirements](#requirements) for dependencies.
 ### Install script (recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install | bash
+curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
 ```
 
 ### Download

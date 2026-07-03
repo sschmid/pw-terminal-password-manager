@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install | bash
+# curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
 #
 # To uninstall, run
 # ~/.local/share/pw/install --uninstall
