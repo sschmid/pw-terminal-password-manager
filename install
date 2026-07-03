@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 #
-# To install, run
-# bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
+# curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install | bash
+#
+# To uninstall, run
+# ~/.local/share/pw/install --uninstall
 
 set -e
 
-INST_DIR="/opt/pw"
-BIN_PATH="/usr/local/bin/pw"
+INST_DIR="${XDG_DATA_HOME:-"${HOME}/.local/share"}/pw"
+BIN_PATH="${XDG_BIN_HOME:-"${HOME}/.local/bin"}/pw"
 
 if [[ $1 == "--uninstall" ]]; then
 	rm -rf "${INST_DIR}" "${BIN_PATH}"
@@ -20,8 +22,7 @@ if [[ -d "${INST_DIR}" ]]; then
 	exit
 fi
 
+mkdir -p "${INST_DIR%/*}" "${BIN_PATH%/*}"
 git clone https://github.com/sschmid/pw-terminal-password-manager "${INST_DIR}"
-echo "Linking ${INST_DIR}/src/pw to ${BIN_PATH}"
-mkdir -p "$(dirname "${BIN_PATH}")"
-ln -sf "${INST_DIR}/src/pw" "${BIN_PATH}"
+ln -svf "${INST_DIR}/src/pw" "${BIN_PATH}"
 echo "pw has been installed successfully"

@@ -34,14 +34,7 @@ See [requirements](#requirements) for dependencies.
 ### Install script (recommended)
 
 ```bash
-sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install)"
-```
-
-### Manual install
-
-```bash
-git clone https://github.com/sschmid/pw-terminal-password-manager /opt/pw
-ln -s /opt/pw/src/pw /usr/local/bin/pw
+curl -fsSL https://raw.githubusercontent.com/sschmid/pw-terminal-password-manager/main/install | bash
 ```
 
 ### Download
@@ -63,13 +56,13 @@ Alternatively, you can use `pw` directly from the `src` directory.
 ## Update
 
 ```bash
-sudo pw update
+pw update
 ```
 
 ## Uninstall
 
 ```bash
-sudo /opt/pw/install --uninstall
+~/.local/share/pw/install --uninstall
 ```
 
 ---
