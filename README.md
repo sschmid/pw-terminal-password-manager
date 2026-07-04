@@ -59,6 +59,15 @@ Alternatively, you can use `pw` directly from the `src` directory.
 pw update
 ```
 
+## Migration
+
+When breaking changes occur, `pw` will apply migrations automatically. For older
+migrations marked as obsolete (e.g. before 12.0.0), you can run them manually:
+
+```bash
+pw migrate
+```
+
 ## Uninstall
 
 ```bash

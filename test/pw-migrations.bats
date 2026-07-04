@@ -78,8 +78,8 @@ EOF
 }
 
 assert_latest_config() {
-	run pw -y ls
-	assert_failure
+	run pw -y migrate
+	assert_success
 
 	run cat "${PW_CONFIG}"
 	assert_success

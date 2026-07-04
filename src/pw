@@ -50,6 +50,7 @@ commands:
   lock                            lock keychain
   unlock                          unlock keychain
   update                          update pw
+  migrate                         run migrations
 EOF
 }
 
@@ -58,16 +59,6 @@ pw::parse_config() {
 
 	local config="${1:-"${PW_CONFIG_HOME}/pw/pw.conf"}"
 	declare -ag PW_PLUGINS PW_KEYCHAINS
-
-	# Migrate configs
-	local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
-	if [[ -f "${pwrc}" ]]; then
-		"${PW_HOME}/src/migrations/pwrc-9.0.0" "${pwrc}"
-		"${PW_HOME}/src/migrations/pwrc-10.0.0" "${pwrc}"
-		"${PW_HOME}/src/migrations/pwrc-11.0.0" "${pwrc}"
-	fi
-
-	"${PW_HOME}/src/migrations/pwconf-12.0.0"
 
 	# shellcheck disable=SC2174
 	if [[ ! -f "${config}" ]]; then
@@ -124,7 +115,6 @@ pw::config_callback() {
 			;;
 	esac
 }
-
 
 pw::set_keychain() {
 	# Extract keychain and options (keychain:key=value)
@@ -263,6 +253,19 @@ pw::update() {
 		git switch "${branch}"
 		git pull
 	popd >/dev/null || exit 1
+}
+
+pw::migrate() {
+	# Migrate old .pwrc files
+	local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
+	if [[ -f "${pwrc}" ]]; then
+		"${PW_HOME}/src/migrations/pwrc-9.0.0" "${pwrc}"
+		"${PW_HOME}/src/migrations/pwrc-10.0.0" "${pwrc}"
+		"${PW_HOME}/src/migrations/pwrc-11.0.0" "${pwrc}"
+	fi
+
+	# Migrate old pw.conf format
+	"${PW_HOME}/src/migrations/pwconf-12.0.0"
 }
 
 #
@@ -471,19 +474,20 @@ main() {
 
 	if (( $# )); then
 		case "$1" in
-			init)   shift; pw::infer_plugin "$@"; pw::init                           ;;
-			add)    shift; pw::select_keychain  ; pw::add    "$@"                    ;;
-			edit)   shift; pw::select_keychain  ; pw::edit   "$@"                    ;;
-			mv)     shift; pw::select_keychain  ; pw::mv     "$@"                    ;;
-			show)   shift; pw::select_keychain  ; pw::show   "$@"                    ;;
-			rm)     shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
-			ls)     shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
-			gen)    shift;                        pw::gen    "$@"                    ;;
-			open)   shift; pw::select_keychain  ; pw::plugin open   "${PW_KEYCHAIN}" ;;
-			lock)   shift; pw::select_keychain  ; pw::plugin lock   "${PW_KEYCHAIN}" ;;
-			unlock) shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
-			update) shift;                        pw::update "$@"                    ;;
-			*)             pw::select_keychain  ; pw::get    "$@"                    ;;
+			init)    shift; pw::infer_plugin "$@"; pw::init                           ;;
+			add)     shift; pw::select_keychain  ; pw::add    "$@"                    ;;
+			edit)    shift; pw::select_keychain  ; pw::edit   "$@"                    ;;
+			mv)      shift; pw::select_keychain  ; pw::mv     "$@"                    ;;
+			show)    shift; pw::select_keychain  ; pw::show   "$@"                    ;;
+			rm)      shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
+			ls)      shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
+			gen)     shift;                        pw::gen    "$@"                    ;;
+			open)    shift; pw::select_keychain  ; pw::plugin open   "${PW_KEYCHAIN}" ;;
+			lock)    shift; pw::select_keychain  ; pw::plugin lock   "${PW_KEYCHAIN}" ;;
+			unlock)  shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
+			update)  shift;                        pw::update "$@"                    ;;
+			migrate) shift;                        pw::migrate                        ;;
+			*)              pw::select_keychain  ; pw::get    "$@"                    ;;
 		esac
 	else
 		pw::select_keychain ; pw::get
