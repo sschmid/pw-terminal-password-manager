@@ -152,8 +152,8 @@ assert_rm_not_found_output() {
 	# shellcheck disable=SC2317,SC2329
 	_get_note() {
 		local comments
-		comments="$(security find-generic-password -j "${SINGLE_LINE_NOTES}" -g "${PW_KEYCHAIN}" 2>&1 \
-			| awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
+		comments="$(security find-generic-password -j "${SINGLE_LINE_NOTES}" -g "${PW_KEYCHAIN}" 2>&1 |
+			awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }')"
 		echo "${comments:1:-1}"
 	}
 
@@ -169,9 +169,9 @@ EOF
 	assert_item_exists "${PW_1}" "${NAME_A}"
 
 	_get_note() {
-		security find-generic-password -j "${MULTI_LINE_NOTES}" -g "${PW_KEYCHAIN}" 2>&1 \
-			| awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }' \
-			| xxd -r -p
+		security find-generic-password -j "${MULTI_LINE_NOTES}" -g "${PW_KEYCHAIN}" 2>&1 |
+			awk 'BEGIN { FS="<blob>=" } /"icmt"/ { print ($2 == "<NULL>") ? "" : $2 }' |
+			xxd -r -p
 	}
 
 	run _get_note

@@ -71,8 +71,8 @@ _wait_for_run() {
 
 _download_artifact() {
 	local artifact_name="$1" artifact_id
-	artifact_id="$(github::artifacts "${RELEASE_RUN_ID}" \
-		| jq -r --arg name "${artifact_name}" '.artifacts[] | select(.name == $name) | .id')"
+	artifact_id="$(github::artifacts "${RELEASE_RUN_ID}" |
+		jq -r --arg name "${artifact_name}" '.artifacts[] | select(.name == $name) | .id')"
 
 	mkdir -p dist
 	echo "Downloading artifact: ${artifact_name} [${artifact_id}]"
