@@ -1,12 +1,12 @@
 lib_config_parse_section() {
 	if (( ! $# )); then
-		printf "%s error: config file not specified\n" "${PROGRAM}" >&2
+		printf '%s error: config file not specified\n' "${PROGRAM}" >&2
 		exit 1
 	fi
 
 	local config_path="$1"
 	if [[ ! -f "${config_path}" ]]; then
-		printf "%s error: config file not found: %s\n" "${PROGRAM}" "${config_path}" >&2
+		printf '%s error: config file not found: %s\n' "${PROGRAM}" "${config_path}" >&2
 		exit 1
 	fi
 
@@ -34,5 +34,5 @@ lib_config_parse_section() {
 }
 
 lib_config_print_kv() {
-	printf "%s%s%s = %s\n" "${COLOR_BLUE}" "$2" "${COLOR_RESET}" "$3"
+	printf '%s%s%s = %s\n' "${COLOR_BLUE}" "$2" "${COLOR_RESET}" "$3"
 }

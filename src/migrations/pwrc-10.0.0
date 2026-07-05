@@ -27,5 +27,5 @@ if ! grep -qE '\[plugins\]|\[keychains\]' "${pw_rc}" >/dev/null ; then
 [keychains]
 EOF
 
-	printf "\t%s\n" "${keychains[@]}" >> "${pw_rc}"
+	printf '\t%s\n' "${keychains[@]}" >> "${pw_rc}"
 fi

@@ -203,7 +203,7 @@ pw::infer_plugin() {
 	else
 		pw::exit "Could not detect plugin for ${PW_KEYCHAIN}" \
 			"Supported extensions are:" \
-			"$(for i in "${!exts[@]}"; do printf "%-13s - %s\n" "${exts[$i]}" "${types[$i]}"; done)"
+			"$(for i in "${!exts[@]}"; do printf '%-13s - %s\n' "${exts[$i]}" "${types[$i]}"; done)"
 	fi
 }
 
@@ -299,7 +299,7 @@ pw::prompt_password() {
 			fi
 		done
 	fi
-	printf "%s" "${password}"
+	printf '%s\n' "${password}"
 }
 
 pw::init() {
@@ -436,7 +436,7 @@ pw::select_item_with_prompt() {
 #
 
 pw::exit() {
-	printf "%s\n" "$@" >&2
+	printf '%s\n' "$@" >&2
 	exit 1
 }
 

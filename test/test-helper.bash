@@ -64,12 +64,12 @@ EOF
 
 _config_append_keychains() {
 	echo "[keychains]" >> "${PW_CONFIG}"
-	printf "keychain = %s\n" "$@" >> "${PW_CONFIG}"
+	printf 'keychain = %s\n' "$@" >> "${PW_CONFIG}"
 }
 
 _config_append_keychains_with_key() {
 	echo "[keychains]" >> "${PW_CONFIG}"
-	printf "%s\n" "$@" >> "${PW_CONFIG}"
+	printf '%s\n' "$@" >> "${PW_CONFIG}"
 }
 
 assert_init_already_exists() {
