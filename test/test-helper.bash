@@ -28,7 +28,7 @@ and spaces "
 }
 
 _set_config_with_copy_paste() {
-	cat > "${PW_CONFIG}" << 'EOF'
+	cat > "${PW_CONFIG}" <<'EOF'
 [general]
 copy = cat > "${BATS_TEST_TMPDIR}/test_clipboard"
 paste = cat "${BATS_TEST_TMPDIR}/test_clipboard"
@@ -172,7 +172,7 @@ EOF
 
 _skip_manual_test() {
 	if [[ -v PW_TEST_RUN_MANUAL_TESTS ]]; then
-		echo "# Please enter $1" >&3
+		echo "# 🟡 [ manual test ] $1" >&3
 	else
 		skip "Requires user input. Use test/run -m to also run manual tests."
 	fi

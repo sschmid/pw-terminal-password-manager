@@ -138,7 +138,7 @@ setup() {
 
 # bats test_tags=tag:manual_test
 @test "selects keychain with fzf" {
-	_skip_manual_test "'b keychain.test' using fzf (Press enter to continue ...)"
+	_skip_manual_test "Select 'b keychain.test' using fzf and confirm with enter. Press enter to start..."
 	read -rsp "Press enter to continue ..."
 
 	_config_append_keychains "a keychain.test" "b keychain.test"

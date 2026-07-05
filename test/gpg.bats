@@ -212,7 +212,7 @@ assert_keyid() {
 
 # bats test_tags=tag:manual_test
 @test "prompts for new filename when adding item with existing name" {
-	_skip_manual_test "new filename: '${PW_KEYCHAIN}/new_name'"
+	_skip_manual_test "Press n to not overwrite, then enter new filename: '${PW_KEYCHAIN}/new_name'"
 	assert_adds_item "${PW_1}" "${NAME_A}"
 	run pw add "${NAME_A}" <<< "${PW_2}"
 	assert_success
@@ -401,7 +401,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "opens keychain" {
-	_skip_manual_test "Opens folder in finder"
+	_skip_manual_test "Check if folder opened in finder"
 	run pw open
 	assert_success
 	refute_output
@@ -427,7 +427,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "unlocks keychain and prompts keychain password" {
-	_skip_manual_test "pw_test_password - Press enter to continue ..."
+	_skip_manual_test "Enter password: 'pw_test_password'. Press enter to start..."
 	read -rsp "Press enter to continue ..."
 
 	run _ps
@@ -487,7 +487,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "yanks item to clipboard" {
-	_skip_manual_test "yank 'NAME A' to clipboard"
+	_skip_manual_test "Select 'NAME A' using fzf and yank (crtl+y). Press enter to start..."
 	read -rsp "Press enter to continue ..."
 	# fzf strips leading and trailing whitespace, so don't use variables here
 	assert_adds_item "${PW_1}" "NAME A" "ACCOUNT A" "URL A" "${MULTI_LINE_NOTES}"

@@ -56,7 +56,7 @@ assert_rm_not_found_output() {
 
 # bats test_tags=tag:manual_test
 @test "inits keychain and prompts keychain password" {
-	_skip_manual_test "'test' twice"
+	_skip_manual_test "Enter password twice: 'test'"
 	PW_KEYCHAIN="${BATS_TEST_TMPDIR}/manual pw macos_keychain test.keychain-db"
 	run pw init "${PW_KEYCHAIN}"
 	assert_success
@@ -509,7 +509,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "unlocks keychain and prompts keychain password" {
-	_skip_manual_test "'${KEYCHAIN_TEST_PASSWORD}'"
+	_skip_manual_test "Enter password: '${KEYCHAIN_TEST_PASSWORD}'"
 
 	run pw lock
 	assert_success
@@ -573,7 +573,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "yanks item to clipboard" {
-	_skip_manual_test "yank 'NAME A' to clipboard"
+	_skip_manual_test "Select 'NAME A' using fzf and yank (crtl+y). Press enter to start..."
 	read -rsp "Press enter to continue ..."
 	# fzf strips leading and trailing whitespace, so don't use variables here
 	assert_adds_item "${PW_1}" "NAME A" "ACCOUNT A" "URL A" "${MULTI_LINE_NOTES}"

@@ -101,7 +101,7 @@ setup() {
 
 # bats test_tags=tag:manual_test
 @test "prompts password when no stdin" {
-	_skip_manual_test "' test password ' twice (with leading whitespace)"
+	_skip_manual_test "Enter password twice: ' test password '"
 	run pw add "${NAME_A}"
 	assert_success
 	cat <<EOF | assert_output -
@@ -113,7 +113,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "add prompts password until retyped password matches" {
-	_skip_manual_test "'test 1' and 'test 2', then 'test 3' twice"
+	_skip_manual_test "Enter password: 'test 1', then 'test 2', then 'test 3' twice"
 	run pw add "${NAME_A}"
 	assert_success
 	cat <<EOF | assert_output -
@@ -127,7 +127,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "generates password when empty" {
-	_skip_manual_test "nothing"
+	_skip_manual_test "Do nothing and confirm with enter"
 	export PW_GEN_LENGTH=5
 	export PW_GEN_CLASS="1"
 	run pw -p add "${NAME_A}"
@@ -140,7 +140,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "adds item interactively" {
-	_skip_manual_test "name, account, url, notes (end with Ctrl+D), then pass, pass"
+	_skip_manual_test "Enter: 'name', 'account', 'url', 'notes' (end with Ctrl+D), then 'pass' twice"
 	run pw add
 	assert_success
 	cat <<EOF | assert_output -
@@ -187,7 +187,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "removes item interactively" {
-	_skip_manual_test "select 'name 2', then enter 'y'"
+	_skip_manual_test "Select 'name 2' using fzf and confirm with enter, then enter 'y' and confirm with enter"
 	export PW_TEST_PLUGIN_LS=1
 	read -rsp "Press enter to continue ..."
 	run pw rm
@@ -216,7 +216,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "edit prompts password until retyped password matches" {
-	_skip_manual_test "'test 1' and 'test 2', then 'test 3' twice"
+	_skip_manual_test "Enter password: 'test 1', then 'test 2', then 'test 3' twice"
 	run pw edit "${NAME_A}"
 	assert_success
 	cat <<EOF | assert_output -
@@ -315,7 +315,7 @@ EOF
 
 # bats test_tags=tag:manual_test
 @test "runs fzf preview in bash" {
-	_skip_manual_test "activate preview and select 'name 2'. Preview should look fine with no errors."
+	_skip_manual_test "Activate preview in fzf (?) and select 'name 2'. Preview should look fine with no errors."
 	export PW_TEST_PLUGIN_LS=1
 	read -rsp "Press enter to continue ..."
 	run pw -p
