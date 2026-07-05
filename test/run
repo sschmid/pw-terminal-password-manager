@@ -10,7 +10,7 @@ run_tests() {
 
 cmd_options=()
 no_shellcheck=0
-while getopts ":ac:j:mp:" options; do
+while getopts ":ac:j:mnp:" options; do
 	case "${options}" in
 		a)
 			run_tests alpine
@@ -31,6 +31,10 @@ while getopts ":ac:j:mp:" options; do
 		m)
 			export PW_TEST_RUN_MANUAL_TESTS=1
 			cmd_options+=("--tap")
+			;;
+		n)
+			export PW_TEST_RUN_MANUAL_TESTS=1
+			cmd_options+=("--filter-tags" "tag:manual_test" "--tap")
 			;;
 		p)
 			run_tests "${OPTARG}"

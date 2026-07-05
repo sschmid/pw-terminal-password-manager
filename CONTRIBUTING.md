@@ -75,6 +75,12 @@ Run tests including manual tests:
 test/run -m
 ```
 
+Run only manual tests:
+
+```bash
+test/run -n
+```
+
 Run tests in parallel (requires GNU parallel):
 
 ```bash
