@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-options="$1" keychain_password="$2" keychain="$3" rename="$4" name="$5" account="$6" url="$7"
+IFS= read -r keychain_password
+
+options="$1" keychain="$2" rename="$3" name="$4" account="$5" url="$6"
 
 echo "test mv <${options}> <${keychain_password}> <${keychain}> <${rename}> <${name}> <${account}> <${url}>"

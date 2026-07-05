@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-options="$1" keychain_password="$2" keychain="$3" format="${4:-default}"
+IFS= read -r keychain_password
+
+options="$1" keychain="$2" format="${3:-default}"
 
 [[ -v PW_TEST_PLUGIN_FAIL ]] && exit 1
 

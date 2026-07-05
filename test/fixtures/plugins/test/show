@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
+IFS= read -r keychain_password
+
+options="$1" keychain="$2" name="$3" account="$4" url="$5"
 
 echo "test show <${options}> <${keychain_password}> <${keychain}> <${name}> <${account}> <${url}>"
