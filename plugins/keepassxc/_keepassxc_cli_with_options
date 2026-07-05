@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-parse_options="$(dirname -- "${BASH_SOURCE[0]}")/../parse_options"
 "$(dirname -- "${BASH_SOURCE[0]}")/_require"
+parse_options="$(dirname -- "${BASH_SOURCE[0]}")/../parse_options"
 
 options="$1" command="$2"; shift 2
 

@@ -62,8 +62,7 @@ pw::parse_config() {
 
 	# shellcheck disable=SC2174
 	if [[ ! -f "${config}" ]]; then
-		mkdir -m 700 -p "${PW_CONFIG_HOME}"
-		mkdir -m 700 -p "${PW_CONFIG_HOME}/pw"
+		mkdir -m 700 -p "${PW_CONFIG_HOME}" "${PW_CONFIG_HOME}/pw"
 		cp "${PW_HOME}/examples/pw.conf" "${config}"
 	fi
 
@@ -210,8 +209,10 @@ pw::infer_plugin() {
 declare -ix PW_PRINT=0
 
 pw::output() {
+	local output
+	output=$(cat)
 	if (( PW_PRINT )); then
-		printf "%s\n" "$1"
+		printf '%s\n' "${output}"
 	else
 		local pname
 		local -i pid
@@ -221,9 +222,9 @@ pw::output() {
 			kill -9 ${pid} &>/dev/null || true
 			wait ${pid} &>/dev/null || true
 		fi
-		printf "%s" "$1" | "${PW_HOME}/src/copy"
+		printf '%s' "${output}" | "${PW_HOME}/src/copy"
 		( ( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait " )
-			[[ "$("${PW_HOME}/src/paste")" == "$1" ]] && printf "" | "${PW_HOME}/src/copy"
+			[[ "$("${PW_HOME}/src/paste")" == "${output}" ]] && printf '' | "${PW_HOME}/src/copy"
 		) &>/dev/null & disown
 	fi
 }
@@ -235,16 +236,21 @@ pw::gen() {
 	local password="" class="${2:-"${PW_GEN_CLASS}"}"
 
 	local -i block_size=$(( length / 32 ))
-	(( block_size == 0 )) && block_size=1
+	(( block_size )) || block_size=1
 
 	# Fix character classes for BusyBox tr
 	[[ "${class}" == "[:graph:]" ]] && class="[:alnum:][:punct:]"
 	[[ "${class}" == "[:print:]" ]] && class="[:alnum:][:punct:][:space:]"
 
 	while (( "${#password}" != length )); do
-		password+=$(dd if=/dev/urandom bs=${block_size} count=1 2>/dev/null | LC_CTYPE=C LC_ALL=C tr -dc "${class}" | head -c $(( length - ${#password} )))
+		password+=$(
+			dd if=/dev/urandom bs=${block_size} count=1 status=none 2>/dev/null |
+			LC_CTYPE=C LC_ALL=C tr -dc "${class}" |
+			head -c $(( length - ${#password} ))
+		)
 	done
-	pw::output "${password}"
+
+	pw::output <<< "${password}"
 }
 
 pw::update() {
@@ -299,7 +305,7 @@ pw::prompt_password() {
 			fi
 		done
 	fi
-	printf '%s\n' "${password}"
+	printf '%s' "${password}"
 }
 
 pw::init() {
@@ -311,35 +317,35 @@ pw::add() {
 	local keychain_password
 	keychain_password="$(pw::plugin keychain_password "add" "${PW_KEYCHAIN}")"
 	if (( $# )); then
-		pw::select_item_with_prompt "add" "${keychain_password}" "$@"
+		pw::select_item_with_prompt "add" "$@"
 	else
 		IFS= read -rp "Title: " PW_NAME
 		IFS= read -rp "Username: " PW_ACCOUNT
 		IFS= read -rp "URL: " PW_URL
-		printf "Notes: Enter multi-line input (end with Ctrl+D):\n"
+		printf 'Notes: Enter multi-line input (end with Ctrl+D):\n'
 		PW_NOTES=$(cat)
 	fi
 
-	local password
-	password="$(pw::prompt_password)"
-	pw::plugin add "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
-		"${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}"
+	pw::plugin add "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}" <<EOF
+${keychain_password}
+$(pw::prompt_password)
+EOF
 }
 
 pw::edit() {
 	local keychain_password
 	keychain_password="$(pw::plugin keychain_password "edit" "${PW_KEYCHAIN}")"
-	pw::select_item_with_prompt "edit" "${keychain_password}" "$@"
-	local password
-	password="$(pw::prompt_password)"
-	pw::plugin edit "${keychain_password}" "${PW_KEYCHAIN}" "${password}" \
-		"${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+	pw::select_item_with_prompt "edit" "$@"
+	pw::plugin edit "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<EOF
+${keychain_password}
+$(pw::prompt_password)
+EOF
 }
 
 pw::mv() {
 	local keychain_password
 	keychain_password="$(pw::plugin keychain_password "mv" "${PW_KEYCHAIN}")"
-	pw::select_item_with_prompt "move" "${keychain_password}" "$@"
+	pw::select_item_with_prompt "move" "$@"
 
 	local rename=""
 	if [[ -p /dev/stdin ]]; then
@@ -350,51 +356,47 @@ pw::mv() {
 		done
 	fi
 
-	pw::plugin mv "${keychain_password}" "${PW_KEYCHAIN}" "${rename}" \
-		"${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+	pw::plugin mv "${PW_KEYCHAIN}" "${rename}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<< "${keychain_password}"
 }
 
 pw::get() {
 	local keychain_password fzf_prompt
 	keychain_password="$(pw::plugin keychain_password "get" "${PW_KEYCHAIN}")"
 	(( PW_PRINT )) && fzf_prompt="print" || fzf_prompt="copy"
-	pw::select_item_with_prompt "${fzf_prompt}" "${keychain_password}" "$@"
-	local password
-	password="$(pw::plugin get "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
-	pw::output "${password}"
+	pw::select_item_with_prompt "${fzf_prompt}" "$@"
+	pw::plugin get "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<< "${keychain_password}" | pw::output
 }
 
 pw::show() {
 	local keychain_password
 	keychain_password="$(pw::plugin keychain_password "show" "${PW_KEYCHAIN}")"
 	(( PW_PRINT )) && fzf_prompt="print details" || fzf_prompt="copy details"
-	pw::select_item_with_prompt "${fzf_prompt}" "${keychain_password}" "$@"
-	local details
-	details="$(pw::plugin show "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}")"
-	pw::output "${details}"
+	pw::select_item_with_prompt "${fzf_prompt}" "$@"
+	pw::plugin show "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<< "${keychain_password}" | pw::output
 }
 
 pw::rm() {
 	local keychain_password
 	keychain_password="$(pw::plugin keychain_password "rm" "${PW_KEYCHAIN}")"
 	local -i remove=1
-	pw::select_item_with_prompt "remove" "${keychain_password}" "$@"
+	pw::select_item_with_prompt "remove" "$@"
 	if (( PW_FZF )); then
 		local answer
 		IFS= read -rp "Do you really want to remove ${PW_NAME:+"'${PW_NAME}' "}${PW_ACCOUNT:+"'${PW_ACCOUNT}' "}from '${PW_KEYCHAIN}'? (y / N): " answer
 		[[ "${answer}" == [yY] ]] || remove=0
 	fi
-	(( ! remove )) || pw::plugin rm "${keychain_password}" "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}"
+
+	(( ! remove )) || pw::plugin rm "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<< "${keychain_password}"
 }
 
 pw::ls() {
 	local keychain_password
 	keychain_password="$(pw::plugin keychain_password "ls" "${PW_KEYCHAIN}")"
-	pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "$@"
+	pw::plugin ls "${PW_KEYCHAIN}" "$@" <<< "${keychain_password}"
 }
 
 pw::select_item_with_prompt() {
-	local fzf_prompt="$1" keychain_password="$2"; shift 2
+	local fzf_prompt="$1"; shift
 	if (( $# )); then
 		PW_NAME="$1"
 		PW_ACCOUNT="${2:-}"
@@ -409,9 +411,9 @@ pw::select_item_with_prompt() {
 		# fzf will use the pretty printed values 1..3
 		# variables are set with the actual values 4..6
 		local items item preview yank yank_action
-		items="$(pw::plugin ls "${keychain_password}" "${PW_KEYCHAIN}" "fzf")"
-		preview="$(pw::plugin fzf_preview "${keychain_password}" "${PW_KEYCHAIN}")"
-		yank="pw::output \"\$(${preview})\""
+		items="$(pw::plugin ls "${PW_KEYCHAIN}" "fzf" <<< "${keychain_password}")"
+		preview="$(pw::plugin fzf_preview "${PW_KEYCHAIN}" <<< "${keychain_password}")"
+		yank="pw::output <<< \"\$(${preview})\""
 		(( PW_PRINT )) && yank_action="print" || yank_action="copy"
 
 		# KCOV_EXCL_START

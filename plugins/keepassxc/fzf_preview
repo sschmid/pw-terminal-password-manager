@@ -2,6 +2,8 @@
 set -euo pipefail
 _keepassxc_cli_with_options="$(dirname -- "${BASH_SOURCE[0]}")/_keepassxc_cli_with_options"
 
-options="$1" keychain_password="$2" keychain="$3"
+IFS= read -r keychain_password
+
+options="$1" keychain="$2"
 
 echo "\"${_keepassxc_cli_with_options}\" \"${options}\" show \"${keychain}\" {4} <<< \"${keychain_password}\""

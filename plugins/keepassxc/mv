@@ -2,8 +2,10 @@
 set -euo pipefail
 _keepassxc_cli_with_options="$(dirname -- "${BASH_SOURCE[0]}")/_keepassxc_cli_with_options"
 
-# options="$1" keychain_password="$2" keychain="$3" rename="$4" name="$5" account="$6" url="$7"
-options="$1" keychain_password="$2" keychain="$3" rename="$4" name="$5"
+IFS= read -r keychain_password
+
+# options="$1" keychain="$2" rename="$3" name="$4" account="$5" url="$6"
+options="$1" keychain="$2" rename="$3" name="$4"
 
 title="${rename##*/}"
 

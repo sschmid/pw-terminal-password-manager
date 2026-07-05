@@ -2,7 +2,9 @@
 set -euo pipefail
 _keepassxc_cli_with_options="$(dirname -- "${BASH_SOURCE[0]}")/_keepassxc_cli_with_options"
 
-options="$1" keychain_password="$2" keychain="$3" format="${4:-default}"
+IFS= read -r keychain_password
+
+options="$1" keychain="$2" format="${3:-default}"
 
 if ! list="$("${_keepassxc_cli_with_options}" "${options}" ls --flatten --recursive "${keychain}" <<< "${keychain_password}" | { grep -v -e '/$' -e 'Recycle Bin/' || true; } | sort -f)"
 then
