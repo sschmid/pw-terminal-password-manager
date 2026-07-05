@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-"$(dirname "$0")/_require"
+"$(dirname -- "${BASH_SOURCE[0]}")/_require"
 
 keychain_password="$1" path="${2:-}"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-_keepassxc_cli_with_options="$(dirname "$0")/_keepassxc_cli_with_options"
+_keepassxc_cli_with_options="$(dirname -- "${BASH_SOURCE[0]}")/_keepassxc_cli_with_options"
 
 options="$1" keychain_password="$2" keychain="$3"
 
