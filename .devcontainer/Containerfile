@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     $(cat /tmp/DEPENDENCIES) \
     curl \
     file \
+    fzf \
     git \
     jq \
     parallel \
