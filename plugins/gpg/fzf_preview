@@ -2,8 +2,10 @@
 set -euo pipefail
 _parse_details="$(dirname -- "${BASH_SOURCE[0]}")/_parse_details"
 
-# options="$1" keychain_password="$2" keychain="$3"
-keychain="$3"
+IFS= read -r _
+
+# options="$1" keychain="$2"
+keychain="$2"
 
 # KCOV_EXCL_START
 # shellcheck disable=SC1083

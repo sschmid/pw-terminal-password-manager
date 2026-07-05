@@ -2,7 +2,9 @@
 set -euo pipefail
 _gpg_decrypt="$(dirname -- "${BASH_SOURCE[0]}")/_gpg_decrypt"
 
-# options="$1" keychain_password="$2" keychain="$3" name="$4" account="$5" url="$6"
-keychain_password="$2" keychain="$3" name="$4"
+IFS= read -r keychain_password
 
-"${_gpg_decrypt}" "${keychain_password}" "${keychain}/${name}" | sed -n '1p'
+# options="$1" keychain="$2" name="$3" account="$4" url="$5"
+keychain="$2" name="$3"
+
+"${_gpg_decrypt}" "${keychain}/${name}" <<< "${keychain_password}" | sed -n '1p'

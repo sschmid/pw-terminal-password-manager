@@ -452,7 +452,7 @@ EOF
 	assert_item_exists "${PW_1}" "${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
 	local cmd
-	cmd="$("${PROJECT_ROOT}/plugins/gpg/fzf_preview" "" "" "${PW_KEYCHAIN}")"
+	cmd="$("${PROJECT_ROOT}/plugins/gpg/fzf_preview" "" "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}")"
 	cmd=${cmd//\{4\}/"\"${NAME_A}\""}
 
 	run eval "${cmd}"
@@ -471,7 +471,7 @@ EOF
 	assert_item_exists "${PW_1}" "group/${NAME_A}" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
 	local cmd
-	cmd="$("${PROJECT_ROOT}/plugins/gpg/fzf_preview" "" "" "${PW_KEYCHAIN}")"
+	cmd="$("${PROJECT_ROOT}/plugins/gpg/fzf_preview" "" "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}")"
 	cmd=${cmd//\{4\}/"\"group/${NAME_A}\""}
 
 	run eval "${cmd}"

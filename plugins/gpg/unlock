@@ -11,4 +11,4 @@ then IFS= read -r keychain_password
 else keychain_password=""
 fi
 
-"${_gpg_encrypt}" "${options}" <<< "" | "${_gpg_decrypt}" "${keychain_password}" >/dev/null
+"${_gpg_decrypt}" <("${_gpg_encrypt}" "${options}" <<< "") <<< "${keychain_password}" >/dev/null
