@@ -45,7 +45,7 @@ commands:
   [-p] show [<args>]              copy (or print) details. If no args, fzf mode
   rm [<args>]                     remove entry. If no args, fzf mode
   ls                              list all entries
-  [-p] gen [<length>] [<class>]   generate password (default: 35 [:graph:])
+  [-p] gen [<length>] [<class>]   generate password (default: 24 [:graph:])
   open                            open keychain in native gui
   lock                            lock keychain
   unlock                          unlock keychain
@@ -68,7 +68,7 @@ pw::parse_config() {
 
 	lib_config_parse_section "${config}" "" pw::config_callback
 
-	declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-35}"
+	declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-24}"
 	declare -rgx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
 	declare -irgx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
 }

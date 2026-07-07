@@ -15,7 +15,7 @@ if ! grep -qE '\[plugins\]|\[keychains\]' "${pw_rc}" >/dev/null ; then
 
 	cat <<EOF > "${pw_rc}"
 [config]
-	password_length = 35
+	password_length = 24
 	password_character_class = [:graph:]
 	clipboard_clear_time = 45
 

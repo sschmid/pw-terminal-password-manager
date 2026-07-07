@@ -27,7 +27,7 @@ _set_pwrc_10_0_0() {
 	# using ini-like format
 	cat <<EOF > "${PW_RC}"
 [config]
-	password_length = 35
+	password_length = 24
 	password_character_class = [:graph:]
 	clipboard_clear_time = 45
 
@@ -45,7 +45,7 @@ _set_pw_config_11_0_0() {
 	# moved to ~/.config/pw/config
 	cat <<EOF > "${PW_CONFIG_11}"
 [config]
-	password_length = 35
+	password_length = 24
 	password_character_class = [:graph:]
 	clipboard_clear_time = 45
 
@@ -63,7 +63,7 @@ _set_pw_config_12_0_0() {
 	# moved to ~/.config/pw/pw.conf
 	cat <<EOF > "${PW_CONFIG}"
 [general]
-password_length = 35
+password_length = 24
 password_character_class = [:graph:]
 clipboard_clear_time = 45
 
@@ -85,7 +85,7 @@ assert_latest_config() {
 	assert_success
 	cat <<EOF | assert_output -
 [general]
-password_length = 35
+password_length = 24
 password_character_class = [:graph:]
 clipboard_clear_time = 45
 
