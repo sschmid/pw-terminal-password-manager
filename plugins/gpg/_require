@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 command -v gpg >/dev/null || {
 	cat <<EOF >&2
 command not found: gpg

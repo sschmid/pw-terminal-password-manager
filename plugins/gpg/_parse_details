@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 
 # KCOV_EXCL_START
 # shellcheck disable=SC2016

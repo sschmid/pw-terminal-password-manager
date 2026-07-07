@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 _gpg_decrypt="$(dirname -- "${BASH_SOURCE[0]}")/_gpg_decrypt"
 _gpg_encrypt="$(dirname -- "${BASH_SOURCE[0]}")/_gpg_encrypt"
 

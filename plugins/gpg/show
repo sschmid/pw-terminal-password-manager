@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 _gpg_decrypt="$(dirname -- "${BASH_SOURCE[0]}")/_gpg_decrypt"
 _parse_details="$(dirname -- "${BASH_SOURCE[0]}")/_parse_details"
 

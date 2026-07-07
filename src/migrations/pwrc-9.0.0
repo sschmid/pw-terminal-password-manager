@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # added Oct 2024
-set -euo pipefail
+set +x -euo pipefail
 IFS=$'\n\t'
 
 pw_rc="$1"

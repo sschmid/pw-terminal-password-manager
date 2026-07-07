@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 # 🔐 pw - Terminal Password Manager
-set -euo pipefail
+set +x -euo pipefail
 IFS=$'\n\t'
 
 # make fzf preview use bash

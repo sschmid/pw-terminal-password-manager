@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 command -v keepassxc-cli >/dev/null || {
 	cat <<EOF >&2
 command not found: keepassxc-cli

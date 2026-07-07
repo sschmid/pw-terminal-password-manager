@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 
 # options="$1" keychain="$2" rename="$3" name="$4" account="$5" url="$6"
 

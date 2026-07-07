@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 IFS=$'\n\t'
 
 if [[ -v PW_COPY ]]; then

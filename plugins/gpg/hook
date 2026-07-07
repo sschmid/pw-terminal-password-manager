@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +x -euo pipefail
 
 FILE_TYPE="PGP"
 FILE_EXTENSION="/, gpg, asc"
