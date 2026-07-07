@@ -221,8 +221,9 @@ pw::output() {
 		(
 			( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait" )
 			now="$("${PW_HOME}/src/paste" | base64)"
-			[[ "${now}" != "$(printf '%s' "${output}" | base64)" ]] && before="${now}"
-			echo "${before}" | base64 -d | "${PW_HOME}/src/copy"
+			if [[ "${now}" == "$(printf '%s' "${output}" | base64)" ]]; then
+				echo "${before}" | base64 -d | "${PW_HOME}/src/copy"
+			fi
 		) &>/dev/null & disown
 	fi
 }
