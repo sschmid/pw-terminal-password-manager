@@ -24,4 +24,4 @@ ENTRYPOINT ["entrypoint.sh"]
 FROM pw AS test
 WORKDIR /opt/pw
 COPY test test
-RUN test/bats/bin/bats --jobs $(nproc) test
+RUN test/bats/bin/bats test
