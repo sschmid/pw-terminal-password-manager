@@ -9,7 +9,7 @@ setup() {
 	export PW_CLIP_TIME=1
 }
 
-_wait() { sleep 2; }
+_wait() { sleep $(( PW_CLIP_TIME + 2 )); }
 
 @test "copies item password" {
 	run pw "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
