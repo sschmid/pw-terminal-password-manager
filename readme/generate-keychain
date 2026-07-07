@@ -6,10 +6,10 @@ export PW_KEYCHAIN="readme.kdbx"
 
 password="pw"
 
-pw init "${PW_KEYCHAIN}" <<< "${password}" 2>/dev/null
+src/pw init "${PW_KEYCHAIN}" <<< "${password}" 2>/dev/null
 
 pw_add() {
-	pw add "$@" <<EOF
+	src/pw add "$@" <<EOF
 ${password}
 ${password}
 EOF
