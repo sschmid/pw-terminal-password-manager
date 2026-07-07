@@ -43,15 +43,17 @@ _wait() { sleep $(( PW_CLIP_TIME + 2 )); }
 	}
 }
 
-@test "clears clipboard after copying item password" {
+@test "restores clipboard after copying item password" {
+	echo -n "test" | _copy
 	run pw "${NAME_A}"
 	assert_success
 	_wait
 	run _paste
-	refute_output
+	assert_output "test"
 }
 
-@test "doesn't clear clipboard after copying item password when changed" {
+@test "doesn't restore clipboard after copying item password when changed" {
+	echo -n "test" | _copy
 	run pw "${NAME_A}"
 	assert_success
 	echo -n "after" | _copy
@@ -68,15 +70,17 @@ _wait() { sleep $(( PW_CLIP_TIME + 2 )); }
 	assert_output "test show <> <> <${PW_KEYCHAIN}> <${NAME_A}> <${ACCOUNT_A}> <${URL_A}>"
 }
 
-@test "clears clipboard after copying item details" {
+@test "restores clipboard after copying item details" {
+	echo -n "test" | _copy
 	run pw show "${NAME_A}"
 	assert_success
 	_wait
 	run _paste
-	refute_output
+	assert_output "test"
 }
 
-@test "doesn't clear clipboard after copying item details when changed" {
+@test "doesn't restore clipboard after copying item details when changed" {
+	echo -n "test" | _copy
 	run pw show "${NAME_A}"
 	assert_success
 	echo -n "after" | _copy
@@ -95,14 +99,16 @@ _wait() { sleep $(( PW_CLIP_TIME + 2 )); }
 	assert_output "11111"
 }
 
-@test "clears clipboard after generating password" {
+@test "restores clipboard after generating password" {
+	echo -n test | _copy
 	run pw gen
 	_wait
 	run _paste
-	refute_output
+	assert_output "test"
 }
 
-@test "doesn't clear clipboard after generating password when changed" {
+@test "doesn't restore clipboard after generating password when changed" {
+	echo -n "test" | _copy
 	run pw gen
 	echo -n "after" | _copy
 	_wait
@@ -113,6 +119,7 @@ _wait() { sleep $(( PW_CLIP_TIME + 2 )); }
 @test "env vars override config" {
 	export PW_COPY="cat > ${BATS_TEST_TMPDIR}/my_clipboard"
 	export PW_PASTE="cat ${BATS_TEST_TMPDIR}/my_clipboard"
+	touch "${BATS_TEST_TMPDIR}/my_clipboard"
 	run pw "${NAME_A}" "${ACCOUNT_A}" "${URL_A}"
 	assert_success
 

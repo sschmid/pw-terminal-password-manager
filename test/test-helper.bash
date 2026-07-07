@@ -28,6 +28,7 @@ and spaces "
 }
 
 _set_config_with_copy_paste() {
+	touch "${BATS_TEST_TMPDIR}/test_clipboard"
 	cat > "${PW_CONFIG}" <<'EOF'
 [general]
 copy = cat > "${BATS_TEST_TMPDIR}/test_clipboard"
