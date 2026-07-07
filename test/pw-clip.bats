@@ -1,4 +1,6 @@
-export BATS_NO_PARALLELIZE_WITHIN_FILE=true
+setup_file() {
+	export BATS_NO_PARALLELIZE_WITHIN_FILE=true
+}
 
 setup() {
 	load 'pw'
