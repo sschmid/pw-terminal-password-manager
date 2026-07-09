@@ -6,6 +6,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [13.0.0] - 2026-07-09
+### Added
+- Disable shell tracing in all scripts with `set -x` to avoid shell output from being logged
+
+### Changed
+- Restore clipboard to original content after timeout instead of clearing
+- Improve security by passing keychain password via stdin instead of passing as command-line argument in all plugins:
+  - `macos_keychain`
+  - `keepassxc`
+  - `gpg`
+- Change default password length from 35 to 24
+- Install script now uses XDG base directories to allow custom configuration
+
+### Deprecated
+- Old migrations (< 12.0.0) now require manual application with `pw migrate`
+
+### Removed
+- Remove `pw update`. Run the install script again to update
+
+### Fixed
+- Use `BASH_SOURCE` for robust path resolution
+- Scope `PW_PRINT=1` in `pw::prompt_password`
+
+### CI
+- Update bats
+- Trust coveralls formula
+- Update `test/shellcheck` to include all files in `src` and `plugins`
+- Add `test/run -n` option to run only manual tests
+- Improve messages for manual tests
+- Add `$CONTAINER_RUNTIME` to customize container runtime (e.g.docker, podman, container)
+- Set `WORKDIR` to `workspaces`
+
+### Other
+- Add dev container
+- Rename `DEPENDENCIES.md` to `DEPENDENCIES`
+- Rename `.dockerignore` to `.containerignore`
+- Remove .idea from gitignore
+- Add distro logos
+
 ## [12.3.1] - 2026-06-04
 ### Added
 - Fit usage within 80 chars
@@ -518,7 +557,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.0...HEAD
+[13.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.1...13.0.0
 [12.3.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.0...12.3.1
 [12.3.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.2.0...12.3.0
 [12.2.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.1.1...12.2.0
