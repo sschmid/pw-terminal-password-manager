@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [13.0.0] - 2026-07-09
+### Action required
+The install script now installs to `~/.local/share/pw` instead of `/opt/pw`.
+Please uninstall your previous `pw` installation and run the install script again.
+`pw update` has been removed. Run the install script again to update.
+
 ### Added
 - Disable shell tracing in all scripts with `set -x` to avoid shell output from being logged
 
