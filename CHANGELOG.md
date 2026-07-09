@@ -9,8 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [13.0.0] - 2026-07-09
 ### Action required
 The install script now installs to `~/.local/share/pw` instead of `/opt/pw`.
-Please uninstall your previous `pw` installation and run the install script again.
-`pw update` has been removed. Run the install script again to update.
+Please uninstall your previous `pw` installation and run the install script again:
+
+```bash
+sudo rm -rf /opt/pw /usr/local/bin/pw
+curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
+```
+
+`pw update` has been removed. Run the install script again to update pw to the latest version.
 
 ### Added
 - Disable shell tracing in all scripts with `set -x` to avoid shell output from being logged
