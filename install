@@ -37,4 +37,5 @@ if [[ ":$PATH:" != *":${BIN_DIR}:"* ]]; then
 	echo "Add the following line to your shell configuration:"
 	echo
 	echo '  export PATH="$HOME/.local/bin:$PATH"'
+	echo
 fi
