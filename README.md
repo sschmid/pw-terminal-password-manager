@@ -11,7 +11,6 @@ you to interact with [multiple keychains](#multiple-keychains) effortlessly.
 
 
 [![CI](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/sschmid/pw-terminal-password-manager/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/sschmid/pw-terminal-password-manager/badge.svg)](https://coveralls.io/github/sschmid/pw-terminal-password-manager)
 [![Latest release](https://img.shields.io/github/release/sschmid/pw-terminal-password-manager.svg)](https://github.com/sschmid/pw-terminal-password-manager/releases)
 [![Twitter](https://img.shields.io/twitter/follow/s_schmid)](https://twitter.com/intent/follow?original_referer=https%3A%2F%2Fgithub.com%2Fsschmid%2Fpw&screen_name=s_schmid&tw_p=followbutton)
 
