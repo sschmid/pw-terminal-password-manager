@@ -49,7 +49,6 @@ commands:
   open                            open keychain in native gui
   lock                            lock keychain
   unlock                          unlock keychain
-  update                          update pw
   migrate                         run migrations
 EOF
 }
@@ -250,14 +249,6 @@ pw::gen() {
 	done
 
 	pw::output <<< "${password}"
-}
-
-pw::update() {
-	local branch="${1:-main}"
-	pushd "${PW_HOME}" >/dev/null || exit 1
-		git switch "${branch}"
-		git pull
-	popd >/dev/null || exit 1
 }
 
 pw::migrate() {
@@ -486,7 +477,6 @@ main() {
 			open)    shift; pw::select_keychain  ; pw::plugin open   "${PW_KEYCHAIN}" ;;
 			lock)    shift; pw::select_keychain  ; pw::plugin lock   "${PW_KEYCHAIN}" ;;
 			unlock)  shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
-			update)  shift;                        pw::update "$@"                    ;;
 			migrate) shift;                        pw::migrate                        ;;
 			*)              pw::select_keychain  ; pw::get    "$@"                    ;;
 		esac

@@ -37,6 +37,8 @@ See [requirements](#requirements) for dependencies.
 curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
 ```
 
+Run the install script again to update pw to the latest version.
+
 ### Download
 
 [Latest release](https://github.com/sschmid/pw-terminal-password-manager/releases/latest)
@@ -46,11 +48,9 @@ extract and add `src` to your `$PATH`, or run directly:
 ~/Downloads/pw/src/pw
 ```
 
-### Update / Migrate / Uninstall
+### Uninstall
 
 ```bash
-pw update
-pw migrate
 ~/.local/share/pw/install --uninstall
 ```
 

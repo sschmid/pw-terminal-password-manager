@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 #
+# To install, run
 # curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
 #
 # To uninstall, run
@@ -7,6 +8,7 @@
 
 set -e
 
+REPO="https://github.com/sschmid/pw-terminal-password-manager"
 INST_DIR="${XDG_DATA_HOME:-"${HOME}/.local/share"}/pw"
 BIN_PATH="${XDG_BIN_HOME:-"${HOME}/.local/bin"}/pw"
 
@@ -16,13 +18,13 @@ if [[ $1 == "--uninstall" ]]; then
 	exit
 fi
 
-if [[ -d "${INST_DIR}" ]]; then
-	echo "It seems like pw is already installed at ${INST_DIR}"
-	echo "Run 'pw update' to update pw to the latest version"
-	exit
+if [[ ! -d "${INST_DIR}" ]]; then
+	mkdir -p "${INST_DIR%/*}" "${BIN_PATH%/*}"
+	git clone "${REPO}" "${INST_DIR}"
+	ln -svf "${INST_DIR}/src/pw" "${BIN_PATH}"
+	echo "pw has been installed successfully"
+else
+	git -C "${INST_DIR}" switch main
+	git -C "${INST_DIR}" pull
+	echo "pw has been updated successfully"
 fi
-
-mkdir -p "${INST_DIR%/*}" "${BIN_PATH%/*}"
-git clone https://github.com/sschmid/pw-terminal-password-manager "${INST_DIR}"
-ln -svf "${INST_DIR}/src/pw" "${BIN_PATH}"
-echo "pw has been installed successfully"
