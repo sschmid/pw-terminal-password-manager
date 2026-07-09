@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [13.0.1] - 2026-07-09
+### Added
+- Add `PATH` check in install script to make sure users add `~/.local/bin` to their `PATH`
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+### CI
+- Don't run coverage in parallel
+
 ## [13.0.0] - 2026-07-09
 ### Action required
 The install script now installs to `~/.local/share/pw` instead of `/opt/pw`.
@@ -568,7 +579,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.1...HEAD
+[13.0.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.0...13.0.1
 [13.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.1...13.0.0
 [12.3.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.0...12.3.1
 [12.3.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.2.0...12.3.0
