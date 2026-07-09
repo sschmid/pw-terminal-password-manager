@@ -70,7 +70,7 @@ jobs:
           submodules: recursive
 
       - name: "Test coverage"
-        run: sudo test/coverage --jobs $(sysctl -n hw.logicalcpu) test
+        run: sudo test/coverage test
 
       - name: "Upload coverage report"
         uses: actions/upload-artifact@v7
