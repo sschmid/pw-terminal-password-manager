@@ -37,13 +37,13 @@ options:
 args: [<name>] [<account>] [<url>] [<notes>]
 
 commands:
-  [-p] [<args>]                   copy (or print) password. If no args, fzf mode
+  [-p] [<args>]                   copy/print password (fzf if no args)
   init <keychain>                 create keychain
-  add [<args>]                    add entry. If no args, interactive mode
-  edit [<args>]                   edit entry. If no args, fzf mode
-  mv [<args>]                     move (rename) entry. If no args, fzf mode
-  [-p] show [<args>]              copy (or print) details. If no args, fzf mode
-  rm [<args>]                     remove entry. If no args, fzf mode
+  add [<args>]                    add entry (interactive if no args)
+  edit [<args>]                   edit entry (fzf if no args)
+  mv [<args>]                     move/rename entry (fzf if no args)
+  [-p] show [<args>]              copy/print details (fzf if no args)
+  rm [<args>]                     remove entry (fzf if no args)
   ls                              list all entries
   [-p] gen [<length>] [<class>]   generate password (default: 24 [:graph:])
   open                            open keychain in native gui
