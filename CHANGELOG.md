@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [13.0.2] - 2026-07-13
+### Migration
+Added a migration for [13.0.0] that automatically migrates your installation
+from `/usr/local/opt/pw` or `/opt/pw` to the new default location: `~/.local/share/pw`
+
+Run `pw migrate` to apply and migrate to the new install location.
+
+### Added
+- Add pw install location migration
+
+### CI
+- Remove coverage and Coveralls CI jobs
+
 ## [13.0.1] - 2026-07-09
 ### Added
 - Add `PATH` check in install script to make sure users add `~/.local/bin` to their `PATH`
@@ -582,7 +595,8 @@ new format. `pw` can automatically migrate your `.pwrc` to the new format:
 - Add install script
 - Add readme
 
-[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.1...HEAD
+[Unreleased]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.2...HEAD
+[13.0.2]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.1...13.0.2
 [13.0.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/13.0.0...13.0.1
 [13.0.0]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.1...13.0.0
 [12.3.1]: https://github.com/sschmid/pw-terminal-password-manager/compare/12.3.0...12.3.1
