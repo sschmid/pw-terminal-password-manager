@@ -1,5 +1,5 @@
 FROM alpine:latest AS base
-WORKDIR /opt/pw
+WORKDIR /root/.local/share/pw
 COPY DEPENDENCIES .
 RUN apk add --no-cache \
     $(cat DEPENDENCIES) \
@@ -8,7 +8,7 @@ RUN apk add --no-cache \
     xvfb
 
 FROM base AS pw
-WORKDIR /opt/pw
+WORKDIR /root/.local/share/pw
 COPY src src
 COPY examples examples
 COPY lib lib
@@ -20,6 +20,6 @@ COPY container/entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
 
 FROM pw AS test
-WORKDIR /opt/pw
+WORKDIR /root/.local/share/pw
 COPY test test
 RUN test/bats/bin/bats test

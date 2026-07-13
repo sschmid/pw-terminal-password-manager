@@ -1,6 +1,6 @@
 FROM archlinux:latest AS base
 # FROM --platform=linux/amd64 archlinux:latest AS base
-WORKDIR /opt/pw
+WORKDIR /root/.local/share/pw
 COPY DEPENDENCIES .
 RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
     $(cat DEPENDENCIES) \
@@ -10,7 +10,7 @@ RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
     && pacman -Scc --noconfirm
 
 FROM base AS pw
-WORKDIR /opt/pw
+WORKDIR /root/.local/share/pw
 COPY src src
 COPY examples examples
 COPY lib lib
@@ -22,6 +22,6 @@ COPY container/entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
 
 FROM pw AS test
-WORKDIR /opt/pw
+WORKDIR /root/.local/share/pw
 COPY test test
 RUN test/bats/bin/bats test
