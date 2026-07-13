@@ -262,6 +262,9 @@ pw::migrate() {
 
 	# Migrate old pw.conf format
 	"${PW_HOME}/src/migrations/pwconf-12.0.0"
+
+	# Migrate old install location
+	"${PW_HOME}/src/migrations/pw-install-13.0.0"
 }
 
 #

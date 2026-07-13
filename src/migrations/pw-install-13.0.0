@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# added July 2026
+set +x -euo pipefail
+IFS=$'\n\t'
+
+removed=0
+old_bin="/usr/local/bin/pw"
+old_pws=(
+	"/usr/local/opt/pw"
+	"/opt/pw"
+)
+
+for old_pw in "${old_pws[@]}"; do
+	if [[ -d "${old_pw}" ]]; then
+		if (( ! PW_YES )); then
+			IFS= read -rp "pw 13.0.0 moved the install from '${old_pw}' to '${XDG_DATA_HOME:-${HOME}/.local/share}/pw'. Would you like to remove your old installation and install pw to the new location? (y / N): " answer >&2
+			[[ "${answer}" == [yY] ]] || exit 1
+		fi
+
+		rm -rf "${old_pw}"
+
+		if [[ -f "${old_bin}" ]]; then
+			rm -f "${old_bin}"
+		fi
+
+		removed=1
+	fi
+done
+
+if (( removed )); then
+	curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
+fi
