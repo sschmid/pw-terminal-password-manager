@@ -20,10 +20,13 @@ export PATH="$HOME/.local/bin:$PATH"
 ## [13.0.0] - 2026-07-09
 ### Action required
 The install script now installs to `~/.local/share/pw` instead of `/opt/pw`.
-Please uninstall your previous `pw` installation and run the install script again:
+Run `pw migrate` or uninstall your previous `pw` installation and run the install script again:
 
 ```bash
-sudo rm -rf /opt/pw /usr/local/bin/pw
+pw migrate
+
+# or
+sudo rm -rf /usr/local/opt/pw /opt/pw /usr/local/bin/pw
 curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
 ```
 
@@ -42,7 +45,7 @@ curl -fsSL https://raw.githubusercontent.com/sschmid/pw/main/install | bash
 - Install script now uses XDG base directories to allow custom configuration
 
 ### Deprecated
-- Old migrations (< 12.0.0) now require manual application with `pw migrate`
+- Migrations now require manual application with `pw migrate`
 
 ### Removed
 - Remove `pw update`. Run the install script again to update

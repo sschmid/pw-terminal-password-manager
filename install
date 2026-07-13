@@ -31,11 +31,13 @@ else
 fi
 
 if [[ ":$PATH:" != *":${BIN_DIR}:"* ]]; then
-	echo
-	echo "${BIN_DIR} is not currently in your PATH."
-	echo
-	echo "Add the following line to your shell configuration:"
-	echo
-	echo '  export PATH="$HOME/.local/bin:$PATH"'
-	echo
+	cat <<EOF
+
+${BIN_DIR} is not currently in your PATH.
+
+Add the following line to your shell configuration:
+
+  export PATH="\$HOME/.local/bin:\$PATH"
+
+EOF
 fi
