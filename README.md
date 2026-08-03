@@ -330,6 +330,14 @@ Or: `export PW_MACOS_KEYCHAIN_ACCESS_CONTROL="always-allow"`
 - Output binary: `pw add GitHub.gpg`
 - Output ASCII-armored: `pw add GitHub.asc`
 
+Tell GPG which terminal to use for passphrase prompts: `export GPG_TTY=$(tty)`
+This resolves:
+
+```bash
+gpg: public key decryption failed: Not a tty
+gpg: decryption failed: Not a tty
+```
+
 Ignore false-positive keychain dirs:
 
 ```ini
