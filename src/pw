@@ -8,11 +8,7 @@ IFS=$'\n\t'
 SHELL="$(type -p bash)"
 export SHELL
 
-PW_HOME="${BASH_SOURCE[0]}"
-while [[ -L "${PW_HOME}" ]]; do
-	PW_HOME="$(readlink "${PW_HOME}")"
-done
-PW_HOME="$(cd "$(dirname "${PW_HOME}")/.." && pwd)"
+PW_HOME="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
 declare -rx PW_HOME
 declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
