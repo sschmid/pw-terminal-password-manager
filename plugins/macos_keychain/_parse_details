@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set +x -euo pipefail
 
-# shellcheck disable=SC2016
+# shellcheck disable=2016
 awk_cmd='BEGIN { FS="<blob>=" }
 /0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
 /"acct"/ { account = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }

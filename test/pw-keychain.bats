@@ -1,4 +1,4 @@
-# shellcheck disable=SC2030,SC2031
+# shellcheck disable=2030,2031
 setup() {
 	load 'pw'
 	_setup
@@ -87,7 +87,7 @@ setup() {
 }
 
 @test "replace ~ with real HOME" {
-	# shellcheck disable=SC2088
+	# shellcheck disable=2088
 	_config_append_keychains "~/${TEST_KEYCHAIN}"
 	run pw ls
 	assert_success

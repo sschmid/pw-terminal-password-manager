@@ -1,4 +1,4 @@
-# shellcheck disable=SC2034
+# shellcheck disable=1091,2034
 _common_setup() {
 	load 'test_helper/bats-support/load'
 	load 'test_helper/bats-assert/load'

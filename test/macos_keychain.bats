@@ -1,4 +1,4 @@
-# shellcheck disable=SC2030,SC2031
+# shellcheck disable=2030,2031
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 
@@ -6,7 +6,7 @@ setup() {
 	load 'macos_keychain'
 	_setup
 	_set_config_with_copy_paste
-	# shellcheck disable=SC2016
+	# shellcheck disable=2016
 	_config_append_with_plugin '$PW_HOME/plugins/macos_keychain'
 	_config_append_macos_keychain_keychain_access_control_always_allow
 	pw init "${PW_KEYCHAIN}" <<< "${KEYCHAIN_TEST_PASSWORD}"
@@ -149,7 +149,7 @@ assert_rm_not_found_output() {
 	assert_adds_item "${PW_1}" "${NAME_A}" "" "" "${SINGLE_LINE_NOTES}"
 	assert_item_exists "${PW_1}" "${NAME_A}"
 
-	# shellcheck disable=SC2317,SC2329
+	# shellcheck disable=2317,2329
 	_get_note() {
 		local comments
 		comments="$(security find-generic-password -j "${SINGLE_LINE_NOTES}" -g "${PW_KEYCHAIN}" 2>&1 |

@@ -7,7 +7,7 @@ IFS= read -r _
 # options="$1" keychain="$2"
 keychain="$2"
 
-# shellcheck disable=SC1083
+# shellcheck disable=1083
 _fzf_preview() {
 	gpg --quiet --decrypt "${keychain}/"{4} | "${_parse_details}" {4}
 }

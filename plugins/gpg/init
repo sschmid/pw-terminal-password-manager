@@ -4,5 +4,5 @@ set +x -euo pipefail
 # options="$1" keychain="$2"
 keychain="$2"
 
-# shellcheck disable=SC2174
+# shellcheck disable=2174
 mkdir -m 700 -p "${keychain}"

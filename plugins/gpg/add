@@ -8,7 +8,7 @@ IFS= read -r password
 # options="$1" keychain="$2" name="$3" account="$4" url="$5" notes="$6"
 options="$1" keychain="$2" name="$3" account="$4" url="$5" notes="$6"
 
-# shellcheck disable=SC2174
+# shellcheck disable=2174
 mkdir -m 700 -p "${keychain}"
 
 mkdir -p "${keychain}/$(dirname "${name}")"

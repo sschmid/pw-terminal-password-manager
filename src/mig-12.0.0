@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # added May 2025
-# shellcheck disable=SC2174
 set +x -euo pipefail
 IFS=$'\n\t'
 

@@ -3,7 +3,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 setup() {
 	load 'macos_keychain'
 	_setup
-	# shellcheck disable=SC2016
+	# shellcheck disable=2016
 	_config_append_with_plugin '$PW_HOME/plugins/macos_keychain'
 }
 

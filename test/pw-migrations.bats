@@ -1,4 +1,3 @@
-# shellcheck disable=SC2030,SC2031
 setup() {
 	load 'pw'
 	_setup

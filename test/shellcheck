@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2046
+# shellcheck disable=2046
 shellcheck $(
 	find "src" "plugins" -type f &&
 	find "test/fixtures" -type f -name "*.bash" &&

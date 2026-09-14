@@ -1,4 +1,4 @@
-# shellcheck disable=SC2030,SC2031
+# shellcheck disable=2030,2031
 setup_file() {
 	export BATS_NO_PARALLELIZE_WITHIN_FILE=true
 	export GNUPGHOME="${BATS_FILE_TMPDIR}/.gnupg"
@@ -13,7 +13,7 @@ setup() {
 	load 'gpg'
 	_setup
 	_set_config_with_copy_paste
-	# shellcheck disable=SC2016
+	# shellcheck disable=2016
 	_config_append_with_plugin '$PW_HOME/plugins/gpg'
 	KEYCHAIN_TEST_PASSWORD="pw_test_password"
 	pw init "${PW_KEYCHAIN}"
@@ -28,8 +28,8 @@ teardown() {
 # helpers
 ################################################################################
 
-# shellcheck disable=SC2009
 _ps() {
+	# shellcheck disable=2009
 	case "${OSTYPE}" in
 		darwin*) ps -A | grep "gpg-agent --homedir ${GNUPGHOME}" | grep -v grep ;;
 		linux*) ps -A | grep "gpg-agent" | grep -v grep ;;
@@ -89,7 +89,7 @@ assert_url() {
 }
 
 assert_notes() {
-	# shellcheck disable=SC2016
+	# shellcheck disable=2016
 	run _gpg_decrypt "$1" '4,$p'
 	assert_success
 	if (( $# == 2 ))
@@ -298,7 +298,6 @@ EOF
 	assert_notes "${NAME_A}" "${MULTI_LINE_NOTES}"
 }
 
-# shellcheck disable=SC2034
 @test "edits item with key id" {
 	local keychain="${PW_KEYCHAIN}"
 	PW_KEYCHAIN="${keychain}:key=634419040D678764"

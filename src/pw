@@ -49,6 +49,8 @@ pw::parse_config() {
 
 	declare -ga PW_PLUGINS PW_KEYCHAINS
 	local section key value
+
+	# shellcheck disable=2016
 	while IFS=$'\t' read -r section key value; do
 		value="${value/'~'/"${HOME}"}"
 		value="${value/'$HOME'/"${HOME}"}"
@@ -79,6 +81,7 @@ pw::parse_config() {
 			*)
 				for plugin in "${PW_PLUGINS[@]}"; do
 					if [[ "${plugin}" == *"/${section}" && -f "${plugin}/config_hook" ]]; then
+						# shellcheck disable=1091
 						source "${plugin}/config_hook"
 						pw::config_hook "${key}" "${value}"
 						unset -f pw::config_hook
