@@ -3,13 +3,13 @@ set +x -euo pipefail
 IFS=$'\n\t'
 
 if (( ! $# )); then
-	printf '%s error: config file not specified\n' "${PROGRAM}" >&2
+	printf 'error: config file not specified\n' >&2
 	exit 1
 fi
 
 CONFIG_FILE="$1"
 if [[ ! -f "${CONFIG_FILE}" ]]; then
-	printf '%s error: config file not found: %s\n' "${PROGRAM}" "${CONFIG_FILE}" >&2
+	printf 'error: config file not found: %s\n' "${CONFIG_FILE}" >&2
 	exit 1
 fi
 

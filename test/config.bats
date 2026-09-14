@@ -19,14 +19,14 @@ write_config() {
 	run --separate-stderr config_parse_section
 	assert_failure
 	refute_output
-	assert_stderr "${PROGRAM} error: config file not specified"
+	assert_stderr "error: config file not specified"
 }
 
 @test "fails when config file does not exist" {
 	run --separate-stderr config_parse_section "unknown.conf"
 	assert_failure
 	refute_output
-	assert_stderr "${PROGRAM} error: config file not found: unknown.conf"
+	assert_stderr "error: config file not found: unknown.conf"
 }
 
 @test "does not print if no section exists" {
