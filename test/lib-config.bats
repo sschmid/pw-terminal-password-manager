@@ -7,7 +7,6 @@ setup() {
 	PROGRAM="test-program"
 	TEST_CONFIG="${BATS_TEST_TMPDIR}/test.conf"
 	source 'lib/config.bash'
-	PATH="${BATS_TEST_DIRNAME}/../lib:${PATH}"
 }
 
 write_config() {

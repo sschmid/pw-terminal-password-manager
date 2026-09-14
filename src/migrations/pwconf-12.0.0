@@ -20,10 +20,17 @@ if [[ -f "${old_pw_config}" ]] ; then
 	rm -f "${mig_pw_config}"
 	touch "${mig_pw_config}"
 
+	trim() {
+		local line="$1"
+		line="${line#"${line%%[![:space:]]*}"}"
+		line="${line%"${line##*[![:space:]]}"}"
+		printf '%s' "${line}"
+	}
+
 	migrate() {
 		local line section=""
 		while IFS= read -r line; do
-			line="$(string_trim "${line}")"
+			line="$(trim "${line}")"
 			[[ -z "${line}" ]] && echo >> "${mig_pw_config}" && continue
 			[[ "${line}" == "#"* || "${line}" == ";"* ]] && echo "${line}" >> "${mig_pw_config}" && continue
 

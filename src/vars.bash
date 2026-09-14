@@ -8,4 +8,4 @@ declare -gr PW_CONFIG_FILE="${PW_CONFIG_HOME}/pw.conf"
 
 mkdir -m 700 -p "${PW_CONFIG_HOME}"
 
-PATH="${PW_HOME}/src:${PW_HOME}/lib:${PATH}"
+PATH="${PW_HOME}/src:${PATH}"

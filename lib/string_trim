@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-IFS=$'\n\t'
-
-line="$1"
-line="${line#"${line%%[![:space:]]*}"}"
-line="${line%"${line##*[![:space:]]}"}"
-printf '%s' "${line}"
