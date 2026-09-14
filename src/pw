@@ -51,12 +51,12 @@ pw::parse_config() {
 		[[ -f "${config}" ]] || cp "${PW_HOME}/examples/pw.conf" "${config}"
 	fi
 
-	declare -ag PW_PLUGINS PW_KEYCHAINS
+	declare -ga PW_PLUGINS PW_KEYCHAINS
 	pw::config_callback < <(config_parse_section "${config}" "")
 
-	declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-24}"
-	declare -rgx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
-	declare -irgx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
+	declare -girx PW_GEN_LENGTH="${PW_GEN_LENGTH:-24}"
+	declare -grx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
+	declare -girx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
 }
 
 pw::config_callback() {
@@ -74,8 +74,8 @@ pw::config_callback() {
 					password_length)          [[ -v PW_GEN_LENGTH ]] || PW_GEN_LENGTH="${value}" ;;
 					password_character_class) [[ -v PW_GEN_CLASS ]]  || PW_GEN_CLASS="${value}"  ;;
 					clipboard_clear_time)     [[ -v PW_CLIP_TIME ]]  || PW_CLIP_TIME="${value}"  ;;
-					copy)  [[ -v PW_COPY ]]  || declare -rgx PW_COPY="${value}"  ;;
-					paste) [[ -v PW_PASTE ]] || declare -rgx PW_PASTE="${value}" ;;
+					copy)  [[ -v PW_COPY ]]  || declare -grx PW_COPY="${value}"  ;;
+					paste) [[ -v PW_PASTE ]] || declare -grx PW_PASTE="${value}" ;;
 				esac
 				;;
 			"plugins")
