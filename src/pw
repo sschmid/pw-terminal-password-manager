@@ -91,7 +91,7 @@ pw::parse_config() {
 				done
 				;;
 		esac
-	done < <(config_parse_section "${config}" "")
+	done < <(config-parse "${config}" "")
 
 	declare -girx PW_GEN_LENGTH="${PW_GEN_LENGTH:-24}"
 	declare -grx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"

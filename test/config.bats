@@ -16,14 +16,14 @@ write_config() {
 }
 
 @test "fails when config file argument is not specified" {
-	run --separate-stderr config_parse_section
+	run --separate-stderr config-parse
 	assert_failure
 	refute_output
 	assert_stderr "error: config file not specified"
 }
 
 @test "fails when config file does not exist" {
-	run --separate-stderr config_parse_section "unknown.conf"
+	run --separate-stderr config-parse "unknown.conf"
 	assert_failure
 	refute_output
 	assert_stderr "error: config file not found: unknown.conf"
@@ -34,7 +34,7 @@ write_config() {
 key1 = value 1
 key2 = value 2
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	refute_output
 }
@@ -45,7 +45,7 @@ EOF
 key1 = value 1
 key2 = value 2
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	refute_output
 }
@@ -56,7 +56,7 @@ EOF
 key1 = value 1
 key2 = value 2
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1
@@ -74,7 +74,7 @@ key2 = value 2
 key3 = value 3
 key4 = value 4
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key3	value 3
@@ -94,7 +94,7 @@ key4 = value 4
 key5 = value 5
 key6 = value 6
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1
@@ -114,7 +114,7 @@ key1 = value 1
 key2 = value 2
 
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1
@@ -132,7 +132,7 @@ key1 = value 1
 ; this is a comment
 key2 = value 2
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1
@@ -146,7 +146,7 @@ EOF
   	key 1    = 	 value 1
 			key 2		=   value 2
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key 1	value 1
@@ -161,7 +161,7 @@ key1 = value 1
 key2 =
 key3 = value 3
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1
@@ -179,7 +179,7 @@ key2 = value 2 line 1 \
        value 2 line 2 \
        value 2 line 3
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1 line 1 value 1 line 2 value 1 line 3
@@ -201,7 +201,7 @@ key2 = value 2 line 1 \
 
        value 2 line 3
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1 line 1 value 1 line 2 value 1 line 3
@@ -219,7 +219,7 @@ key2 = value 2 line 1 \
       ;  value 2 line 2 \
        value 2 line 3
 EOF
-	run config_parse_section "${TEST_CONFIG}" "section 1"
+	run config-parse "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
 section 1	key1	value 1 line 1 value 1 line 3
@@ -244,7 +244,7 @@ key2 = value 2
 key3 = value 3
 key4 = value 4
 EOF
-	run config_parse_section "${TEST_CONFIG}" ""
+	run config-parse "${TEST_CONFIG}" ""
 	assert_success
 	cat <<EOF | assert_output -
 	key1	value 1
