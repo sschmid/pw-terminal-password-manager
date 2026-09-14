@@ -8,7 +8,7 @@ assert_pw_home() {
 	assert_output --partial "🔐 pw $(cat "${PROJECT_ROOT}/version.txt") - Terminal Password Manager"
 }
 
-@test "prints help" {
+@test "prints usage" {
 	run pw -h
 	assert_success
 	assert_output --partial "usage: pw"

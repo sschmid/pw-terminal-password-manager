@@ -15,7 +15,7 @@ source "${PW_HOME}/lib/string.bash"
 source "${PW_HOME}/lib/config.bash"
 export -f lib_string_trim
 
-pw::help() {
+pw::usage() {
 	cat <<EOF
 🔐 pw $(cat "${PW_HOME}/version.txt") - Terminal Password Manager
 
@@ -445,7 +445,7 @@ main() {
 	local config="" options
 	while getopts ":hypk:c:" options; do
 		case "${options}" in
-			h) pw::help; return ;;
+			h) pw::usage; return ;;
 			y) PW_YES=1 ;;
 			p) PW_PRINT=1 ;;
 			k) PW_KEYCHAIN="${OPTARG}" ;;
