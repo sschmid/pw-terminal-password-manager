@@ -52,14 +52,6 @@ pw::parse_config() {
 	fi
 
 	declare -ga PW_PLUGINS PW_KEYCHAINS
-	pw::config_callback < <(config_parse_section "${config}" "")
-
-	declare -girx PW_GEN_LENGTH="${PW_GEN_LENGTH:-24}"
-	declare -grx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
-	declare -girx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
-}
-
-pw::config_callback() {
 	local section key value
 	while IFS=$'\t' read -r section key value; do
 		value="${value/'~'/"${HOME}"}"
@@ -99,7 +91,11 @@ pw::config_callback() {
 				done
 				;;
 		esac
-	done
+	done < <(config_parse_section "${config}" "")
+
+	declare -girx PW_GEN_LENGTH="${PW_GEN_LENGTH:-24}"
+	declare -grx PW_GEN_CLASS="${PW_GEN_CLASS:-"[:graph:]"}"
+	declare -girx PW_CLIP_TIME="${PW_CLIP_TIME:-45}"
 }
 
 pw::set_keychain() {
