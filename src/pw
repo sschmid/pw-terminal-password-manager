@@ -4,10 +4,6 @@
 set +x -euo pipefail
 IFS=$'\n\t'
 
-# make fzf preview use bash
-SHELL="$(type -p bash)"
-export SHELL
-
 PW_HOME="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
 
 source "${PW_HOME}/src/vars.bash"
@@ -189,8 +185,6 @@ pw::infer_plugin() {
 	fi
 }
 
-declare -ix PW_PRINT=0
-
 pw::output() {
 	if (( PW_PRINT )); then
 		cat
@@ -199,27 +193,23 @@ pw::output() {
 		output=$(cat)
 		local pname="pw-clip" before now
 		pkill -f "^${pname}" 2>/dev/null && sleep 0.5
-		before="$("${PW_HOME}/src/paste" 2>/dev/null | base64)"
-		printf '%s' "${output}" | "${PW_HOME}/src/copy"
+		before="$(paste 2>/dev/null | base64)"
+		printf '%s' "${output}" | copy
 		(
 			( exec -a "${pname}" bash <<< "trap 'kill %1' TERM; sleep ${PW_CLIP_TIME} & wait" )
-			now="$("${PW_HOME}/src/paste" | base64)"
+			now="$(paste | base64)"
 			if [[ "${now}" == "$(printf '%s' "${output}" | base64)" ]]; then
-				echo "${before}" | base64 -d | "${PW_HOME}/src/copy"
+				echo "${before}" | base64 -d | copy
 			fi
 		) &>/dev/null & disown
 	fi
 }
 
+export -f pw::output
+
 #
 # BEGIN plugin
 #
-
-PW_NAME=""
-PW_ACCOUNT=""
-PW_URL=""
-PW_NOTES=""
-declare -i PW_FZF=0
 
 pw::plugin() {
 	local cmd="$1"; shift
@@ -246,7 +236,7 @@ pw::add() {
 
 	pw::plugin add "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}" <<EOF
 ${keychain_password}
-$(password-prompt)
+$(password-prompt "${PW_NAME}")
 EOF
 }
 
@@ -256,7 +246,7 @@ pw::edit() {
 	pw::select_item_with_prompt "edit" "$@"
 	pw::plugin edit "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<EOF
 ${keychain_password}
-$(password-prompt)
+$(password-prompt "${PW_NAME}")
 EOF
 }
 
@@ -335,17 +325,27 @@ pw::select_item_with_prompt() {
 		(( PW_PRINT )) && yank_action="print" || yank_action="copy"
 
 		# KCOV_EXCL_START
-		item="$(fzf --prompt "${fzf_prompt}> " --layout reverse \
-			--delimiter '\t' --with-nth 1..3 --nth 1..3 \
-			--preview "${preview}" --preview-window hidden \
+		item="$(fzf \
+			--with-nth 1..3 \
+			--accept-nth 4..6 \
+			--delimiter '\t' \
+			--style full \
+			--layout=reverse \
+			--border \
+			--border-label ' pw ' \
+			--prompt "${fzf_prompt}> " \
+			--preview "${preview}" \
+			--preview-window hidden \
 			--header "?: toggle preview, CTRL-Y: ${yank_action} details" \
+			--with-shell='bash -c' \
+			--bind "start:reload:printf '%s' '${items}'" \
 			--bind "ctrl-y:execute(${yank})+abort" \
-			--bind '?:toggle-preview' <<< "${items}")"
+			--bind '?:toggle-preview')"
 		# KCOV_EXCL_STOP
 
-		PW_NAME="$(awk -F '\t' '{print $4}' <<< "${item}")"
-		PW_ACCOUNT="$(awk -F '\t' '{print $5}' <<< "${item}")"
-		PW_URL="$(awk -F '\t' '{print $6}' <<< "${item}")"
+		PW_NAME="$(awk -F '\t' '{print $1}' <<< "${item}")"
+		PW_ACCOUNT="$(awk -F '\t' '{print $2}' <<< "${item}")"
+		PW_URL="$(awk -F '\t' '{print $3}' <<< "${item}")"
 		[[ -n "${PW_NAME}" || -n "${PW_ACCOUNT}" || -n "${PW_URL}" ]] || exit 1
 		PW_FZF=1
 	fi
@@ -371,6 +371,12 @@ pw::require_fzf() {
 	command -v fzf >/dev/null || pw::exit "pw requires fzf. Please install fzf: https://github.com/junegunn/fzf"
 }
 
+PW_NAME=""
+PW_ACCOUNT=""
+PW_URL=""
+PW_NOTES=""
+declare -i PW_FZF=0
+declare -i PW_PRINT=0
 declare -ix PW_YES=0
 
 main() {

@@ -6,4 +6,4 @@ IFS= read -r keychain_password
 options="$1" keychain="$2"
 
 # shellcheck disable=SC2016
-echo '_=""; echo "${_:1:-1}"; echo "test fzf_preview <{4}> <{5}> <{6}> <${SHELL}>"'
+echo '_=""; echo "${_:1:-1}"; echo "test fzf_preview <{4}> <{5}> <{6}> <${BASH_VERSION}>"'

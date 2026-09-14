@@ -119,6 +119,7 @@ EOF
 	cat <<EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
+Passwords do not match. Please try again.
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
 test add <> <> <${PW_KEYCHAIN}> <test 3> <${NAME_A}> <> <> <>
@@ -222,6 +223,7 @@ EOF
 	cat <<EOF | assert_output -
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
+Passwords do not match. Please try again.
 Enter password for '${NAME_A}' (leave empty to generate password):
 Retype password for '${NAME_A}':
 test edit <> <> <${PW_KEYCHAIN}> <test 3> <${NAME_A}> <> <>
