@@ -49,17 +49,15 @@ EOF
 }
 
 pw::parse_config() {
-	[[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
-
-	local config="${1:-"${PW_CONFIG_FILE}"}"
-	declare -ag PW_PLUGINS PW_KEYCHAINS
-
-	# shellcheck disable=SC2174
-	if [[ ! -f "${config}" ]]; then
-		mkdir -m 700 -p "${PW_CONFIG_HOME}" "${PW_CONFIG_HOME}/pw"
-		cp "${PW_HOME}/examples/pw.conf" "${config}"
+	if [[ -n "$1" ]]; then
+		[[ -f "$1" ]] || pw::exit "pw: config file not found: $1"
+		local config="$1"
+	else
+		local config="${PW_CONFIG_FILE}"
+		[[ -f "${config}" ]] || cp "${PW_HOME}/examples/pw.conf" "${config}"
 	fi
 
+	declare -ag PW_PLUGINS PW_KEYCHAINS
 	lib_config_parse_section "${config}" "" pw::config_callback
 
 	declare -irgx PW_GEN_LENGTH="${PW_GEN_LENGTH:-24}"
