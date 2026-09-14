@@ -15,30 +15,57 @@ fi
 
 SECTION="$2"
 
-trim() {
-	local line="$1"
-	line="${line#"${line%%[![:space:]]*}"}"
-	line="${line%"${line##*[![:space:]]}"}"
-	printf '%s' "${line}"
-}
+awk -v wanted="${SECTION}" '
+{
+	line = $0
 
-section=""
-while IFS= read -r line; do
-	line="$(trim "${line}")"
-	[[ -z ${line} ]] && continue
-	[[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
-	[[ "${line}" == \[*\] ]] && section="${line//[\[\]]/}" && continue
-	if [[ -z "${SECTION}" ]] || [[ "${section}" == "${SECTION}" ]]; then
-		while [[ "${line}" == *\\ ]]; do
-			IFS= read -r next_line
-			next_line="$(trim "${next_line}")"
-			[[ -z ${next_line} ]] && continue
-			[[ "${next_line}" == "#"* || "${next_line}" == ";"* ]] && continue
-			line="${line%\\}${next_line}"
-		done
-		key="$(trim "${line%%=*}")"
-		value="$(trim "${line#*=}")"
-		[[ -z ${value} ]] && continue
-		printf '%s\t%s\t%s\n' "${section}" "${key}" "${value}"
-	fi
-done < "${CONFIG_FILE}"
+	sub(/^[[:space:]]+/, "", line)
+	sub(/[[:space:]]+$/, "", line)
+
+	if (line == "" || line ~ /^[#;]/)
+		next
+
+	if (line ~ /^\[.*\]$/) {
+		section = line
+		sub(/^\[/, "", section)
+		sub(/\]$/, "", section)
+		next
+	}
+
+	if (wanted != "" && section != wanted)
+		next
+
+	while (line ~ /\\$/) {
+		line = substr(line, 1, length(line) - 1)
+
+		while (1) {
+			if (getline next_line <= 0)
+				break
+
+			sub(/^[[:space:]]+/, "", next_line)
+			sub(/[[:space:]]+$/, "", next_line)
+
+			if (next_line == "" || next_line ~ /^[#;]/)
+				continue
+			break
+		}
+
+		line = line next_line
+	}
+
+	eq = index(line, "=")
+
+	if (!eq)
+		next
+
+	key = substr(line, 1, eq - 1)
+	value = substr(line, eq + 1)
+
+	sub(/^[[:space:]]+/, "", key)
+	sub(/[[:space:]]+$/, "", key)
+	sub(/^[[:space:]]+/, "", value)
+	sub(/[[:space:]]+$/, "", value)
+
+	if (value != "")
+		printf "%s\t%s\t%s\n", section, key, value
+}' "${CONFIG_FILE}"
