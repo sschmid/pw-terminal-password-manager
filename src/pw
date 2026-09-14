@@ -230,25 +230,6 @@ pw::plugin() {
 	"${PW_PLUGIN}/${cmd}" "${PW_KEYCHAIN_OPTIONS}" "$@"
 }
 
-pw::prompt_password() {
-	local password=""
-	if [[ -p /dev/stdin ]]; then
-		IFS= read -r password
-		printf '%s' "${password}"
-	else
-		while [[ -z "${password}" ]]; do
-			IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' password
-			if [[ -n "${password}" ]]; then
-				local retype
-				IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
-				[[ "${retype}" == "${password}" ]] || password=""
-			else
-				gen
-			fi
-		done
-	fi
-}
-
 pw::init() {
 	[[ -e "${PW_KEYCHAIN}" ]] && pw::exit "pw: ${PW_KEYCHAIN} already exists."
 	pw::plugin init "${PW_KEYCHAIN}"
@@ -269,7 +250,7 @@ pw::add() {
 
 	pw::plugin add "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}" <<EOF
 ${keychain_password}
-$(pw::prompt_password)
+$(prompt_password)
 EOF
 }
 
@@ -279,7 +260,7 @@ pw::edit() {
 	pw::select_item_with_prompt "edit" "$@"
 	pw::plugin edit "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<EOF
 ${keychain_password}
-$(pw::prompt_password)
+$(prompt_password)
 EOF
 }
 
