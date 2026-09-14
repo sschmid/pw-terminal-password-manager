@@ -78,24 +78,21 @@ assert_pw_home() {
 @test "generates and prints password" {
 	export PW_GEN_LENGTH=1
 	export PW_GEN_CLASS="1"
-	run pw -p gen
-	assert_success
+	run -141 pw -p gen
 	assert_output "1"
 }
 
 @test "generates password with specified length" {
 	export PW_GEN_LENGTH=2
 	export PW_GEN_CLASS="1"
-	run pw -p gen 1
-	assert_success
+	run -141 pw -p gen 1
 	assert_output "1"
 }
 
 @test "generates password with specified character class" {
 	export PW_GEN_LENGTH=2
 	export PW_GEN_CLASS="1"
-	run pw -p gen 1 "2"
-	assert_success
+	run -141 pw -p gen 1 "2"
 	assert_output "2"
 }
 

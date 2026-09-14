@@ -544,7 +544,6 @@ EOF
 	assert_item_exists "${PW_1}" "NAME A" <<< "${KEYCHAIN_TEST_PASSWORD}"
 
 	export PW_CLIP_TIME=1
-	bats_require_minimum_version 1.5.0
 	run -130 pw <<< "${KEYCHAIN_TEST_PASSWORD}"
 
 	run _paste

@@ -580,7 +580,6 @@ EOF
 	assert_item_exists "${PW_1}" "NAME A"
 
 	export PW_CLIP_TIME=1
-	bats_require_minimum_version 1.5.0
 	run -130 pw
 
 	run _paste

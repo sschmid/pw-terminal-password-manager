@@ -196,11 +196,11 @@ pw::infer_plugin() {
 declare -ix PW_PRINT=0
 
 pw::output() {
-	local output
-	output=$(cat)
 	if (( PW_PRINT )); then
-		printf '%s\n' "${output}"
+		cat
 	else
+		local output
+		output=$(cat)
 		local pname="pw-clip" before now
 		pkill -f "^${pname}" 2>/dev/null && sleep 0.5
 		before="$("${PW_HOME}/src/paste" 2>/dev/null | base64)"
@@ -213,30 +213,6 @@ pw::output() {
 			fi
 		) &>/dev/null & disown
 	fi
-}
-
-export -f pw::output
-
-pw::gen() {
-	local -i length=${1:-${PW_GEN_LENGTH}}
-	local password="" class="${2:-"${PW_GEN_CLASS}"}"
-
-	local -i block_size=$(( length / 32 ))
-	(( block_size )) || block_size=1
-
-	# Fix character classes for BusyBox tr
-	[[ "${class}" == "[:graph:]" ]] && class="[:alnum:][:punct:]"
-	[[ "${class}" == "[:print:]" ]] && class="[:alnum:][:punct:][:space:]"
-
-	while (( "${#password}" != length )); do
-		password+=$(
-			dd if=/dev/urandom bs=${block_size} count=1 status=none 2>/dev/null |
-			LC_CTYPE=C LC_ALL=C tr -dc "${class}" |
-			head -c $(( length - ${#password} ))
-		)
-	done
-
-	pw::output <<< "${password}"
 }
 
 #
@@ -258,6 +234,7 @@ pw::prompt_password() {
 	local password=""
 	if [[ -p /dev/stdin ]]; then
 		IFS= read -r password
+		printf '%s' "${password}"
 	else
 		while [[ -z "${password}" ]]; do
 			IFS= read -rsp "Enter password for '${PW_NAME}' (leave empty to generate password):"$'\n' password
@@ -266,11 +243,10 @@ pw::prompt_password() {
 				IFS= read -rsp "Retype password for '${PW_NAME}':"$'\n' retype
 				[[ "${retype}" == "${password}" ]] || password=""
 			else
-				password="$(PW_PRINT=1 pw::gen)"
+				gen
 			fi
 		done
 	fi
-	printf '%s' "${password}"
 }
 
 pw::init() {
@@ -448,7 +424,7 @@ main() {
 			show)    shift; pw::select_keychain  ; pw::show   "$@"                    ;;
 			rm)      shift; pw::select_keychain  ; pw::rm     "$@"                    ;;
 			ls)      shift; pw::select_keychain  ; pw::ls     "$@"                    ;;
-			gen)     shift;                        pw::gen    "$@"                    ;;
+			gen)     shift;                        gen        "$@" | pw::output       ;;
 			open)    shift; pw::select_keychain  ; pw::plugin open   "${PW_KEYCHAIN}" ;;
 			lock)    shift; pw::select_keychain  ; pw::plugin lock   "${PW_KEYCHAIN}" ;;
 			unlock)  shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;

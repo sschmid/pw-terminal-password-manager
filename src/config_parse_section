@@ -15,8 +15,7 @@ fi
 
 SECTION="$2"
 
-awk -v wanted="${SECTION}" '
-{
+awk -v wanted="${SECTION}" '{
 	line = $0
 
 	sub(/^[[:space:]]+/, "", line)

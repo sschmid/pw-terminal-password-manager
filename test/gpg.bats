@@ -497,7 +497,6 @@ EOF
 	assert_success
 
 	export PW_CLIP_TIME=1
-	bats_require_minimum_version 1.5.0
 	run -130 pw
 
 	run _paste

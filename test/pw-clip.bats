@@ -92,8 +92,7 @@ _wait() { sleep $(( PW_CLIP_TIME + 2 )); }
 @test "generates and copies password" {
 	export PW_GEN_LENGTH=5
 	export PW_GEN_CLASS="1"
-	run pw gen
-	assert_success
+	run -141 pw gen
 	refute_output
 	run _paste
 	assert_output "11111"

@@ -3,6 +3,7 @@ _common_setup() {
 	load 'test_helper/bats-support/load'
 	load 'test_helper/bats-assert/load'
 	load 'test_helper/bats-file/load'
+	bats_require_minimum_version 1.5.0
 	PROJECT_ROOT="${BATS_TEST_DIRNAME}/.."
 	export XDG_CONFIG_HOME="${BATS_TEST_TMPDIR}/.config"
 	source "${PROJECT_ROOT}/src/vars.bash"
