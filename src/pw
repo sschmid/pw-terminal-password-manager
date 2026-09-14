@@ -9,12 +9,12 @@ SHELL="$(type -p bash)"
 export SHELL
 
 PW_HOME="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
-declare -rx PW_HOME
 declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
 # shellcheck disable=SC2034
 declare -r PROGRAM="pw"
 
+source "${PW_HOME}/src/vars.bash"
 source "${PW_HOME}/lib/string.bash"
 source "${PW_HOME}/lib/config.bash"
 export -f lib_string_trim
