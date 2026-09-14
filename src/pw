@@ -246,7 +246,7 @@ pw::add() {
 
 	pw::plugin add "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" "${PW_NOTES}" <<EOF
 ${keychain_password}
-$(prompt_password)
+$(password-prompt)
 EOF
 }
 
@@ -256,7 +256,7 @@ pw::edit() {
 	pw::select_item_with_prompt "edit" "$@"
 	pw::plugin edit "${PW_KEYCHAIN}" "${PW_NAME}" "${PW_ACCOUNT}" "${PW_URL}" <<EOF
 ${keychain_password}
-$(prompt_password)
+$(password-prompt)
 EOF
 }
 
