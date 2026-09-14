@@ -13,20 +13,20 @@ lib_config_parse_section() {
 	local requested="$2" callback="$3"
 	local line next_line section="" key value
 	while IFS= read -r line; do
-		line="$(lib_string_trim "${line}")"
+		line="$(string_trim "${line}")"
 		[[ -z ${line} ]] && continue
 		[[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
 		[[ "${line}" == \[*\] ]] && section="${line//[\[\]]/}" && continue
 		if [[ -z "${requested}" ]] || [[ "${section}" == "${requested}" ]]; then
 			while [[ "${line}" == *\\ ]]; do
 				IFS= read -r next_line
-				next_line="$(lib_string_trim "${next_line}")"
+				next_line="$(string_trim "${next_line}")"
 				[[ -z ${next_line} ]] && continue
 				[[ "${next_line}" == "#"* || "${next_line}" == ";"* ]] && continue
 				line="${line%\\}${next_line}"
 			done
-			key="$(lib_string_trim "${line%%=*}")"
-			value="$(lib_string_trim "${line#*=}")"
+			key="$(string_trim "${line%%=*}")"
+			value="$(string_trim "${line#*=}")"
 			[[ -z ${value} ]] && continue
 			"${callback}" "${section}" "${key}" "${value}"
 		fi

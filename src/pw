@@ -11,9 +11,7 @@ export SHELL
 PW_HOME="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
 
 source "${PW_HOME}/src/vars.bash"
-source "${PW_HOME}/lib/string.bash"
 source "${PW_HOME}/lib/config.bash"
-export -f lib_string_trim
 
 pw::usage() {
 	cat <<EOF
