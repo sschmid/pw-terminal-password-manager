@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set +x -euo pipefail
 
-# KCOV_EXCL_START
 # shellcheck disable=SC2016
 awk_cmd='BEGIN { FS="<blob>=" }
 /0x00000007 / { label = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2) }
@@ -20,6 +19,5 @@ awk_cmd='BEGIN { FS="<blob>=" }
 	}
 }
 /"svce"/ { service = ($2 == "<NULL>") ? "" : substr($2, 2, length($2) - 2);'
-# KCOV_EXCL_STOP
 
 awk "${awk_cmd} $1 }"

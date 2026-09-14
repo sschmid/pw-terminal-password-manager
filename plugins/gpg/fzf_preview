@@ -7,12 +7,10 @@ IFS= read -r _
 # options="$1" keychain="$2"
 keychain="$2"
 
-# KCOV_EXCL_START
 # shellcheck disable=SC1083
 _fzf_preview() {
 	gpg --quiet --decrypt "${keychain}/"{4} | "${_parse_details}" {4}
 }
-# KCOV_EXCL_STOP
 
 declare -p keychain _parse_details
 declare -f _fzf_preview
