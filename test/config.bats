@@ -1,23 +1,11 @@
-# shellcheck disable=SC1091
 setup() {
-	load 'test_helper/bats-support/load.bash'
-	load 'test_helper/bats-assert/load.bash'
-	bats_require_minimum_version 1.5.0
-
-	PROGRAM="test-program"
+	load 'common-setup'
+	_common_setup
 	TEST_CONFIG="${BATS_TEST_TMPDIR}/test.conf"
-	source 'lib/config.bash'
 }
 
 write_config() {
 	cat > "${TEST_CONFIG}"
-}
-
-print_kv() {
-	if [[ -n "$1" ]]
-	then printf '"%s_%s" : "%s"\n' "$1" "$2" "$3"
-	else printf '"%s" : "%s"\n' "$2" "$3"
-	fi
 }
 
 @test "writes test config file" {
@@ -28,14 +16,14 @@ print_kv() {
 }
 
 @test "fails when config file argument is not specified" {
-	run --separate-stderr lib_config_parse_section
+	run --separate-stderr config_parse_section
 	assert_failure
 	refute_output
 	assert_stderr "${PROGRAM} error: config file not specified"
 }
 
 @test "fails when config file does not exist" {
-	run --separate-stderr lib_config_parse_section "unknown.conf"
+	run --separate-stderr config_parse_section "unknown.conf"
 	assert_failure
 	refute_output
 	assert_stderr "${PROGRAM} error: config file not found: unknown.conf"
@@ -46,7 +34,7 @@ print_kv() {
 key1 = value 1
 key2 = value 2
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	refute_output
 }
@@ -57,7 +45,7 @@ EOF
 key1 = value 1
 key2 = value 2
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	refute_output
 }
@@ -68,11 +56,11 @@ EOF
 key1 = value 1
 key2 = value 2
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1"
-"section 1_key2" : "value 2"
+section 1	key1	value 1
+section 1	key2	value 2
 EOF
 }
 
@@ -86,11 +74,11 @@ key2 = value 2
 key3 = value 3
 key4 = value 4
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key3" : "value 3"
-"section 1_key4" : "value 4"
+section 1	key3	value 3
+section 1	key4	value 4
 EOF
 }
 
@@ -106,13 +94,13 @@ key4 = value 4
 key5 = value 5
 key6 = value 6
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1"
-"section 1_key2" : "value 2"
-"section 1_key5" : "value 5"
-"section 1_key6" : "value 6"
+section 1	key1	value 1
+section 1	key2	value 2
+section 1	key5	value 5
+section 1	key6	value 6
 EOF
 }
 
@@ -126,11 +114,11 @@ key1 = value 1
 key2 = value 2
 
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1"
-"section 1_key2" : "value 2"
+section 1	key1	value 1
+section 1	key2	value 2
 EOF
 }
 
@@ -144,11 +132,11 @@ key1 = value 1
 ; this is a comment
 key2 = value 2
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1"
-"section 1_key2" : "value 2"
+section 1	key1	value 1
+section 1	key2	value 2
 EOF
 }
 
@@ -158,11 +146,11 @@ EOF
   	key 1    = 	 value 1
 			key 2		=   value 2
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key 1" : "value 1"
-"section 1_key 2" : "value 2"
+section 1	key 1	value 1
+section 1	key 2	value 2
 EOF
 }
 
@@ -173,11 +161,11 @@ key1 = value 1
 key2 =
 key3 = value 3
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1"
-"section 1_key3" : "value 3"
+section 1	key1	value 1
+section 1	key3	value 3
 EOF
 }
 
@@ -191,11 +179,11 @@ key2 = value 2 line 1 \
        value 2 line 2 \
        value 2 line 3
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1 line 1 value 1 line 2 value 1 line 3"
-"section 1_key2" : "value 2 line 1 value 2 line 2 value 2 line 3"
+section 1	key1	value 1 line 1 value 1 line 2 value 1 line 3
+section 1	key2	value 2 line 1 value 2 line 2 value 2 line 3
 EOF
 }
 
@@ -213,11 +201,11 @@ key2 = value 2 line 1 \
 
        value 2 line 3
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1 line 1 value 1 line 2 value 1 line 3"
-"section 1_key2" : "value 2 line 1 value 2 line 2 value 2 line 3"
+section 1	key1	value 1 line 1 value 1 line 2 value 1 line 3
+section 1	key2	value 2 line 1 value 2 line 2 value 2 line 3
 EOF
 }
 
@@ -231,18 +219,12 @@ key2 = value 2 line 1 \
       ;  value 2 line 2 \
        value 2 line 3
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "section 1" print_kv
+	run config_parse_section "${TEST_CONFIG}" "section 1"
 	assert_success
 	cat <<EOF | assert_output -
-"section 1_key1" : "value 1 line 1 value 1 line 3"
-"section 1_key2" : "value 2 line 1 value 2 line 3"
+section 1	key1	value 1 line 1 value 1 line 3
+section 1	key2	value 2 line 1 value 2 line 3
 EOF
-}
-
-@test "prints kv pair" {
-	run lib_config_print_kv "section 1" "key 1" "value 1"
-	assert_success
-	assert_output "key 1 = value 1"
 }
 
 @test "prints entire config section" {
@@ -262,16 +244,16 @@ key2 = value 2
 key3 = value 3
 key4 = value 4
 EOF
-	run lib_config_parse_section "${TEST_CONFIG}" "" print_kv
+	run config_parse_section "${TEST_CONFIG}" ""
 	assert_success
 	cat <<EOF | assert_output -
-"key1" : "value 1"
-"key2" : "value 2"
-"section 1_key1" : "value 1"
-"section 1_key2" : "value 2"
-"section 2_key1" : "value 1"
-"section 2_key2" : "value 2"
-"section 1_key3" : "value 3"
-"section 1_key4" : "value 4"
+	key1	value 1
+	key2	value 2
+section 1	key1	value 1
+section 1	key2	value 2
+section 2	key1	value 1
+section 2	key2	value 2
+section 1	key3	value 3
+section 1	key4	value 4
 EOF
 }

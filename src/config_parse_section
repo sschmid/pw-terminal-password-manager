@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set +x -euo pipefail
+IFS=$'\n\t'
+
+if (( ! $# )); then
+	printf '%s error: config file not specified\n' "${PROGRAM}" >&2
+	exit 1
+fi
+
+CONFIG_FILE="$1"
+if [[ ! -f "${CONFIG_FILE}" ]]; then
+	printf '%s error: config file not found: %s\n' "${PROGRAM}" "${CONFIG_FILE}" >&2
+	exit 1
+fi
+
+SECTION="$2"
+
+trim() {
+	local line="$1"
+	line="${line#"${line%%[![:space:]]*}"}"
+	line="${line%"${line##*[![:space:]]}"}"
+	printf '%s' "${line}"
+}
+
+section=""
+while IFS= read -r line; do
+	line="$(trim "${line}")"
+	[[ -z ${line} ]] && continue
+	[[ "${line}" == "#"* || "${line}" == ";"* ]] && continue
+	[[ "${line}" == \[*\] ]] && section="${line//[\[\]]/}" && continue
+	if [[ -z "${SECTION}" ]] || [[ "${section}" == "${SECTION}" ]]; then
+		while [[ "${line}" == *\\ ]]; do
+			IFS= read -r next_line
+			next_line="$(trim "${next_line}")"
+			[[ -z ${next_line} ]] && continue
+			[[ "${next_line}" == "#"* || "${next_line}" == ";"* ]] && continue
+			line="${line%\\}${next_line}"
+		done
+		key="$(trim "${line%%=*}")"
+		value="$(trim "${line#*=}")"
+		[[ -z ${value} ]] && continue
+		printf '%s\t%s\t%s\n' "${section}" "${key}" "${value}"
+	fi
+done < "${CONFIG_FILE}"

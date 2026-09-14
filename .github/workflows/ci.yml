@@ -70,7 +70,6 @@ jobs:
           name: pw
           path: |
             examples/**
-            lib/**
             plugins/**
             src/**
             CHANGELOG.md
