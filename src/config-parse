@@ -7,15 +7,15 @@ if (( ! $# )); then
 	exit 1
 fi
 
-CONFIG_FILE="$1"
-if [[ ! -f "${CONFIG_FILE}" ]]; then
-	printf 'error: config file not found: %s\n' "${CONFIG_FILE}" >&2
+config_file="$1"
+if [[ ! -f "${config_file}" ]]; then
+	printf 'error: config file not found: %s\n' "${config_file}" >&2
 	exit 1
 fi
 
-SECTION="$2"
+section="$2"
 
-awk -v wanted="${SECTION}" '{
+awk -v wanted="${section}" '{
 	line = $0
 
 	sub(/^[[:space:]]+/, "", line)
@@ -67,4 +67,4 @@ awk -v wanted="${SECTION}" '{
 
 	if (value != "")
 		printf "%s\t%s\t%s\n", section, key, value
-}' "${CONFIG_FILE}"
+}' "${config_file}"
