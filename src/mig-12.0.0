@@ -27,7 +27,7 @@ if [[ -f "${old_pw_config}" ]] ; then
 		printf '%s' "${line}"
 	}
 
-	migrate() {
+	mig() {
 		local line section=""
 		while IFS= read -r line; do
 			line="$(trim "${line}")"
@@ -50,6 +50,6 @@ if [[ -f "${old_pw_config}" ]] ; then
 		done < "${new_pw_config}.bak"
 	}
 
-	migrate
+	mig
 	mv "${mig_pw_config}" "${new_pw_config}"
 fi

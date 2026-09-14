@@ -239,22 +239,6 @@ pw::gen() {
 	pw::output <<< "${password}"
 }
 
-pw::migrate() {
-	# Migrate old .pwrc files
-	local pwrc="${PW_RC:-"${HOME}/.pwrc"}"
-	if [[ -f "${pwrc}" ]]; then
-		"${PW_HOME}/src/migrations/pwrc-9.0.0" "${pwrc}"
-		"${PW_HOME}/src/migrations/pwrc-10.0.0" "${pwrc}"
-		"${PW_HOME}/src/migrations/pwrc-11.0.0" "${pwrc}"
-	fi
-
-	# Migrate old pw.conf format
-	"${PW_HOME}/src/migrations/pwconf-12.0.0"
-
-	# Migrate old install location
-	"${PW_HOME}/src/migrations/pw-install-13.0.0"
-}
-
 #
 # BEGIN plugin
 #
@@ -468,7 +452,7 @@ main() {
 			open)    shift; pw::select_keychain  ; pw::plugin open   "${PW_KEYCHAIN}" ;;
 			lock)    shift; pw::select_keychain  ; pw::plugin lock   "${PW_KEYCHAIN}" ;;
 			unlock)  shift; pw::select_keychain  ; pw::plugin unlock "${PW_KEYCHAIN}" ;;
-			migrate) shift;                        pw::migrate                        ;;
+			migrate) shift;                        migrate                            ;;
 			*)              pw::select_keychain  ; pw::get    "$@"                    ;;
 		esac
 	else

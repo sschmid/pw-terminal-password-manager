@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set +x -euo pipefail
+IFS=$'\n\t'
+
+# Migrate old .pwrc files
+pwrc="${PW_RC:-"${HOME}/.pwrc"}"
+if [[ -f "${pwrc}" ]]; then
+	mig-9.0.0 "${pwrc}"
+	mig-10.0.0 "${pwrc}"
+	mig-11.0.0 "${pwrc}"
+fi
+
+# Migrate old pw.conf format
+mig-12.0.0
+
+# Migrate old install location
+mig-13.0.0
