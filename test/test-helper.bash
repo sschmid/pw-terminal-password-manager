@@ -3,13 +3,9 @@ _common_setup() {
 	load 'test_helper/bats-support/load.bash'
 	load 'test_helper/bats-assert/load.bash'
 	load 'test_helper/bats-file/load.bash'
-
+	PROJECT_ROOT="${BATS_TEST_DIRNAME}/.."
 	export XDG_CONFIG_HOME="${BATS_TEST_TMPDIR}/.config"
-	PW_CONFIG="${XDG_CONFIG_HOME}/pw/pw.conf"
-	mkdir -p "${XDG_CONFIG_HOME}/pw"
-
-	PROJECT_ROOT="$(cd "${BATS_TEST_DIRNAME}/.." &>/dev/null && pwd)"
-	PATH="${PROJECT_ROOT}/src:${PATH}"
+	source "${PROJECT_ROOT}/src/vars.bash"
 
 	KEYCHAIN_TEST_PASSWORD=" test password "
 	NAME_A=" a test name "
@@ -29,7 +25,7 @@ and spaces "
 
 _set_config_with_copy_paste() {
 	touch "${BATS_TEST_TMPDIR}/test_clipboard"
-	cat > "${PW_CONFIG}" <<'EOF'
+	cat > "${PW_CONFIG_FILE}" <<'EOF'
 [general]
 copy = cat > "${BATS_TEST_TMPDIR}/test_clipboard"
 paste = cat "${BATS_TEST_TMPDIR}/test_clipboard"
@@ -45,7 +41,7 @@ _paste() {
 }
 
 _config_append_with_plugin() {
-	cat >> "${PW_CONFIG}" <<EOF
+	cat >> "${PW_CONFIG_FILE}" <<EOF
 [plugins]
 # unknown key
 pluginX = invalid
@@ -54,7 +50,7 @@ EOF
 }
 
 _config_append_with_test_plugins() {
-	cat >> "${1:-"${PW_CONFIG}"}" <<EOF
+	cat >> "${1:-"${PW_CONFIG_FILE}"}" <<EOF
 [plugins]
 # unknown key
 pluginX = invalid
@@ -64,13 +60,13 @@ EOF
 }
 
 _config_append_keychains() {
-	echo "[keychains]" >> "${PW_CONFIG}"
-	printf 'keychain = %s\n' "$@" >> "${PW_CONFIG}"
+	echo "[keychains]" >> "${PW_CONFIG_FILE}"
+	printf 'keychain = %s\n' "$@" >> "${PW_CONFIG_FILE}"
 }
 
 _config_append_keychains_with_key() {
-	echo "[keychains]" >> "${PW_CONFIG}"
-	printf '%s\n' "$@" >> "${PW_CONFIG}"
+	echo "[keychains]" >> "${PW_CONFIG_FILE}"
+	printf '%s\n' "$@" >> "${PW_CONFIG_FILE}"
 }
 
 assert_init_already_exists() {

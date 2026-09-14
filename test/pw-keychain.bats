@@ -153,7 +153,7 @@ setup() {
 	assert_failure
 	cat <<EOF | assert_output -
 pw: no keychain was set!
-Set a keychain with the -k option or provide a list of default keychains in ${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw/pw.conf.
+Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_FILE}.
 EOF
 }
 
@@ -162,7 +162,7 @@ EOF
 	assert_failure
 	cat <<EOF | assert_output -
 pw: no keychain was set!
-Set a keychain with the -k option or provide a list of default keychains in ${XDG_CONFIG_HOME:-"${HOME}/.config"}/pw/pw.conf.
+Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_FILE}.
 EOF
 }
 

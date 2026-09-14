@@ -9,7 +9,6 @@ SHELL="$(type -p bash)"
 export SHELL
 
 PW_HOME="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
-declare -rx PW_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 
 # shellcheck disable=SC2034
 declare -r PROGRAM="pw"
@@ -52,7 +51,7 @@ EOF
 pw::parse_config() {
 	[[ -z "$1" || -f "$1" ]] || pw::exit "pw: config file not found: $1"
 
-	local config="${1:-"${PW_CONFIG_HOME}/pw/pw.conf"}"
+	local config="${1:-"${PW_CONFIG_FILE}"}"
 	declare -ag PW_PLUGINS PW_KEYCHAINS
 
 	# shellcheck disable=SC2174
@@ -121,7 +120,7 @@ pw::set_keychain() {
 	fi
 
 	[[ -n "${PW_KEYCHAIN}" ]] || pw::exit "pw: no keychain was set!" \
-		"Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_HOME}/pw/pw.conf."
+		"Set a keychain with the -k option or provide a list of default keychains in ${PW_CONFIG_FILE}."
 }
 
 pw::select_keychain() {

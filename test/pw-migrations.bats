@@ -61,7 +61,7 @@ EOF
 
 _set_pw_config_12_0_0() {
 	# moved to ~/.config/pw/pw.conf
-	cat <<EOF > "${PW_CONFIG}"
+	cat <<EOF > "${PW_CONFIG_FILE}"
 [general]
 password_length = 24
 password_character_class = [:graph:]
@@ -81,7 +81,7 @@ assert_latest_config() {
 	run pw -y migrate
 	assert_success
 
-	run cat "${PW_CONFIG}"
+	run cat "${PW_CONFIG_FILE}"
 	assert_success
 	cat <<EOF | assert_output -
 [general]

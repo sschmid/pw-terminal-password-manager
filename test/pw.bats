@@ -38,7 +38,7 @@ assert_pw_home() {
 
 @test "doesn't source config" {
 	_config_append_keychains " test keychain "
-	echo 'echo "# test config sourced"' >> "${PW_CONFIG}"
+	echo 'echo "# test config sourced"' >> "${PW_CONFIG_FILE}"
 	run pw -h
 	refute_output --partial "# test config sourced"
 }
@@ -46,19 +46,19 @@ assert_pw_home() {
 @test "doesn't create default config when not accessed" {
 	run pw -h
 	assert_success
-	assert_file_not_exists "${PW_CONFIG}"
+	assert_file_not_exists "${PW_CONFIG_FILE}"
 }
 
 @test "creates default config" {
 	run pw ls
 	assert_failure
-	assert_file_exists "${PW_CONFIG}"
+	assert_file_exists "${PW_CONFIG_FILE}"
 }
 
 @test "doesn't create custom config" {
 	run pw -c "${BATS_TEST_TMPDIR}/myconfig" ls
 	assert_failure
-	assert_file_not_exists "${PW_CONFIG}"
+	assert_file_not_exists "${PW_CONFIG_FILE}"
 }
 
 @test "uses custom config" {
