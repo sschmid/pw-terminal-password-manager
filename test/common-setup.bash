@@ -1,8 +1,8 @@
 # shellcheck disable=SC2034
 _common_setup() {
-	load 'test_helper/bats-support/load.bash'
-	load 'test_helper/bats-assert/load.bash'
-	load 'test_helper/bats-file/load.bash'
+	load 'test_helper/bats-support/load'
+	load 'test_helper/bats-assert/load'
+	load 'test_helper/bats-file/load'
 	PROJECT_ROOT="${BATS_TEST_DIRNAME}/.."
 	export XDG_CONFIG_HOME="${BATS_TEST_TMPDIR}/.config"
 	source "${PROJECT_ROOT}/src/vars.bash"

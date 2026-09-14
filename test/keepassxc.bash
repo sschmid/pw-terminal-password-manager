@@ -1,5 +1,5 @@
 _setup() {
-	load 'test-helper'
+	load 'common-setup'
 	_common_setup
 	export PW_KEYCHAIN="${BATS_TEST_TMPDIR}/pw keepassxc test.kdbx"
 }

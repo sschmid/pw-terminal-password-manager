@@ -1,4 +1,4 @@
 _setup() {
-	load 'test-helper'
+	load 'common-setup'
 	_common_setup
 }
